@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on PPD&#39;s blog</title>
+    <link>https://ppd0705.github.io/post/</link>
+    <description>Recent content in Posts on PPD&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Fri, 28 Jun 2019 22:14:50 +0800</lastBuildDate>
+    
+	<atom:link href="https://ppd0705.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>First</title>
+      <link>https://ppd0705.github.io/post/first/</link>
+      <pubDate>Fri, 28 Jun 2019 22:14:50 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/first/</guid>
+      <description>写东西一直就是我不擅长的事情 语文作文800字总是觉得凑不够 那就开始写吧 毕竟我也没有什么擅长的</description>
+    </item>
+    
+  </channel>
+</rss>
