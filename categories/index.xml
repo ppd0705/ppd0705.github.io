@@ -6,10 +6,19 @@
     <description>Recent content in Categories on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Fri, 28 Jun 2019 22:14:50 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 27 Jul 2019 21:49:48 +0800</lastBuildDate>
     
 	<atom:link href="https://ppd0705.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>计算机</title>
+      <link>https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/</link>
+      <pubDate>Sat, 27 Jul 2019 21:49:48 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>生活</title>

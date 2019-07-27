@@ -3,7 +3,44 @@
   
   <url>
     <loc>https://ppd0705.github.io/categories/</loc>
-    <lastmod>2019-06-28T22:14:50+08:00</lastmod>
+    <lastmod>2019-07-27T21:49:48+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://ppd0705.github.io/tags/java/</loc>
+    <lastmod>2019-07-27T21:49:48+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://ppd0705.github.io/post/java_basic_1/</loc>
+    <lastmod>2019-07-27T21:49:48+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://ppd0705.github.io/</loc>
+    <lastmod>2019-07-27T21:49:48+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://ppd0705.github.io/post/</loc>
+    <lastmod>2019-07-27T21:49:48+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://ppd0705.github.io/tags/</loc>
+    <lastmod>2019-07-27T21:49:48+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/</loc>
+    <lastmod>2019-07-27T21:49:48+08:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -12,18 +49,6 @@
     <lastmod>2019-06-28T22:14:50+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://ppd0705.github.io/</loc>
-    <lastmod>2019-06-28T22:14:50+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://ppd0705.github.io/post/</loc>
-    <lastmod>2019-06-28T22:14:50+08:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>
@@ -37,11 +62,6 @@
     <lastmod>2019-06-28T22:01:49+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://ppd0705.github.io/tags/</loc>
-    <priority>0</priority>
   </url>
   
 </urlset>
