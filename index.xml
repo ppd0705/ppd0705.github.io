@@ -6,10 +6,73 @@
     <description>Recent content on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 27 Jul 2019 21:49:48 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 29 Jul 2019 21:53:34 +0800</lastBuildDate>
     
         <atom:link href="https://ppd0705.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Java_basic_2</title>
+      <link>https://ppd0705.github.io/post/java_basic_2/</link>
+      <pubDate>Mon, 29 Jul 2019 21:53:34 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/java_basic_2/</guid>
+      
+        <description>
+
+&lt;h4 id=&#34;string&#34;&gt;String&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;不可变&lt;/li&gt;
+&lt;li&gt;使用Unicode编码表示&lt;/li&gt;
+&lt;li&gt;早期JDK以char[]存储，新版本用byte[]&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;stringbuilder&#34;&gt;StringBuilder&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;可变对象，新增字符时，不会创建新的临时对象&lt;/li&gt;
+&lt;li&gt;append方法返回this，故可以链式调用&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;stringjoiner&#34;&gt;StringJoiner&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;用于分隔符拼接数据&lt;/li&gt;
+&lt;li&gt;底层使用的仍是StringBuilder&lt;/li&gt;
+&lt;li&gt;无需指定开头结尾时可用String.join()方法&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;包装类型&#34;&gt;包装类型&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;基本类型的封装，可赋值为null&lt;/li&gt;
+&lt;li&gt;编译器可Auto Boxing自动封箱(如 Integer n = 100 -&amp;gt; Integer n = Integer.valueOf(100))、Auto Unboxing自动拆箱(如 int x = n -&amp;gt; int x = n.intValue())&lt;/li&gt;
+&lt;li&gt;为不可变类型&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;javabean&#34;&gt;JavaBean&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;符合命名规范的class, 通过getter和setter来读写属性&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;enum枚举&#34;&gt;enum枚举&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;继承自Enum, static final类型，无法被继承，无法new&lt;/li&gt;
+&lt;li&gt;.ordinal()返回定义顺序&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;常用工具类&#34;&gt;常用工具类&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Math 提供数学方法&lt;/li&gt;
+&lt;li&gt;Random 伪随机数&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+      
+    </item>
     
     <item>
       <title>Java_basic_1</title>
