@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Python on PPD&#39;s blog</title>
+    <link>https://ppd0705.github.io/tags/python/</link>
+    <description>Recent content in Python on PPD&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Tue, 20 Aug 2019 08:34:39 +0800</lastBuildDate>
+    
+	<atom:link href="https://ppd0705.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Setuptools_doc_notes</title>
+      <link>https://ppd0705.github.io/post/setuptools_doc_notes/</link>
+      <pubDate>Tue, 20 Aug 2019 08:34:39 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/setuptools_doc_notes/</guid>
+      <description>版本规则 正式版本由一串被.符合分隔开的数据组成 2.1，代表release 2 的第一个子版本 2.1 == 2.1.0 == 2.01 预发布版本，通常在版本号后加字母tag， 如</description>
+    </item>
+    
+  </channel>
+</rss>

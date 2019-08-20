@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>PPD&#39;s blog</title>
+  <title>Setuptools_doc_notes - PPD&#39;s blog</title>
   
 
 <meta name="renderer" content="webkit" />
@@ -22,8 +22,8 @@
 
 <meta name="mobile-web-app-capable" content="yes">
 
-<meta name="author" content="PPD" />
-  <meta name="description" content="PPD&#39;s blog" />
+<meta name="author" content="PPD" /><meta name="description" content="setuptools文档阅读笔记" />
+
   <meta name="keywords" content="PPD, blog" />
 
 
@@ -34,8 +34,7 @@
 <meta name="generator" content="Hugo 0.55.6" />
 
 
-<link rel="canonical" href="https://ppd0705.github.io/" />
-<link href="%7balternate%20%7bRSS%20application/rss&#43;xml%20%20index%20alternate%20%20false%20false%20true%20false%20false%200%7d%20/index.xml%20https://ppd0705.github.io/index.xml%7d" rel="alternate" type="application/rss+xml" title="PPD&#39;s blog" />
+<link rel="canonical" href="https://ppd0705.github.io/post/setuptools_doc_notes/" />
 
 
 
@@ -57,19 +56,27 @@
 
 
 
-<meta property="og:title" content="PPD&#39;s blog" />
-<meta property="og:description" content="PPD&#39;s blog" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://ppd0705.github.io/" />
+<meta property="og:title" content="Setuptools_doc_notes" />
+<meta property="og:description" content="setuptools文档阅读笔记" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ppd0705.github.io/post/setuptools_doc_notes/" />
+<meta property="article:published_time" content="2019-08-20T08:34:39&#43;08:00"/>
+<meta property="article:modified_time" content="2019-08-20T08:34:39&#43;08:00"/>
 
-<meta property="og:updated_time" content="2019-08-20T08:34:39&#43;08:00"/>
+<meta itemprop="name" content="Setuptools_doc_notes">
+<meta itemprop="description" content="setuptools文档阅读笔记">
 
-<meta itemprop="name" content="PPD&#39;s blog">
-<meta itemprop="description" content="PPD&#39;s blog">
 
+<meta itemprop="datePublished" content="2019-08-20T08:34:39&#43;08:00" />
+<meta itemprop="dateModified" content="2019-08-20T08:34:39&#43;08:00" />
+<meta itemprop="wordCount" content="561">
+
+
+
+<meta itemprop="keywords" content="Python," />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="PPD&#39;s blog"/>
-<meta name="twitter:description" content="PPD&#39;s blog"/>
+<meta name="twitter:title" content="Setuptools_doc_notes"/>
+<meta name="twitter:description" content="setuptools文档阅读笔记"/>
 
 <!--[if lte IE 9]>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
@@ -213,7 +220,7 @@
   <ul id="menu" class="menu">
     
     
-        <li class="menu-item active">
+        <li class="menu-item">
         
           
           
@@ -278,161 +285,239 @@
     <main id="main" class="main bg-llight">
       <div class="content-wrapper">
         <div id="content" class="content container">
-          
-  <section id="posts" class="posts">
+          <article class="post bg-white">
     
-    
-    
-      <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
+    <header class="post-header">
+      <h1 class="post-title">Setuptools_doc_notes</h1>
       
-      <a class="post-link" href="/post/setuptools_doc_notes/">Setuptools_doc_notes</a>
-    </h1>
+      <div class="post-meta">
+        <time datetime="2019-08-20" class="post-time">
+          2019-08-20
+        </time>
+        <div class="post-category">
+            <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
+            
+          </div>
+        <span class="more-meta"> 561 words </span>
+          <span class="more-meta"> 2 min read </span>
+
+        
+        
+
+        
+        
+      </div>
+    </header>
+
     
-    <div class="post-meta">
-      <time datetime="2019-08-20" class="post-time">
-        2019-08-20
-      </time>
-      <div class="post-category">
-          <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
+    
+
+    
+    <div class="post-content">
+      
+
+<h4 id="版本规则">版本规则</h4>
+
+<ul>
+<li><p>正式版本由一串被<code>.</code>符合分隔开的数据组成</p>
+
+<ul>
+<li>2.1，代表release 2 的第一个子版本</li>
+<li>2.1 == 2.1.0 == 2.01</li>
+</ul></li>
+
+<li><p>预发布版本，通常在版本号后加字母tag， 如alpha, a, c, dev</p>
+
+<ul>
+<li>2.4.c1 = 2.4-c1 = 2.4c1</li>
+<li>c有别名，2.4rc1 =  2.4pre1 = 2.4preview1 = 2.4.c1</li>
+<li>2.4 &gt; 2.4c1 &gt; 2.4b1</li>
+</ul></li>
+</ul>
+
+<h4 id="声明部分功能的特殊依赖">声明部分功能的特殊依赖</h4>
+
+<ul>
+<li>声明（默认不会下载extras_require里面的依赖）</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="n">setup</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&#34;Project-A&#34;</span><span class="p">,</span>
+    <span class="o">...</span>
+    <span class="n">extras_require</span><span class="o">=</span><span class="p">{</span>
+        <span class="s1">&#39;PDF&#39;</span><span class="p">:</span>  <span class="p">[</span><span class="s2">&#34;ReportLab&gt;=1.2&#34;</span><span class="p">,</span> <span class="s2">&#34;RXP&#34;</span><span class="p">],</span>
+        <span class="s1">&#39;reST&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&#34;docutils&gt;=0.3&#34;</span><span class="p">],</span>
+    <span class="p">}</span>
+<span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<ul>
+<li>当前项目引用</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="n">entry_points</span><span class="o">=</span><span class="p">{</span>
+        <span class="s1">&#39;console_scripts&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s1">&#39;rst2pdf = project_a.tools.pdfgen [PDF]&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;rst2html = project_a.tools.htmlgen&#39;</span><span class="p">,</span>
+            <span class="c1"># more script entry points ...</span>
+        <span class="p">]}</span></code></pre></td></tr></table>
+</div>
+</div>
+<ul>
+<li>其他项目引用</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="n">setup</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&#34;Project-B&#34;</span><span class="p">,</span>
+    <span class="n">install_requires</span><span class="o">=</span><span class="p">[</span><span class="s2">&#34;Project-A[PDF]&#34;</span><span class="p">],</span>
+<span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<ul>
+<li>下载
+<code>pip install &quot;Project-A[PDF]&quot;</code></li>
+</ul>
+
+<h4 id="开发模式">开发模式</h4>
+
+<ul>
+<li>使用： <code>python setup.py develop</code></li>
+<li>执行过程：
+
+<ul>
+<li>执行egg-info命令</li>
+<li>在site-package目录创建一个.egg-link文件记录当前项目的绝对路径</li>
+<li>site-packages/easy-install.pth记录当前项目的绝对路径(.pth文件的内容会加载到sys.path)</li>
+<li>下载项目依赖</li>
+</ul></li>
+<li>等效命令 <code>pip intall -e .</code></li>
+</ul>
+
+<h4 id="安装">安装</h4>
+
+<ul>
+<li>使用 <code>python setup.py install</code></li>
+<li>执行过程
+
+<ul>
+<li>执行egg-info命令</li>
+<li>执行build命令</li>
+<li>创建egg(bdist_egg命令，egg和OS、python版本相关)</li>
+<li>解压egg到site-packages目录</li>
+<li>site-packages/easy-install.pth记录egg文件夹的相对路径</li>
+<li>下载项目依赖</li>
+</ul></li>
+</ul>
+
+<h4 id="wheel">wheel</h4>
+
+<ul>
+<li>新的发布包格式，the standard for built and binary packaging for Python.</li>
+<li>使用: <code>python setup.py bdist_wheel</code></li>
+<li><code>pip install .</code> 安装时会构建wheel而非egg</li>
+<li>可以像sdsit一样跨平台</li>
+</ul>
+
+<h4 id="参考">参考</h4>
+
+<ul>
+<li><a href="https://setuptools.readthedocs.io/en/latest/">https://setuptools.readthedocs.io/en/latest/</a></li>
+<li><a href="https://pythonwheels.com/">https://pythonwheels.com/</a></li>
+<li><a href="https://packaging.python.org/discussions/wheel-vs-egg/">https://packaging.python.org/discussions/wheel-vs-egg/</a></li>
+<li><a href="https://docs.python.org/3/library/site.html#module-site">https://docs.python.org/3/library/site.html#module-site</a></li>
+</ul>
+
+    </div>
+
+    
+    
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="https://ppd0705.github.io/tags/python/">Python</a>
           
         </div>
-      <span class="more-meta"> 561 words </span>
-      <span class="more-meta"> 2 min read </span>
+
       
-      
-      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/post/java_basic_3/">
+            <span class="next-text nav-default">Java_basic_3</span>
+            <span class="prev-text nav-mobile">Next</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "ppd0705/ppd0705.github.io"
+            issue-term="utteranc"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
     </div>
-  </header>
   
-  <div class="post-content">
-    
-    <div class="post-summary">
-      版本规则 正式版本由一串被.符合分隔开的数据组成 2.1，代表release 2 的第一个子版本 2.1 == 2.1.0 == 2.01 预发布版本，通常在版本号后加字母tag， 如
-    </div>
-    <div class="read-more">
-      <a href="/post/setuptools_doc_notes/" class="read-more-link">Read more</a>
-    </div>
-    
-  </div>
-</article>
+
+  
+
+  
+
+  
 
     
-      <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
-      
-      <a class="post-link" href="/post/java_basic_3/">Java_basic_3</a>
-    </h1>
-    
-    <div class="post-meta">
-      <time datetime="2019-07-31" class="post-time">
-        2019-07-31
-      </time>
-      <div class="post-category">
-          <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
-          
-        </div>
-      <span class="more-meta"> 385 words </span>
-      <span class="more-meta"> 1 min read </span>
-      
-      
-      
-    </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      异常 异常类继承自Throwable, 分为Eroor和Exception两类 Error是无需捕获的严重异常 Exception分为Runtime
-    </div>
-    <div class="read-more">
-      <a href="/post/java_basic_3/" class="read-more-link">Read more</a>
-    </div>
-    
-  </div>
-</article>
-
-    
-      <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
-      
-      <a class="post-link" href="/post/java_basic_2/">Java_basic_2</a>
-    </h1>
-    
-    <div class="post-meta">
-      <time datetime="2019-07-29" class="post-time">
-        2019-07-29
-      </time>
-      <div class="post-category">
-          <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
-          
-        </div>
-      <span class="more-meta"> 346 words </span>
-      <span class="more-meta"> 1 min read </span>
-      
-      
-      
-    </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      String 不可变 使用Unicode编码表示 早期JDK以char[]存储，新版本用byte[] StringBuilder 可变对象，新增字符时，不会创建新的临时对象 append
-    </div>
-    <div class="read-more">
-      <a href="/post/java_basic_2/" class="read-more-link">Read more</a>
-    </div>
-    
-  </div>
-</article>
-
-    
-  </section>
-
-  
-  
-
-
-
-  
-  
-  
-
-  
-  
-
-  
-  
-
-  
-  
-
-  
-  
-  <nav class="pagination">
-    <ul>
-      
-      <li  class="active" >
-        <a href="/">1</a>
-      </li>
-      
-      <li >
-        <a href="/page/2/">2</a>
-      </li>
-      
-    </ul>
-  </nav>
-
-  
-  
-
-
-
-
 
         </div>
       </div>
