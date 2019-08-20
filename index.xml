@@ -23,7 +23,7 @@
 &lt;h4 id=&#34;版本规则&#34;&gt;版本规则&lt;/h4&gt;
 
 &lt;ul&gt;
-&lt;li&gt;&lt;p&gt;正式版本由一串被&lt;code&gt;.&lt;/code&gt;符合分隔开的数据组成&lt;/p&gt;
+&lt;li&gt;&lt;p&gt;正式版本由一串被&lt;code&gt;.&lt;/code&gt;符号分隔开的数据组成&lt;/p&gt;
 
 &lt;ul&gt;
 &lt;li&gt;2.1，代表release 2 的第一个子版本&lt;/li&gt;

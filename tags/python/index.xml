@@ -17,7 +17,7 @@
       <pubDate>Tue, 20 Aug 2019 08:34:39 +0800</pubDate>
       
       <guid>https://ppd0705.github.io/post/setuptools_doc_notes/</guid>
-      <description>版本规则 正式版本由一串被.符合分隔开的数据组成 2.1，代表release 2 的第一个子版本 2.1 == 2.1.0 == 2.01 预发布版本，通常在版本号后加字母tag， 如</description>
+      <description>版本规则 正式版本由一串被.符号分隔开的数据组成 2.1，代表release 2 的第一个子版本 2.1 == 2.1.0 == 2.01 预发布版本，通常在版本号后加字母tag， 如</description>
     </item>
     
   </channel>
