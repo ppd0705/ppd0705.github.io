@@ -6,10 +6,19 @@
     <description>Recent content in 计算机 on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 20 Aug 2019 08:34:39 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 04 Sep 2019 01:10:03 +0800</lastBuildDate>
     
 	<atom:link href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>MySQL协议初探及pymysql源码节选</title>
+      <link>https://ppd0705.github.io/post/mysql_procotol_1/</link>
+      <pubDate>Wed, 04 Sep 2019 01:10:03 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/mysql_procotol_1/</guid>
+      <description>登录流程 TCP连接建立 1 2 3 4 5 # Connection.connection sock = socket.create_connection((host, port),connection_timeout) sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1) sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1) _rfile = _makefile(sock, &amp;#39;rb&amp;#39;) Server向Client发送Handshake packet：包含serve</description>
+    </item>
     
     <item>
       <title>Setuptools_doc_notes</title>
