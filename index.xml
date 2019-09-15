@@ -20,6 +20,10 @@
       
         <description>
 
+&lt;h4 id=&#34;总体交互过程&#34;&gt;总体交互过程&lt;/h4&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/mysql_interaction.png&#34; alt=&#34;交互示意&#34; /&gt;&lt;/p&gt;
+
 &lt;h4 id=&#34;登录流程&#34;&gt;登录流程&lt;/h4&gt;
 
 &lt;ul&gt;
@@ -243,6 +247,7 @@
 &lt;li&gt;&lt;a href=&#34;https://zh.wikipedia.org/wiki/%E9%80%BB%E8%BE%91%E5%BC%82%E6%88%96&#34;&gt;https://zh.wikipedia.org/wiki/%E9%80%BB%E8%BE%91%E5%BC%82%E6%88%96&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://zh.wikipedia.org/zh-hans/%E8%AF%A2%E9%97%AE%E6%8F%A1%E6%89%8B%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE&#34;&gt;https://zh.wikipedia.org/zh-hans/%E8%AF%A2%E9%97%AE%E6%8F%A1%E6%89%8B%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://cloud.tencent.com/developer/article/1005252&#34;&gt;https://cloud.tencent.com/developer/article/1005252&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.callmejiagu.com/2018/11/01/%E5%9F%BA%E4%BA%8EMySQL-Protocol%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%B7%B1%E7%9A%84%E6%95%B0%E6%8D%AE%E5%BA%93%E9%A9%B1%E5%8A%A8/&#34;&gt;https://www.callmejiagu.com/2018/11/01/%E5%9F%BA%E4%BA%8EMySQL-Protocol%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%B7%B1%E7%9A%84%E6%95%B0%E6%8D%AE%E5%BA%93%E9%A9%B1%E5%8A%A8/&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
       

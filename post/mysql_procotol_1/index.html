@@ -23,7 +23,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 
 <meta name="author" content="PPD" />
-  <meta name="description" content="登录流程 TCP连接建立 1 2 3 4 5 # Connection.connection sock = socket.create_connection((host, port),connection_timeout) sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1) sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1) _rfile = _makefile(sock, &amp;#39;rb&amp;#39;) Server向Client发送Handshake packet：包含serve" />
+  <meta name="description" content="总体交互过程 登录流程 TCP连接建立 1 2 3 4 5 # Connection.connection sock = socket.create_connection((host, port),connection_timeout) sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1) sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1) _rfile = _makefile(sock, &amp;#39;rb&amp;#39;) Server向Client发送Handshake packet：包" />
 <meta name="keywords" content="pymysql" />
 
 
@@ -58,26 +58,26 @@
 
 
 <meta property="og:title" content="MySQL协议初探及pymysql源码节选" />
-<meta property="og:description" content="登录流程 TCP连接建立 1 2 3 4 5 # Connection.connection sock = socket.create_connection((host, port),connection_timeout) sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1) sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1) _rfile = _makefile(sock, &#39;rb&#39;) Server向Client发送Handshake packet：包含serve" />
+<meta property="og:description" content="总体交互过程 登录流程 TCP连接建立 1 2 3 4 5 # Connection.connection sock = socket.create_connection((host, port),connection_timeout) sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1) sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1) _rfile = _makefile(sock, &#39;rb&#39;) Server向Client发送Handshake packet：包" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://ppd0705.github.io/post/mysql_procotol_1/" />
 <meta property="article:published_time" content="2019-09-04T01:10:03&#43;08:00"/>
 <meta property="article:modified_time" content="2019-09-04T01:10:03&#43;08:00"/>
 
 <meta itemprop="name" content="MySQL协议初探及pymysql源码节选">
-<meta itemprop="description" content="登录流程 TCP连接建立 1 2 3 4 5 # Connection.connection sock = socket.create_connection((host, port),connection_timeout) sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1) sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1) _rfile = _makefile(sock, &#39;rb&#39;) Server向Client发送Handshake packet：包含serve">
+<meta itemprop="description" content="总体交互过程 登录流程 TCP连接建立 1 2 3 4 5 # Connection.connection sock = socket.create_connection((host, port),connection_timeout) sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1) sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1) _rfile = _makefile(sock, &#39;rb&#39;) Server向Client发送Handshake packet：包">
 
 
 <meta itemprop="datePublished" content="2019-09-04T01:10:03&#43;08:00" />
 <meta itemprop="dateModified" content="2019-09-04T01:10:03&#43;08:00" />
-<meta itemprop="wordCount" content="711">
+<meta itemprop="wordCount" content="718">
 
 
 
 <meta itemprop="keywords" content="MySQL,Python," />
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="MySQL协议初探及pymysql源码节选"/>
-<meta name="twitter:description" content="登录流程 TCP连接建立 1 2 3 4 5 # Connection.connection sock = socket.create_connection((host, port),connection_timeout) sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1) sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1) _rfile = _makefile(sock, &#39;rb&#39;) Server向Client发送Handshake packet：包含serve"/>
+<meta name="twitter:description" content="总体交互过程 登录流程 TCP连接建立 1 2 3 4 5 # Connection.connection sock = socket.create_connection((host, port),connection_timeout) sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1) sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1) _rfile = _makefile(sock, &#39;rb&#39;) Server向Client发送Handshake packet：包"/>
 
 <!--[if lte IE 9]>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
@@ -299,7 +299,7 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 711 words </span>
+        <span class="more-meta"> 718 words </span>
           <span class="more-meta"> 2 min read </span>
 
         
@@ -316,6 +316,10 @@
     
     <div class="post-content">
       
+
+<h4 id="总体交互过程">总体交互过程</h4>
+
+<p><img src="/image/mysql_interaction.png" alt="交互示意" /></p>
 
 <h4 id="登录流程">登录流程</h4>
 
@@ -540,6 +544,7 @@
 <li><a href="https://zh.wikipedia.org/wiki/%E9%80%BB%E8%BE%91%E5%BC%82%E6%88%96">https://zh.wikipedia.org/wiki/%E9%80%BB%E8%BE%91%E5%BC%82%E6%88%96</a></li>
 <li><a href="https://zh.wikipedia.org/zh-hans/%E8%AF%A2%E9%97%AE%E6%8F%A1%E6%89%8B%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE">https://zh.wikipedia.org/zh-hans/%E8%AF%A2%E9%97%AE%E6%8F%A1%E6%89%8B%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE</a></li>
 <li><a href="https://cloud.tencent.com/developer/article/1005252">https://cloud.tencent.com/developer/article/1005252</a></li>
+<li><a href="https://www.callmejiagu.com/2018/11/01/%E5%9F%BA%E4%BA%8EMySQL-Protocol%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%B7%B1%E7%9A%84%E6%95%B0%E6%8D%AE%E5%BA%93%E9%A9%B1%E5%8A%A8/">https://www.callmejiagu.com/2018/11/01/%E5%9F%BA%E4%BA%8EMySQL-Protocol%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%B7%B1%E7%9A%84%E6%95%B0%E6%8D%AE%E5%BA%93%E9%A9%B1%E5%8A%A8/</a></li>
 </ul>
 
     </div>
