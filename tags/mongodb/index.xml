@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>MongoDB on PPD&#39;s blog</title>
+    <link>https://ppd0705.github.io/tags/mongodb/</link>
+    <description>Recent content in MongoDB on PPD&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sat, 05 Oct 2019 11:21:34 +0800</lastBuildDate>
+    
+	<atom:link href="https://ppd0705.github.io/tags/mongodb/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Mongo协议初探及pymongo源码节选</title>
+      <link>https://ppd0705.github.io/post/mongo_procotol_1/</link>
+      <pubDate>Sat, 05 Oct 2019 11:21:34 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/mongo_procotol_1/</guid>
+      <description>通讯协议 组成 head: 消息头 payload length(int32): 消息长度 request_id(int32)： 请求ID response_to(int32): 服务端响应对应请求的reques_id(请求类型为OP_QUE</description>
+    </item>
+    
+  </channel>
+</rss>
