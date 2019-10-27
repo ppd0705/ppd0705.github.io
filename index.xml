@@ -6,10 +6,57 @@
     <description>Recent content on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 27 Oct 2019 15:26:47 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 28 Oct 2019 01:24:40 +0800</lastBuildDate>
     
         <atom:link href="https://ppd0705.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Python标准库heapq</title>
+      <link>https://ppd0705.github.io/post/python_standard_libary_heapq/</link>
+      <pubDate>Mon, 28 Oct 2019 01:24:40 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/python_standard_libary_heapq/</guid>
+      
+        <description>
+
+&lt;h4 id=&#34;底层设计&#34;&gt;底层设计:&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;完全二叉树（除了最后一层，其他层都是满的，最后一层的节点都靠左排列）&lt;/li&gt;
+&lt;li&gt;每个节点的值都小于等于左右子节点的值&lt;/li&gt;
+&lt;li&gt;使用list存储&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;入堆heappush&#34;&gt;入堆heappush：&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;先放入list尾部&lt;/li&gt;
+&lt;li&gt;依次和上一次的父节点比较，如果比父节点小则交换(_siftdown上浮)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;移除堆顶元素heappop&#34;&gt;移除堆顶元素heappop：&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;记录最后要返回的结果即heap[0]&lt;/li&gt;
+&lt;li&gt;将heap[-1]弹出并赋值给heap[0],从堆顶依次和左右节点中的大节点交换（_siftup下沉)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;有序堆heapify&#34;&gt;有序堆heapify：&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;从非叶子节点到根节点逆序依次下沉&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;返回一个无序列表前n个最小值nsmallest&#34;&gt;返回一个无序列表前n个最小值nsmallest：&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;等效于sorted(iterrable, key=key)[:n]&lt;/li&gt;
+&lt;li&gt;用前n个元素构建一个大顶堆，后续元素与堆顶堆顶比较，如果小于堆顶则替换之并下沉&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+      
+    </item>
     
     <item>
       <title>Python标准库之并发相关库</title>

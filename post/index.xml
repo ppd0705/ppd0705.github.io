@@ -6,10 +6,19 @@
     <description>Recent content in Posts on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 27 Oct 2019 15:26:47 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 28 Oct 2019 01:24:40 +0800</lastBuildDate>
     
 	<atom:link href="https://ppd0705.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Python标准库heapq</title>
+      <link>https://ppd0705.github.io/post/python_standard_libary_heapq/</link>
+      <pubDate>Mon, 28 Oct 2019 01:24:40 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/python_standard_libary_heapq/</guid>
+      <description>底层设计: 完全二叉树（除了最后一层，其他层都是满的，最后一层的节点都靠左排列） 每个节点的值都小于等于左右子节点的值 使用list存储 入堆hea</description>
+    </item>
     
     <item>
       <title>Python标准库之并发相关库</title>
