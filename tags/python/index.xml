@@ -6,10 +6,19 @@
     <description>Recent content in Python on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 21 Oct 2019 04:17:14 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 27 Oct 2019 15:26:47 +0800</lastBuildDate>
     
 	<atom:link href="https://ppd0705.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Python标准库之并发相关库</title>
+      <link>https://ppd0705.github.io/post/python_standard_libary_1/</link>
+      <pubDate>Sun, 27 Oct 2019 15:26:47 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/python_standard_libary_1/</guid>
+      <description>threading Lock: 可被其他线程释放 .RLock: 与Lock的区别在于可被锁拥有者多次获取，只能被被锁拥有者释放，释放次数等于获取次数才算完全释放 Condition: condition实</description>
+    </item>
     
     <item>
       <title>Python标准库functools</title>

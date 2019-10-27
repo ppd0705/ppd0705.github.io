@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Archive - PPD&#39;s blog</title>
+  <title>Python标准库之并发相关库 - PPD&#39;s blog</title>
   
 
 <meta name="renderer" content="webkit" />
@@ -23,7 +23,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 
 <meta name="author" content="PPD" />
-  <meta name="description" content="PPD&#39;s blog" />
+  <meta name="description" content="threading Lock: 可被其他线程释放 .RLock: 与Lock的区别在于可被锁拥有者多次获取，只能被被锁拥有者释放，释放次数等于获取次数才算完全释放 Condition: condition实" />
+
   <meta name="keywords" content="PPD, blog" />
 
 
@@ -34,8 +35,7 @@
 <meta name="generator" content="Hugo 0.55.6" />
 
 
-<link rel="canonical" href="https://ppd0705.github.io/post/" />
-<link href="%7balternate%20%7bRSS%20application/rss&#43;xml%20%20index%20alternate%20%20false%20false%20true%20false%20false%200%7d%20/post/index.xml%20https://ppd0705.github.io/post/index.xml%7d" rel="alternate" type="application/rss+xml" title="PPD&#39;s blog" />
+<link rel="canonical" href="https://ppd0705.github.io/post/python_standard_libary_1/" />
 
 
 
@@ -57,19 +57,27 @@
 
 
 
-<meta property="og:title" content="Posts" />
-<meta property="og:description" content="PPD&#39;s blog" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://ppd0705.github.io/post/" />
+<meta property="og:title" content="Python标准库之并发相关库" />
+<meta property="og:description" content="threading Lock: 可被其他线程释放 .RLock: 与Lock的区别在于可被锁拥有者多次获取，只能被被锁拥有者释放，释放次数等于获取次数才算完全释放 Condition: condition实" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ppd0705.github.io/post/python_standard_libary_1/" />
+<meta property="article:published_time" content="2019-10-27T15:26:47&#43;08:00"/>
+<meta property="article:modified_time" content="2019-10-27T15:26:47&#43;08:00"/>
 
-<meta property="og:updated_time" content="2019-10-27T15:26:47&#43;08:00"/>
+<meta itemprop="name" content="Python标准库之并发相关库">
+<meta itemprop="description" content="threading Lock: 可被其他线程释放 .RLock: 与Lock的区别在于可被锁拥有者多次获取，只能被被锁拥有者释放，释放次数等于获取次数才算完全释放 Condition: condition实">
 
-<meta itemprop="name" content="Posts">
-<meta itemprop="description" content="PPD&#39;s blog">
 
+<meta itemprop="datePublished" content="2019-10-27T15:26:47&#43;08:00" />
+<meta itemprop="dateModified" content="2019-10-27T15:26:47&#43;08:00" />
+<meta itemprop="wordCount" content="873">
+
+
+
+<meta itemprop="keywords" content="Python," />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Posts"/>
-<meta name="twitter:description" content="PPD&#39;s blog"/>
+<meta name="twitter:title" content="Python标准库之并发相关库"/>
+<meta name="twitter:description" content="threading Lock: 可被其他线程释放 .RLock: 与Lock的区别在于可被锁拥有者多次获取，只能被被锁拥有者释放，释放次数等于获取次数才算完全释放 Condition: condition实"/>
 
 <!--[if lte IE 9]>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
@@ -224,7 +232,7 @@
 
       </li>
     
-        <li class="menu-item active">
+        <li class="menu-item">
         
           
           
@@ -278,117 +286,179 @@
     <main id="main" class="main bg-llight">
       <div class="content-wrapper">
         <div id="content" class="content container">
-          
-<section id="archive" class="archive">
-    <div class="archive-title">
-      <span class="archive-post-counter">
-          10 posts In Total
-      </span>
-    </div>
+          <article class="post bg-white">
     
-      <div class="collection-title">
-        <h2 class="archive-year">2019</h2>
+    <header class="post-header">
+      <h1 class="post-title">Python标准库之并发相关库</h1>
+      
+      <div class="post-meta">
+        <time datetime="2019-10-27" class="post-time">
+          2019-10-27
+        </time>
+        <div class="post-category">
+            <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
+            
+          </div>
+        <span class="more-meta"> 873 words </span>
+          <span class="more-meta"> 2 min read </span>
+
+        
+        
+
+        
+        
       </div>
+    </header>
 
-    <div class="archive-post">
-      <time datetime="2019-10-27" class="archive-post-time">
-        2019-10-27
-      </time>
-      <span class="archive-post-title">
-        <a href="/post/python_standard_libary_1/" class="archive-post-link">
-          Python标准库之并发相关库
-        </a>
-      </span>
-    </div>
+    
     
 
-    <div class="archive-post">
-      <time datetime="2019-10-21" class="archive-post-time">
-        2019-10-21
-      </time>
-      <span class="archive-post-title">
-        <a href="/post/functools/" class="archive-post-link">
-          Python标准库functools
-        </a>
-      </span>
-    </div>
     
-
-    <div class="archive-post">
-      <time datetime="2019-10-05" class="archive-post-time">
-        2019-10-05
-      </time>
-      <span class="archive-post-title">
-        <a href="/post/redis_procotol_1/" class="archive-post-link">
-          Redis协议初探及redis-py源码节选
-        </a>
-      </span>
-    </div>
-    
-
-    <div class="archive-post">
-      <time datetime="2019-10-05" class="archive-post-time">
-        2019-10-05
-      </time>
-      <span class="archive-post-title">
-        <a href="/post/mongo_procotol_1/" class="archive-post-link">
-          Mongo协议初探及pymongo源码节选
-        </a>
-      </span>
-    </div>
-    
-
-    <div class="archive-post">
-      <time datetime="2019-09-04" class="archive-post-time">
-        2019-09-04
-      </time>
-      <span class="archive-post-title">
-        <a href="/post/mysql_procotol_1/" class="archive-post-link">
-          MySQL协议初探及pymysql源码节选
-        </a>
-      </span>
-    </div></section>
-
-
-
-
-
-
-  
-  
-  
-
-  
-  
-
-  
-  
-
-  
-  
-
-  
-  
-  <nav class="pagination">
-    <ul>
+    <div class="post-content">
       
-      <li  class="active" >
-        <a href="/post/">1</a>
-      </li>
+
+<h4 id="threading">threading</h4>
+
+<ul>
+<li>Lock: 可被其他线程释放</li>
+
+<li><p>.RLock: 与Lock的区别在于可被锁拥有者多次获取，只能被被锁拥有者释放，释放次数等于获取次数才算完全释放</p></li>
+
+<li><p>Condition:</p>
+
+<ul>
+<li>condition实例自带公共锁，调用wait 或者notify之前需要获取公共锁</li>
+<li>调用wait时会为当前线程创建一个waiter锁(Lock)并获取，放入dequeue,然后释放公共锁，再次获取waiter锁（因为没有释放, 获取操作会阻塞），最终会重新获取公共锁</li>
+<li>调用notify时，会将dequeue中的锁释放</li>
+</ul></li>
+
+<li><p>Semaphore: 基于Condition， 限制同时aquire的数量，并利用nofify来通知waiter</p></li>
+
+<li><p>Event: 基于Cindition，通过一个flag变量来更新状态</p></li>
+</ul>
+
+<hr />
+
+<h4 id="queue">queue</h4>
+
+<ul>
+<li><p>Queue: 基于一个dequeue 和 一个Lock 和共用Lock 的三个Condition</p>
+
+<ul>
+<li>dequeue: 数据get和put</li>
+<li>not_empty(Condition): 用于get</li>
+<li>not_ful(Condition): 用于put</li>
+<li>all_task_done(Condition):用于task_done和join</li>
+</ul></li>
+
+<li><p>PriortyQueue: 继承Queue,区别在于</p>
+
+<ul>
+<li>使用list存储数据</li>
+<li>使用heapq对数据进行排序</li>
+</ul></li>
+</ul>
+
+<hr />
+
+<h4 id="multiprocessing">multiprocessing</h4>
+
+<ul>
+<li>Process 通过配置context(或者用默认context)来选择通过什么模式启动子进程, linux下默认用fork模式</li>
+<li>Lock 通过底层的SemLock实现</li>
+<li>SimpleQueue: 使用Pipe通信，读和写各用一个锁来保证并发安全</li>
+
+<li><p>Queue put会先放数据到进程的dequeue中缓冲，同时启动一个线程将dequeue中的数据写入到公共Pipe</p></li>
+
+<li><p>Pool:</p>
+
+<ul>
+<li>启动n个子进程，通过两个SimpleQueue:in_queue接受task、out_queue返回task的结果</li>
+<li>主进程启动一个线程接收task_queue的任务，放入in_queue</li>
+<li>主进程启动一个线程接收out_queue的结果，放入一个cache dict中</li>
+<li>apply： 构建一个ApplyResult实例，用一个Event来通知task的状态（_handle_results会更新Event状态）
+<br /></li>
+</ul></li>
+</ul>
+
+<h4 id="concurrent-futures">concurrent.futures</h4>
+
+<ul>
+<li>Waiter: 统计拥有的futures的状态，根据同步设置（第一次完成、第一次报错、全部完成）等来set Event</li>
+<li>Future: 存储task的状态结果</li>
+</ul>
+
+<h4 id="参考">参考</h4>
+
+<ul>
+<li><a href="https://stackoverflow.com/questions/31665328/python-3-multiprocessing-queue-deadlock-when-calling-join-before-the-queue-is-em">queue卡死</a></li>
+<li><a href="https://juejin.im/post/5b0abab451882538c220440b">python进程间通信的五种方式（文件 pipe socket 消息队列 ）样例</a></li>
+</ul>
+
+    </div>
+
+    
+    
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="https://ppd0705.github.io/tags/python/">Python</a>
+          
+        </div>
+
       
-      <li >
-        <a href="/post/page/2/">2</a>
-      </li>
-      
-    </ul>
-  </nav>
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/post/functools/">
+            <span class="next-text nav-default">Python标准库functools</span>
+            <span class="prev-text nav-mobile">Next</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
 
   
   
 
+  
+  
 
+  
 
+  
+  
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "ppd0705/ppd0705.github.io"
+            issue-term="utteranc"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+  
 
+  
+
+  
+
+  
+
+    
 
         </div>
       </div>
