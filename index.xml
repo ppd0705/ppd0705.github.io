@@ -6,10 +6,226 @@
     <description>Recent content on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 28 Oct 2019 01:24:40 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 05 Nov 2019 06:22:00 +0800</lastBuildDate>
     
         <atom:link href="https://ppd0705.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Asyncio主要类和方法一览</title>
+      <link>https://ppd0705.github.io/post/asyncio/</link>
+      <pubDate>Tue, 05 Nov 2019 06:22:00 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/asyncio/</guid>
+      
+        <description>
+
+&lt;h4 id=&#34;events&#34;&gt;events&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Handle&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;基本属性： loop, context, call_back, args&lt;/li&gt;
+&lt;li&gt;run: 执行call_back&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;TimeHandle: 带有&lt;code&gt;when&lt;/code&gt;到期时间的handle,也用于来比较大小&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;AbstractServer: 抽象server, 定义start_server、server_forever等方法&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;AbstractEventLoop：抽象loop, 定义run_forever、run_until_complte、stop、create_tast、call_later、create_connection、add_reader、sock_recv等方法&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;base-events&#34;&gt;base_events&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Server&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;属性： loop,sockets, protocl_factory&lt;/li&gt;
+&lt;li&gt;_start_serving: 为各个socket启动一个serveing&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;BaseEventLoop&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;基本属性&lt;/li&gt;
+&lt;li&gt;_ready: dequeue类型，存放已经ready的task&lt;/li&gt;
+&lt;li&gt;_scheduled: list类型, 存放time handle，使用heapq排序&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;selector: IO复用模型&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;_run_once方法：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;移除已经取消的sheduled handle&lt;/li&gt;
+&lt;li&gt;设置timeout: ready有值设为0，否则取第一个schedule的delay时间&lt;/li&gt;
+&lt;li&gt;selector获取事件列表&lt;/li&gt;
+&lt;li&gt;process_events 处理事件(如没取消加入ready)&lt;/li&gt;
+&lt;li&gt;将scheduled中已经到时间的handle移植ready&lt;/li&gt;
+&lt;li&gt;依次运行ready中的handle&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;run_forever: 不断执行_run_once直到stop&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;run_until_complete: run_forever后返回指定future的结果&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;call_soon: 构造一个handle加入ready尾部&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;call_later:构造一个time handle加入scheduled&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;add_reader: 将fd 和callback注册到selector的read列表里&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;base-futures&#34;&gt;base_futures&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;isfuture: hasattr(obj.&lt;strong&gt;class&lt;/strong&gt;, &amp;lsquo;_asyncio_future_blocking&amp;rsquo;)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;futures&#34;&gt;futures&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Future
+
+&lt;ul&gt;
+&lt;li&gt;基本属性：_state, _result, _excetption, _loop, _asyncio_future_blocking, _callbacks&lt;/li&gt;
+&lt;li&gt;cancel: call_soon当前的call_back并将_state设为&lt;code&gt;_CANCELLED&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;set_result: 设置_result并将_state设为&lt;code&gt;_FINISHED&lt;/code&gt;，调用__schedule_callbacks&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;tasks&#34;&gt;tasks&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Task(继承自Future)
+
+&lt;ul&gt;
+&lt;li&gt;基本属性： _coro, _name, _fut_waiter&lt;/li&gt;
+&lt;li&gt;__step：
+&lt;br /&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt; 
+&lt;span class=&#34;k&#34;&gt;try&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;   
+    &lt;span class=&#34;n&#34;&gt;result&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;coro&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;send&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;bp&#34;&gt;None&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; 
+&lt;span class=&#34;k&#34;&gt;except&lt;/span&gt; &lt;span class=&#34;ne&#34;&gt;StopIteration&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;as&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;exc&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;
+    &lt;span class=&#34;c1&#34;&gt;# coro finished&lt;/span&gt;
+    &lt;span class=&#34;nb&#34;&gt;super&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;set_result&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;exc&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;value&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;else&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;isinstance&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;result&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Future&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;result&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;_blocking&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;
+            &lt;span class=&#34;bp&#34;&gt;self&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;_blocking&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;bp&#34;&gt;False&lt;/span&gt;
+            &lt;span class=&#34;n&#34;&gt;result&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;add_done_callback&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;bp&#34;&gt;self&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;_wakeup&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;result&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;else&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;
+            &lt;span class=&#34;k&#34;&gt;pass&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;elif&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;result&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;is&lt;/span&gt; &lt;span class=&#34;bp&#34;&gt;None&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;
+        &lt;span class=&#34;bp&#34;&gt;self&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;_loop&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;call_soon&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;bp&#34;&gt;self&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;_step&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;else&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;
+       &lt;span class=&#34;k&#34;&gt;pass&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;wait: 等超时或return_when条件满足之后返回（donw=e, pengding）两类futures&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;awaitables&#34;&gt;Awaitables&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;coroutines&lt;/li&gt;
+&lt;li&gt;Task: schedule coroutines concurrently&lt;/li&gt;
+&lt;li&gt;Future: eventual result of an asynchronous operation.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;transports&#34;&gt;transports:&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;理解：the transport is concerned with how bytes are transmitted. a different way of saying the same thing: a transport is an abstraction for a socket&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;主要类：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;BaseTransport&lt;/li&gt;
+&lt;li&gt;ReadTransport&lt;/li&gt;
+&lt;li&gt;WriteTransport&lt;/li&gt;
+&lt;li&gt;Transport： a bidirectional transport&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;selector.Transport&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;protocols&#34;&gt;protocols:&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;理解：the protocol determines which bytes to transmit (and to some extent when). a different way of saying the same thing: a protocol is an abstraction for an application&lt;/li&gt;
+&lt;li&gt;主要类：
+
+&lt;ul&gt;
+&lt;li&gt;BaseProtocol：
+
+&lt;ul&gt;
+&lt;li&gt;connnection_made: start a connect base on a specified transport&lt;/li&gt;
+&lt;li&gt;connection_lost: called when the connection is lost or closed&lt;/li&gt;
+&lt;li&gt;pause_writing: called when transport&amp;rsquo;s buffer goes over the high-water mark&lt;/li&gt;
+&lt;li&gt;resume_writing: called when transport&amp;rsquo;s drains below the low-water mark&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Protocol: stream protocol
+
+&lt;ul&gt;
+&lt;li&gt;data_receied&lt;/li&gt;
+&lt;li&gt;eof_received&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;streams&#34;&gt;streams&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;StreamReader
+
+&lt;ul&gt;
+&lt;li&gt;read&lt;/li&gt;
+&lt;li&gt;readexactly&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;StreamWriter
+
+&lt;ul&gt;
+&lt;li&gt;write&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;参考&#34;&gt;参考&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://lotabout.me/2017/understand-python-asyncio/&#34;&gt;asyncio理解&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://zhuanlan.zhihu.com/p/64991670&#34;&gt;asyncio实现&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+      
+    </item>
     
     <item>
       <title>Python标准库heapq</title>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>计算机 · PPD&#39;s blog</title>
+  <title>Asyncio主要类和方法一览 - PPD&#39;s blog</title>
   
 
 <meta name="renderer" content="webkit" />
@@ -23,7 +23,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 
 <meta name="author" content="PPD" />
-  <meta name="description" content="PPD&#39;s blog" />
+  <meta name="description" content="events Handle 基本属性： loop, context, call_back, args run: 执行call_back TimeHandle: 带有when到期时间的handle,也用于来比较大小 AbstractServer: 抽象server, 定义start_se" />
+
   <meta name="keywords" content="PPD, blog" />
 
 
@@ -34,8 +35,7 @@
 <meta name="generator" content="Hugo 0.55.6" />
 
 
-<link rel="canonical" href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/" />
-<link href="%7balternate%20%7bRSS%20application/rss&#43;xml%20%20index%20alternate%20%20false%20false%20true%20false%20false%200%7d%20/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/index.xml%20https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/index.xml%7d" rel="alternate" type="application/rss+xml" title="PPD&#39;s blog" />
+<link rel="canonical" href="https://ppd0705.github.io/post/asyncio/" />
 
 
 
@@ -57,19 +57,27 @@
 
 
 
-<meta property="og:title" content="计算机" />
-<meta property="og:description" content="PPD&#39;s blog" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/" />
+<meta property="og:title" content="Asyncio主要类和方法一览" />
+<meta property="og:description" content="events Handle 基本属性： loop, context, call_back, args run: 执行call_back TimeHandle: 带有when到期时间的handle,也用于来比较大小 AbstractServer: 抽象server, 定义start_se" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ppd0705.github.io/post/asyncio/" />
+<meta property="article:published_time" content="2019-11-05T06:22:00&#43;08:00"/>
+<meta property="article:modified_time" content="2019-11-05T06:22:00&#43;08:00"/>
 
-<meta property="og:updated_time" content="2019-11-05T06:22:00&#43;08:00"/>
+<meta itemprop="name" content="Asyncio主要类和方法一览">
+<meta itemprop="description" content="events Handle 基本属性： loop, context, call_back, args run: 执行call_back TimeHandle: 带有when到期时间的handle,也用于来比较大小 AbstractServer: 抽象server, 定义start_se">
 
-<meta itemprop="name" content="计算机">
-<meta itemprop="description" content="PPD&#39;s blog">
 
+<meta itemprop="datePublished" content="2019-11-05T06:22:00&#43;08:00" />
+<meta itemprop="dateModified" content="2019-11-05T06:22:00&#43;08:00" />
+<meta itemprop="wordCount" content="1029">
+
+
+
+<meta itemprop="keywords" content="Python," />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="计算机"/>
-<meta name="twitter:description" content="PPD&#39;s blog"/>
+<meta name="twitter:title" content="Asyncio主要类和方法一览"/>
+<meta name="twitter:description" content="events Handle 基本属性： loop, context, call_back, args run: 执行call_back TimeHandle: 带有when到期时间的handle,也用于来比较大小 AbstractServer: 抽象server, 定义start_se"/>
 
 <!--[if lte IE 9]>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
@@ -278,165 +286,305 @@
     <main id="main" class="main bg-llight">
       <div class="content-wrapper">
         <div id="content" class="content container">
-          
-
-<section id="archive" class="archive">
-  
+          <article class="post bg-white">
     
-      <div class="archive-title category">
-        <h2 class="archive-name">Category: 计算机</h2>
+    <header class="post-header">
+      <h1 class="post-title">Asyncio主要类和方法一览</h1>
+      
+      <div class="post-meta">
+        <time datetime="2019-11-05" class="post-time">
+          2019-11-05 06:22:00
+        </time>
+        <div class="post-category">
+            <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
+            
+          </div>
+        <span class="more-meta"> 1029 words </span>
+          <span class="more-meta"> 3 min read </span>
+
+        
+        
+
+        
+        
       </div>
+    </header>
+
     
+    
+
+    
+    <div class="post-content">
+      
+
+<h4 id="events">events</h4>
+
+<ul>
+<li><p>Handle</p>
+
+<ul>
+<li>基本属性： loop, context, call_back, args</li>
+<li>run: 执行call_back</li>
+</ul></li>
+
+<li><p>TimeHandle: 带有<code>when</code>到期时间的handle,也用于来比较大小</p></li>
+
+<li><p>AbstractServer: 抽象server, 定义start_server、server_forever等方法</p></li>
+
+<li><p>AbstractEventLoop：抽象loop, 定义run_forever、run_until_complte、stop、create_tast、call_later、create_connection、add_reader、sock_recv等方法</p></li>
+</ul>
+
+<h4 id="base-events">base_events</h4>
+
+<ul>
+<li><p>Server</p>
+
+<ul>
+<li>属性： loop,sockets, protocl_factory</li>
+<li>_start_serving: 为各个socket启动一个serveing</li>
+</ul></li>
+
+<li><p>BaseEventLoop</p>
+
+<ul>
+<li>基本属性</li>
+<li>_ready: dequeue类型，存放已经ready的task</li>
+<li>_scheduled: list类型, 存放time handle，使用heapq排序</li>
+
+<li><p>selector: IO复用模型</p></li>
+
+<li><p>_run_once方法：</p>
+
+<ul>
+<li>移除已经取消的sheduled handle</li>
+<li>设置timeout: ready有值设为0，否则取第一个schedule的delay时间</li>
+<li>selector获取事件列表</li>
+<li>process_events 处理事件(如没取消加入ready)</li>
+<li>将scheduled中已经到时间的handle移植ready</li>
+<li>依次运行ready中的handle</li>
+</ul></li>
+
+<li><p>run_forever: 不断执行_run_once直到stop</p></li>
+
+<li><p>run_until_complete: run_forever后返回指定future的结果</p></li>
+
+<li><p>call_soon: 构造一个handle加入ready尾部</p></li>
+
+<li><p>call_later:构造一个time handle加入scheduled</p></li>
+
+<li><p>add_reader: 将fd 和callback注册到selector的read列表里</p></li>
+</ul></li>
+</ul>
+
+<h4 id="base-futures">base_futures</h4>
+
+<ul>
+<li>isfuture: hasattr(obj.<strong>class</strong>, &lsquo;_asyncio_future_blocking&rsquo;)</li>
+</ul>
+
+<h4 id="futures">futures</h4>
+
+<ul>
+<li>Future
+
+<ul>
+<li>基本属性：_state, _result, _excetption, _loop, _asyncio_future_blocking, _callbacks</li>
+<li>cancel: call_soon当前的call_back并将_state设为<code>_CANCELLED</code></li>
+<li>set_result: 设置_result并将_state设为<code>_FINISHED</code>，调用__schedule_callbacks</li>
+</ul></li>
+</ul>
+
+<h4 id="tasks">tasks</h4>
+
+<ul>
+<li>Task(继承自Future)
+
+<ul>
+<li>基本属性： _coro, _name, _fut_waiter</li>
+<li>__step：
+<br /></li>
+</ul></li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"> 
+<span class="k">try</span><span class="p">:</span>   
+    <span class="n">result</span> <span class="o">=</span> <span class="n">coro</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span> 
+<span class="k">except</span> <span class="ne">StopIteration</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+    <span class="c1"># coro finished</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">set_result</span><span class="p">(</span><span class="n">exc</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">Future</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">_blocking</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_blocking</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">add_done_callback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wakeup</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="k">elif</span> <span class="n">result</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="n">call_soon</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_step</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+       <span class="k">pass</span></code></pre></td></tr></table>
+</div>
+</div>
+<ul>
+<li>wait: 等超时或return_when条件满足之后返回（donw=e, pengding）两类futures</li>
+</ul>
+
+<h4 id="awaitables">Awaitables</h4>
+
+<ul>
+<li>coroutines</li>
+<li>Task: schedule coroutines concurrently</li>
+<li>Future: eventual result of an asynchronous operation.</li>
+</ul>
+
+<h4 id="transports">transports:</h4>
+
+<ul>
+<li>理解：the transport is concerned with how bytes are transmitted. a different way of saying the same thing: a transport is an abstraction for a socket</li>
+
+<li><p>主要类：</p>
+
+<ul>
+<li>BaseTransport</li>
+<li>ReadTransport</li>
+<li>WriteTransport</li>
+<li>Transport： a bidirectional transport</li>
+</ul></li>
+
+<li><p>selector.Transport</p></li>
+</ul>
+
+<h4 id="protocols">protocols:</h4>
+
+<ul>
+<li>理解：the protocol determines which bytes to transmit (and to some extent when). a different way of saying the same thing: a protocol is an abstraction for an application</li>
+<li>主要类：
+
+<ul>
+<li>BaseProtocol：
+
+<ul>
+<li>connnection_made: start a connect base on a specified transport</li>
+<li>connection_lost: called when the connection is lost or closed</li>
+<li>pause_writing: called when transport&rsquo;s buffer goes over the high-water mark</li>
+<li>resume_writing: called when transport&rsquo;s drains below the low-water mark</li>
+</ul></li>
+<li>Protocol: stream protocol
+
+<ul>
+<li>data_receied</li>
+<li>eof_received</li>
+</ul></li>
+</ul></li>
+</ul>
+
+<h4 id="streams">streams</h4>
+
+<ul>
+<li>StreamReader
+
+<ul>
+<li>read</li>
+<li>readexactly</li>
+</ul></li>
+<li>StreamWriter
+
+<ul>
+<li>write</li>
+</ul></li>
+</ul>
+
+<h4 id="参考">参考</h4>
+
+<ul>
+<li><a href="https://lotabout.me/2017/understand-python-asyncio/">asyncio理解</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/64991670">asyncio实现</a></li>
+</ul>
+
+    </div>
+
+    
+    
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="https://ppd0705.github.io/tags/python/">Python</a>
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/post/python_standard_libary_heapq/">
+            <span class="next-text nav-default">Python标准库heapq</span>
+            <span class="prev-text nav-mobile">Next</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
   
 
   
-    <div class="archive-post">
-      <time datetime="2019-11-05" class="archive-post-time">
-        2019-11-05 06:22:00
-      </time>
-      <span class="archive-post-title">
-        <a href="/post/asyncio/" class="archive-post-link">
-          Asyncio主要类和方法一览
-        </a>
-      </span>
+  
+
+  
+
+  
+  
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "ppd0705/ppd0705.github.io"
+            issue-term="utteranc"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
     </div>
   
-    <div class="archive-post">
-      <time datetime="2019-10-28" class="archive-post-time">
-        2019-10-28 01:24:40
-      </time>
-      <span class="archive-post-title">
-        <a href="/post/python_standard_libary_heapq/" class="archive-post-link">
-          Python标准库heapq
-        </a>
-      </span>
-    </div>
-  
-    <div class="archive-post">
-      <time datetime="2019-10-27" class="archive-post-time">
-        2019-10-27 15:26:47
-      </time>
-      <span class="archive-post-title">
-        <a href="/post/python_standard_libary_1/" class="archive-post-link">
-          Python标准库之并发相关库
-        </a>
-      </span>
-    </div>
-  
-    <div class="archive-post">
-      <time datetime="2019-10-21" class="archive-post-time">
-        2019-10-21 04:17:14
-      </time>
-      <span class="archive-post-title">
-        <a href="/post/functools/" class="archive-post-link">
-          Python标准库functools
-        </a>
-      </span>
-    </div>
-  
-    <div class="archive-post">
-      <time datetime="2019-10-05" class="archive-post-time">
-        2019-10-05 20:28:20
-      </time>
-      <span class="archive-post-title">
-        <a href="/post/redis_procotol_1/" class="archive-post-link">
-          Redis协议初探及redis-py源码节选
-        </a>
-      </span>
-    </div>
-  
-    <div class="archive-post">
-      <time datetime="2019-10-05" class="archive-post-time">
-        2019-10-05 11:21:34
-      </time>
-      <span class="archive-post-title">
-        <a href="/post/mongo_procotol_1/" class="archive-post-link">
-          Mongo协议初探及pymongo源码节选
-        </a>
-      </span>
-    </div>
-  
-    <div class="archive-post">
-      <time datetime="2019-09-04" class="archive-post-time">
-        2019-09-04 01:10:03
-      </time>
-      <span class="archive-post-title">
-        <a href="/post/mysql_procotol_1/" class="archive-post-link">
-          MySQL协议初探及pymysql源码节选
-        </a>
-      </span>
-    </div>
-  
-    <div class="archive-post">
-      <time datetime="2019-08-20" class="archive-post-time">
-        2019-08-20 08:34:39
-      </time>
-      <span class="archive-post-title">
-        <a href="/post/setuptools_doc_notes/" class="archive-post-link">
-          Setuptools_doc_notes
-        </a>
-      </span>
-    </div>
-  
-    <div class="archive-post">
-      <time datetime="2019-07-31" class="archive-post-time">
-        2019-07-31 22:32:54
-      </time>
-      <span class="archive-post-title">
-        <a href="/post/java_basic_3/" class="archive-post-link">
-          Java_basic_3
-        </a>
-      </span>
-    </div>
-  
-    <div class="archive-post">
-      <time datetime="2019-07-29" class="archive-post-time">
-        2019-07-29 21:53:34
-      </time>
-      <span class="archive-post-title">
-        <a href="/post/java_basic_2/" class="archive-post-link">
-          Java_basic_2
-        </a>
-      </span>
-    </div>
-  
-    <div class="archive-post">
-      <time datetime="2019-07-27" class="archive-post-time">
-        2019-07-27 21:49:48
-      </time>
-      <span class="archive-post-title">
-        <a href="/post/java_basic_1/" class="archive-post-link">
-          Java_basic_1
-        </a>
-      </span>
-    </div>
-  
-</section>
 
-
-
-
-
-
-  
-  
   
 
   
-  
 
   
-  
 
-  
-  
-
-  
-  
-
-
-
-
+    
 
         </div>
       </div>

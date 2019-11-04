@@ -6,10 +6,19 @@
     <description>Recent content in Python on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 28 Oct 2019 01:24:40 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 05 Nov 2019 06:22:00 +0800</lastBuildDate>
     
 	<atom:link href="https://ppd0705.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Asyncio主要类和方法一览</title>
+      <link>https://ppd0705.github.io/post/asyncio/</link>
+      <pubDate>Tue, 05 Nov 2019 06:22:00 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/asyncio/</guid>
+      <description>events Handle 基本属性： loop, context, call_back, args run: 执行call_back TimeHandle: 带有when到期时间的handle,也用于来比较大小 AbstractServer: 抽象server, 定义start_se</description>
+    </item>
     
     <item>
       <title>Python标准库heapq</title>
