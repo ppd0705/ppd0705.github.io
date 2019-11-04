@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Tags - PPD&#39;s blog</title>
+  <title>Python标准库io和select - PPD&#39;s blog</title>
   
 
 <meta name="renderer" content="webkit" />
@@ -23,7 +23,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 
 <meta name="author" content="PPD" />
-  <meta name="description" content="PPD&#39;s blog" />
+  <meta name="description" content="三种I/O类型 Binary: expects and produces bytes objects, 不会编解码，不会换行 Text: expects and produces str objects， 自动编解码和换行 Raw(unbuffered): building-block for binary and text streams 底层类 抽象基类IOBase: 无read" />
+
   <meta name="keywords" content="PPD, blog" />
 
 
@@ -34,8 +35,7 @@
 <meta name="generator" content="Hugo 0.55.6" />
 
 
-<link rel="canonical" href="https://ppd0705.github.io/tags/" />
-<link href="%7balternate%20%7bRSS%20application/rss&#43;xml%20%20index%20alternate%20%20false%20false%20true%20false%20false%200%7d%20/tags/index.xml%20https://ppd0705.github.io/tags/index.xml%7d" rel="alternate" type="application/rss+xml" title="PPD&#39;s blog" />
+<link rel="canonical" href="https://ppd0705.github.io/post/python_io/" />
 
 
 
@@ -57,19 +57,27 @@
 
 
 
-<meta property="og:title" content="Tags" />
-<meta property="og:description" content="PPD&#39;s blog" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://ppd0705.github.io/tags/" />
+<meta property="og:title" content="Python标准库io和select" />
+<meta property="og:description" content="三种I/O类型 Binary: expects and produces bytes objects, 不会编解码，不会换行 Text: expects and produces str objects， 自动编解码和换行 Raw(unbuffered): building-block for binary and text streams 底层类 抽象基类IOBase: 无read" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ppd0705.github.io/post/python_io/" />
+<meta property="article:published_time" content="2019-11-05T06:48:57&#43;08:00"/>
+<meta property="article:modified_time" content="2019-11-05T06:48:57&#43;08:00"/>
 
-<meta property="og:updated_time" content="2019-11-05T06:48:57&#43;08:00"/>
+<meta itemprop="name" content="Python标准库io和select">
+<meta itemprop="description" content="三种I/O类型 Binary: expects and produces bytes objects, 不会编解码，不会换行 Text: expects and produces str objects， 自动编解码和换行 Raw(unbuffered): building-block for binary and text streams 底层类 抽象基类IOBase: 无read">
 
-<meta itemprop="name" content="Tags">
-<meta itemprop="description" content="PPD&#39;s blog">
 
+<meta itemprop="datePublished" content="2019-11-05T06:48:57&#43;08:00" />
+<meta itemprop="dateModified" content="2019-11-05T06:48:57&#43;08:00" />
+<meta itemprop="wordCount" content="184">
+
+
+
+<meta itemprop="keywords" content="Python," />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Tags"/>
-<meta name="twitter:description" content="PPD&#39;s blog"/>
+<meta name="twitter:title" content="Python标准库io和select"/>
+<meta name="twitter:description" content="三种I/O类型 Binary: expects and produces bytes objects, 不会编解码，不会换行 Text: expects and produces str objects， 自动编解码和换行 Raw(unbuffered): building-block for binary and text streams 底层类 抽象基类IOBase: 无read"/>
 
 <!--[if lte IE 9]>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
@@ -235,7 +243,7 @@
 
       </li>
     
-        <li class="menu-item active">
+        <li class="menu-item">
         
           
           
@@ -278,89 +286,145 @@
     <main id="main" class="main bg-llight">
       <div class="content-wrapper">
         <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">Python标准库io和select</h1>
+      
+      <div class="post-meta">
+        <time datetime="2019-11-05" class="post-time">
+          2019-11-05 06:48:57
+        </time>
+        <div class="post-category">
+            <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
+            
+          </div>
+        <span class="more-meta"> 184 words </span>
+          <span class="more-meta"> 1 min read </span>
+
+        
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    
+    <div class="post-content">
+      
+
+<h4 id="三种i-o类型">三种I/O类型</h4>
+
+<ul>
+<li>Binary: expects and produces bytes objects, 不会编解码，不会换行</li>
+<li>Text: expects and produces str objects， 自动编解码和换行</li>
+<li>Raw(unbuffered): building-block for binary and text streams</li>
+</ul>
+
+<h4 id="底层类">底层类</h4>
+
+<ul>
+<li>抽象基类IOBase: 无read/write方法</li>
+<li>RawIOBase: raw binary I/O</li>
+<li>BufferedIOBase: binary stream</li>
+</ul>
+
+<h4 id="buffered-sreams">Buffered Sreams</h4>
+
+<ul>
+<li>BytesIO: an in-memory buffer bytes stream</li>
+<li>StringIO:  an in-memory buffer str stream</li>
+</ul>
+
+<h4 id="select">select</h4>
+
+<ul>
+<li>select: 用法 select([read_fds, write_fds, exception_fds], timeout)</li>
+<li>poll</li>
+</ul>
+
+<h4 id="selectors">selectors</h4>
+
+<ul>
+<li>按位来区分订阅的事件类型： READ :1, WRITE: 2, READWRITE: 3</li>
+<li>SelectSelector: 使用select获取fds的状态</li>
+<li>PollSelector: 使用poll获取fds的状态</li>
+<li>EpollSelector: 使用epoll获取fds的状态
+<br /></li>
+</ul>
+
+<h4 id="参考">参考</h4>
+
+<p><a href="https://blog.ansheng.me/article/python-full-stack-way-io-multiplexing.htmlIO">IO多路复用</a></p>
+
+    </div>
+
+    
+    
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="https://ppd0705.github.io/tags/python/">Python</a>
           
-  
-  
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/post/asyncio/">
+            <span class="next-text nav-default">Asyncio主要类和方法一览</span>
+            <span class="prev-text nav-mobile">Next</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
   
   
 
   
   
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <div class="tag-cloud" style="padding: 5px 15px">
-      <div class="tag-cloud-title">
-        5 Tags In Total
-      </div>
-      <div class="tag-cloud-tags">
-      
-        
-        
-        
-        
-        
-        
-        
-        <a href="https://ppd0705.github.io/tags/java/"
-          style="font-size:1.7156818820794935rem">java</a>
-        
-      
-        
-        
-        
-        
-        
-        
-        
-        <a href="https://ppd0705.github.io/tags/mongodb/"
-          style="font-size:1rem">mongodb</a>
-        
-      
-        
-        
-        
-        
-        
-        
-        
-        <a href="https://ppd0705.github.io/tags/mysql/"
-          style="font-size:1rem">mysql</a>
-        
-      
-        
-        
-        
-        
-        
-        
-        
-        <a href="https://ppd0705.github.io/tags/python/"
-          style="font-size:2.4313637641589874rem">python</a>
-        
-      
-        
-        
-        
-        
-        
-        
-        
-        <a href="https://ppd0705.github.io/tags/redis/"
-          style="font-size:1rem">redis</a>
-        
-      
-      </div>
+
+  
+
+  
+  
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "ppd0705/ppd0705.github.io"
+            issue-term="utteranc"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
     </div>
   
+
   
 
+  
+
+  
+
+    
 
         </div>
       </div>

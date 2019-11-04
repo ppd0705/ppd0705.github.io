@@ -6,10 +6,66 @@
     <description>Recent content on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 05 Nov 2019 06:22:00 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 05 Nov 2019 06:48:57 +0800</lastBuildDate>
     
         <atom:link href="https://ppd0705.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Python标准库io和select</title>
+      <link>https://ppd0705.github.io/post/python_io/</link>
+      <pubDate>Tue, 05 Nov 2019 06:48:57 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/python_io/</guid>
+      
+        <description>
+
+&lt;h4 id=&#34;三种i-o类型&#34;&gt;三种I/O类型&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Binary: expects and produces bytes objects, 不会编解码，不会换行&lt;/li&gt;
+&lt;li&gt;Text: expects and produces str objects， 自动编解码和换行&lt;/li&gt;
+&lt;li&gt;Raw(unbuffered): building-block for binary and text streams&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;底层类&#34;&gt;底层类&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;抽象基类IOBase: 无read/write方法&lt;/li&gt;
+&lt;li&gt;RawIOBase: raw binary I/O&lt;/li&gt;
+&lt;li&gt;BufferedIOBase: binary stream&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;buffered-sreams&#34;&gt;Buffered Sreams&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;BytesIO: an in-memory buffer bytes stream&lt;/li&gt;
+&lt;li&gt;StringIO:  an in-memory buffer str stream&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;select&#34;&gt;select&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;select: 用法 select([read_fds, write_fds, exception_fds], timeout)&lt;/li&gt;
+&lt;li&gt;poll&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;selectors&#34;&gt;selectors&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;按位来区分订阅的事件类型： READ :1, WRITE: 2, READWRITE: 3&lt;/li&gt;
+&lt;li&gt;SelectSelector: 使用select获取fds的状态&lt;/li&gt;
+&lt;li&gt;PollSelector: 使用poll获取fds的状态&lt;/li&gt;
+&lt;li&gt;EpollSelector: 使用epoll获取fds的状态
+&lt;br /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;参考&#34;&gt;参考&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://blog.ansheng.me/article/python-full-stack-way-io-multiplexing.htmlIO&#34;&gt;IO多路复用&lt;/a&gt;&lt;/p&gt;
+</description>
+      
+    </item>
     
     <item>
       <title>Asyncio主要类和方法一览</title>

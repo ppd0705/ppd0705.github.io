@@ -6,10 +6,19 @@
     <description>Recent content in 计算机 on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 05 Nov 2019 06:22:00 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 05 Nov 2019 06:48:57 +0800</lastBuildDate>
     
 	<atom:link href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Python标准库io和select</title>
+      <link>https://ppd0705.github.io/post/python_io/</link>
+      <pubDate>Tue, 05 Nov 2019 06:48:57 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/python_io/</guid>
+      <description>三种I/O类型 Binary: expects and produces bytes objects, 不会编解码，不会换行 Text: expects and produces str objects， 自动编解码和换行 Raw(unbuffered): building-block for binary and text streams 底层类 抽象基类IOBase: 无read</description>
+    </item>
     
     <item>
       <title>Asyncio主要类和方法一览</title>
