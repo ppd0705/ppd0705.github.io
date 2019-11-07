@@ -25,28 +25,30 @@
 &lt;ul&gt;
 &lt;li&gt;Binary: expects and produces bytes objects, 不会编解码，不会换行&lt;/li&gt;
 &lt;li&gt;Text: expects and produces str objects， 自动编解码和换行&lt;/li&gt;
-&lt;li&gt;Raw(unbuffered): building-block for binary and text streams&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Raw(unbuffered): uilding-block for binary and text streams&lt;/p&gt;
+
+&lt;h4 id=&#34;底层类&#34;&gt;底层类&lt;/h4&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;抽象基类IOBase: 无read/write方法&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;RawIOBase: raw binary I/O&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;BufferedIOBase: binary stream&lt;/p&gt;
+
+&lt;h4 id=&#34;buffered-sreams&#34;&gt;Buffered Sreams&lt;/h4&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;BytesIO: an in-memory buffer bytes stream&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;StringIO:  an in-memory buffer str stream&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h4 id=&#34;底层类&#34;&gt;底层类&lt;/h4&gt;
-
-&lt;ul&gt;
-&lt;li&gt;抽象基类IOBase: 无read/write方法&lt;/li&gt;
-&lt;li&gt;RawIOBase: raw binary I/O&lt;/li&gt;
-&lt;li&gt;BufferedIOBase: binary stream&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&#34;buffered-sreams&#34;&gt;Buffered Sreams&lt;/h4&gt;
-
-&lt;ul&gt;
-&lt;li&gt;BytesIO: an in-memory buffer bytes stream&lt;/li&gt;
-&lt;li&gt;StringIO:  an in-memory buffer str stream&lt;/li&gt;
-&lt;/ul&gt;
+&lt;hr /&gt;
 
 &lt;h4 id=&#34;select&#34;&gt;select&lt;/h4&gt;
 
 &lt;ul&gt;
-&lt;li&gt;select: 用法 select([read_fds, write_fds, exception_fds], timeout)&lt;/li&gt;
+&lt;li&gt;select: 用法 select([read_fds, write_fds, exception_fds], timeout)， select要求fileno小于1024&lt;/li&gt;
 &lt;li&gt;poll&lt;/li&gt;
 &lt;/ul&gt;
 
@@ -62,7 +64,11 @@
 
 &lt;h4 id=&#34;参考&#34;&gt;参考&lt;/h4&gt;
 
-&lt;p&gt;&lt;a href=&#34;https://blog.ansheng.me/article/python-full-stack-way-io-multiplexing.htmlIO&#34;&gt;IO多路复用&lt;/a&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://blog.ansheng.me/article/python-full-stack-way-io-multiplexing.html&#34;&gt;IO多路复用&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://cxd2014.github.io/2018/01/10/epoll/&#34;&gt;select poll epoll之间该如何决择&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://cxd2014.github.io/2018/12/09/aio/&#34;&gt;异步IO&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
 </description>
       
     </item>

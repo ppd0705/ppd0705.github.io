@@ -23,7 +23,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 
 <meta name="author" content="PPD" />
-  <meta name="description" content="三种I/O类型 Binary: expects and produces bytes objects, 不会编解码，不会换行 Text: expects and produces str objects， 自动编解码和换行 Raw(unbuffered): building-block for binary and text streams 底层类 抽象基类IOBase: 无read" />
+  <meta name="description" content="三种I/O类型 Binary: expects and produces bytes objects, 不会编解码，不会换行 Text: expects and produces str objects， 自动编解码和换行 Raw(unbuffered): uilding-block for binary and text streams 底层类 抽象基类IOBase: 无read" />
 
   <meta name="keywords" content="PPD, blog" />
 
@@ -58,26 +58,26 @@
 
 
 <meta property="og:title" content="Python标准库io和select" />
-<meta property="og:description" content="三种I/O类型 Binary: expects and produces bytes objects, 不会编解码，不会换行 Text: expects and produces str objects， 自动编解码和换行 Raw(unbuffered): building-block for binary and text streams 底层类 抽象基类IOBase: 无read" />
+<meta property="og:description" content="三种I/O类型 Binary: expects and produces bytes objects, 不会编解码，不会换行 Text: expects and produces str objects， 自动编解码和换行 Raw(unbuffered): uilding-block for binary and text streams 底层类 抽象基类IOBase: 无read" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://ppd0705.github.io/post/python_io/" />
 <meta property="article:published_time" content="2019-11-05T06:48:57&#43;08:00"/>
 <meta property="article:modified_time" content="2019-11-05T06:48:57&#43;08:00"/>
 
 <meta itemprop="name" content="Python标准库io和select">
-<meta itemprop="description" content="三种I/O类型 Binary: expects and produces bytes objects, 不会编解码，不会换行 Text: expects and produces str objects， 自动编解码和换行 Raw(unbuffered): building-block for binary and text streams 底层类 抽象基类IOBase: 无read">
+<meta itemprop="description" content="三种I/O类型 Binary: expects and produces bytes objects, 不会编解码，不会换行 Text: expects and produces str objects， 自动编解码和换行 Raw(unbuffered): uilding-block for binary and text streams 底层类 抽象基类IOBase: 无read">
 
 
 <meta itemprop="datePublished" content="2019-11-05T06:48:57&#43;08:00" />
 <meta itemprop="dateModified" content="2019-11-05T06:48:57&#43;08:00" />
-<meta itemprop="wordCount" content="184">
+<meta itemprop="wordCount" content="230">
 
 
 
 <meta itemprop="keywords" content="Python," />
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Python标准库io和select"/>
-<meta name="twitter:description" content="三种I/O类型 Binary: expects and produces bytes objects, 不会编解码，不会换行 Text: expects and produces str objects， 自动编解码和换行 Raw(unbuffered): building-block for binary and text streams 底层类 抽象基类IOBase: 无read"/>
+<meta name="twitter:description" content="三种I/O类型 Binary: expects and produces bytes objects, 不会编解码，不会换行 Text: expects and produces str objects， 自动编解码和换行 Raw(unbuffered): uilding-block for binary and text streams 底层类 抽象基类IOBase: 无read"/>
 
 <!--[if lte IE 9]>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
@@ -299,7 +299,7 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 184 words </span>
+        <span class="more-meta"> 230 words </span>
           <span class="more-meta"> 1 min read </span>
 
         
@@ -322,28 +322,30 @@
 <ul>
 <li>Binary: expects and produces bytes objects, 不会编解码，不会换行</li>
 <li>Text: expects and produces str objects， 自动编解码和换行</li>
-<li>Raw(unbuffered): building-block for binary and text streams</li>
+
+<li><p>Raw(unbuffered): uilding-block for binary and text streams</p>
+
+<h4 id="底层类">底层类</h4></li>
+
+<li><p>抽象基类IOBase: 无read/write方法</p></li>
+
+<li><p>RawIOBase: raw binary I/O</p></li>
+
+<li><p>BufferedIOBase: binary stream</p>
+
+<h4 id="buffered-sreams">Buffered Sreams</h4></li>
+
+<li><p>BytesIO: an in-memory buffer bytes stream</p></li>
+
+<li><p>StringIO:  an in-memory buffer str stream</p></li>
 </ul>
 
-<h4 id="底层类">底层类</h4>
-
-<ul>
-<li>抽象基类IOBase: 无read/write方法</li>
-<li>RawIOBase: raw binary I/O</li>
-<li>BufferedIOBase: binary stream</li>
-</ul>
-
-<h4 id="buffered-sreams">Buffered Sreams</h4>
-
-<ul>
-<li>BytesIO: an in-memory buffer bytes stream</li>
-<li>StringIO:  an in-memory buffer str stream</li>
-</ul>
+<hr />
 
 <h4 id="select">select</h4>
 
 <ul>
-<li>select: 用法 select([read_fds, write_fds, exception_fds], timeout)</li>
+<li>select: 用法 select([read_fds, write_fds, exception_fds], timeout)， select要求fileno小于1024</li>
 <li>poll</li>
 </ul>
 
@@ -359,7 +361,11 @@
 
 <h4 id="参考">参考</h4>
 
-<p><a href="https://blog.ansheng.me/article/python-full-stack-way-io-multiplexing.htmlIO">IO多路复用</a></p>
+<ul>
+<li><a href="https://blog.ansheng.me/article/python-full-stack-way-io-multiplexing.html">IO多路复用</a></li>
+<li><a href="http://cxd2014.github.io/2018/01/10/epoll/">select poll epoll之间该如何决择</a></li>
+<li><a href="http://cxd2014.github.io/2018/12/09/aio/">异步IO</a></li>
+</ul>
 
     </div>
 
