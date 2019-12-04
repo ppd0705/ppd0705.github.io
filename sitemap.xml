@@ -3,19 +3,44 @@
   
   <url>
     <loc>https://ppd0705.github.io/categories/</loc>
-    <lastmod>2019-11-05T06:48:57+08:00</lastmod>
+    <lastmod>2019-12-02T22:00:57+08:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
+    <loc>https://ppd0705.github.io/tags/mysql/</loc>
+    <lastmod>2019-12-02T22:00:57+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://ppd0705.github.io/post/mysql_transaction_isolation/</loc>
+    <lastmod>2019-12-02T22:00:57+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>https://ppd0705.github.io/</loc>
-    <lastmod>2019-11-05T06:48:57+08:00</lastmod>
+    <lastmod>2019-12-02T22:00:57+08:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://ppd0705.github.io/post/</loc>
-    <lastmod>2019-11-05T06:48:57+08:00</lastmod>
+    <lastmod>2019-12-02T22:00:57+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://ppd0705.github.io/tags/</loc>
+    <lastmod>2019-12-02T22:00:57+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/</loc>
+    <lastmod>2019-12-02T22:00:57+08:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -30,18 +55,6 @@
     <lastmod>2019-11-05T06:48:57+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://ppd0705.github.io/tags/</loc>
-    <lastmod>2019-11-05T06:48:57+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/</loc>
-    <lastmod>2019-11-05T06:48:57+08:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>
@@ -96,12 +109,6 @@
     <lastmod>2019-10-05T11:21:34+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://ppd0705.github.io/tags/mysql/</loc>
-    <lastmod>2019-09-04T01:10:03+08:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>

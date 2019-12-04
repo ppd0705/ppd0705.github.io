@@ -6,10 +6,19 @@
     <description>Recent content in 计算机 on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 05 Nov 2019 06:48:57 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 02 Dec 2019 22:00:57 +0800</lastBuildDate>
     
 	<atom:link href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>MySQL事务隔离</title>
+      <link>https://ppd0705.github.io/post/mysql_transaction_isolation/</link>
+      <pubDate>Mon, 02 Dec 2019 22:00:57 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/mysql_transaction_isolation/</guid>
+      <description>四种隔离级别 读未提交(read uncommitted)： 事务还未提交时能被其他事务看到 读提交(read committed)： 事务提交后才能被</description>
+    </item>
     
     <item>
       <title>Python标准库io和select</title>
