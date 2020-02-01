@@ -3,31 +3,69 @@
   
   <url>
     <loc>https://ppd0705.github.io/categories/</loc>
-    <lastmod>2020-01-28T10:09:11+07:00</lastmod>
+    <lastmod>2020-02-01T12:20:47+07:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://ppd0705.github.io/</loc>
-    <lastmod>2020-01-28T10:09:11+07:00</lastmod>
+    <lastmod>2020-02-01T12:20:47+07:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://ppd0705.github.io/post/</loc>
-    <lastmod>2020-01-28T10:09:11+07:00</lastmod>
+    <lastmod>2020-02-01T12:20:47+07:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
+    <loc>https://ppd0705.github.io/post/saul/</loc>
+    <lastmod>2020-02-01T12:20:47+07:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>https://ppd0705.github.io/tags/</loc>
-    <lastmod>2020-01-28T10:09:11+07:00</lastmod>
+    <lastmod>2020-02-01T12:20:47+07:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://ppd0705.github.io/tags/%E5%8F%AF%E7%88%B1%E7%9A%84%E4%BA%BA%E5%84%BF/</loc>
+    <lastmod>2020-02-01T12:20:47+07:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://ppd0705.github.io/tags/%E6%97%85%E8%A1%8C/</loc>
-    <lastmod>2020-01-28T10:09:11+07:00</lastmod>
+    <lastmod>2020-02-01T12:20:47+07:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://ppd0705.github.io/categories/%E7%94%9F%E6%B4%BB/</loc>
+    <lastmod>2020-02-01T12:20:47+07:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://ppd0705.github.io/tags/go/</loc>
+    <lastmod>2020-02-01T12:00:59+07:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://ppd0705.github.io/post/go_basic/</loc>
+    <lastmod>2020-02-01T12:00:59+07:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/</loc>
+    <lastmod>2020-02-01T12:00:59+07:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -36,12 +74,6 @@
     <lastmod>2020-01-28T10:09:11+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://ppd0705.github.io/categories/%E7%94%9F%E6%B4%BB/</loc>
-    <lastmod>2020-01-28T10:09:11+07:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>
@@ -55,12 +87,6 @@
     <lastmod>2019-12-02T22:00:57+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/</loc>
-    <lastmod>2019-12-02T22:00:57+08:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>
