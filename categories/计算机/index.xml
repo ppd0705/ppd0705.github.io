@@ -6,10 +6,19 @@
     <description>Recent content in 计算机 on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 01 Feb 2020 12:00:59 +0700</lastBuildDate>
+    <lastBuildDate>Thu, 20 Feb 2020 21:29:37 +0800</lastBuildDate>
     
 	<atom:link href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>gunicorn笔记</title>
+      <link>https://ppd0705.github.io/post/gunicorn_note/</link>
+      <pubDate>Thu, 20 Feb 2020 21:29:37 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/gunicorn_note/</guid>
+      <description>简介 gunicorn是一遵守WSGI协议的web服务器， 其整体架构是Master/Workers模型。master进程通过信号机制管理wor</description>
+    </item>
     
     <item>
       <title>Go语言基础笔记</title>
