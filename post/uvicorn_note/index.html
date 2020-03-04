@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Tags - PPD&#39;s blog</title>
+  <title>Uvicorn源码笔记 - PPD&#39;s blog</title>
   
 
 <meta name="renderer" content="webkit" />
@@ -23,7 +23,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 
 <meta name="author" content="PPD" />
-  <meta name="description" content="PPD&#39;s blog" />
+  <meta name="description" content="简介 Unicorn是一个遵守ASGI协议的web服务器，使用asycnio框架，要求python3.6&#43;，支持HTTP1.1和WebSock" />
+
   <meta name="keywords" content="PPD, blog" />
 
 
@@ -34,8 +35,7 @@
 <meta name="generator" content="Hugo 0.55.6" />
 
 
-<link rel="canonical" href="https://ppd0705.github.io/tags/" />
-<link href="%7balternate%20%7bRSS%20application/rss&#43;xml%20%20index%20alternate%20%20false%20false%20true%20false%20false%200%7d%20/tags/index.xml%20https://ppd0705.github.io/tags/index.xml%7d" rel="alternate" type="application/rss+xml" title="PPD&#39;s blog" />
+<link rel="canonical" href="https://ppd0705.github.io/post/uvicorn_note/" />
 
 
 
@@ -57,19 +57,27 @@
 
 
 
-<meta property="og:title" content="Tags" />
-<meta property="og:description" content="PPD&#39;s blog" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://ppd0705.github.io/tags/" />
+<meta property="og:title" content="Uvicorn源码笔记" />
+<meta property="og:description" content="简介 Unicorn是一个遵守ASGI协议的web服务器，使用asycnio框架，要求python3.6&#43;，支持HTTP1.1和WebSock" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ppd0705.github.io/post/uvicorn_note/" />
+<meta property="article:published_time" content="2020-03-04T08:25:53&#43;08:00"/>
+<meta property="article:modified_time" content="2020-03-04T08:25:53&#43;08:00"/>
 
-<meta property="og:updated_time" content="2020-03-04T08:25:53&#43;08:00"/>
+<meta itemprop="name" content="Uvicorn源码笔记">
+<meta itemprop="description" content="简介 Unicorn是一个遵守ASGI协议的web服务器，使用asycnio框架，要求python3.6&#43;，支持HTTP1.1和WebSock">
 
-<meta itemprop="name" content="Tags">
-<meta itemprop="description" content="PPD&#39;s blog">
 
+<meta itemprop="datePublished" content="2020-03-04T08:25:53&#43;08:00" />
+<meta itemprop="dateModified" content="2020-03-04T08:25:53&#43;08:00" />
+<meta itemprop="wordCount" content="490">
+
+
+
+<meta itemprop="keywords" content="Python," />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Tags"/>
-<meta name="twitter:description" content="PPD&#39;s blog"/>
+<meta name="twitter:title" content="Uvicorn源码笔记"/>
+<meta name="twitter:description" content="简介 Unicorn是一个遵守ASGI协议的web服务器，使用asycnio框架，要求python3.6&#43;，支持HTTP1.1和WebSock"/>
 
 <!--[if lte IE 9]>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
@@ -235,7 +243,7 @@
 
       </li>
     
-        <li class="menu-item active">
+        <li class="menu-item">
         
           
           
@@ -278,122 +286,174 @@
     <main id="main" class="main bg-llight">
       <div class="content-wrapper">
         <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">Uvicorn源码笔记</h1>
+      
+      <div class="post-meta">
+        <time datetime="2020-03-04" class="post-time">
+          2020-03-04 08:25:53
+        </time>
+        <div class="post-category">
+            <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
+            
+          </div>
+        <span class="more-meta"> 490 words </span>
+          <span class="more-meta"> 1 min read </span>
+
+        
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    
+    <div class="post-content">
+      
+
+<h3 id="简介">简介</h3>
+
+<p>Unicorn是一个遵守ASGI协议的web服务器，使用asycnio框架，要求python3.6+，支持HTTP1.1和WebSockets。</p>
+
+<h3 id="部分模块介绍">部分模块介绍</h3>
+
+<h4 id="config">config</h4>
+
+<ul>
+<li>参数解析设定</li>
+<li>加载app, 中间件</li>
+<li>绑定socket</li>
+</ul>
+
+<h4 id="middleware">middleware</h4>
+
+<h5 id="middleware-wsgi">middleware.wsgi</h5>
+
+<ul>
+<li>将同步调用start_response和app方法放到线程池里面执行，通过queue和event来通知sender</li>
+</ul>
+
+<h5 id="middleware-degbug">middleware.degbug</h5>
+
+<ul>
+<li>捕捉traceback.format_exc()返回给请求端</li>
+</ul>
+
+<h5 id="middleware-message-logger">middleware.message_logger</h5>
+
+<ul>
+<li>打印详细日志</li>
+</ul>
+
+<h5 id="middleware-proxy-headers">middleware.proxy_headers</h5>
+
+<ul>
+<li>使用LB时,解析来自client的真正procotol和host</li>
+</ul>
+
+<h4 id="protocols">protocols</h4>
+
+<p>ServerState: 在不同protocols之间共享server的信息如连接数，完成请求数据量,当前tasks</p>
+
+<h5 id="http">http</h5>
+
+<ul>
+<li>继承async.Protocol，实现data_received方法处理请求</li>
+<li>实现了send和revceive方法,</li>
+<li>需要升级到websocket时替换protocol_class即可</li>
+<li>http parser可选h11(python 实现)、httptools(C实现，默认先选)</li>
+</ul>
+
+<h5 id="websocket">websocket</h5>
+
+<ul>
+<li>默认WebSocketProtocol</li>
+</ul>
+
+<h4 id="workers">workers</h4>
+
+<ul>
+<li>UvicornWorker: gunicorn的Worker子类，官方推荐生产环境使用gunicorn</li>
+</ul>
+
+<h3 id="参考">参考</h3>
+
+<ul>
+<li><a href="https://www.uvicorn.org/">官方文档</a></li>
+<li><a href="https://github.com/python-hyper/h11/issues/9">h11和https比较</a></li>
+<li><a href="https://readthedocs.org/projects/asgi/downloads/pdf/latest/">ASGI</a></li>
+</ul>
+
+    </div>
+
+    
+    
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="https://ppd0705.github.io/tags/python/">Python</a>
           
-  
-  
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/post/asgi_note/">
+            <span class="next-text nav-default">ASGI摘抄</span>
+            <span class="prev-text nav-mobile">Next</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
   
   
 
   
   
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <div class="tag-cloud" style="padding: 5px 15px">
-      <div class="tag-cloud-title">
-        8 Tags In Total
-      </div>
-      <div class="tag-cloud-tags">
-      
-        
-        
-        
-        
-        
-        
-        
-        <a href="https://ppd0705.github.io/tags/go/"
-          style="font-size:1rem">go</a>
-        
-      
-        
-        
-        
-        
-        
-        
-        
-        <a href="https://ppd0705.github.io/tags/java/"
-          style="font-size:1.642476011547092rem">java</a>
-        
-      
-        
-        
-        
-        
-        
-        
-        
-        <a href="https://ppd0705.github.io/tags/mongodb/"
-          style="font-size:1rem">mongodb</a>
-        
-      
-        
-        
-        
-        
-        
-        
-        
-        <a href="https://ppd0705.github.io/tags/mysql/"
-          style="font-size:1.4053572316409797rem">mysql</a>
-        
-      
-        
-        
-        
-        
-        
-        
-        
-        <a href="https://ppd0705.github.io/tags/python/"
-          style="font-size:2.4531904748290514rem">python</a>
-        
-      
-        
-        
-        
-        
-        
-        
-        
-        <a href="https://ppd0705.github.io/tags/redis/"
-          style="font-size:1rem">redis</a>
-        
-      
-        
-        
-        
-        
-        
-        
-        
-        <a href="https://ppd0705.github.io/tags/%E5%8F%AF%E7%88%B1%E7%9A%84%E4%BA%BA%E5%84%BF/"
-          style="font-size:1rem">可爱的人儿</a>
-        
-      
-        
-        
-        
-        
-        
-        
-        
-        <a href="https://ppd0705.github.io/tags/%E6%97%85%E8%A1%8C/"
-          style="font-size:1.4053572316409797rem">旅行</a>
-        
-      
-      </div>
+
+  
+
+  
+  
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "ppd0705/ppd0705.github.io"
+            issue-term="utteranc"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
     </div>
   
+
   
 
+  
+
+  
+
+    
 
         </div>
       </div>

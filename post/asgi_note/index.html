@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>gunicorn笔记 - PPD&#39;s blog</title>
+  <title>ASGI摘抄 - PPD&#39;s blog</title>
   
 
 <meta name="renderer" content="webkit" />
@@ -23,7 +23,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 
 <meta name="author" content="PPD" />
-  <meta name="description" content="简介 gunicorn是一遵守WSGI协议的web服务器， 其整体架构是Master/Workers模型。master进程通过信号机制管理wor" />
+  <meta name="description" content="Asynchronous Server Gateway Interface Onverview two components protocol server: terminatas socket and translates them into connections and per-conenction event messages application: lives in inside a server, is instantiated once per connection, and handles event messages as they happen difference between two components applications are instantiat objects that are fed events rather than simple callables, and must run as asyncio-compativle corountines two separate parts of a connection: a connection scope; events" />
 
   <meta name="keywords" content="PPD, blog" />
 
@@ -35,7 +35,7 @@
 <meta name="generator" content="Hugo 0.55.6" />
 
 
-<link rel="canonical" href="https://ppd0705.github.io/post/gunicorn_note/" />
+<link rel="canonical" href="https://ppd0705.github.io/post/asgi_note/" />
 
 
 
@@ -57,27 +57,27 @@
 
 
 
-<meta property="og:title" content="gunicorn笔记" />
-<meta property="og:description" content="简介 gunicorn是一遵守WSGI协议的web服务器， 其整体架构是Master/Workers模型。master进程通过信号机制管理wor" />
+<meta property="og:title" content="ASGI摘抄" />
+<meta property="og:description" content="Asynchronous Server Gateway Interface Onverview two components protocol server: terminatas socket and translates them into connections and per-conenction event messages application: lives in inside a server, is instantiated once per connection, and handles event messages as they happen difference between two components applications are instantiat objects that are fed events rather than simple callables, and must run as asyncio-compativle corountines two separate parts of a connection: a connection scope; events" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://ppd0705.github.io/post/gunicorn_note/" />
-<meta property="article:published_time" content="2020-02-20T21:29:37&#43;08:00"/>
-<meta property="article:modified_time" content="2020-02-20T21:29:37&#43;08:00"/>
+<meta property="og:url" content="https://ppd0705.github.io/post/asgi_note/" />
+<meta property="article:published_time" content="2020-03-04T08:25:38&#43;08:00"/>
+<meta property="article:modified_time" content="2020-03-04T08:25:38&#43;08:00"/>
 
-<meta itemprop="name" content="gunicorn笔记">
-<meta itemprop="description" content="简介 gunicorn是一遵守WSGI协议的web服务器， 其整体架构是Master/Workers模型。master进程通过信号机制管理wor">
+<meta itemprop="name" content="ASGI摘抄">
+<meta itemprop="description" content="Asynchronous Server Gateway Interface Onverview two components protocol server: terminatas socket and translates them into connections and per-conenction event messages application: lives in inside a server, is instantiated once per connection, and handles event messages as they happen difference between two components applications are instantiat objects that are fed events rather than simple callables, and must run as asyncio-compativle corountines two separate parts of a connection: a connection scope; events">
 
 
-<meta itemprop="datePublished" content="2020-02-20T21:29:37&#43;08:00" />
-<meta itemprop="dateModified" content="2020-02-20T21:29:37&#43;08:00" />
-<meta itemprop="wordCount" content="674">
+<meta itemprop="datePublished" content="2020-03-04T08:25:38&#43;08:00" />
+<meta itemprop="dateModified" content="2020-03-04T08:25:38&#43;08:00" />
+<meta itemprop="wordCount" content="566">
 
 
 
 <meta itemprop="keywords" content="Python," />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="gunicorn笔记"/>
-<meta name="twitter:description" content="简介 gunicorn是一遵守WSGI协议的web服务器， 其整体架构是Master/Workers模型。master进程通过信号机制管理wor"/>
+<meta name="twitter:title" content="ASGI摘抄"/>
+<meta name="twitter:description" content="Asynchronous Server Gateway Interface Onverview two components protocol server: terminatas socket and translates them into connections and per-conenction event messages application: lives in inside a server, is instantiated once per connection, and handles event messages as they happen difference between two components applications are instantiat objects that are fed events rather than simple callables, and must run as asyncio-compativle corountines two separate parts of a connection: a connection scope; events"/>
 
 <!--[if lte IE 9]>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
@@ -289,17 +289,17 @@
           <article class="post bg-white">
     
     <header class="post-header">
-      <h1 class="post-title">gunicorn笔记</h1>
+      <h1 class="post-title">ASGI摘抄</h1>
       
       <div class="post-meta">
-        <time datetime="2020-02-20" class="post-time">
-          2020-02-20 21:29:37
+        <time datetime="2020-03-04" class="post-time">
+          2020-03-04 08:25:38
         </time>
         <div class="post-category">
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 674 words </span>
+        <span class="more-meta"> 566 words </span>
           <span class="more-meta"> 2 min read </span>
 
         
@@ -317,51 +317,100 @@
     <div class="post-content">
       
 
-<h4 id="简介">简介</h4>
+<h3 id="asynchronous-server-gateway-interface">Asynchronous Server Gateway Interface</h3>
 
-<p>gunicorn是一遵守WSGI协议的web服务器， 其整体架构是Master/Workers模型。master进程通过信号机制管理worker进程；而实际的请求由worker进程处理，worker类型有多种(sync, gevent, asycnio, tornado&hellip;)可通过参数指定。</p>
+<h3 id="onverview">Onverview</h3>
 
-<h4 id="信号处理">信号处理</h4>
-
-<h5 id="master">Master</h5>
+<h4 id="two-components">two components</h4>
 
 <ul>
-<li>CHLD（子进程退出事发给父进程）: 通过os.waitpid得异常pid并pop出woker队列，关闭改woker.tmp</li>
-<li>HUP(重载workers): 更新配置，新建linsener,新建workers, 给旧wokers发TERM信号</li>
-<li>QUIT(停止): 给wokers发QUIT信号</li>
-<li>INT:  同QUIT</li>
-<li>TERM: 给wokers发TERM信号，gracefual_time之后发KILL信号</li>
-<li>TTIN: num_workers += 1</li>
-<li>TTOU: num_workers -=1</li>
-<li>USR1: 重开logfile并给wokers发USR1信号</li>
-<li>USR2: os.execvpe, 新启master/wokers, 新master是老master的子进程, 这个和HUP信号的区别在于会重新加载gunicorn，且旧workers不会退出</li>
-<li>WINCH(窗口大小改变的信号): 针对gunicorn后台运行时，给所有woker发TERM信号，把worker数改为0</li>
+<li>protocol server: terminatas socket and translates them into connections and per-conenction event messages</li>
+<li>application: lives in inside a server, is instantiated once per connection, and handles event messages as they happen</li>
 </ul>
 
-<h5 id="workers">Workers</h5>
+<h4 id="difference-between-two-components">difference between two components</h4>
 
 <ul>
-<li>QUIT(停止): alive=False, sys.exit(0)</li>
-<li>INT:  同QUIT</li>
-<li>TERM: alive=False</li>
-<li>USR1: 重开logfile</li>
-<li>ABRT: alive=False，sys.exit(1)</li>
-<li>WINCH: 忽略</li>
+<li>applications are instantiat objects that are fed events rather than simple callables, and must run as asyncio-compativle corountines</li>
+<li>two separate parts of a connection: a connection scope; events</li>
 </ul>
 
-<h4 id="监控">监控</h4>
+<h3 id="details">Details</h3>
+
+<h4 id="connection-scope">Connection Scope</h4>
 
 <ul>
-<li>Master: 通过worker的tmpfile的st_ctime来判断子进程是否正常，如果为否则发送ABRT信号给对应子进程</li>
-<li>Workers: worker会创建一个tmpfile,并一直刷新st_ctime; 同时ppid是否有变，如果变了则直接退出</li>
+<li>Under HTTP, the connecton scope lasts just one request. it contains most of the request data(apart from the request body)</li>
+<li>Under WebSocket, the connection scope lasts for as long as the socket is connected. the scope contains information like the WebSocket&rsquo;s path, but details like incoming messages come through as events instead.</li>
+<li>Each protocol definition must contai information about how long its connection scope lasts, and what information you will get inside it</li>
+<li>Applications cannot communicate with the client when they are initialized and given their connection scope, they must wait utnile their event loop is entered</li>
+</ul>
+
+<h4 id="events">Events</h4>
+
+<ul>
+<li>for HTTP, 2 evens in order - <code>http.requst</code> and <code>http.disconnect</code></li>
+<li>for WebSocket, it could more like <code>websocket.connect</code>, <code>websocket.send</code>, <code>websocket.receive</code>, and finnaly <code>websocket.disconnect</code></li>
+<li>eacn event is a <code>dict</code></li>
+</ul>
+
+<h4 id="applications">Applications</h4>
+
+<p>Applications should be a single async callable:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="n">coroutine</span> <span class="n">application</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">receive</span><span class="p">,</span> <span class="n">send</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<ul>
+<li>scope: The connection scope, a dict that contains as least a <code>type</code> key specifying the protocol thas is incoming</li>
+<li>reveive: an awaitable callable that will yield a new event dict when one is available</li>
+<li>send: an awaitable callable taking a single event dict as positional argument that will return once the send has been completed or the connection has been closed</li>
+</ul>
+
+<h4 id="message-format">Message Format</h4>
+
+<h5 id="http">HTTP</h5>
+
+<ul>
+<li>Connection Scope: type(<code>http</code>), asgi, method, path, scheme, query_string, client, server</li>
+<li>Request： the body message serves as a way to stram incoming HTTP bodies in chunks. keys include type(<code>http.request</code>), body(bytes), more_body(bool)</li>
+<li>Response Start: start sending a response. keys include type(<code>http.response.start</code>), status(int), headers</li>
+<li>Response Body: continues sending a response to the client. keys include type(<code>http.response,body</code>), body(bytes), more_body(bool)</li>
+<li>Disconnect: sent to the application when a connection is closed . keys include type(<code>http.disconnect</code>)</li>
+</ul>
+
+<h5 id="websocket">Websocket</h5>
+
+<ul>
+<li>Connection Scope: keys include type(<code>websocket</code>), asgi, http_version, headers&hellip;</li>
+<li>Connection: sent when the client initially opens a connection and is about to finish the WebSocket handshake. keys include type(<code>websocket.connect</code>)</li>
+<li>Accept: keys include type(<code>websocket.accept</code>), headers</li>
+<li>Receive: sent when a message is receivied from the client. keys include type(<code>websocket.receive</code>), bytes(bytes), text(str)</li>
+<li>Send: keys include type(<code>websocket.send</code>), bytes, text</li>
+<li>Disconnection: keys include tyoe(<code>websocket.disconnect</code>), code(int)</li>
+<li>Close: tell the server to close the connection. keys include type(<code>websocket.close</code>), code(int)</li>
+</ul>
+
+<h5 id="lifespan">Lifespan</h5>
+
+<ul>
+<li>Scope: exists for the duration of the event loop. keys include type(<code>lifespan</code>)</li>
+<li>Startup: send when the server is ready to startup and receive connectins, but before it has started to do so. keys include type(<code>lifespan,startup</code>)</li>
+<li>Start Complate: sent by the application when it has comleted its startup. a server must wait for this message before it starts processing connections. keys include type(<code>lifespan.startup.complete</code>)</li>
+<li>Startup Failed: if a server sees this it should log the message proved and then exit. keys include type(<code>lifespan.startup.failed</code>), message(str)</li>
+<li>Shutdown: sent when the server has stopped accepting connections and closed all active connections. keys include type(<code>lifespan.shutdown</code>)</li>
+<li>Shutdown Complete: sent by the application when it has completed its cleanup. keys include type(<code>lifespan.shutdown.complete</code>)</li>
+<li>Shutdown Failed: sent by the application when it has failed to complete its cleanup. keys include type(<code>life.shutdown.failed</code>), message</li>
 </ul>
 
 <h4 id="参考">参考</h4>
 
 <ul>
-<li><a href="http://docs.gunicorn.org/en/stable/design.html">官方文档</a></li>
-<li><a href="https://docs.oracle.com/cd/E19455-01/806-4750/signals-7/index.html">sigchld</a></li>
-<li><a href="http://docs.gunicorn.org/en/stable/signals.html#binary-upgrade">gunicorn-binary-upgrade</a></li>
+<li><a href="https://readthedocs.org/projects/asgi/downloads/pdf/latest/">ASGI官方文档</a></li>
 </ul>
 
     </div>
@@ -382,7 +431,7 @@
       
       <nav class="post-nav">
         
-          <a class="prev" href="/post/asgi_note/">
+          <a class="prev" href="/post/uvicorn_note/">
             
             <i class="iconfont">
               <svg  class="icon" viewBox="0 0 1024 1024" version="1.1"
@@ -392,12 +441,12 @@
 </svg>
 
             </i>
-            <span class="prev-text nav-default">ASGI摘抄</span>
+            <span class="prev-text nav-default">Uvicorn源码笔记</span>
             <span class="prev-text nav-mobile">Prev</span>
           </a>
         
-          <a class="next" href="/post/saul/">
-            <span class="next-text nav-default">Saul</span>
+          <a class="next" href="/post/gunicorn_note/">
+            <span class="next-text nav-default">gunicorn笔记</span>
             <span class="prev-text nav-mobile">Next</span>
             
             <i class="iconfont">
