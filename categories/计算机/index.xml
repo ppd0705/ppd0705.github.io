@@ -6,10 +6,19 @@
     <description>Recent content in 计算机 on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 04 Mar 2020 08:25:53 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 12 Mar 2020 22:46:27 +0800</lastBuildDate>
     
 	<atom:link href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Starlette源码笔记</title>
+      <link>https://ppd0705.github.io/post/starlette_note/</link>
+      <pubDate>Thu, 12 Mar 2020 22:46:27 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/starlette_note/</guid>
+      <description>简介 Starlette是一个轻量的基于ASGI协议的web框架 部分模块 aplications Starlette: app class, 设置routes/middleware等，实现call(sco</description>
+    </item>
     
     <item>
       <title>Uvicorn源码笔记</title>

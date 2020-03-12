@@ -6,10 +6,103 @@
     <description>Recent content on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 04 Mar 2020 08:25:53 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 12 Mar 2020 22:46:27 +0800</lastBuildDate>
     
         <atom:link href="https://ppd0705.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Starlette源码笔记</title>
+      <link>https://ppd0705.github.io/post/starlette_note/</link>
+      <pubDate>Thu, 12 Mar 2020 22:46:27 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/starlette_note/</guid>
+      
+        <description>
+
+&lt;h3 id=&#34;简介&#34;&gt;简介&lt;/h3&gt;
+
+&lt;p&gt;Starlette是一个轻量的基于ASGI协议的web框架&lt;/p&gt;
+
+&lt;h3 id=&#34;部分模块&#34;&gt;部分模块&lt;/h3&gt;
+
+&lt;h4 id=&#34;aplications&#34;&gt;aplications&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Starlette: app class, 设置routes/middleware等，实现call(scope, receive, send)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;routing&#34;&gt;routing&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Route: 路由基本单位，记录了path、endpoint之间的映射关系
+
+&lt;ul&gt;
+&lt;li&gt;matches: 校验是否有与path匹配的endpoint&lt;/li&gt;
+&lt;li&gt;ulr_path_for: 通过end_point name找到对应的url&lt;/li&gt;
+&lt;li&gt;handle: call endpoint&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Mount: 一组带path prefix的Route，类似flask中的blueprint&lt;/li&gt;
+&lt;li&gt;Routers: 所有Route集合，按顺序依次去match path, 另外执行starup/shotdown hook&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;endpoints&#34;&gt;endpoints&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;HTTPEndpoint: 类方法的形式去handler具体method&lt;/p&gt;
+
+&lt;h4 id=&#34;middleware&#34;&gt;middleware&lt;/h4&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;AuthenticationMiddleware：通过识别scope中的如cokkie等信息校验&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;CORSMiddleware: cross origin source share&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;GZipMiddleware: gzip压缩response&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;SessionMiddleware: Set-Cokkie&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;HTTPSRedirectMiddleware: http请求跳转到https&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;TrustedHostMiddleware: 限制host&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;requests&#34;&gt;requests&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Request: 解析scope 和 recive到的数据&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;responses&#34;&gt;responses&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Response: 基类，render body, init headers, set cookie, call(scope, receice, send)发送header和body&lt;/li&gt;
+&lt;li&gt;JSONResponse: render body 时使用json.dumps&lt;/li&gt;
+&lt;li&gt;RedirectResponse: header中设置&lt;code&gt;location&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;StreamingResponse： chunked body&lt;/li&gt;
+&lt;li&gt;FileResponse&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;config&#34;&gt;config&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Config: 从环境变量和配置文件加载变量，优先使用环境变量&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;tests&#34;&gt;tests&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;TestClient&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;参考&#34;&gt;参考&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.starlette.io&#34;&gt;官方文档&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Transfer-Encoding&#34;&gt;Transfer-Encoding: chunked&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+      
+    </item>
     
     <item>
       <title>Uvicorn源码笔记</title>
@@ -3325,21 +3418,6 @@ majority: 大多数节点写入之后才确认&lt;/li&gt;
 &lt;li&gt;如果不确定是否需要public，就不声明为public&lt;/li&gt;
 &lt;li&gt;一个.java文件只能包含一个public类，但可以包含多个非public类&lt;/li&gt;
 &lt;/ul&gt;
-</description>
-      
-    </item>
-    
-    <item>
-      <title>First</title>
-      <link>https://ppd0705.github.io/post/first/</link>
-      <pubDate>Fri, 28 Jun 2019 22:14:50 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/first/</guid>
-      
-        <description>&lt;p&gt;写东西一直就是我不擅长的事情&lt;br /&gt;
-语文作文800字总是觉得凑不够&lt;br /&gt;
-那就开始写吧&lt;br /&gt;
-毕竟我也没有什么擅长的&lt;/p&gt;
 </description>
       
     </item>

@@ -6,10 +6,19 @@
     <description>Recent content in Posts on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 04 Mar 2020 08:25:53 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 12 Mar 2020 22:46:27 +0800</lastBuildDate>
     
 	<atom:link href="https://ppd0705.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Starlette源码笔记</title>
+      <link>https://ppd0705.github.io/post/starlette_note/</link>
+      <pubDate>Thu, 12 Mar 2020 22:46:27 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/starlette_note/</guid>
+      <description>简介 Starlette是一个轻量的基于ASGI协议的web框架 部分模块 aplications Starlette: app class, 设置routes/middleware等，实现call(sco</description>
+    </item>
     
     <item>
       <title>Uvicorn源码笔记</title>
@@ -180,15 +189,6 @@
       
       <guid>https://ppd0705.github.io/post/java_basic_1/</guid>
       <description>碎碎念： 最近总算给自己打气开始了解Java语言。以下均来自廖雪峰Java教程的笔记 基本单位为class 通常大写字母开头 基本变量类型 整数： byte, short,</description>
-    </item>
-    
-    <item>
-      <title>First</title>
-      <link>https://ppd0705.github.io/post/first/</link>
-      <pubDate>Fri, 28 Jun 2019 22:14:50 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/first/</guid>
-      <description>写东西一直就是我不擅长的事情 语文作文800字总是觉得凑不够 那就开始写吧 毕竟我也没有什么擅长的</description>
     </item>
     
   </channel>
