@@ -6,10 +6,19 @@
     <description>Recent content in Posts on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 12 Mar 2020 22:46:27 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 08 Apr 2020 20:32:24 +0800</lastBuildDate>
     
 	<atom:link href="https://ppd0705.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Lua基本使用</title>
+      <link>https://ppd0705.github.io/post/lua_introduction/</link>
+      <pubDate>Wed, 08 Apr 2020 20:32:24 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/lua_introduction/</guid>
+      <description>前言：最近在了解API网关apisix， 其中的配置都是用的lua, 于是开始了解lua。 语法 注释 行注释 -- 块注释 1 2 3 --[[块 注释 --]] 变量 布尔类</description>
+    </item>
     
     <item>
       <title>Starlette源码笔记</title>
@@ -180,15 +189,6 @@
       
       <guid>https://ppd0705.github.io/post/java_basic_2/</guid>
       <description>String 不可变 使用Unicode编码表示 早期JDK以char[]存储，新版本用byte[] StringBuilder 可变对象，新增字符时，不会创建新的临时对象 append</description>
-    </item>
-    
-    <item>
-      <title>Java_basic_1</title>
-      <link>https://ppd0705.github.io/post/java_basic_1/</link>
-      <pubDate>Sat, 27 Jul 2019 21:49:48 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/java_basic_1/</guid>
-      <description>碎碎念： 最近总算给自己打气开始了解Java语言。以下均来自廖雪峰Java教程的笔记 基本单位为class 通常大写字母开头 基本变量类型 整数： byte, short,</description>
     </item>
     
   </channel>

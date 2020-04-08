@@ -6,10 +6,19 @@
     <description>Recent content in Tags on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 12 Mar 2020 22:46:27 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 08 Apr 2020 20:32:24 +0800</lastBuildDate>
     
 	<atom:link href="https://ppd0705.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Lua</title>
+      <link>https://ppd0705.github.io/tags/lua/</link>
+      <pubDate>Wed, 08 Apr 2020 20:32:24 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/tags/lua/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>Python</title>
