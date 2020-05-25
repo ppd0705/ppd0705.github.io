@@ -6,10 +6,19 @@
     <description>Recent content in Posts on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 08 Apr 2020 20:32:24 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 25 May 2020 22:44:02 +0800</lastBuildDate>
     
 	<atom:link href="https://ppd0705.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>[笔记]C# 基本语法</title>
+      <link>https://ppd0705.github.io/post/csharp_notes/</link>
+      <pubDate>Mon, 25 May 2020 22:44:02 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/csharp_notes/</guid>
+      <description>前言：最近在维护一个获取http接口的数据然后填充到Excel的工具，于是接触到了C#，总体感觉下来，C#关键字多，语法多，功能强大，LIN</description>
+    </item>
     
     <item>
       <title>Lua基本使用</title>
@@ -180,15 +189,6 @@
       
       <guid>https://ppd0705.github.io/post/java_basic_3/</guid>
       <description>异常 异常类继承自Throwable, 分为Eroor和Exception两类 Error是无需捕获的严重异常 Exception分为Runtime</description>
-    </item>
-    
-    <item>
-      <title>Java_basic_2</title>
-      <link>https://ppd0705.github.io/post/java_basic_2/</link>
-      <pubDate>Mon, 29 Jul 2019 21:53:34 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/java_basic_2/</guid>
-      <description>String 不可变 使用Unicode编码表示 早期JDK以char[]存储，新版本用byte[] StringBuilder 可变对象，新增字符时，不会创建新的临时对象 append</description>
     </item>
     
   </channel>

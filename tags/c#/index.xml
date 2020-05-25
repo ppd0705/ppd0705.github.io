@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>C# on PPD&#39;s blog</title>
+    <link>https://ppd0705.github.io/tags/c#/</link>
+    <description>Recent content in C# on PPD&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Mon, 25 May 2020 22:44:02 +0800</lastBuildDate>
+    
+	<atom:link href="https://ppd0705.github.io/tags/c#/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>[笔记]C# 基本语法</title>
+      <link>https://ppd0705.github.io/post/csharp_notes/</link>
+      <pubDate>Mon, 25 May 2020 22:44:02 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/csharp_notes/</guid>
+      <description>前言：最近在维护一个获取http接口的数据然后填充到Excel的工具，于是接触到了C#，总体感觉下来，C#关键字多，语法多，功能强大，LIN</description>
+    </item>
+    
+  </channel>
+</rss>

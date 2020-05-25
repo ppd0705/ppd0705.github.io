@@ -6,10 +6,19 @@
     <description>Recent content in 计算机 on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 08 Apr 2020 20:32:24 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 25 May 2020 22:44:02 +0800</lastBuildDate>
     
 	<atom:link href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>[笔记]C# 基本语法</title>
+      <link>https://ppd0705.github.io/post/csharp_notes/</link>
+      <pubDate>Mon, 25 May 2020 22:44:02 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/csharp_notes/</guid>
+      <description>前言：最近在维护一个获取http接口的数据然后填充到Excel的工具，于是接触到了C#，总体感觉下来，C#关键字多，语法多，功能强大，LIN</description>
+    </item>
     
     <item>
       <title>Lua基本使用</title>
