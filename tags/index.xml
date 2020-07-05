@@ -6,10 +6,19 @@
     <description>Recent content in Tags on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 25 May 2020 22:44:02 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 05 Jul 2020 22:24:16 +0800</lastBuildDate>
     
 	<atom:link href="https://ppd0705.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>SRE</title>
+      <link>https://ppd0705.github.io/tags/sre/</link>
+      <pubDate>Sun, 05 Jul 2020 22:24:16 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/tags/sre/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>C#</title>

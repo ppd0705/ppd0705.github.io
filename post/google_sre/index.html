@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Tags - PPD&#39;s blog</title>
+  <title>[笔记]GoogleSRE - PPD&#39;s blog</title>
   
 
 <meta name="renderer" content="webkit" />
@@ -23,7 +23,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 
 <meta name="author" content="PPD" />
-  <meta name="description" content="PPD&#39;s blog" />
+  <meta name="description" content="第一部分 第一章 SRE(site reliability engineering): 设计和研发大型、分不出计算机系统。有时和研发团队工作，其他时候开发基础组件，推广这些基础组件在多个项目中复用。 SRE关注" />
+
   <meta name="keywords" content="PPD, blog" />
 
 
@@ -34,8 +35,7 @@
 <meta name="generator" content="Hugo 0.55.6" />
 
 
-<link rel="canonical" href="https://ppd0705.github.io/tags/" />
-<link href="%7balternate%20%7bRSS%20application/rss&#43;xml%20%20index%20alternate%20%20false%20false%20true%20false%20false%200%7d%20/tags/index.xml%20https://ppd0705.github.io/tags/index.xml%7d" rel="alternate" type="application/rss+xml" title="PPD&#39;s blog" />
+<link rel="canonical" href="https://ppd0705.github.io/post/google_sre/" />
 
 
 
@@ -57,19 +57,27 @@
 
 
 
-<meta property="og:title" content="Tags" />
-<meta property="og:description" content="PPD&#39;s blog" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://ppd0705.github.io/tags/" />
+<meta property="og:title" content="[笔记]GoogleSRE" />
+<meta property="og:description" content="第一部分 第一章 SRE(site reliability engineering): 设计和研发大型、分不出计算机系统。有时和研发团队工作，其他时候开发基础组件，推广这些基础组件在多个项目中复用。 SRE关注" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ppd0705.github.io/post/google_sre/" />
+<meta property="article:published_time" content="2020-07-05T22:24:16&#43;08:00"/>
+<meta property="article:modified_time" content="2020-07-05T22:24:16&#43;08:00"/>
 
-<meta property="og:updated_time" content="2020-07-05T22:24:16&#43;08:00"/>
+<meta itemprop="name" content="[笔记]GoogleSRE">
+<meta itemprop="description" content="第一部分 第一章 SRE(site reliability engineering): 设计和研发大型、分不出计算机系统。有时和研发团队工作，其他时候开发基础组件，推广这些基础组件在多个项目中复用。 SRE关注">
 
-<meta itemprop="name" content="Tags">
-<meta itemprop="description" content="PPD&#39;s blog">
 
+<meta itemprop="datePublished" content="2020-07-05T22:24:16&#43;08:00" />
+<meta itemprop="dateModified" content="2020-07-05T22:24:16&#43;08:00" />
+<meta itemprop="wordCount" content="1000">
+
+
+
+<meta itemprop="keywords" content="SRE," />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Tags"/>
-<meta name="twitter:description" content="PPD&#39;s blog"/>
+<meta name="twitter:title" content="[笔记]GoogleSRE"/>
+<meta name="twitter:description" content="第一部分 第一章 SRE(site reliability engineering): 设计和研发大型、分不出计算机系统。有时和研发团队工作，其他时候开发基础组件，推广这些基础组件在多个项目中复用。 SRE关注"/>
 
 <!--[if lte IE 9]>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
@@ -235,7 +243,7 @@
 
       </li>
     
-        <li class="menu-item active">
+        <li class="menu-item">
         
           
           
@@ -278,155 +286,168 @@
     <main id="main" class="main bg-llight">
       <div class="content-wrapper">
         <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">[笔记]GoogleSRE</h1>
+      
+      <div class="post-meta">
+        <time datetime="2020-07-05" class="post-time">
+          2020-07-05 22:24:16
+        </time>
+        <div class="post-category">
+            <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
+            
+          </div>
+        <span class="more-meta"> 1000 words </span>
+          <span class="more-meta"> 2 min read </span>
+
+        
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    
+    <div class="post-content">
+      
+
+<h2 id="第一部分">第一部分</h2>
+
+<h3 id="第一章">第一章</h3>
+
+<p>SRE(site reliability engineering): 设计和研发大型、分不出计算机系统。有时和研发团队工作，其他时候开发基础组件，推广这些基础组件在多个项目中复用。</p>
+
+<p>SRE关注的焦点在可靠性（reliability）,可靠性指的是在指定环境下成功执行某个功能指定时间的概率。</p>
+
+<p>SRE花50%时间在真实的开发工作上。这样既保障了SRE有足够的运维经验，也有足够的时间和精力去进行真正有创造性的、自主的研发工作。</p>
+
+<p>SRE职责通常有：可用性改进，延迟优化，性能优化，效率优化，变更管理，监控，容量规划和管理
+- 监控系统： 警报信息应该由系统自动分析，并只有三类输出
+  - 紧急警报alert: 收到警报的人员需要立即执行某种操作
+  - 工单ticket: 收到ticker的人员可以在几天内执行某种操作
+  - 日志logging: 日志用于调试和事后分析</p>
+
+<ul>
+<li>变更管理：可以自动化的完成以下几个项目
+
+<ul>
+<li>渐进式发布机制</li>
+<li>迅速而准确地检测到问题的发生</li>
+<li>出现问题时，安全迅速的回滚
+<br /></li>
+</ul></li>
+</ul>
+
+<h3 id="第三章-拥抱风险">第三章 拥抱风险</h3>
+
+<p>服务可用性=成功请求数/总请求数</p>
+
+<p>由于产品研发和SRE基于不同的指标进行绩效评估，所以组员共同定义一个基于SLO的季度错误预算，通常做法如下：
+- 产品管理层顶一个一个SLO, 确定一项服务在每个季度预计的正常运行时间
+- 实际在线时间由一个中立的第三方-监控系统来预算
+- 两者的差值就是这个季度剩余的错误预算
+- 只有仍有剩余的错误预算就可以发布新版本</p>
+
+<p>使用错误预算的好处
+- 可以通过这个调节发布新版本的速度， 产品开发指导预算还剩多少，可以控制自己的风险
+- SRE可以有权停止新版本的发布</p>
+
+<h3 id="第四章-服务质量目标">第四章 服务质量目标</h3>
+
+<p>SLI(service level indicator):服务质量指标， 如响应时间，准确性</p>
+
+<p>SLO(service levelo objective):服务质量目标，即SLI的预期值，如响应时间10ms</p>
+
+<p>SLA(service level agreement):服务质量协议,包含SLI/SLO等一系列明确或不明确的协议， 描述了达到或没有达到SLO之后的明确后果</p>
+
+<h4 id="sli">SLI</h4>
+
+<p>基于服务性质的不同，会选择不同的指标，通常四五个具有代表性的指标就可以对系统监控程度做出评估和关注</p>
+
+<p>标准化一些常见的SLI
+- 汇总间隔： 每分钟一次
+- 范围： 集群中全部任务
+- 度量频率： 每10s一次
+- 获取：黑盒监控任务通过HTTP GET请求获取</p>
+
+<h4 id="slo">SLO</h4>
+
+<p>SLO应该具体指出如何被度量以及有效条件</p>
+
+<p>SLO可以在系统运维时提供决策</p>
+
+<p>SLO 也可以建立用户预期，避免用户对服务过度依赖（google chubby服务会在有错误预算的时候有一安排一次可控的故障，找出对其不合理依赖的上游服务）</p>
+
+    </div>
+
+    
+    
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="https://ppd0705.github.io/tags/sre/">SRE</a>
           
-  
-  
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/post/csharp_notes/">
+            <span class="next-text nav-default">[笔记]C# 基本语法</span>
+            <span class="prev-text nav-mobile">Next</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
   
   
 
   
   
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <div class="tag-cloud" style="padding: 5px 15px">
-      <div class="tag-cloud-title">
-        11 Tags In Total
-      </div>
-      <div class="tag-cloud-tags">
-      
-        
-        
-        
-        
-        
-        
-        
-        <a href="https://ppd0705.github.io/tags/c#/"
-          style="font-size:1rem">c#</a>
-        
-      
-        
-        
-        
-        
-        
-        
-        
-        <a href="https://ppd0705.github.io/tags/go/"
-          style="font-size:1rem">go</a>
-        
-      
-        
-        
-        
-        
-        
-        
-        
-        <a href="https://ppd0705.github.io/tags/java/"
-          style="font-size:1.6244344957986987rem">java</a>
-        
-      
-        
-        
-        
-        
-        
-        
-        
-        <a href="https://ppd0705.github.io/tags/lua/"
-          style="font-size:1rem">lua</a>
-        
-      
-        
-        
-        
-        
-        
-        
-        
-        <a href="https://ppd0705.github.io/tags/mongodb/"
-          style="font-size:1rem">mongodb</a>
-        
-      
-        
-        
-        
-        
-        
-        
-        
-        <a href="https://ppd0705.github.io/tags/mysql/"
-          style="font-size:1.3939743025557902rem">mysql</a>
-        
-      
-        
-        
-        
-        
-        
-        
-        
-        <a href="https://ppd0705.github.io/tags/python/"
-          style="font-size:2.457878157104382rem">python</a>
-        
-      
-        
-        
-        
-        
-        
-        
-        
-        <a href="https://ppd0705.github.io/tags/redis/"
-          style="font-size:1rem">redis</a>
-        
-      
-        
-        
-        
-        
-        
-        
-        
-        <a href="https://ppd0705.github.io/tags/sre/"
-          style="font-size:1rem">sre</a>
-        
-      
-        
-        
-        
-        
-        
-        
-        
-        <a href="https://ppd0705.github.io/tags/%E5%8F%AF%E7%88%B1%E7%9A%84%E4%BA%BA%E5%84%BF/"
-          style="font-size:1rem">可爱的人儿</a>
-        
-      
-        
-        
-        
-        
-        
-        
-        
-        <a href="https://ppd0705.github.io/tags/%E6%97%85%E8%A1%8C/"
-          style="font-size:1.3939743025557902rem">旅行</a>
-        
-      
-      </div>
+
+  
+
+  
+  
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "ppd0705/ppd0705.github.io"
+            issue-term="utteranc"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
     </div>
   
+
   
 
+  
+
+  
+
+    
 
         </div>
       </div>

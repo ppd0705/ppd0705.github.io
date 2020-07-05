@@ -6,10 +6,19 @@
     <description>Recent content in 计算机 on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 25 May 2020 22:44:02 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 05 Jul 2020 22:24:16 +0800</lastBuildDate>
     
 	<atom:link href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>[笔记]GoogleSRE</title>
+      <link>https://ppd0705.github.io/post/google_sre/</link>
+      <pubDate>Sun, 05 Jul 2020 22:24:16 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/google_sre/</guid>
+      <description>第一部分 第一章 SRE(site reliability engineering): 设计和研发大型、分不出计算机系统。有时和研发团队工作，其他时候开发基础组件，推广这些基础组件在多个项目中复用。 SRE关注</description>
+    </item>
     
     <item>
       <title>[笔记]C# 基本语法</title>
@@ -180,15 +189,6 @@
       
       <guid>https://ppd0705.github.io/post/java_basic_2/</guid>
       <description>String 不可变 使用Unicode编码表示 早期JDK以char[]存储，新版本用byte[] StringBuilder 可变对象，新增字符时，不会创建新的临时对象 append</description>
-    </item>
-    
-    <item>
-      <title>Java_basic_1</title>
-      <link>https://ppd0705.github.io/post/java_basic_1/</link>
-      <pubDate>Sat, 27 Jul 2019 21:49:48 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/java_basic_1/</guid>
-      <description>碎碎念： 最近总算给自己打气开始了解Java语言。以下均来自廖雪峰Java教程的笔记 基本单位为class 通常大写字母开头 基本变量类型 整数： byte, short,</description>
     </item>
     
   </channel>

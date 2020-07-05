@@ -6,10 +6,19 @@
     <description>Recent content in Posts on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 25 May 2020 22:44:02 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 05 Jul 2020 22:24:16 +0800</lastBuildDate>
     
 	<atom:link href="https://ppd0705.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>[笔记]GoogleSRE</title>
+      <link>https://ppd0705.github.io/post/google_sre/</link>
+      <pubDate>Sun, 05 Jul 2020 22:24:16 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/google_sre/</guid>
+      <description>第一部分 第一章 SRE(site reliability engineering): 设计和研发大型、分不出计算机系统。有时和研发团队工作，其他时候开发基础组件，推广这些基础组件在多个项目中复用。 SRE关注</description>
+    </item>
     
     <item>
       <title>[笔记]C# 基本语法</title>
@@ -180,15 +189,6 @@
       
       <guid>https://ppd0705.github.io/post/setuptools_doc_notes/</guid>
       <description>版本规则 正式版本由一串被.符号分隔开的数据组成 2.1，代表release 2 的第一个子版本 2.1 == 2.1.0 == 2.01 预发布版本，通常在版本号后加字母tag， 如</description>
-    </item>
-    
-    <item>
-      <title>Java_basic_3</title>
-      <link>https://ppd0705.github.io/post/java_basic_3/</link>
-      <pubDate>Wed, 31 Jul 2019 22:32:54 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/java_basic_3/</guid>
-      <description>异常 异常类继承自Throwable, 分为Eroor和Exception两类 Error是无需捕获的严重异常 Exception分为Runtime</description>
     </item>
     
   </channel>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>SRE on PPD&#39;s blog</title>
+    <link>https://ppd0705.github.io/tags/sre/</link>
+    <description>Recent content in SRE on PPD&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 05 Jul 2020 22:24:16 +0800</lastBuildDate>
+    
+	<atom:link href="https://ppd0705.github.io/tags/sre/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>[笔记]GoogleSRE</title>
+      <link>https://ppd0705.github.io/post/google_sre/</link>
+      <pubDate>Sun, 05 Jul 2020 22:24:16 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/google_sre/</guid>
+      <description>第一部分 第一章 SRE(site reliability engineering): 设计和研发大型、分不出计算机系统。有时和研发团队工作，其他时候开发基础组件，推广这些基础组件在多个项目中复用。 SRE关注</description>
+    </item>
+    
+  </channel>
+</rss>

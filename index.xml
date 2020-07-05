@@ -6,10 +6,89 @@
     <description>Recent content on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 25 May 2020 22:44:02 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 05 Jul 2020 22:24:16 +0800</lastBuildDate>
     
         <atom:link href="https://ppd0705.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>[笔记]GoogleSRE</title>
+      <link>https://ppd0705.github.io/post/google_sre/</link>
+      <pubDate>Sun, 05 Jul 2020 22:24:16 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/google_sre/</guid>
+      
+        <description>
+
+&lt;h2 id=&#34;第一部分&#34;&gt;第一部分&lt;/h2&gt;
+
+&lt;h3 id=&#34;第一章&#34;&gt;第一章&lt;/h3&gt;
+
+&lt;p&gt;SRE(site reliability engineering): 设计和研发大型、分不出计算机系统。有时和研发团队工作，其他时候开发基础组件，推广这些基础组件在多个项目中复用。&lt;/p&gt;
+
+&lt;p&gt;SRE关注的焦点在可靠性（reliability）,可靠性指的是在指定环境下成功执行某个功能指定时间的概率。&lt;/p&gt;
+
+&lt;p&gt;SRE花50%时间在真实的开发工作上。这样既保障了SRE有足够的运维经验，也有足够的时间和精力去进行真正有创造性的、自主的研发工作。&lt;/p&gt;
+
+&lt;p&gt;SRE职责通常有：可用性改进，延迟优化，性能优化，效率优化，变更管理，监控，容量规划和管理
+- 监控系统： 警报信息应该由系统自动分析，并只有三类输出
+  - 紧急警报alert: 收到警报的人员需要立即执行某种操作
+  - 工单ticket: 收到ticker的人员可以在几天内执行某种操作
+  - 日志logging: 日志用于调试和事后分析&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;变更管理：可以自动化的完成以下几个项目
+
+&lt;ul&gt;
+&lt;li&gt;渐进式发布机制&lt;/li&gt;
+&lt;li&gt;迅速而准确地检测到问题的发生&lt;/li&gt;
+&lt;li&gt;出现问题时，安全迅速的回滚
+&lt;br /&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;第三章-拥抱风险&#34;&gt;第三章 拥抱风险&lt;/h3&gt;
+
+&lt;p&gt;服务可用性=成功请求数/总请求数&lt;/p&gt;
+
+&lt;p&gt;由于产品研发和SRE基于不同的指标进行绩效评估，所以组员共同定义一个基于SLO的季度错误预算，通常做法如下：
+- 产品管理层顶一个一个SLO, 确定一项服务在每个季度预计的正常运行时间
+- 实际在线时间由一个中立的第三方-监控系统来预算
+- 两者的差值就是这个季度剩余的错误预算
+- 只有仍有剩余的错误预算就可以发布新版本&lt;/p&gt;
+
+&lt;p&gt;使用错误预算的好处
+- 可以通过这个调节发布新版本的速度， 产品开发指导预算还剩多少，可以控制自己的风险
+- SRE可以有权停止新版本的发布&lt;/p&gt;
+
+&lt;h3 id=&#34;第四章-服务质量目标&#34;&gt;第四章 服务质量目标&lt;/h3&gt;
+
+&lt;p&gt;SLI(service level indicator):服务质量指标， 如响应时间，准确性&lt;/p&gt;
+
+&lt;p&gt;SLO(service levelo objective):服务质量目标，即SLI的预期值，如响应时间10ms&lt;/p&gt;
+
+&lt;p&gt;SLA(service level agreement):服务质量协议,包含SLI/SLO等一系列明确或不明确的协议， 描述了达到或没有达到SLO之后的明确后果&lt;/p&gt;
+
+&lt;h4 id=&#34;sli&#34;&gt;SLI&lt;/h4&gt;
+
+&lt;p&gt;基于服务性质的不同，会选择不同的指标，通常四五个具有代表性的指标就可以对系统监控程度做出评估和关注&lt;/p&gt;
+
+&lt;p&gt;标准化一些常见的SLI
+- 汇总间隔： 每分钟一次
+- 范围： 集群中全部任务
+- 度量频率： 每10s一次
+- 获取：黑盒监控任务通过HTTP GET请求获取&lt;/p&gt;
+
+&lt;h4 id=&#34;slo&#34;&gt;SLO&lt;/h4&gt;
+
+&lt;p&gt;SLO应该具体指出如何被度量以及有效条件&lt;/p&gt;
+
+&lt;p&gt;SLO可以在系统运维时提供决策&lt;/p&gt;
+
+&lt;p&gt;SLO 也可以建立用户预期，避免用户对服务过度依赖（google chubby服务会在有错误预算的时候有一安排一次可控的故障，找出对其不合理依赖的上游服务）&lt;/p&gt;
+</description>
+      
+    </item>
     
     <item>
       <title>[笔记]C# 基本语法</title>
@@ -4727,40 +4806,6 @@ majority: 大多数节点写入之后才确认&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://pythonwheels.com/&#34;&gt;https://pythonwheels.com/&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://packaging.python.org/discussions/wheel-vs-egg/&#34;&gt;https://packaging.python.org/discussions/wheel-vs-egg/&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://docs.python.org/3/library/site.html#module-site&#34;&gt;https://docs.python.org/3/library/site.html#module-site&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-      
-    </item>
-    
-    <item>
-      <title>Java_basic_3</title>
-      <link>https://ppd0705.github.io/post/java_basic_3/</link>
-      <pubDate>Wed, 31 Jul 2019 22:32:54 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/java_basic_3/</guid>
-      
-        <description>
-
-&lt;h4 id=&#34;异常&#34;&gt;异常&lt;/h4&gt;
-
-&lt;ul&gt;
-&lt;li&gt;异常类继承自Throwable, 分为Eroor和Exception两类&lt;/li&gt;
-&lt;li&gt;Error是无需捕获的严重异常&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Exception分为RuntimeExceptin和非RuntimeExcetion, 非RuntimeExcetion强制用try &amp;hellip; catch捕获&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;抛出异常用throw new Exception()&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;assert断言：JVM默认不开启，建议只用于调试&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&#34;日志输出&#34;&gt;日志输出&lt;/h4&gt;
-
-&lt;ul&gt;
-&lt;li&gt;自带java.util.logging模块， 默认INFO级别&lt;/li&gt;
-&lt;li&gt;第三方日志接口模块Commons Logging，默认用Log4j， 找不到则使用标准库， 可用log.error(String, Throwable)打印异常&lt;/li&gt;
-&lt;li&gt;第三方日志系统Log4j，可通过四种Appender(console, file, socket, jbdc)将日志输出到不同的地方&lt;/li&gt;
-&lt;li&gt;SLF4J和Logback可以取代Commons Logging和Log4j，使用‘{}’占位符取代用‘+’对字符串拼接&lt;/li&gt;
 &lt;/ul&gt;
 </description>
       
