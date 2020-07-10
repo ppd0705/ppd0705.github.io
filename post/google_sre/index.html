@@ -70,7 +70,7 @@
 
 <meta itemprop="datePublished" content="2020-07-05T22:24:16&#43;08:00" />
 <meta itemprop="dateModified" content="2020-07-05T22:24:16&#43;08:00" />
-<meta itemprop="wordCount" content="1000">
+<meta itemprop="wordCount" content="1253">
 
 
 
@@ -299,8 +299,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 1000 words </span>
-          <span class="more-meta"> 2 min read </span>
+        <span class="more-meta"> 1253 words </span>
+          <span class="more-meta"> 3 min read </span>
 
         
         
@@ -370,11 +370,14 @@
 
 <p>基于服务性质的不同，会选择不同的指标，通常四五个具有代表性的指标就可以对系统监控程度做出评估和关注</p>
 
-<p>标准化一些常见的SLI
-- 汇总间隔： 每分钟一次
-- 范围： 集群中全部任务
-- 度量频率： 每10s一次
-- 获取：黑盒监控任务通过HTTP GET请求获取</p>
+<p>标准化一些常见的SLI</p>
+
+<ul>
+<li>汇总间隔： 每分钟一次</li>
+<li>范围： 集群中全部任务</li>
+<li>度量频率： 每10s一次</li>
+<li>获取：黑盒监控任务通过HTTP GET请求获取</li>
+</ul>
 
 <h4 id="slo">SLO</h4>
 
@@ -383,6 +386,52 @@
 <p>SLO可以在系统运维时提供决策</p>
 
 <p>SLO 也可以建立用户预期，避免用户对服务过度依赖（google chubby服务会在有错误预算的时候有一安排一次可控的故障，找出对其不合理依赖的上游服务）</p>
+
+<h3 id="第五章-减少琐事">第五章 减少琐事</h3>
+
+<h4 id="何为琐事">何为琐事</h4>
+
+<ul>
+<li>手动性的，重复性的，可以被自动化的</li>
+<li>突然出现的、应对性的工作，而非主动安排的</li>
+<li>没有持久价值的</li>
+<li>与服务规模线性增长的</li>
+</ul>
+
+<h4 id="何为工程工作">何为工程工作</h4>
+
+<ul>
+<li>创新的、需要主管判断的</li>
+<li>着重通过设计来解决问题</li>
+<li>符合长期战略的</li>
+</ul>
+
+<h3 id="第六章-分布式系统的监控">第六章 分布式系统的监控</h3>
+
+<h4 id="为何监控">为何监控</h4>
+
+<ul>
+<li>报警</li>
+<li>不同条件的比较（不同时间范围比较）</li>
+<li>分析长期趋势</li>
+</ul>
+
+<h4 id="4个监控黄金指标">4个监控黄金指标</h4>
+
+<ul>
+<li><p>延迟
+服务处理某个请求所需要的时间，区分成功请求和失败请求</p></li>
+
+<li><p>流量
+对于web服务来说同时是每秒HTTP请求数量，对于流媒体系统来说科目是I/O速率</p></li>
+
+<li><p>错误
+请求失败的速率</p></li>
+
+<li><p>饱和度(saturation)</p></li>
+</ul>
+
+<p>服务容量有多满。如内存、I/O</p>
 
     </div>
 

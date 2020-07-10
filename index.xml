@@ -73,11 +73,14 @@
 
 &lt;p&gt;基于服务性质的不同，会选择不同的指标，通常四五个具有代表性的指标就可以对系统监控程度做出评估和关注&lt;/p&gt;
 
-&lt;p&gt;标准化一些常见的SLI
-- 汇总间隔： 每分钟一次
-- 范围： 集群中全部任务
-- 度量频率： 每10s一次
-- 获取：黑盒监控任务通过HTTP GET请求获取&lt;/p&gt;
+&lt;p&gt;标准化一些常见的SLI&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;汇总间隔： 每分钟一次&lt;/li&gt;
+&lt;li&gt;范围： 集群中全部任务&lt;/li&gt;
+&lt;li&gt;度量频率： 每10s一次&lt;/li&gt;
+&lt;li&gt;获取：黑盒监控任务通过HTTP GET请求获取&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;h4 id=&#34;slo&#34;&gt;SLO&lt;/h4&gt;
 
@@ -86,6 +89,52 @@
 &lt;p&gt;SLO可以在系统运维时提供决策&lt;/p&gt;
 
 &lt;p&gt;SLO 也可以建立用户预期，避免用户对服务过度依赖（google chubby服务会在有错误预算的时候有一安排一次可控的故障，找出对其不合理依赖的上游服务）&lt;/p&gt;
+
+&lt;h3 id=&#34;第五章-减少琐事&#34;&gt;第五章 减少琐事&lt;/h3&gt;
+
+&lt;h4 id=&#34;何为琐事&#34;&gt;何为琐事&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;手动性的，重复性的，可以被自动化的&lt;/li&gt;
+&lt;li&gt;突然出现的、应对性的工作，而非主动安排的&lt;/li&gt;
+&lt;li&gt;没有持久价值的&lt;/li&gt;
+&lt;li&gt;与服务规模线性增长的&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;何为工程工作&#34;&gt;何为工程工作&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;创新的、需要主管判断的&lt;/li&gt;
+&lt;li&gt;着重通过设计来解决问题&lt;/li&gt;
+&lt;li&gt;符合长期战略的&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;第六章-分布式系统的监控&#34;&gt;第六章 分布式系统的监控&lt;/h3&gt;
+
+&lt;h4 id=&#34;为何监控&#34;&gt;为何监控&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;报警&lt;/li&gt;
+&lt;li&gt;不同条件的比较（不同时间范围比较）&lt;/li&gt;
+&lt;li&gt;分析长期趋势&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;4个监控黄金指标&#34;&gt;4个监控黄金指标&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;延迟
+服务处理某个请求所需要的时间，区分成功请求和失败请求&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;流量
+对于web服务来说同时是每秒HTTP请求数量，对于流媒体系统来说科目是I/O速率&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;错误
+请求失败的速率&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;饱和度(saturation)&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;服务容量有多满。如内存、I/O&lt;/p&gt;
 </description>
       
     </item>
