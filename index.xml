@@ -122,19 +122,115 @@
 &lt;h4 id=&#34;4个监控黄金指标&#34;&gt;4个监控黄金指标&lt;/h4&gt;
 
 &lt;ul&gt;
-&lt;li&gt;&lt;p&gt;延迟
-服务处理某个请求所需要的时间，区分成功请求和失败请求&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;流量
-对于web服务来说同时是每秒HTTP请求数量，对于流媒体系统来说科目是I/O速率&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;错误
-请求失败的速率&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;饱和度(saturation)&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;延迟:服务处理某个请求所需要的时间，区分成功请求和失败请求&lt;/li&gt;
+&lt;li&gt;流量:对于web服务来说同时是每秒HTTP请求数量，对于流媒体系统来说科目是I/O速率&lt;/li&gt;
+&lt;li&gt;错误:请求失败的速率&lt;/li&gt;
+&lt;li&gt;饱和度(saturation):服务容量有多满。如内存、I/O&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;服务容量有多满。如内存、I/O&lt;/p&gt;
+&lt;h2 id=&#34;第二部分&#34;&gt;第二部分&lt;/h2&gt;
+
+&lt;p&gt;SRE的终极责任是确保服务可以正常运转&lt;/p&gt;
+
+&lt;h3 id=&#34;第10章-基于时间序列数据进行有效报警&#34;&gt;第10章 基于时间序列数据进行有效报警&lt;/h3&gt;
+
+&lt;p&gt;监控系统既要从服务质量目标层面进行报警，也应该保持足够的粒度，可以追踪到具体某个组件&lt;/p&gt;
+
+&lt;p&gt;应用软件保留HTTP接口提供全部监控变量值，Borgmon安装配置定时抓取，将数据保存在内存中，并定时落盘。&lt;/p&gt;
+
+&lt;p&gt;这些数据都是类似(timestamp, value)格式存储在一个按时间排序的链表中，该链表称为time series&lt;/p&gt;
+
+&lt;p&gt;当Borgmon计算完成一条报警规则结果为true时会产生一条警报&lt;/p&gt;
+
+&lt;p&gt;每条报警规则都指定了一个最小持续时间值，只有当警报持续时间超过这个值得时间才会发送警报，这个周期至少被设置为两个计算周期。&lt;/p&gt;
+
+&lt;p&gt;Borgmon会将报警信息发送到报警管理服务Altermanager，其负责将警报发送到合适的渠道，另外也管理&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;报警信息的去重&lt;/li&gt;
+&lt;li&gt;根据保荐信息将多个警报信息合并&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;探针程序是一个检查检查测试模型和一些高级time-series创建功能的混合体，既可以探测到前端，也可以探测到负载均衡后面的服务&lt;/p&gt;
+
+&lt;h3 id=&#34;第11章-on-call轮值&#34;&gt;第11章 on-call轮值&lt;/h3&gt;
+
+&lt;p&gt;on-call工程师可以承诺分钟级别执行生产系统的维护需求&lt;/p&gt;
+
+&lt;p&gt;SRE不会超过25%的时间用来on-call，另外50%花在软件工程上，其余25%用来处理其余运维工作&lt;/p&gt;
+
+&lt;h3 id=&#34;第12章-有效的故障排查手段&#34;&gt;第12章 有效的故障排查手段&lt;/h3&gt;
+
+&lt;p&gt;故障排查依赖于两个要素&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;对于通用故障排查过程的理解&lt;/li&gt;
+&lt;li&gt;对于发生故障的系统的足够了解&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;对于排查的过程我们定义为反复采用&lt;code&gt;假设-排除&lt;/code&gt;的过程&lt;/p&gt;
+
+&lt;p&gt;优化排查过程&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;服务增加可观察项，如增加白盒测试指标，利用结构化的日志&lt;/li&gt;
+&lt;li&gt;利用成熟的观察性好的组件来设计系统&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;第14章-紧急事件管理&#34;&gt;第14章 紧急事件管理&lt;/h3&gt;
+
+&lt;p&gt;明确职责可以让每个人更加独立自主解决问题&lt;/p&gt;
+
+&lt;p&gt;通常分为4种角色&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;incident command事故总控: 负责组建事务处理团队，按优先级分配任务&lt;/li&gt;
+&lt;li&gt;operation work 事务处理团队：唯一能对事故系统做修改的团队&lt;/li&gt;
+&lt;li&gt;communication 发言人： 公众发言人，负责向其他人发送周期性通知，及时更新处理状态&lt;/li&gt;
+&lt;li&gt;planning 规划负责人：为事务处理团队提供支持，如填写Bug报告记录系统，安排职责交接记录&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;对外宣布事故的标准，满足如下一条应该实及时宣布&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;是否需要引入第二个团队&lt;/li&gt;
+&lt;li&gt;是否影响到最终用户&lt;/li&gt;
+&lt;li&gt;分析一小时后仍未得到解决&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;第15章-事后总结-从失败中学习&#34;&gt;第15章 事后总结：从失败中学习&lt;/h3&gt;
+
+&lt;p&gt;事后总结&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;是一个全公司的学习机会&lt;/li&gt;
+&lt;li&gt;对事不对人&lt;/li&gt;
+&lt;li&gt;假设参与事件的人在当时拥有的信息下做了正确的举动&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;事后总结是一个团队协作的过程，大家都可以来完善。&lt;/p&gt;
+
+&lt;p&gt;事后总结包括正式的评审和发布过程，评审条件包括&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;关键的灾难数据是否被收集和保存&lt;/li&gt;
+&lt;li&gt;影响评估是否完整&lt;/li&gt;
+&lt;li&gt;根源问题调查是否深入&lt;/li&gt;
+&lt;li&gt;是否及时解决了根源问题，排期优先级是否合理&lt;/li&gt;
+&lt;li&gt;事故处理过程是否共享给了所有相关部门&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;建立事后总结文化&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;每周一次的本周最佳事后总结&lt;/li&gt;
+&lt;li&gt;组织事后阅读俱乐部，共同讨论一篇有趣或有影响力的事后总结&lt;/li&gt;
+&lt;li&gt;再现事故现场，故障处理分角色扮演&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;事后总结纳入个人绩效考核以及管理层积极参与和认可，可加强事后总结机制&lt;/p&gt;
+
+&lt;p&gt; &lt;/p&gt;
 </description>
       
     </item>
