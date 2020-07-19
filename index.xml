@@ -1997,14 +1997,14 @@ dotnet run&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;h4 id=&#34;two-components&#34;&gt;two components&lt;/h4&gt;
 
 &lt;ul&gt;
-&lt;li&gt;protocol server: terminatas socket and translates them into connections and per-conenction event messages&lt;/li&gt;
+&lt;li&gt;protocol server: terminates socket and translates them into connections and per-connection event messages&lt;/li&gt;
 &lt;li&gt;application: lives in inside a server, is instantiated once per connection, and handles event messages as they happen&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h4 id=&#34;difference-between-two-components&#34;&gt;difference between two components&lt;/h4&gt;
 
 &lt;ul&gt;
-&lt;li&gt;applications are instantiat objects that are fed events rather than simple callables, and must run as asyncio-compativle corountines&lt;/li&gt;
+&lt;li&gt;applications are instant objects that are fed events rather than simple callable, and must run as asyncio-compativle corountines&lt;/li&gt;
 &lt;li&gt;two separate parts of a connection: a connection scope; events&lt;/li&gt;
 &lt;/ul&gt;
 
@@ -2013,18 +2013,18 @@ dotnet run&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;h4 id=&#34;connection-scope&#34;&gt;Connection Scope&lt;/h4&gt;
 
 &lt;ul&gt;
-&lt;li&gt;Under HTTP, the connecton scope lasts just one request. it contains most of the request data(apart from the request body)&lt;/li&gt;
+&lt;li&gt;Under HTTP, the connection scope lasts just one request. it contains most of the request data(apart from the request body)&lt;/li&gt;
 &lt;li&gt;Under WebSocket, the connection scope lasts for as long as the socket is connected. the scope contains information like the WebSocket&amp;rsquo;s path, but details like incoming messages come through as events instead.&lt;/li&gt;
-&lt;li&gt;Each protocol definition must contai information about how long its connection scope lasts, and what information you will get inside it&lt;/li&gt;
-&lt;li&gt;Applications cannot communicate with the client when they are initialized and given their connection scope, they must wait utnile their event loop is entered&lt;/li&gt;
+&lt;li&gt;Each protocol definition must contain information about how long its connection scope lasts, and what information you will get inside it&lt;/li&gt;
+&lt;li&gt;Applications cannot communicate with the client when they are initialized and given their connection scope, they must wait until their event loop is entered&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h4 id=&#34;events&#34;&gt;Events&lt;/h4&gt;
 
 &lt;ul&gt;
 &lt;li&gt;for HTTP, 2 evens in order - &lt;code&gt;http.requst&lt;/code&gt; and &lt;code&gt;http.disconnect&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;for WebSocket, it could more like &lt;code&gt;websocket.connect&lt;/code&gt;, &lt;code&gt;websocket.send&lt;/code&gt;, &lt;code&gt;websocket.receive&lt;/code&gt;, and finnaly &lt;code&gt;websocket.disconnect&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;eacn event is a &lt;code&gt;dict&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;for WebSocket, it could more like &lt;code&gt;websocket.connect&lt;/code&gt;, &lt;code&gt;websocket.send&lt;/code&gt;, &lt;code&gt;websocket.receive&lt;/code&gt;, and finally &lt;code&gt;websocket.disconnect&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;each event is a &lt;code&gt;dict&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h4 id=&#34;applications&#34;&gt;Applications&lt;/h4&gt;
@@ -2039,8 +2039,8 @@ dotnet run&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;ul&gt;
-&lt;li&gt;scope: The connection scope, a dict that contains as least a &lt;code&gt;type&lt;/code&gt; key specifying the protocol thas is incoming&lt;/li&gt;
-&lt;li&gt;reveive: an awaitable callable that will yield a new event dict when one is available&lt;/li&gt;
+&lt;li&gt;scope: The connection scope, a dict that contains as least a &lt;code&gt;type&lt;/code&gt; key specifying the protocol that is incoming&lt;/li&gt;
+&lt;li&gt;receive: an awaitable callable that will yield a new event dict when one is available&lt;/li&gt;
 &lt;li&gt;send: an awaitable callable taking a single event dict as positional argument that will return once the send has been completed or the connection has been closed&lt;/li&gt;
 &lt;/ul&gt;
 
@@ -2050,7 +2050,7 @@ dotnet run&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Connection Scope: type(&lt;code&gt;http&lt;/code&gt;), asgi, method, path, scheme, query_string, client, server&lt;/li&gt;
-&lt;li&gt;Request： the body message serves as a way to stram incoming HTTP bodies in chunks. keys include type(&lt;code&gt;http.request&lt;/code&gt;), body(bytes), more_body(bool)&lt;/li&gt;
+&lt;li&gt;Request： the body message serves as a way to stream incoming HTTP bodies in chunks. keys include type(&lt;code&gt;http.request&lt;/code&gt;), body(bytes), more_body(bool)&lt;/li&gt;
 &lt;li&gt;Response Start: start sending a response. keys include type(&lt;code&gt;http.response.start&lt;/code&gt;), status(int), headers&lt;/li&gt;
 &lt;li&gt;Response Body: continues sending a response to the client. keys include type(&lt;code&gt;http.response,body&lt;/code&gt;), body(bytes), more_body(bool)&lt;/li&gt;
 &lt;li&gt;Disconnect: sent to the application when a connection is closed . keys include type(&lt;code&gt;http.disconnect&lt;/code&gt;)&lt;/li&gt;
@@ -2062,9 +2062,9 @@ dotnet run&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;li&gt;Connection Scope: keys include type(&lt;code&gt;websocket&lt;/code&gt;), asgi, http_version, headers&amp;hellip;&lt;/li&gt;
 &lt;li&gt;Connection: sent when the client initially opens a connection and is about to finish the WebSocket handshake. keys include type(&lt;code&gt;websocket.connect&lt;/code&gt;)&lt;/li&gt;
 &lt;li&gt;Accept: keys include type(&lt;code&gt;websocket.accept&lt;/code&gt;), headers&lt;/li&gt;
-&lt;li&gt;Receive: sent when a message is receivied from the client. keys include type(&lt;code&gt;websocket.receive&lt;/code&gt;), bytes(bytes), text(str)&lt;/li&gt;
+&lt;li&gt;Receive: sent when a message is received from the client. keys include type(&lt;code&gt;websocket.receive&lt;/code&gt;), bytes(bytes), text(str)&lt;/li&gt;
 &lt;li&gt;Send: keys include type(&lt;code&gt;websocket.send&lt;/code&gt;), bytes, text&lt;/li&gt;
-&lt;li&gt;Disconnection: keys include tyoe(&lt;code&gt;websocket.disconnect&lt;/code&gt;), code(int)&lt;/li&gt;
+&lt;li&gt;Disconnection: keys include type(&lt;code&gt;websocket.disconnect&lt;/code&gt;), code(int)&lt;/li&gt;
 &lt;li&gt;Close: tell the server to close the connection. keys include type(&lt;code&gt;websocket.close&lt;/code&gt;), code(int)&lt;/li&gt;
 &lt;/ul&gt;
 
@@ -2072,8 +2072,8 @@ dotnet run&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Scope: exists for the duration of the event loop. keys include type(&lt;code&gt;lifespan&lt;/code&gt;)&lt;/li&gt;
-&lt;li&gt;Startup: send when the server is ready to startup and receive connectins, but before it has started to do so. keys include type(&lt;code&gt;lifespan,startup&lt;/code&gt;)&lt;/li&gt;
-&lt;li&gt;Start Complate: sent by the application when it has comleted its startup. a server must wait for this message before it starts processing connections. keys include type(&lt;code&gt;lifespan.startup.complete&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;Startup: send when the server is ready to startup and receive connections, but before it has started to do so. keys include type(&lt;code&gt;lifespan,startup&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;Start Complete: sent by the application when it has completed its startup. a server must wait for this message before it starts processing connections. keys include type(&lt;code&gt;lifespan.startup.complete&lt;/code&gt;)&lt;/li&gt;
 &lt;li&gt;Startup Failed: if a server sees this it should log the message proved and then exit. keys include type(&lt;code&gt;lifespan.startup.failed&lt;/code&gt;), message(str)&lt;/li&gt;
 &lt;li&gt;Shutdown: sent when the server has stopped accepting connections and closed all active connections. keys include type(&lt;code&gt;lifespan.shutdown&lt;/code&gt;)&lt;/li&gt;
 &lt;li&gt;Shutdown Complete: sent by the application when it has completed its cleanup. keys include type(&lt;code&gt;lifespan.shutdown.complete&lt;/code&gt;)&lt;/li&gt;

@@ -62,7 +62,7 @@
       <pubDate>Wed, 04 Mar 2020 08:25:38 +0800</pubDate>
       
       <guid>https://ppd0705.github.io/post/asgi_note/</guid>
-      <description>Asynchronous Server Gateway Interface Onverview two components protocol server: terminatas socket and translates them into connections and per-conenction event messages application: lives in inside a server, is instantiated once per connection, and handles event messages as they happen difference between two components applications are instantiat objects that are fed events rather than simple callables, and must run as asyncio-compativle corountines two separate parts of a connection: a connection scope; events</description>
+      <description>Asynchronous Server Gateway Interface Onverview two components protocol server: terminates socket and translates them into connections and per-connection event messages application: lives in inside a server, is instantiated once per connection, and handles event messages as they happen difference between two components applications are instant objects that are fed events rather than simple callable, and must run as asyncio-compativle corountines two separate parts of a connection: a connection scope; events</description>
     </item>
     
     <item>

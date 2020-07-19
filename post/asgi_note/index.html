@@ -23,7 +23,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 
 <meta name="author" content="PPD" />
-  <meta name="description" content="Asynchronous Server Gateway Interface Onverview two components protocol server: terminatas socket and translates them into connections and per-conenction event messages application: lives in inside a server, is instantiated once per connection, and handles event messages as they happen difference between two components applications are instantiat objects that are fed events rather than simple callables, and must run as asyncio-compativle corountines two separate parts of a connection: a connection scope; events" />
+  <meta name="description" content="Asynchronous Server Gateway Interface Onverview two components protocol server: terminates socket and translates them into connections and per-connection event messages application: lives in inside a server, is instantiated once per connection, and handles event messages as they happen difference between two components applications are instant objects that are fed events rather than simple callable, and must run as asyncio-compativle corountines two separate parts of a connection: a connection scope; events" />
 
   <meta name="keywords" content="PPD, blog" />
 
@@ -58,14 +58,14 @@
 
 
 <meta property="og:title" content="ASGI摘抄" />
-<meta property="og:description" content="Asynchronous Server Gateway Interface Onverview two components protocol server: terminatas socket and translates them into connections and per-conenction event messages application: lives in inside a server, is instantiated once per connection, and handles event messages as they happen difference between two components applications are instantiat objects that are fed events rather than simple callables, and must run as asyncio-compativle corountines two separate parts of a connection: a connection scope; events" />
+<meta property="og:description" content="Asynchronous Server Gateway Interface Onverview two components protocol server: terminates socket and translates them into connections and per-connection event messages application: lives in inside a server, is instantiated once per connection, and handles event messages as they happen difference between two components applications are instant objects that are fed events rather than simple callable, and must run as asyncio-compativle corountines two separate parts of a connection: a connection scope; events" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://ppd0705.github.io/post/asgi_note/" />
 <meta property="article:published_time" content="2020-03-04T08:25:38&#43;08:00"/>
 <meta property="article:modified_time" content="2020-03-04T08:25:38&#43;08:00"/>
 
 <meta itemprop="name" content="ASGI摘抄">
-<meta itemprop="description" content="Asynchronous Server Gateway Interface Onverview two components protocol server: terminatas socket and translates them into connections and per-conenction event messages application: lives in inside a server, is instantiated once per connection, and handles event messages as they happen difference between two components applications are instantiat objects that are fed events rather than simple callables, and must run as asyncio-compativle corountines two separate parts of a connection: a connection scope; events">
+<meta itemprop="description" content="Asynchronous Server Gateway Interface Onverview two components protocol server: terminates socket and translates them into connections and per-connection event messages application: lives in inside a server, is instantiated once per connection, and handles event messages as they happen difference between two components applications are instant objects that are fed events rather than simple callable, and must run as asyncio-compativle corountines two separate parts of a connection: a connection scope; events">
 
 
 <meta itemprop="datePublished" content="2020-03-04T08:25:38&#43;08:00" />
@@ -77,7 +77,7 @@
 <meta itemprop="keywords" content="Python," />
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="ASGI摘抄"/>
-<meta name="twitter:description" content="Asynchronous Server Gateway Interface Onverview two components protocol server: terminatas socket and translates them into connections and per-conenction event messages application: lives in inside a server, is instantiated once per connection, and handles event messages as they happen difference between two components applications are instantiat objects that are fed events rather than simple callables, and must run as asyncio-compativle corountines two separate parts of a connection: a connection scope; events"/>
+<meta name="twitter:description" content="Asynchronous Server Gateway Interface Onverview two components protocol server: terminates socket and translates them into connections and per-connection event messages application: lives in inside a server, is instantiated once per connection, and handles event messages as they happen difference between two components applications are instant objects that are fed events rather than simple callable, and must run as asyncio-compativle corountines two separate parts of a connection: a connection scope; events"/>
 
 <!--[if lte IE 9]>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
@@ -324,14 +324,14 @@
 <h4 id="two-components">two components</h4>
 
 <ul>
-<li>protocol server: terminatas socket and translates them into connections and per-conenction event messages</li>
+<li>protocol server: terminates socket and translates them into connections and per-connection event messages</li>
 <li>application: lives in inside a server, is instantiated once per connection, and handles event messages as they happen</li>
 </ul>
 
 <h4 id="difference-between-two-components">difference between two components</h4>
 
 <ul>
-<li>applications are instantiat objects that are fed events rather than simple callables, and must run as asyncio-compativle corountines</li>
+<li>applications are instant objects that are fed events rather than simple callable, and must run as asyncio-compativle corountines</li>
 <li>two separate parts of a connection: a connection scope; events</li>
 </ul>
 
@@ -340,18 +340,18 @@
 <h4 id="connection-scope">Connection Scope</h4>
 
 <ul>
-<li>Under HTTP, the connecton scope lasts just one request. it contains most of the request data(apart from the request body)</li>
+<li>Under HTTP, the connection scope lasts just one request. it contains most of the request data(apart from the request body)</li>
 <li>Under WebSocket, the connection scope lasts for as long as the socket is connected. the scope contains information like the WebSocket&rsquo;s path, but details like incoming messages come through as events instead.</li>
-<li>Each protocol definition must contai information about how long its connection scope lasts, and what information you will get inside it</li>
-<li>Applications cannot communicate with the client when they are initialized and given their connection scope, they must wait utnile their event loop is entered</li>
+<li>Each protocol definition must contain information about how long its connection scope lasts, and what information you will get inside it</li>
+<li>Applications cannot communicate with the client when they are initialized and given their connection scope, they must wait until their event loop is entered</li>
 </ul>
 
 <h4 id="events">Events</h4>
 
 <ul>
 <li>for HTTP, 2 evens in order - <code>http.requst</code> and <code>http.disconnect</code></li>
-<li>for WebSocket, it could more like <code>websocket.connect</code>, <code>websocket.send</code>, <code>websocket.receive</code>, and finnaly <code>websocket.disconnect</code></li>
-<li>eacn event is a <code>dict</code></li>
+<li>for WebSocket, it could more like <code>websocket.connect</code>, <code>websocket.send</code>, <code>websocket.receive</code>, and finally <code>websocket.disconnect</code></li>
+<li>each event is a <code>dict</code></li>
 </ul>
 
 <h4 id="applications">Applications</h4>
@@ -366,8 +366,8 @@
 </div>
 </div>
 <ul>
-<li>scope: The connection scope, a dict that contains as least a <code>type</code> key specifying the protocol thas is incoming</li>
-<li>reveive: an awaitable callable that will yield a new event dict when one is available</li>
+<li>scope: The connection scope, a dict that contains as least a <code>type</code> key specifying the protocol that is incoming</li>
+<li>receive: an awaitable callable that will yield a new event dict when one is available</li>
 <li>send: an awaitable callable taking a single event dict as positional argument that will return once the send has been completed or the connection has been closed</li>
 </ul>
 
@@ -377,7 +377,7 @@
 
 <ul>
 <li>Connection Scope: type(<code>http</code>), asgi, method, path, scheme, query_string, client, server</li>
-<li>Request： the body message serves as a way to stram incoming HTTP bodies in chunks. keys include type(<code>http.request</code>), body(bytes), more_body(bool)</li>
+<li>Request： the body message serves as a way to stream incoming HTTP bodies in chunks. keys include type(<code>http.request</code>), body(bytes), more_body(bool)</li>
 <li>Response Start: start sending a response. keys include type(<code>http.response.start</code>), status(int), headers</li>
 <li>Response Body: continues sending a response to the client. keys include type(<code>http.response,body</code>), body(bytes), more_body(bool)</li>
 <li>Disconnect: sent to the application when a connection is closed . keys include type(<code>http.disconnect</code>)</li>
@@ -389,9 +389,9 @@
 <li>Connection Scope: keys include type(<code>websocket</code>), asgi, http_version, headers&hellip;</li>
 <li>Connection: sent when the client initially opens a connection and is about to finish the WebSocket handshake. keys include type(<code>websocket.connect</code>)</li>
 <li>Accept: keys include type(<code>websocket.accept</code>), headers</li>
-<li>Receive: sent when a message is receivied from the client. keys include type(<code>websocket.receive</code>), bytes(bytes), text(str)</li>
+<li>Receive: sent when a message is received from the client. keys include type(<code>websocket.receive</code>), bytes(bytes), text(str)</li>
 <li>Send: keys include type(<code>websocket.send</code>), bytes, text</li>
-<li>Disconnection: keys include tyoe(<code>websocket.disconnect</code>), code(int)</li>
+<li>Disconnection: keys include type(<code>websocket.disconnect</code>), code(int)</li>
 <li>Close: tell the server to close the connection. keys include type(<code>websocket.close</code>), code(int)</li>
 </ul>
 
@@ -399,8 +399,8 @@
 
 <ul>
 <li>Scope: exists for the duration of the event loop. keys include type(<code>lifespan</code>)</li>
-<li>Startup: send when the server is ready to startup and receive connectins, but before it has started to do so. keys include type(<code>lifespan,startup</code>)</li>
-<li>Start Complate: sent by the application when it has comleted its startup. a server must wait for this message before it starts processing connections. keys include type(<code>lifespan.startup.complete</code>)</li>
+<li>Startup: send when the server is ready to startup and receive connections, but before it has started to do so. keys include type(<code>lifespan,startup</code>)</li>
+<li>Start Complete: sent by the application when it has completed its startup. a server must wait for this message before it starts processing connections. keys include type(<code>lifespan.startup.complete</code>)</li>
 <li>Startup Failed: if a server sees this it should log the message proved and then exit. keys include type(<code>lifespan.startup.failed</code>), message(str)</li>
 <li>Shutdown: sent when the server has stopped accepting connections and closed all active connections. keys include type(<code>lifespan.shutdown</code>)</li>
 <li>Shutdown Complete: sent by the application when it has completed its cleanup. keys include type(<code>lifespan.shutdown.complete</code>)</li>
