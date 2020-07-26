@@ -6,10 +6,19 @@
     <description>Recent content in 计算机 on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 05 Jul 2020 22:24:16 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 23 Jul 2020 08:06:35 +0800</lastBuildDate>
     
 	<atom:link href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>[笔记]Pydantic</title>
+      <link>https://ppd0705.github.io/post/pydantic_note/</link>
+      <pubDate>Thu, 23 Jul 2020 08:06:35 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/pydantic_note/</guid>
+      <description>简介 pydantic是一个基于type hint 的类型检查库 使用 Model 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 from typing import Optional from datetime import datetime from pydantic import BaseModel, Field class User(BaseModel): id:int name:str = &amp;#34;PPD&amp;#34; age: int = None hometown:</description>
+    </item>
     
     <item>
       <title>[笔记]GoogleSRE</title>
@@ -44,7 +53,7 @@
       <pubDate>Thu, 12 Mar 2020 22:46:27 +0800</pubDate>
       
       <guid>https://ppd0705.github.io/post/starlette_note/</guid>
-      <description>简介 Starlette是一个轻量的基于ASGI协议的web框架 部分模块 aplications Starlette: app class, 设置routes/middleware等，实现call(sco</description>
+      <description>简介 Starlette是一个轻量的基于ASGI协议的web框架, 一个简单app如下： 1 2 3 4 5 6 7 8 async def app(scope, recieve, send): assert scope[&amp;#34;type&amp;#34;] == &amp;#34;http&amp;#34; body = b&amp;#34;hello: &amp;#34; request = Request(scope, recieve) async for chunk</description>
     </item>
     
     <item>
@@ -180,15 +189,6 @@
       
       <guid>https://ppd0705.github.io/post/java_basic_3/</guid>
       <description>异常 异常类继承自Throwable, 分为Eroor和Exception两类 Error是无需捕获的严重异常 Exception分为Runtime</description>
-    </item>
-    
-    <item>
-      <title>Java_basic_2</title>
-      <link>https://ppd0705.github.io/post/java_basic_2/</link>
-      <pubDate>Mon, 29 Jul 2019 21:53:34 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/java_basic_2/</guid>
-      <description>String 不可变 使用Unicode编码表示 早期JDK以char[]存储，新版本用byte[] StringBuilder 可变对象，新增字符时，不会创建新的临时对象 append</description>
     </item>
     
   </channel>

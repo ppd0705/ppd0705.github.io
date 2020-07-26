@@ -62,7 +62,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://ppd0705.github.io/" />
 
-<meta property="og:updated_time" content="2020-07-05T22:24:16&#43;08:00"/>
+<meta property="og:updated_time" content="2020-07-23T08:06:35&#43;08:00"/>
 
 <meta itemprop="name" content="PPD&#39;s blog">
 <meta itemprop="description" content="PPD&#39;s blog">
@@ -287,6 +287,42 @@
   <header class="post-header">
     <h1 class="post-title">
       
+      <a class="post-link" href="/post/pydantic_note/">[笔记]Pydantic</a>
+    </h1>
+    
+    <div class="post-meta">
+      <time datetime="2020-07-23" class="post-time">
+        2020-07-23 08:06:35
+      </time>
+      <div class="post-category">
+          <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
+          
+        </div>
+      <span class="more-meta"> 508 words </span>
+      <span class="more-meta"> 2 min read </span>
+      
+      
+      
+    </div>
+  </header>
+  
+  <div class="post-content">
+    
+    <div class="post-summary">
+      简介 pydantic是一个基于type hint 的类型检查库 使用 Model 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 from typing import Optional from datetime import datetime from pydantic import BaseModel, Field class User(BaseModel): id:int name:str = &#34;PPD&#34; age: int = None hometown:
+    </div>
+    <div class="read-more">
+      <a href="/post/pydantic_note/" class="read-more-link">Read more</a>
+    </div>
+    
+  </div>
+</article>
+
+    
+      <article class="post bg-white">
+  <header class="post-header">
+    <h1 class="post-title">
+      
       <a class="post-link" href="/post/google_sre/">[笔记]GoogleSRE</a>
     </h1>
     
@@ -406,8 +442,8 @@
           <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
           
         </div>
-      <span class="more-meta"> 501 words </span>
-      <span class="more-meta"> 1 min read </span>
+      <span class="more-meta"> 1135 words </span>
+      <span class="more-meta"> 3 min read </span>
       
       
       
@@ -417,7 +453,7 @@
   <div class="post-content">
     
     <div class="post-summary">
-      简介 Starlette是一个轻量的基于ASGI协议的web框架 部分模块 aplications Starlette: app class, 设置routes/middleware等，实现call(sco
+      简介 Starlette是一个轻量的基于ASGI协议的web框架, 一个简单app如下： 1 2 3 4 5 6 7 8 async def app(scope, recieve, send): assert scope[&#34;type&#34;] == &#34;http&#34; body = b&#34;hello: &#34; request = Request(scope, recieve) async for chunk
     </div>
     <div class="read-more">
       <a href="/post/starlette_note/" class="read-more-link">Read more</a>
@@ -601,42 +637,6 @@
     </div>
     <div class="read-more">
       <a href="/post/go_basic/" class="read-more-link">Read more</a>
-    </div>
-    
-  </div>
-</article>
-
-    
-      <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
-      
-      <a class="post-link" href="/post/elephant_park/">柬埔寨大象自然公园的一周</a>
-    </h1>
-    
-    <div class="post-meta">
-      <time datetime="2020-01-28" class="post-time">
-        2020-01-28 10:09:11
-      </time>
-      <div class="post-category">
-          <a href="https://ppd0705.github.io/categories/%E7%94%9F%E6%B4%BB/"> 生活 </a>
-          
-        </div>
-      <span class="more-meta"> 1061 words </span>
-      <span class="more-meta"> 3 min read </span>
-      
-      
-      
-    </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      缘起 19年国庆时无意在豆瓣上看到一个人写因为母亲去世想排解一些内心的伤痛而去泰国的大象自然公园度过一周，无意勾起了我对奶奶的思念。这个陪伴我
-    </div>
-    <div class="read-more">
-      <a href="/post/elephant_park/" class="read-more-link">Read more</a>
     </div>
     
   </div>
