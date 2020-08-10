@@ -428,6 +428,76 @@
 &lt;p&gt;事后总结纳入个人绩效考核以及管理层积极参与和认可，可加强事后总结机制&lt;/p&gt;
 
 &lt;p&gt; &lt;/p&gt;
+
+&lt;h3 id=&#34;第23章-利用分布式共识来提高可靠性&#34;&gt;第23章 利用分布式共识来提高可靠性&lt;/h3&gt;
+
+&lt;h4 id=&#34;cap理论&#34;&gt;CAP理论&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Consistency: 每次读取要么获得最新的数据，要么获得错误&lt;/li&gt;
+&lt;li&gt;Availability: 每次都能获得一个非错误响应，但不保证返回的最新的数据&lt;/li&gt;
+&lt;li&gt;Partition tolerance: 尽管任意数量的消息被节点间的网络丢失或延迟，系统任继续运行&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h5 id=&#34;ca-不能容忍网络错误或节点错误-需要非常严格的全体一致的协议-如2-phase-commit&#34;&gt;CA：不能容忍网络错误或节点错误，需要非常严格的全体一致的协议，如2 phase commit&lt;/h5&gt;
+
+&lt;h5 id=&#34;cp-只需要保证大多数节点的一致性协议-少数落后的节点会变成不可用状态-如paxos算法&#34;&gt;CP：只需要保证大多数节点的一致性协议，少数落后的节点会变成不可用状态, 如Paxos算法&lt;/h5&gt;
+
+&lt;h5 id=&#34;ap-这样的系统不能达成一致性-会出现数据冲突&#34;&gt;AP：这样的系统不能达成一致性，会出现数据冲突&lt;/h5&gt;
+
+&lt;h4 id=&#34;常见的分布式共识问题&#34;&gt;常见的分布式共识问题&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;领头人选举&lt;/li&gt;
+&lt;li&gt;获取小组成员信息&lt;/li&gt;
+&lt;li&gt;分布式锁和租约机制&lt;/li&gt;
+&lt;li&gt;分布式队列&lt;/li&gt;
+&lt;li&gt;以及任何需要在多个进程共同维护一致的关键状态的机制&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;paxos概要&#34;&gt;Paxos概要&lt;/h4&gt;
+
+&lt;p&gt;Paxos基于提案(proposal)的,每个提案都对应一个序号，保证了系统的所有操作严格有序，
+如果提案被大多数节点接受即成功，反之失败&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;第一阶段： 提案者proposer发送一个序列化给数个接受者acceptor,每个acceptor尽在
+没有接受过带有更高序列号的提案的情况下接受这个提案&lt;/li&gt;
+&lt;li&gt;第二阶段: proposer接收到大多数节点的同意回复时，便发送一个带有值得提交信息commit message来尝试提交这个提案&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;复制状态机replicated-state-machine-rsm&#34;&gt;复制状态机replicated state machine(RSM)&lt;/h4&gt;
+
+&lt;p&gt;RSM是一个能在多个进程用同样顺序执行同样一组操作的系统&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;操作按共识算法来全局排序&lt;/li&gt;
+&lt;li&gt;使用关东窗口协议sliding window protocol来同步成员之间的状态消息&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;分布式共识系统的部署&#34;&gt;分布式共识系统的部署&lt;/h4&gt;
+
+&lt;p&gt;副本的数量： 一组2f+1副本可同时承受f个副本失败而继续运行&lt;/p&gt;
+
+&lt;p&gt;因为慢的副本也需要参与冲裁过程所以系统能够承受的失败和落后的副本数量越多，那么整体的系统
+性能也就越好&lt;/p&gt;
+
+&lt;p&gt;副本之间的距离增加，网络往返时间也会增加，系统承受失败的程度也会增加(网络同时出问题的概率会变小)&lt;/p&gt;
+
+&lt;p&gt;向一个采取大多数法定仲裁过程系统增加新副本可能会降低系统的可用性&lt;/p&gt;
+
+&lt;h3 id=&#34;第24章-分布式周期任务系统&#34;&gt;第24章 分布式周期任务系统&lt;/h3&gt;
+
+&lt;p&gt;为了提升Cron的可靠性，我们将实际进程和物理机器分开，运行一个服务，仅通过知名该服务的资源要求以及英国运行的数据中心即可。
+运行一个任务等于想数据中心分发器发送一个RPC&lt;/p&gt;
+
+&lt;p&gt;采用Paxos共识算法保证多个副本的状态一致，使用一个单独的领头人副本，仅该副本可以修改共享状态和启动Cron任务&lt;/p&gt;
+
+&lt;p&gt;任务启动前和启动后均会同步通知到其他的副本，这样每个副本知道任务的启动状态&lt;/p&gt;
+
+&lt;p&gt;任务的启动过程中可能会发生多次RPC调用，为了能够判断RPC是否成功，需要满足其一：
+- 所有需要在选举过后继续的外部操作必须是幂等的，这样可在选举过后重新进行该操作
+- 可以通过查询外部系统确定某项操作是否进行成功&lt;/p&gt;
 </description>
       
     </item>
@@ -3769,7 +3839,7 @@ dotnet run&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 
 &lt;ul&gt;
 &lt;li&gt;先放入list尾部&lt;/li&gt;
-&lt;li&gt;依次和上一次的父节点比较，如果比父节点小则交换(_siftdown上浮)&lt;/li&gt;
+&lt;li&gt;依次和上一层的父节点比较，如果比父节点小则交换(_siftdown上浮)&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h4 id=&#34;移除堆顶元素heappop&#34;&gt;移除堆顶元素heappop：&lt;/h4&gt;
