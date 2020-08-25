@@ -6,10 +6,699 @@
     <description>Recent content on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 23 Jul 2020 08:06:35 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 25 Aug 2020 21:05:35 +0800</lastBuildDate>
     
         <atom:link href="https://ppd0705.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>[笔记]MySQL实战45讲</title>
+      <link>https://ppd0705.github.io/post/mysql_in_action/</link>
+      <pubDate>Tue, 25 Aug 2020 21:05:35 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/mysql_in_action/</guid>
+      
+        <description>
+
+&lt;h3 id=&#34;第一讲-一条sql查询语句的执行过程&#34;&gt;第一讲：一条SQL查询语句的执行过程&lt;/h3&gt;
+
+&lt;h4 id=&#34;mysql架构&#34;&gt;MySQL架构&lt;/h4&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/mysql_in_action/29691D8C-C1EF-4987-88EA-E83320479CDE.png&#34; alt=&#34;0d2070e8f84c4801adbfa03bda1f98d9&#34; /&gt;&lt;/p&gt;
+
+&lt;h5 id=&#34;server层&#34;&gt;Server层&lt;/h5&gt;
+
+&lt;ul&gt;
+&lt;li&gt;连接器： 管理连接，权限验证&lt;/li&gt;
+&lt;li&gt;分析器：词法分析，语法分析&lt;/li&gt;
+&lt;li&gt;优化器：索引选择，join顺序选择，执行计划制定&lt;/li&gt;
+&lt;li&gt;执行器：操作引擎返回结果&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h5 id=&#34;存储引擎层&#34;&gt;存储引擎层&lt;/h5&gt;
+
+&lt;ul&gt;
+&lt;li&gt;负责数据的存储和提取&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;第二讲-一条sql更新语句的执行过程&#34;&gt;第二讲：一条SQL更新语句的执行过程&lt;/h3&gt;
+
+&lt;h4 id=&#34;两种日志&#34;&gt;两种日志&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;redo log: InnoDB引擎特有的的日志系统；大小固定，循环写；物理日志，记录的是数据页做的改动&lt;/li&gt;
+&lt;li&gt;binlog: Server层的日志, 逻辑日志，sql语句的原始逻辑&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;更新流程-浅绿色框表示在innodb内部执行&#34;&gt;更新流程（浅绿色框表示在InnoDB内部执行）&lt;/h4&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/mysql_in_action/02DEDD8D-FBB3-492D-8A4F-C51E0EBDB0D0.png&#34; alt=&#34;2e5bff4910ec189fe1ee6e2ecc7b4bbe&#34; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;redo log 两阶段提交&lt;/li&gt;
+&lt;li&gt;相关参数设定：
+
+&lt;ul&gt;
+&lt;li&gt;innodb_flush_log_at_trx_commit=1表示每次失误的redo log 都持久化到磁盘       - sync_binlog=1表示每次的binlog都持久化到磁盘&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;第三讲-事务隔离&#34;&gt;第三讲：事务隔离&lt;/h3&gt;
+
+&lt;h4 id=&#34;四种隔离级别&#34;&gt;四种隔离级别&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;读未提交(read uncommitted)：
+
+&lt;ul&gt;
+&lt;li&gt;事务还未提交时能被其他事务看到&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;读提交(read committed)：
+
+&lt;ul&gt;
+&lt;li&gt;事务提交后才能被其他事务看到&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;可重复读(repeatable read)(默认选项)：
+
+&lt;ul&gt;
+&lt;li&gt;事务执行过程中看到的数据和该事务启动时一致&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;串行化(serializable)：
+
+&lt;ul&gt;
+&lt;li&gt;读写冲突的时候，后一个事务必须等前一个事务执行完成才能继续执行
+&lt;br /&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;示例&#34;&gt;示例&lt;/h4&gt;
+
+&lt;h5 id=&#34;初始化&#34;&gt;初始化&lt;/h5&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-SQL&#34; data-lang=&#34;SQL&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-SQL&#34; data-lang=&#34;SQL&#34;&gt;&lt;span class=&#34;k&#34;&gt;CREATE&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;DATABASE&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;TEST&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;CREATE&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;TABLE&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;T&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;c&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;engine&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;InnoDB&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;INSERT&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;INTO&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;T&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;c&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;values&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;h5 id=&#34;对于如下示例-在不同的隔离级别-c1-c2-c3-的结果分别是什么&#34;&gt;对于如下示例，在不同的隔离级别&lt;code&gt;c1&lt;/code&gt;/&lt;code&gt;c2&lt;/code&gt;/&lt;code&gt;c3&lt;/code&gt;的结果分别是什么？&lt;/h5&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&#34;center&#34;&gt;事务A&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;事务B&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;start transaction;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;select * from t;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;start transaction;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;update t set c = c + 1 where c = 1;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;select * from t;(&lt;code&gt;c1&lt;/code&gt;)&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;commit;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;select * from t;(&lt;code&gt;c2&lt;/code&gt;)&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;commit;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;select * from t;(&lt;code&gt;c3&lt;/code&gt;)&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;read uncommitted&lt;/em&gt; : 均为2&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;read committed&lt;/em&gt; : c1为1，c2/c3为2&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;repeatable read&lt;/em&gt; : c1/c2为1, c3为2&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;serializable&lt;/em&gt; : c1/c2为1, c3为2 (事务B update时阻塞)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;底层实现逻辑&#34;&gt;底层实现逻辑&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;“读未提交”隔离级别下直接返回记录上的最新值&lt;/li&gt;
+&lt;li&gt;“串行化”隔离级别下直接用加锁的方式来避免并行访问&lt;/li&gt;
+&lt;li&gt;“读已提交”事务在每次Read操作时，都会建立Read View&lt;/li&gt;
+&lt;li&gt;“可重复读”在事务第一次Read时建立一个视图，整个事务存在期间都用这个视图,但是update操作时会读当前并更新视图&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;第四-五讲-索引&#34;&gt;第四、五讲：索引&lt;/h3&gt;
+
+&lt;h4 id=&#34;索引的常见模型&#34;&gt;索引的常见模型&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;哈希表: 适合等值查询的场景&lt;/li&gt;
+&lt;li&gt;有序数组：适用于静态存储，等值查询和范围查询都适用&lt;/li&gt;
+&lt;li&gt;搜索树&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;innodb的b-索引模型&#34;&gt;InnoDB的B+索引模型&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;主键索引(clustered index)：叶子节点存有整行数据&lt;/li&gt;
+&lt;li&gt;二级索引（secondary index）： 叶子节点存有主键的值&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;索引维护&#34;&gt;索引维护&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;自增主键是追加操作，不会触发叶子节点的分裂&lt;/li&gt;
+&lt;li&gt;主键长度越小，二级索引的叶子节点就越小，更节省空间&lt;/li&gt;
+&lt;li&gt;数据页太小会加深层数，太大会增加加载时间和查询时间&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;重建表&#34;&gt;重建表&lt;/h4&gt;
+
+&lt;p&gt;alter table T engine=InnoDB 减少数据空洞&lt;/p&gt;
+
+&lt;h4 id=&#34;覆盖索引&#34;&gt;覆盖索引&lt;/h4&gt;
+
+&lt;p&gt;所查询的数据在索引树上，无需再回表&lt;/p&gt;
+
+&lt;h4 id=&#34;最左前缀原则&#34;&gt;最左前缀原则&lt;/h4&gt;
+
+&lt;p&gt;索引（a, b）可用于查询条件有a或a和b的情况&lt;/p&gt;
+
+&lt;h4 id=&#34;索引下推&#34;&gt;索引下推&lt;/h4&gt;
+
+&lt;p&gt;对索引中包含的字段先做判断， 减少回表次数，如查询 &lt;code&gt;select * from table where name like &amp;quot;王%&amp;quot; and age = 10&lt;/code&gt;, 索引为（name, age）,有索引下推时会对索引中的age做判断而非在回表后再判断&lt;/p&gt;
+
+&lt;h4 id=&#34;其他&#34;&gt;其他&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;主键为(a, b)的表索引c和索引（c, a）等价&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;第六讲-全局锁和表锁&#34;&gt;第六讲：全局锁和表锁&lt;/h3&gt;
+
+&lt;h4 id=&#34;全局锁&#34;&gt;全局锁&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;效果： 加上全局锁是的整个服务处于只读状态&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;加锁命令：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-SQL&#34; data-lang=&#34;SQL&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-SQL&#34; data-lang=&#34;SQL&#34;&gt;&lt;span class=&#34;o&#34;&gt;#&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;FTWRL&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;Flush&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;tables&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;with&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;read&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;lock&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;典型使用场景：做全库逻辑备份&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;注:
+- 对于使用InnoDB的库备份是可用 &lt;code&gt;msyqldump --single-transaction&lt;/code&gt;
+- 全库只读也可用&lt;code&gt;set global readonly=true&lt;/code&gt;的方式,但这个对超级用户无效&lt;/p&gt;
+
+&lt;h4 id=&#34;表级锁&#34;&gt;表级锁&lt;/h4&gt;
+
+&lt;p&gt;分类有2种： 表锁和元数据锁(MDL：meta data lock)&lt;/p&gt;
+
+&lt;h5 id=&#34;表锁&#34;&gt;表锁&lt;/h5&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;语法：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-SQL&#34; data-lang=&#34;SQL&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-SQL&#34; data-lang=&#34;SQL&#34;&gt;&lt;span class=&#34;o&#34;&gt;#&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;加锁&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;lock&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;tables&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;table_name&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;read&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;write&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;#&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;解锁&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;unlock&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;tables&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;效果：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;读锁：其他session写会阻塞,当前session不可写，不可访问其他表&lt;/li&gt;
+&lt;li&gt;写锁: 其他session读写都会阻塞，当前session不可以访问其他表&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;元数据锁&#34;&gt;元数据锁&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;获取： 自动获取&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;类型&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;读锁：增删改查操作&lt;/li&gt;
+&lt;li&gt;写锁：变更表结构&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;互斥性&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;读锁之间不互斥&lt;/li&gt;
+&lt;li&gt;读写锁之间、写写锁之间互斥，会发生阻塞
+&lt;br /&gt;
+&lt;br /&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;第七讲-行锁&#34;&gt;第七讲 行锁&lt;/h3&gt;
+
+&lt;p&gt;行锁是由引擎层实现的，如MyISAM就不支持&lt;/p&gt;
+
+&lt;h4 id=&#34;两阶段&#34;&gt;两阶段&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;执行相应语句时加上，事务结束时释放&lt;/li&gt;
+&lt;li&gt;尽量将最可能锁冲突的的语句放在事务最后&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;死锁&#34;&gt;死锁&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;参数innodb_lock_wait_timeout 锁超时， 默认50s&lt;/li&gt;
+&lt;li&gt;参数innodb_deadlock_detect,检测死锁，默认打开，复杂度O(n2)，所以尽量控制并发事务量&lt;/li&gt;
+&lt;li&gt;死锁检测只会在阻塞时才会执行，只会检测依赖的事务&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;第八讲-视图&#34;&gt;第八讲 视图&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/mysql_in_action/5A850DE9-FF8F-4935-95F9-26CE332387A3.png&#34; alt=&#34;68d08d277a6f7926a41cc5541d3dfced&#34; /&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;一致性读视图-consistent-read-view&#34;&gt;一致性读视图（consistent read view）&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;用于RC和RR隔离级别的实现&lt;/li&gt;
+&lt;li&gt;begin/start transaction并不会马上启动事务，需要等到第一个执行操作才启动，显式启动可用start transaction with consistent snapshot&lt;/li&gt;
+&lt;li&gt;每行数据可能有多个版本，每个版本有自己的trx_id(即对应的事务id)，旧的版本需要根据当前版本和undo log计算出了&lt;/li&gt;
+&lt;li&gt;更新数据都是先读后写，读指读当前的值（current read）, 如果当前的记录的行锁被其他事务占用，就需要等待&lt;/li&gt;
+&lt;li&gt;读语句加上lock in share mode或for update 也是当前读&lt;/li&gt;
+&lt;li&gt;读提交隔离级别下，每个语句执行前都会重新算出一个视图&lt;/li&gt;
+&lt;li&gt;重复读隔离级别下， 事务启动是会建立一个视图&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;第九讲-唯一索引和普通索引的抉择&#34;&gt;第九讲 唯一索引和普通索引的抉择&lt;/h3&gt;
+
+&lt;h4 id=&#34;查询过程&#34;&gt;查询过程&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;数据按页读入内存，InnoDB默认页大小为16KB&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;更新过程&#34;&gt;更新过程&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;当数据在内存中时直接更新&lt;/li&gt;
+&lt;li&gt;当数据不在内存中， 将更新操作缓存在change buffer中，之后再merge, change buffer减少了随机磁盘访问&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;merge的流程&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;从磁盘读入数据页到内存&lt;/li&gt;
+&lt;li&gt;依次更新change buffer中相关记录&lt;/li&gt;
+&lt;li&gt;将内存数据的变更和change buffer的变更写入redo log
+&lt;br /&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;唯一索引需要将数据页读入内存中才能判断唯一性，故不能使用change buffer&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;对于普通索引，如果是写多读少的场景如日志系统，适合change buffer&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;change buffer用的是buffer pool里面的内存，innodb_change_buffer_max_size设置其百分比&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;redo log 会记录在内存数据页更新数据的操作和change buffer的操作；redo log 主要节省的是随机写磁盘的IO消耗，改为顺序写，而change buffer主要节省的是堆积读存盘的IO消耗&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;change buffer的数据会持久化到ibdata系统表里，内存不足或checkpoint的时候会触发落盘&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;第十讲-mysql为什么会选错索引&#34;&gt;第十讲 Mysql为什么会选错索引&lt;/h3&gt;
+
+&lt;h4 id=&#34;优化器选择索引的逻辑&#34;&gt;优化器选择索引的逻辑&lt;/h4&gt;
+
+&lt;p&gt;采样统计预估扫描行情
+- 方式：选择N个数据页，统计这些页面的不同值，得到一个平均值，然后乘以这个索引的页数，得到这个索引的基数cardinality，基数越大，表示区分度也好
+- 更新： 当变更的数据行数超过1/M，会自动触发重新做索引统计&lt;/p&gt;
+
+&lt;p&gt;回表也会被优化器列入考虑因素&lt;/p&gt;
+
+&lt;p&gt;analyze table 来解决统计信息不准确的问题&lt;/p&gt;
+
+&lt;h4 id=&#34;选择异常和处理&#34;&gt;选择异常和处理&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;使用force index&lt;/li&gt;
+&lt;li&gt;修改语句，引导MySQL使用我们期望的索引&lt;/li&gt;
+&lt;li&gt;新建更适合的索引或者删除多余的索引&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;评论区拾遗&#34;&gt;评论区拾遗&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;where a in (1,3) and b in (2, 4)会转换成 (a=1 and b=2) or (a=1 and b=4) or &amp;hellip;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;第十一讲-字符串索引&#34;&gt;第十一讲 字符串索引&lt;/h3&gt;
+
+&lt;h4 id=&#34;前缀索引&#34;&gt;前缀索引&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-SQL&#34; data-lang=&#34;SQL&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-SQL&#34; data-lang=&#34;SQL&#34;&gt;&lt;span class=&#34;k&#34;&gt;alter&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;table&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;SUser&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;add&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;index&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;index2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;email&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;6&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;));&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;使用前缀索引，定义好长度，可以做到既省空间又不用额外增加太多的查询成本，使用前缀索引可能会损失区分度，需要预设一个可接受的比例&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-SQL&#34; data-lang=&#34;SQL&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-SQL&#34; data-lang=&#34;SQL&#34;&gt;&lt;span class=&#34;c1&#34;&gt;--- 查看不同长度前缀的数量
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;select&lt;/span&gt; 
+    &lt;span class=&#34;k&#34;&gt;count&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;distinct&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;left&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;filed&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;4&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;）&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;as&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;L4&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; 
+    &lt;span class=&#34;k&#34;&gt;count&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;distinct&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;left&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;filed&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,,&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;5&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;）&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;as&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;L5&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; 
+    &lt;span class=&#34;k&#34;&gt;count&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;distinct&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;left&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;filed&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,,&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;6&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;）&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;as&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;L6&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; 
+    &lt;span class=&#34;k&#34;&gt;count&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;distinct&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;left&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;filed&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,,&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;7&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;）&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;as&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;L7&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;from&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;SUser&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;使用前缀索引用不上覆盖索引，对应字段只存了前缀部分&lt;/p&gt;
+
+&lt;h4 id=&#34;其他-1&#34;&gt;其他&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;如果前缀区分度比后缀区分度低，可倒序存储再建前缀索引提高区分度&lt;/li&gt;
+&lt;li&gt;可以增加一个int32字段存hash值&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;第十二讲-mysql为什么会-抖动&#34;&gt;第十二讲 MySQL为什么会“抖动”&lt;/h3&gt;
+
+&lt;h4 id=&#34;原因-flush刷脏页&#34;&gt;原因： flush刷脏页&lt;/h4&gt;
+
+&lt;h4 id=&#34;触发场景&#34;&gt;触发场景：&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;redo log写满了&lt;/li&gt;
+&lt;li&gt;系统内存不足&lt;/li&gt;
+&lt;li&gt;Mysql空闲时&lt;/li&gt;
+&lt;li&gt;Mysql正常关闭时&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;刷脏页策略控制&#34;&gt;刷脏页策略控制&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;innodb_io_capacity： 磁盘IO能力，可设成磁盘的IOPS，IOPS可用如下命令测试&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt; fio -filename&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$filename&lt;/span&gt; -direct&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; -iodepth &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; -thread -rw&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;randrw -ioengine&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;psync -bs&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;16k -size&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;500M -numjobs&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;10&lt;/span&gt; -runtime&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;10&lt;/span&gt; -group_reporting -name&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;mytest &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;刷盘速度参考因素： 脏页比例，redo log写盘速度&lt;/li&gt;
+&lt;li&gt;innodb_max_dirty_pages_pct 脏页比例上限，默认值75%， 计算方式Innodb_buffer_pool_pages_dirty/Innodb_buffer_pool_pages_total&lt;/li&gt;
+&lt;li&gt;innodb_flush_neighbors控制是否把相邻的脏页也顺便一起flush, MySQL8.0默认为0&lt;/li&gt;
+&lt;li&gt;LSN(log sequence number)日志序号 可以用show engine innodb status 查看&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;第十三讲-表删除&#34;&gt;第十三讲 表删除&lt;/h3&gt;
+
+&lt;h4 id=&#34;表&#34;&gt;表&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;参数innodb_file_per_table控制每个表是否单独存一个文件， 默认为on, 表数据存储在一个以.ibd为后缀的文件中,如果使用drop table, 会直接删除这个文件&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;行&#34;&gt;行&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;删除数据时只是把对应数据标记为已删除，对应位置可以复用，符合范围条件的数据可以复用这个空间&lt;/li&gt;
+&lt;li&gt;如果整个数据页都标记为删除，可以复用到任何位置&lt;/li&gt;
+&lt;li&gt;如果相邻的两个数据页利用率都很小，系统会将数据合并到一个页，另外一个数据页被标记为可复用&lt;/li&gt;
+&lt;li&gt;如果用delete删除整个表，所有的数据页被标记为可复用，但文件不会变小&lt;/li&gt;
+&lt;li&gt;插入数据可能导致数据页分裂&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;重建表-1&#34;&gt;重建表&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;重建表可以减少数据空洞（每个页留了1/16给后续的更新用）： alter table A engine=InnoDB&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/mysql_in_action/EFDE128B-3C15-447C-B25D-2C73AFA9E38B.png&#34; alt=&#34;2d1cfbbeb013b851a56390d38b5321f0&#34; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Online DDL(data definition Language)（5.6起重建表的默认流程）&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;建立一个临时文件，用原始表的记录生成B+树，存储到临时文件&lt;/li&gt;
+&lt;li&gt;同时把期间原始表的操作记录到一个日志文件中&lt;/li&gt;
+&lt;li&gt;临时文件生成后，将日志中的操作应用到到临时文件&lt;/li&gt;
+&lt;li&gt;用临时文件提花原始表的数据文件&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;optimize talbe = recreate table + analyze table(对索引信息做重新统计)&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;评论区拾遗-1&#34;&gt;评论区拾遗&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;truntace table t 等于 drop table + create table&lt;/li&gt;
+&lt;li&gt;重建表时数据页会按90%满的比例来重新整理页数据（10%留给UPDATE使用）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;第十四讲-count&#34;&gt;第十四讲 count(*)&lt;/h3&gt;
+
+&lt;p&gt;实现方式&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;MyISAM: 把表的总行数存在了磁盘，查询的时候直接返回这个数&lt;/li&gt;
+&lt;li&gt;InnoDB：一行一行读取，累计计数&lt;/li&gt;
+&lt;li&gt;show table status能取得估算的总行数&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;单独实现计数&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;存redis，高效&lt;/li&gt;
+&lt;li&gt;存mysql另一张表，持久化，可用事务保证一致性&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;不同count的区别&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;count(1)：引擎遍历整张表，但不取值&lt;/li&gt;
+&lt;li&gt;count(id)：引擎层遍历整张表逐行解析数据将id返回给server层，&lt;/li&gt;
+&lt;li&gt;count(字段)：引擎层遍历整张表逐行解析数据将对应字段值返回给server层&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;结论：count(字段)&amp;lt;count(主键 id)&amp;lt;count(1)≈count(*)&lt;/p&gt;
+
+&lt;h3 id=&#34;第十五讲-日志和索引相关问题答疑&#34;&gt;第十五讲 日志和索引相关问题答疑&lt;/h3&gt;
+
+&lt;h4 id=&#34;日志相关&#34;&gt;日志相关&lt;/h4&gt;
+
+&lt;h5 id=&#34;两阶段提交过程中crash&#34;&gt;两阶段提交过程中crash&lt;/h5&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-mermaid&#34; data-lang=&#34;mermaid&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-mermaid&#34; data-lang=&#34;mermaid&#34;&gt;graph TD
+A(写入redolog 处于prepare状态) --&amp;gt; |时刻A| B(写入binlog)
+B --&amp;gt; |时刻B| C[提交事务 处于commit状态]&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;时刻A crash: binlog未写入，redo log未提交，事务会回滚&lt;/li&gt;
+&lt;li&gt;时刻B&lt;/li&gt;
+&lt;li&gt;如果binglog完整则提交事务&lt;/li&gt;
+&lt;li&gt;binlog不完整则回滚
+&lt;br /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h5 id=&#34;binlog如何验证完整性&#34;&gt;binlog如何验证完整性&lt;/h5&gt;
+
+&lt;ul&gt;
+&lt;li&gt;statement格式：最后会有comit&lt;/li&gt;
+&lt;li&gt;row格式：最后会XID event&lt;/li&gt;
+&lt;li&gt;5.6.2版本之后还引入了binlog-checksum参数&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h5 id=&#34;redo-log-和binlog如何关联&#34;&gt;redo log 和binlog如何关联&lt;/h5&gt;
+
+&lt;p&gt;通过XID关联&lt;/p&gt;
+
+&lt;p&gt;奔溃恢复的时候，按顺序扫描redo log，如果既有prepare又有commit的redo log,就直接提交，如果没找commit，则拿XID找对应的binlog&lt;/p&gt;
+
+&lt;h5 id=&#34;redo-log-buffer&#34;&gt;redo log buffer&lt;/h5&gt;
+
+&lt;p&gt;一个事务可能有多个操作，操作对应的red log先在redo log buffer中缓存，等执行commit时在写入文件&lt;/p&gt;
+
+&lt;h3 id=&#34;第十六讲-order-by&#34;&gt;第十六讲 order by&lt;/h3&gt;
+
+&lt;p&gt;using filesort表示需要排序，MySQL会给每个线程分配一块内存sort_buffer用于排序&lt;/p&gt;
+
+&lt;h4 id=&#34;全字段排序&#34;&gt;全字段排序&lt;/h4&gt;
+
+&lt;p&gt;把需要查询的字段一行一行查询出放入sort_buffer，再进行快速排序，如果要排序的数据量小于sort_buff_size,排序在内存中完成，否则会利用磁盘临时文件辅助排序，外部排序一般使用归并排序算法。&lt;/p&gt;
+
+&lt;h4 id=&#34;rowid排序&#34;&gt;rowid排序&lt;/h4&gt;
+
+&lt;p&gt;max_length_for_sort_data控制用于排序的行数据长度上限，如果超过这个值就只将排序用到的列和主键列放入sort_buffer，在排完序后再回表找到其他需要的字段. 所以会有两次访问主索引数&lt;/p&gt;
+
+&lt;h4 id=&#34;课后问题-sessiona-最后看到的a是多少&#34;&gt;课后问题: sessionA 最后看到的A是多少&lt;/h4&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&#34;center&#34;&gt;sessionA&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;sessionB&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;start transaction;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;select * from t where id =1; （query result: a=3）&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;update t set a = 5 where id = 1;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;update t set a = 5 where id = 1;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;select * from t where id =1;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;答： 取决于binlog_row_image，binlog_row_image=minimal时a=3,binlog_row_image=full为5。因为mysql在full时会读出所有字段，更新前会判断是否需要更新&lt;/p&gt;
+
+&lt;h3 id=&#34;第十七讲-随机消息&#34;&gt;第十七讲 随机消息&lt;/h3&gt;
+
+&lt;h4 id=&#34;order-by-rand&#34;&gt;order by rand&lt;/h4&gt;
+
+&lt;p&gt;rand是建一个临时表，每行给一个随机值(0, 1),然后在sort buffer中排序,内存中会用到快排，文件中会用归并排序&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;select word from words order by rand() limit 3;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;code&gt;internal_tmp_disk_storage_engine&lt;/code&gt;控制临时表的类型，默认建内存临时表，如果超过了&lt;code&gt;tmp_table_size&lt;/code&gt;就会转成磁盘临时表&lt;/p&gt;
+
+&lt;h4 id=&#34;随机排序法&#34;&gt;随机排序法&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;方法一&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-SQL&#34; data-lang=&#34;SQL&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-SQL&#34; data-lang=&#34;SQL&#34;&gt;&lt;span class=&#34;k&#34;&gt;select&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;max&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;id&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;),&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;min&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;id&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;into&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;@&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;M&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;@&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;N&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;from&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;t&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;set&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;@&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;X&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;floor&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;((&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;@&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;M&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-@&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;N&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;rand&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;@&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;N&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;select&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;from&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;t&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;where&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;id&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;@&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;X&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;limit&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;方法二&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-SQL&#34; data-lang=&#34;SQL&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-SQL&#34; data-lang=&#34;SQL&#34;&gt; &lt;span class=&#34;k&#34;&gt;select&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;count&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;into&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;@&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;C&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;from&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;t&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+ &lt;span class=&#34;k&#34;&gt;set&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;@&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Y&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;floor&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;@&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;C&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;rand&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;());&lt;/span&gt;
+ &lt;span class=&#34;k&#34;&gt;set&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;@&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;sql&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;concat&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;select * from t limit &amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;@&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;,1&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+ &lt;span class=&#34;k&#34;&gt;prepare&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;stmt&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;from&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;@&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;sql&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+ &lt;span class=&#34;k&#34;&gt;execute&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;stmt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+ &lt;span class=&#34;k&#34;&gt;DEALLOCATE&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;prepare&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;stmt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description>
+      
+    </item>
     
     <item>
       <title>[笔记]Pydantic</title>
@@ -3909,9 +4598,9 @@ dotnet run&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;li&gt;调用notify时，会将dequeue中的锁释放&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 
-&lt;li&gt;&lt;p&gt;Semaphore: 基于Condition， 限制同时aquire的数量，并利用nofify来通知waiter&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Semaphore: 基于Condition， 限制同时acquire的数量，并利用notify来通知waiter&lt;/p&gt;&lt;/li&gt;
 
-&lt;li&gt;&lt;p&gt;Event: 基于Cindition，通过一个flag变量来更新状态&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Event: 基于Condition，通过一个flag变量来更新状态&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;hr /&gt;
@@ -5115,248 +5804,6 @@ majority: 大多数节点写入之后才确认&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://yq.aliyun.com/articles/73002&#34;&gt;journal和oplog的关系&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://yq.aliyun.com/articles/54367&#34;&gt;write_concern参数详解&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://yq.aliyun.com/articles/60553&#34;&gt;read_concern参数介绍&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-      
-    </item>
-    
-    <item>
-      <title>MySQL协议初探及pymysql源码节选</title>
-      <link>https://ppd0705.github.io/post/mysql_procotol_1/</link>
-      <pubDate>Wed, 04 Sep 2019 01:10:03 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/mysql_procotol_1/</guid>
-      
-        <description>
-
-&lt;h4 id=&#34;总体交互过程&#34;&gt;总体交互过程&lt;/h4&gt;
-
-&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/mysql_interaction.png&#34; alt=&#34;交互示意&#34; /&gt;&lt;/p&gt;
-
-&lt;h4 id=&#34;登录流程&#34;&gt;登录流程&lt;/h4&gt;
-
-&lt;ul&gt;
-&lt;li&gt;TCP连接建立
-&lt;br /&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# Connection.connection &lt;/span&gt;
-&lt;span class=&#34;n&#34;&gt;sock&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;socket&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;create_connection&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;((&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;host&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;port&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;),&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;connection_timeout&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
-&lt;span class=&#34;n&#34;&gt;sock&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;setsockopt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;socket&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;IPPROTO_TCP&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;socket&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;TCP_NODELAY&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;                       
-&lt;span class=&#34;n&#34;&gt;sock&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;setsockopt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;socket&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;SOL_SOCKET&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;socket&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;SO_KEEPALIVE&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
-&lt;span class=&#34;n&#34;&gt;_rfile&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;_makefile&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;sock&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;rb&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;ul&gt;
-&lt;li&gt;Server向Client发送Handshake packet：包含server版本信息， 随机挑战数等&lt;/li&gt;
-&lt;li&gt;Client与Server发送Auth packet&lt;/li&gt;
-&lt;li&gt;Server向Client发送OK packet或者ERR packet
-&lt;br /&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&#34;认证细节&#34;&gt;认证细节&lt;/h4&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;CHAP协议&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;the server sends the random scramble to the client.&lt;/li&gt;
-&lt;li&gt;client sends the encrypted password back to the server.&lt;/li&gt;
-&lt;li&gt;the server checks the password.
-&lt;br /&gt;&lt;/li&gt;
-&lt;/ol&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;客户端加密&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;stage1 = sha1(password)&lt;/li&gt;
-&lt;li&gt;crypt = (sha1(scramble + sha1(stage1))) ^ stage1
-&lt;br /&gt;&lt;/li&gt;
-&lt;/ol&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;scramble_native_password&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;password&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;message&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
-    &lt;span class=&#34;c1&#34;&gt;# password为明文密码&lt;/span&gt;
-    &lt;span class=&#34;c1&#34;&gt;# message即random scramble&lt;/span&gt;
-    &lt;span class=&#34;n&#34;&gt;stage1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;sha1_new&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;password&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;digest&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;
-    &lt;span class=&#34;n&#34;&gt;stage2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;sha1_new&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;stage1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;digest&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;
-    &lt;span class=&#34;n&#34;&gt;s&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;sha1_new&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;
-    &lt;span class=&#34;n&#34;&gt;s&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;update&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;message&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[:&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;SCRAMBLE_LENGTH&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt;
-    &lt;span class=&#34;n&#34;&gt;s&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;update&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;stage2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
-    &lt;span class=&#34;n&#34;&gt;result&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;s&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;digest&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;
-    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;_my_crypt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;result&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;stage1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
-
-&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;_my_crypt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;message1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;message2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
-    &lt;span class=&#34;n&#34;&gt;result&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;bytearray&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;message1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
-    &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;in&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;range&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;len&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;result&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)):&lt;/span&gt;
-        &lt;span class=&#34;n&#34;&gt;result&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;^=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;message2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;
-    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;bytes&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;result&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;服务端验证 (基于异或的自反性： A ^ B ^ A = B)&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;stage1&amp;rsquo; = crypt ^ (sha1(scramble + mysql.user.password))&lt;/li&gt;
-&lt;li&gt;sha1(stage1&amp;rsquo;) == mysql.user.password
-&lt;br /&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;em&gt;注：即使mysql.user.password泄露也无法认证，因为不知道stage1&lt;/em&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&#34;服务端数据包&#34;&gt;服务端数据包&lt;/h4&gt;
-
-&lt;ul&gt;
-&lt;li&gt;组成
-
-&lt;ul&gt;
-&lt;li&gt;head(4 byte)
-
-&lt;ul&gt;
-&lt;li&gt;payload_length (3 byte)&lt;/li&gt;
-&lt;li&gt;sequense_id (1 byte)&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;payload&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;最大长度（2 ** 24 - 1）,payload等于最大长度时，会拆成多个包，即最后一个包长度总小于最大长度&lt;/li&gt;
-&lt;li&gt;head 解析
-&lt;br /&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# Connection._read_packet&lt;/span&gt;
-&lt;span class=&#34;n&#34;&gt;packet_header&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;bp&#34;&gt;self&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;_read_bytes&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;4&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;        
-&lt;span class=&#34;n&#34;&gt;btrl&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;btrh&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;packet_number&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;struct&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;unpack&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;&amp;lt;HBB&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;packet_header&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
-&lt;span class=&#34;n&#34;&gt;bytes_to_read&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;btrl&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;btrh&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;16&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
-   &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;p&gt;&lt;em&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;注：strucut没有3 byte的类型，故需要分别读H(2 byte)和B(1 byte),然后进行拼接, 小端编码低位在前，所以实际值为 H + B &amp;lt;&amp;lt; 16&lt;/em&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;包的种类：
-
-&lt;ul&gt;
-&lt;li&gt;OK: header = 0 and length of packet &amp;gt; 7&lt;/li&gt;
-&lt;li&gt;EOF(deprecated since 5.7.5): header = 0xfe and length of packet &amp;lt; 9&lt;/li&gt;
-&lt;li&gt;ERROR: header = 0xff&lt;/li&gt;
-&lt;li&gt;Result Set: header in [1, 250]
-&lt;br /&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&#34;客户端数据包&#34;&gt;客户端数据包&lt;/h4&gt;
-
-&lt;ul&gt;
-&lt;li&gt;组成
-
-&lt;ul&gt;
-&lt;li&gt;head(4 byte)
-
-&lt;ul&gt;
-&lt;li&gt;payload_length (3 byte)&lt;/li&gt;
-&lt;li&gt;sequense_id (1 byte)&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;payload
-
-&lt;ul&gt;
-&lt;li&gt;command(1 byte)&lt;/li&gt;
-&lt;li&gt;arguments
-&lt;br /&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;    &lt;span class=&#34;c1&#34;&gt;# Connection._execute_command&lt;/span&gt;
-    &lt;span class=&#34;n&#34;&gt;packet_size&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;min&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;MAX_PACKET_LEN&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;len&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;sql&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;# +1 is for command&lt;/span&gt;
-
-    &lt;span class=&#34;n&#34;&gt;prelude&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;struct&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;pack&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;&amp;lt;iB&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;packet_size&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;command&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
-    &lt;span class=&#34;n&#34;&gt;packet&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;prelude&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;sql&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[:&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;packet_size&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;
-    &lt;span class=&#34;bp&#34;&gt;self&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;_write_bytes&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;packet&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
-    &lt;span class=&#34;bp&#34;&gt;self&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;_next_seq_id&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;
-    &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;packet_size&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;MAX_PACKET_LEN&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;
-        &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt;
-    &lt;span class=&#34;n&#34;&gt;sql&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;sql&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;packet_size&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:]&lt;/span&gt;
-    &lt;span class=&#34;k&#34;&gt;while&lt;/span&gt; &lt;span class=&#34;bp&#34;&gt;True&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;
-        &lt;span class=&#34;n&#34;&gt;packet_size&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;min&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;MAX_PACKET_LEN&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;len&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;sql&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;))&lt;/span&gt;
-        &lt;span class=&#34;bp&#34;&gt;self&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;write_packet&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;sql&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[:&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;packet_size&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt;
-        &lt;span class=&#34;n&#34;&gt;sql&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;sql&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;packet_size&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:]&lt;/span&gt;
-        &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;not&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;sql&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;and&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;packet_size&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;MAX_PACKET_LEN&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;
-            &lt;span class=&#34;k&#34;&gt;break&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;h4 id=&#34;cursor&#34;&gt;cursor&lt;/h4&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Cursor： 默认curosr&lt;/li&gt;
-&lt;li&gt;SSCursor: 不预先将结果一次性全部读入缓存中, 适用于获取大数据时&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&#34;参考&#34;&gt;参考&lt;/h4&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://dev.mysql.com/doc/internals/en/sending-more-than-16mbyte.html&#34;&gt;https://dev.mysql.com/doc/internals/en/sending-more-than-16mbyte.html&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.python.org/dev/peps/pep-0249/#cursor-objects&#34;&gt;https://www.python.org/dev/peps/pep-0249/#cursor-objects&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://jin-yang.github.io/post/mysql-protocol.html&#34;&gt;https://jin-yang.github.io/post/mysql-protocol.html&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.godpan.me/2017/11/10/mysql-protocol.html&#34;&gt;https://www.godpan.me/2017/11/10/mysql-protocol.html&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://zh.wikipedia.org/wiki/%E9%80%BB%E8%BE%91%E5%BC%82%E6%88%96&#34;&gt;https://zh.wikipedia.org/wiki/%E9%80%BB%E8%BE%91%E5%BC%82%E6%88%96&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://zh.wikipedia.org/zh-hans/%E8%AF%A2%E9%97%AE%E6%8F%A1%E6%89%8B%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE&#34;&gt;https://zh.wikipedia.org/zh-hans/%E8%AF%A2%E9%97%AE%E6%8F%A1%E6%89%8B%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://cloud.tencent.com/developer/article/1005252&#34;&gt;https://cloud.tencent.com/developer/article/1005252&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.callmejiagu.com/2018/11/01/%E5%9F%BA%E4%BA%8EMySQL-Protocol%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%B7%B1%E7%9A%84%E6%95%B0%E6%8D%AE%E5%BA%93%E9%A9%B1%E5%8A%A8/&#34;&gt;https://www.callmejiagu.com/2018/11/01/%E5%9F%BA%E4%BA%8EMySQL-Protocol%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%B7%B1%E7%9A%84%E6%95%B0%E6%8D%AE%E5%BA%93%E9%A9%B1%E5%8A%A8/&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
       
