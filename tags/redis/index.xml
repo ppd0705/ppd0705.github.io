@@ -6,10 +6,19 @@
     <description>Recent content in Redis on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 05 Oct 2019 20:28:20 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 31 Aug 2020 21:34:46 +0800</lastBuildDate>
     
 	<atom:link href="https://ppd0705.github.io/tags/redis/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>[笔记]Redis核心技术与实战</title>
+      <link>https://ppd0705.github.io/post/redis_core_technologies/</link>
+      <pubDate>Mon, 31 Aug 2020 21:34:46 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/redis_core_technologies/</guid>
+      <description>2. 数据结构： Redis有哪些慢操作 基本数据结构 五种数据类型 - String - List - Hash - Set - Sorted Set 底层数据结构 全局键值对 桶中的元素都是指向具体值的指针 通过链表</description>
+    </item>
     
     <item>
       <title>Redis协议初探及redis-py源码节选</title>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Redis · PPD&#39;s blog</title>
+  <title>[笔记]Redis核心技术与实战 - PPD&#39;s blog</title>
   
 
 <meta name="renderer" content="webkit" />
@@ -23,7 +23,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 
 <meta name="author" content="PPD" />
-  <meta name="description" content="PPD&#39;s blog" />
+  <meta name="description" content="2. 数据结构： Redis有哪些慢操作 基本数据结构 五种数据类型 - String - List - Hash - Set - Sorted Set 底层数据结构 全局键值对 桶中的元素都是指向具体值的指针 通过链表" />
+
   <meta name="keywords" content="PPD, blog" />
 
 
@@ -34,8 +35,7 @@
 <meta name="generator" content="Hugo 0.55.6" />
 
 
-<link rel="canonical" href="https://ppd0705.github.io/tags/redis/" />
-<link href="%7balternate%20%7bRSS%20application/rss&#43;xml%20%20index%20alternate%20%20false%20false%20true%20false%20false%200%7d%20/tags/redis/index.xml%20https://ppd0705.github.io/tags/redis/index.xml%7d" rel="alternate" type="application/rss+xml" title="PPD&#39;s blog" />
+<link rel="canonical" href="https://ppd0705.github.io/post/redis_core_technologies/" />
 
 
 
@@ -57,19 +57,27 @@
 
 
 
-<meta property="og:title" content="Redis" />
-<meta property="og:description" content="PPD&#39;s blog" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://ppd0705.github.io/tags/redis/" />
+<meta property="og:title" content="[笔记]Redis核心技术与实战" />
+<meta property="og:description" content="2. 数据结构： Redis有哪些慢操作 基本数据结构 五种数据类型 - String - List - Hash - Set - Sorted Set 底层数据结构 全局键值对 桶中的元素都是指向具体值的指针 通过链表" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ppd0705.github.io/post/redis_core_technologies/" />
+<meta property="article:published_time" content="2020-08-31T21:34:46&#43;08:00"/>
+<meta property="article:modified_time" content="2020-08-31T21:34:46&#43;08:00"/>
 
-<meta property="og:updated_time" content="2020-08-31T21:34:46&#43;08:00"/>
+<meta itemprop="name" content="[笔记]Redis核心技术与实战">
+<meta itemprop="description" content="2. 数据结构： Redis有哪些慢操作 基本数据结构 五种数据类型 - String - List - Hash - Set - Sorted Set 底层数据结构 全局键值对 桶中的元素都是指向具体值的指针 通过链表">
 
-<meta itemprop="name" content="Redis">
-<meta itemprop="description" content="PPD&#39;s blog">
 
+<meta itemprop="datePublished" content="2020-08-31T21:34:46&#43;08:00" />
+<meta itemprop="dateModified" content="2020-08-31T21:34:46&#43;08:00" />
+<meta itemprop="wordCount" content="432">
+
+
+
+<meta itemprop="keywords" content="Redis," />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Redis"/>
-<meta name="twitter:description" content="PPD&#39;s blog"/>
+<meta name="twitter:title" content="[笔记]Redis核心技术与实战"/>
+<meta name="twitter:description" content="2. 数据结构： Redis有哪些慢操作 基本数据结构 五种数据类型 - String - List - Hash - Set - Sorted Set 底层数据结构 全局键值对 桶中的元素都是指向具体值的指针 通过链表"/>
 
 <!--[if lte IE 9]>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
@@ -278,66 +286,178 @@
     <main id="main" class="main bg-llight">
       <div class="content-wrapper">
         <div id="content" class="content container">
-          
-
-<section id="archive" class="archive">
-  
+          <article class="post bg-white">
     
-      <div class="archive-title tag">
-        <h2 class="archive-name">Tag: Redis</h2>
+    <header class="post-header">
+      <h1 class="post-title">[笔记]Redis核心技术与实战</h1>
+      
+      <div class="post-meta">
+        <time datetime="2020-08-31" class="post-time">
+          2020-08-31 21:34:46
+        </time>
+        <div class="post-category">
+            <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
+            
+          </div>
+        <span class="more-meta"> 432 words </span>
+          <span class="more-meta"> 1 min read </span>
+
+        
+        
+
+        
+        
       </div>
+    </header>
+
     
+    
+
+    
+    <div class="post-content">
+      
+
+<h2 id="2-数据结构-redis有哪些慢操作">2. 数据结构： Redis有哪些慢操作</h2>
+
+<h3 id="基本数据结构">基本数据结构</h3>
+
+<p>五种数据类型
+- String
+- List
+- Hash
+- Set
+- Sorted Set</p>
+
+<p>底层数据结构</p>
+
+<p><img src="/image/redis_key_technologies/8219f7yy651e566d47cc9f661b399f01.jpg" alt="2_1.jpg" /></p>
+
+<h3 id="全局键值对">全局键值对</h3>
+
+<p><img src="/image/redis_key_technologies/1cc8eaed5d1ca4e3cdbaa5a3d48dfb5f.jpg" alt="2_2.jpg" /></p>
+
+<ul>
+<li><p>桶中的元素都是指向具体值的指针</p></li>
+
+<li><p>通过链表解决冲突</p></li>
+
+<li><p>rehash</p>
+
+<ul>
+<li>使用两个全局哈希表，默认使用表1</li>
+<li>rehash时给表2分配更大的空间</li>
+<li>渐进式地将表1的数据拷贝到表2，每处理一个请求，将一个桶中的所有数据拷贝</li>
+<li>同时也有后台周期(如100ms)迁移任务</li>
+<li>释放表1的空间
+<br /></li>
+</ul></li>
+</ul>
+
+<p><img src="/image/redis_key_technologies/73fb212d0b0928d96a0d7d6ayy76da0c.jpg" alt="2_3.jpg" /></p>
+
+<h3 id="集合数据操作效率">集合数据操作效率</h3>
+
+<h4 id="压缩列表">压缩列表</h4>
+
+<p>类似数组，在表头前有三个字段zlbytes(列表长度)、zltail(表尾偏移量)、zlen（entry个数）, 表尾有一个字段zlend(结束标志位)</p>
+
+<p><img src="/image/redis_key_technologies/9587e483f6ea82f560ff10484aaca4a0.jpg" alt="2_4.jpg" /></p>
+
+<h4 id="跳表">跳表</h4>
+
+<p>在链表的基础上，增加了多级索引，实现数据的快速定位</p>
+
+<p><img src="/image/redis_key_technologies/1eca7135d38de2yy16681c2bbc4f3fb4.jpg" alt="2_5.jpg" /></p>
+
+<h2 id="3-高性能模型-redis单线程为什么那么快">3. 高性能模型： Redis单线程为什么那么快</h2>
+
+<p>Redis单线程是指网络IO和键值对读写是有同一个线程完成的
+其他功能如持久化、异步删除等是有额外线程执行的</p>
+
+<h3 id="快的原因">快的原因</h3>
+
+<ul>
+<li>大部分操作在内存中完成</li>
+<li>高效的数据结构</li>
+<li>IO多路复用机制</li>
+</ul>
+
+<h3 id="同步io模型">同步IO模型</h3>
+
+<p><img src="/image/redis_key_technologies/3_1.jpg" alt="3_1.jpg" /></p>
+
+<p>阻塞点：accept, recv, send</p>
+
+<h3 id="非阻塞io">非阻塞IO</h3>
+
+<p>IO复用是指一个线程同时处理多个IO流</p>
+
+<p><img src="/image/redis_key_technologies/3_2.jpg" alt="3_2.jpg" /></p>
+
+    </div>
+
+    
+    
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="https://ppd0705.github.io/tags/redis/">Redis</a>
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/post/mysql_in_action/">
+            <span class="next-text nav-default">[笔记]MySQL实战45讲</span>
+            <span class="prev-text nav-mobile">Next</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
   
 
   
-    <div class="archive-post">
-      <time datetime="2020-08-31" class="archive-post-time">
-        2020-08-31 21:34:46
-      </time>
-      <span class="archive-post-title">
-        <a href="/post/redis_core_technologies/" class="archive-post-link">
-          [笔记]Redis核心技术与实战
-        </a>
-      </span>
+  
+
+  
+
+  
+  
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "ppd0705/ppd0705.github.io"
+            issue-term="utteranc"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
     </div>
   
-    <div class="archive-post">
-      <time datetime="2019-10-05" class="archive-post-time">
-        2019-10-05 20:28:20
-      </time>
-      <span class="archive-post-title">
-        <a href="/post/redis_procotol_1/" class="archive-post-link">
-          Redis协议初探及redis-py源码节选
-        </a>
-      </span>
-    </div>
-  
-</section>
-
-
-
-
-
 
   
-  
+
   
 
   
-  
 
-  
-  
-
-  
-  
-
-  
-  
-
-
-
-
+    
 
         </div>
       </div>
