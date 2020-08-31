@@ -70,7 +70,7 @@
 
 <meta itemprop="datePublished" content="2020-08-25T21:05:35&#43;08:00" />
 <meta itemprop="dateModified" content="2020-08-25T21:05:35&#43;08:00" />
-<meta itemprop="wordCount" content="5065">
+<meta itemprop="wordCount" content="5536">
 
 
 
@@ -299,8 +299,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 5065 words </span>
-          <span class="more-meta"> 11 min read </span>
+        <span class="more-meta"> 5536 words </span>
+          <span class="more-meta"> 12 min read </span>
 
         
         
@@ -994,6 +994,116 @@ B --&gt; |时刻B| C[提交事务 处于commit状态]</code></pre></td></tr></ta
  <span class="k">DEALLOCATE</span> <span class="k">prepare</span> <span class="n">stmt</span><span class="p">;</span></code></pre></td></tr></table>
 </div>
 </div>
+<h3 id="第十八讲-隐式转换">第十八讲 隐式转换</h3>
+
+<ul>
+<li><p>函数：对字段做了函数操作，就用不上索引，因为可能会破坏索引值的有序性</p></li>
+
+<li><p>隐式类型转化，字符串和数字做比较的话，是将字符串转换成数字</p></li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-SQL" data-lang="SQL"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">t</span> <span class="k">where</span> <span class="n">str_a</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
+<span class="c1">-- 等同于 select * from t where CAST(str_a as signed int) = 100;
+</span><span class="c1"></span>
+<span class="c1">-- 验证
+</span><span class="c1"></span><span class="k">select</span> <span class="s2">&#34;12mw23&#34;</span> <span class="o">=</span> <span class="mi">12</span><span class="p">;</span></code></pre></td></tr></table>
+</div>
+</div>
+<ul>
+<li>隐式字符编码转换</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-SQL" data-lang="SQL"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-SQL" data-lang="SQL"><span class="c1">-- traddelog字符编码为utf8mb4, trade_detaul为utf8
+</span><span class="c1">-- tradeid字段有索引
+</span><span class="c1"></span><span class="k">select</span> <span class="n">d</span><span class="p">.</span><span class="o">*</span> <span class="k">from</span> <span class="n">tradelog</span> <span class="n">l</span><span class="p">,</span> <span class="n">trade_detail</span> <span class="n">d</span> <span class="k">where</span> <span class="n">d</span><span class="p">.</span><span class="n">tradeid</span><span class="o">=</span><span class="n">l</span><span class="p">.</span><span class="n">tradeid</span> <span class="k">and</span> <span class="n">l</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="mi">2</span><span class="p">;</span> <span class="cm">/*语句Q1*/</span>
+<span class="c1">-- 其中查询是用不上索引，因为在tradeid上做了隐式字符转换
+</span><span class="c1"></span>
+<span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">trade_detail</span> <span class="k">where</span> <span class="n">tradeid</span><span class="o">=</span><span class="err">$</span><span class="n">L2</span><span class="p">.</span><span class="n">tradeid</span><span class="p">.</span><span class="n">value</span><span class="p">;</span><span class="cm">/*语句2*/</span>
+
+<span class="c1">-- 等同于
+</span><span class="c1"></span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">trade_detail</span> <span class="k">where</span> <span class="k">CONVERT</span><span class="p">(</span><span class="n">tradeid</span> <span class="k">USING</span> <span class="n">utf8mb4</span><span class="p">)</span><span class="o">=</span><span class="err">$</span><span class="n">L2</span><span class="p">.</span><span class="n">tradeid</span><span class="p">.</span><span class="n">value</span>
+
+<span class="c1">-- 优化
+</span><span class="c1"></span><span class="k">select</span> <span class="n">d</span><span class="p">.</span><span class="o">*</span> <span class="k">from</span> <span class="n">tradelog</span> <span class="n">l</span> <span class="p">,</span> <span class="n">trade_detail</span> <span class="n">d</span> <span class="k">where</span> <span class="n">d</span><span class="p">.</span><span class="n">tradeid</span><span class="o">=</span><span class="k">CONVERT</span><span class="p">(</span><span class="n">l</span><span class="p">.</span><span class="n">tradeid</span> <span class="k">USING</span> <span class="n">utf8</span><span class="p">)</span> <span class="k">and</span> <span class="n">l</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="mi">2</span><span class="p">;</span> 
+
+<span class="c1">-- 原因是tradeid没有了函数操作，即：
+</span><span class="c1"></span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">trade_detail</span> <span class="k">where</span> <span class="n">tradeid</span> <span class="o">=</span> <span class="k">CONVERT</span><span class="p">(</span><span class="err">$</span><span class="n">L2</span><span class="p">.</span><span class="n">tradeid</span><span class="p">.</span><span class="n">value</span> <span class="k">USING</span> <span class="n">utf8mb4</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<h3 id="第十九讲-常见的阻塞场景">第十九讲 常见的阻塞场景</h3>
+
+<h4 id="查询长时间不返回">查询长时间不返回</h4>
+
+<ul>
+<li>等MDL锁</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-SQL" data-lang="SQL"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">lock</span> <span class="k">table</span> <span class="n">t</span> <span class="k">write</span><span class="p">;</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>可以通过查询 sys.schema_table_lock_waits 这张表，我们就可以直接找出造成阻塞的 process id</p>
+
+<ul>
+<li>等flush</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-SQL" data-lang="SQL"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-SQL" data-lang="SQL"><span class="n">flush</span> <span class="n">tables</span> <span class="n">t</span> <span class="k">with</span> <span class="k">read</span> <span class="k">lock</span><span class="p">;</span></code></pre></td></tr></table>
+</div>
+</div>
+<ul>
+<li>等行锁</li>
+</ul>
+
+<p>查询锁占用信息</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-SQL" data-lang="SQL"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-SQL" data-lang="SQL"><span class="n">mysql</span><span class="o">&gt;</span> <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">t</span> <span class="n">sys</span><span class="p">.</span><span class="n">innodb_lock_waits</span> <span class="k">where</span> <span class="n">locked_table</span><span class="o">=</span><span class="s1">&#39;`test`.`t`&#39;</span><span class="err">\</span><span class="k">G</span></code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="查询慢">查询慢</h4>
+
+<ul>
+<li>没有命中索引</li>
+<li>一致性读时 undolog太多，回滚到对应版本耗时长，这种情况会比当前读慢（<code>lock in share mode</code>)</li>
+</ul>
+
     </div>
 
     
