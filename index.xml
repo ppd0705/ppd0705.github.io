@@ -96,6 +96,58 @@
 &lt;p&gt;IO复用是指一个线程同时处理多个IO流&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/redis_key_technologies/3_2.jpg&#34; alt=&#34;3_2.jpg&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;4-aof-append-only-file-日志&#34;&gt;4. AOF(append only file)日志&lt;/h2&gt;
+
+&lt;p&gt;AOF是写后日志,先执行命令后记录日志，避免了额外的检查开销&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/redis_key_technologies/4_1.jpg&#34; alt=&#34;4_1.jpg&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;具体记录的是每条命令，以文本方式保存&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/redis_key_technologies/4_2.jpg&#34; alt=&#34;4_2.jpg&#34; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;三种写策略&#34;&gt;三种写策略&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Always: 每执行一个命令完，立马写磁盘&lt;/li&gt;
+&lt;li&gt;Everysec：先把日志写入缓存区，每秒写一次磁盘&lt;/li&gt;
+&lt;li&gt;No： 把日志写入缓存区，由操作系统决定何时写入磁盘&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/redis_key_technologies/4_3.jpg&#34; alt=&#34;4_3.jpg&#34; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;aof重写&#34;&gt;AOF重写&lt;/h3&gt;
+
+&lt;p&gt;fork一个子进程bgrewriteaof，
+子进程读取所有的键值对，然后对每一个键值对用一条命令记录它的写入到临时文件，
+主进程在重写期间会将新的写操作会同时写到AOF缓冲和AOF重写缓冲，
+等重写完成后，子进程会发信号给父进程，
+父进程将新的AOF重写缓冲追加到临时文件，
+父进程用临时文件替换原有的AOF文件。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/redis_key_technologies/4_4.jpg&#34; alt=&#34;4_4.jpg&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;潜在阻塞点&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;fork过程是阻塞的，虽然copy-on-write, 但fork还是需要拷贝内存表(虚拟内存和物理内存的映射索引表)&lt;/li&gt;
+&lt;li&gt;fork后对父进程操作现有的key,会真正拷贝对应的内存数据，申请新的内存空间&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;5-rdb内存快照&#34;&gt;5. RDB内存快照&lt;/h2&gt;
+
+&lt;p&gt;内存快照是指内存中的数据在某一个时刻的状态的记录&lt;/p&gt;
+
+&lt;p&gt;bgsave会fork一个子进程将内存的数据写入RDB文件&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/redis_key_technologies/5_1.jpg&#34; alt=&#34;5_1.jpg&#34; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;内存快照和aof日志混合使用&#34;&gt;内存快照和AOF日志混合使用&lt;/h3&gt;
+
+&lt;p&gt;两次备份快照期间，中间的写操作用AOF日志记录，开始新的快照备份时清空AOF日志&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/redis_key_technologies/5_2.jpg&#34; alt=&#34;5_2.jpg&#34; /&gt;&lt;/p&gt;
 </description>
       
     </item>
