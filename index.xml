@@ -20,7 +20,7 @@
       
         <description>
 
-&lt;h2 id=&#34;2-数据结构-redis有哪些慢操作&#34;&gt;2. 数据结构： Redis有哪些慢操作&lt;/h2&gt;
+&lt;h2 id=&#34;第2讲-数据结构-redis有哪些慢操作&#34;&gt;第2讲 数据结构： Redis有哪些慢操作&lt;/h2&gt;
 
 &lt;h3 id=&#34;基本数据结构&#34;&gt;基本数据结构&lt;/h3&gt;
 
@@ -72,7 +72,7 @@
 
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/redis_key_technologies/1eca7135d38de2yy16681c2bbc4f3fb4.jpg&#34; alt=&#34;2_5.jpg&#34; /&gt;&lt;/p&gt;
 
-&lt;h2 id=&#34;3-高性能模型-redis单线程为什么那么快&#34;&gt;3. 高性能模型： Redis单线程为什么那么快&lt;/h2&gt;
+&lt;h2 id=&#34;第3讲-高性能模型-redis单线程为什么那么快&#34;&gt;第3讲 高性能模型： Redis单线程为什么那么快&lt;/h2&gt;
 
 &lt;p&gt;Redis单线程是指网络IO和键值对读写是有同一个线程完成的
 其他功能如持久化、异步删除等是有额外线程执行的&lt;/p&gt;
@@ -97,7 +97,7 @@
 
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/redis_key_technologies/3_2.jpg&#34; alt=&#34;3_2.jpg&#34; /&gt;&lt;/p&gt;
 
-&lt;h2 id=&#34;4-aof-append-only-file-日志&#34;&gt;4. AOF(append only file)日志&lt;/h2&gt;
+&lt;h2 id=&#34;第4讲-aof-append-only-file-日志&#34;&gt;第4讲 AOF(append only file)日志&lt;/h2&gt;
 
 &lt;p&gt;AOF是写后日志,先执行命令后记录日志，避免了额外的检查开销&lt;/p&gt;
 
@@ -135,7 +135,7 @@
 &lt;li&gt;fork后对父进程操作现有的key,会真正拷贝对应的内存数据，申请新的内存空间&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;5-rdb内存快照&#34;&gt;5. RDB内存快照&lt;/h2&gt;
+&lt;h2 id=&#34;第5讲-rdb内存快照&#34;&gt;第5讲 RDB内存快照&lt;/h2&gt;
 
 &lt;p&gt;内存快照是指内存中的数据在某一个时刻的状态的记录&lt;/p&gt;
 
@@ -148,6 +148,59 @@
 &lt;p&gt;两次备份快照期间，中间的写操作用AOF日志记录，开始新的快照备份时清空AOF日志&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/redis_key_technologies/5_2.jpg&#34; alt=&#34;5_2.jpg&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;第6讲-主从库如何实现数据一致&#34;&gt;第6讲 主从库如何实现数据一致&lt;/h2&gt;
+
+&lt;h3 id=&#34;读写分离&#34;&gt;读写分离&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;读操作：主库从库都可以接收&lt;/li&gt;
+&lt;li&gt;写操作：首先到主库执行，然后将写操作同步给从库&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/redis_key_technologies/6_1.png&#34; alt=&#34;6_1.png&#34; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;主从库间的第一次同步&#34;&gt;主从库间的第一次同步&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;从库发送&lt;code&gt;psync master_runID offset&lt;/code&gt;，因为是第一次复制，将runID设为&amp;rdquo;?&amp;ldquo;，offset设为-1，表示全量复制&lt;/li&gt;
+&lt;li&gt;主库发送&lt;code&gt;FULLRESYNC runID offset&lt;/code&gt;，发送主库runID和当前复制进度；同时因为是第一次全量复制，主库会执行bgsave,生成RBD文件，
+发送给从库，从库收到文件后，会清空当前数据库，然后加载RDB文件，这一阶段新的写操作会记录在这专门给这个slave的replication buffer中&lt;/li&gt;
+&lt;li&gt;主库将replication buffer发送给从库&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;注： Redis先把数据写到buffer中，然后再把buffer中的数据发到client socket中再通过网络发送出去。
+从库作为一个client，也会分配一个buffer，只不过这个buffer专门用来传播用户的写命令到从库，保证主从数据一致，我们通常把它叫做replication buffer。
+通过client-output-buffer-limit控制这个buffer的大小&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/redis_key_technologies/6_2.jpg&#34; alt=&#34;6_2.jpg&#34; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;级联模式减轻主库压力&#34;&gt;级联模式减轻主库压力&lt;/h3&gt;
+
+&lt;p&gt;通过&amp;rdquo;主 - 从 - 从&amp;rdquo;模式将主库生成RBD和传输RBD的压力以级联的方式分散到从库上&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/redis_key_technologies/6_3.jpg&#34; alt=&#34;6_3.jpg&#34; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;长连接命令传播&#34;&gt;长连接命令传播&lt;/h3&gt;
+
+&lt;p&gt;主从库之间完成了全量复制之后，他们会维护一个长连接，主库会通过这个连接将后续收到的写操作
+同步给从库&lt;/p&gt;
+
+&lt;h3 id=&#34;主从增量同步&#34;&gt;主从增量同步&lt;/h3&gt;
+
+&lt;p&gt;主从库断连后，主库会将断连期间的写操作继续写到repl_backlog_buffer环形缓冲区中。
+主库会记录自己写到的位置master_repl_offset，从库则会记录自己已经读到的位置slave_repl_offset&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;主从库恢复连接后，从库会发送psync命令告知当前的slave_repl_offset, 如果没有被覆写，主库会将
+master_repl_offset和slave_repl_offset之间的写操作发送给从库，如果被覆写会进行全量复制&lt;/li&gt;
+&lt;li&gt;环形缓冲区通过repl_backlog_size控制，需要结合主库的写入速度和主从库建的网络传输速度考虑&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;注：repl_backlog_buffer用于主从间的增量同步。主节点只有一个repl_backlog_buffer缓冲区，各个从节点的offset偏移量都是相对该缓冲区而言的；
+ replication buffer用于主节点与各个从节点间数据通信，每个连接都独享一个buffer&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/redis_key_technologies/6_4.jpg&#34; alt=&#34;6_4.jpg&#34; /&gt;&lt;/p&gt;
 </description>
       
     </item>
