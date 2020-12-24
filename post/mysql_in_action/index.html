@@ -70,7 +70,7 @@
 
 <meta itemprop="datePublished" content="2020-08-25T21:05:35&#43;08:00" />
 <meta itemprop="dateModified" content="2020-08-25T21:05:35&#43;08:00" />
-<meta itemprop="wordCount" content="16931">
+<meta itemprop="wordCount" content="16967">
 
 
 
@@ -299,7 +299,7 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 16931 words </span>
+        <span class="more-meta"> 16967 words </span>
           <span class="more-meta"> 34 min read </span>
 
         
@@ -344,7 +344,7 @@
 
 <ul>
 <li>redo log: InnoDB引擎特有的的日志系统；大小固定，循环写；物理日志，记录的是数据页做的改动</li>
-<li>binlog: Server层的日志, 逻辑日志，sql语句的原始逻辑</li>
+<li>binlog: Server层的日志, 逻辑日志，记录的是sql语句的原始逻辑</li>
 </ul>
 
 <h4 id="更新流程-浅绿色框表示在innodb内部执行">更新流程（浅绿色框表示在InnoDB内部执行）</h4>
@@ -356,7 +356,8 @@
 <li>相关参数设定：
 
 <ul>
-<li>innodb_flush_log_at_trx_commit=1表示每次失误的redo log 都持久化到磁盘       - sync_binlog=1表示每次的binlog都持久化到磁盘</li>
+<li>innodb_flush_log_at_trx_commit=1表示每次事务的redo log 都持久化到磁盘<br /></li>
+<li>sync_binlog=1表示每次的binlog都持久化到磁盘</li>
 </ul></li>
 </ul>
 
@@ -529,7 +530,7 @@
 <h4 id="全局锁">全局锁</h4>
 
 <ul>
-<li>效果： 加上全局锁是的整个服务处于只读状态</li>
+<li>效果： 加上全局锁时整个服务处于只读状态</li>
 
 <li><p>加锁命令：</p>
 <div class="highlight"><div class="chroma">
@@ -546,9 +547,13 @@
 <li>典型使用场景：做全库逻辑备份</li>
 </ul>
 
-<p>注:
-- 对于使用InnoDB的库备份是可用 <code>msyqldump --single-transaction</code>
-- 全库只读也可用<code>set global readonly=true</code>的方式,但这个对超级用户无效</p>
+<p>注:</p>
+
+<ul>
+<li><p>对于使用InnoDB的库备份是可用 <code>msyqldump --single-transaction</code></p></li>
+
+<li><p>全库只读也可用<code>set global readonly=true</code>的方式,但这个对超级用户无效</p></li>
+</ul>
 
 <h4 id="表级锁">表级锁</h4>
 
@@ -636,7 +641,7 @@
 <li>更新数据都是先读后写，读指读当前的值（current read）, 如果当前的记录的行锁被其他事务占用，就需要等待</li>
 <li>读语句加上lock in share mode或for update 也是当前读</li>
 <li>读提交隔离级别下，每个语句执行前都会重新算出一个视图</li>
-<li>重复读隔离级别下， 事务启动是会建立一个视图</li>
+<li>重复读隔离级别下， 第一个执行操作时会建立一个视图，后续复用这个视图</li>
 </ul>
 
 <h3 id="第九讲-唯一索引和普通索引的抉择">第九讲 唯一索引和普通索引的抉择</h3>
@@ -668,7 +673,7 @@
 
 <li><p>change buffer用的是buffer pool里面的内存，innodb_change_buffer_max_size设置其百分比</p></li>
 
-<li><p>redo log 会记录在内存数据页更新数据的操作和change buffer的操作；redo log 主要节省的是随机写磁盘的IO消耗，改为顺序写，而change buffer主要节省的是堆积读存盘的IO消耗</p></li>
+<li><p>redo log 会记录在内存数据页更新数据的操作和change buffer的操作；redo log 主要节省的是随机写磁盘的IO消耗，改为顺序写，而change buffer主要节省的是随机读存盘的IO消耗</p></li>
 
 <li><p>change buffer的数据会持久化到ibdata系统表里，内存不足或checkpoint的时候会触发落盘</p></li>
 </ul>
@@ -677,9 +682,13 @@
 
 <h4 id="优化器选择索引的逻辑">优化器选择索引的逻辑</h4>
 
-<p>采样统计预估扫描行情
-- 方式：选择N个数据页，统计这些页面的不同值，得到一个平均值，然后乘以这个索引的页数，得到这个索引的基数cardinality，基数越大，表示区分度也好
-- 更新： 当变更的数据行数超过1/M，会自动触发重新做索引统计</p>
+<p>采样统计预估扫描行情</p>
+
+<ul>
+<li><p>方式：选择N个数据页，统计这些页面的不同值，得到一个平均值，然后乘以这个索引的页数，得到这个索引的基数cardinality，基数越大，表示区分度也好</p></li>
+
+<li><p>更新： 当变更的数据行数超过1/M，会自动触发重新做索引统计</p></li>
+</ul>
 
 <p>回表也会被优化器列入考虑因素</p>
 
@@ -696,7 +705,7 @@
 <h4 id="评论区拾遗">评论区拾遗</h4>
 
 <ul>
-<li>where a in (1,3) and b in (2, 4)会转换成 (a=1 and b=2) or (a=1 and b=4) or &hellip;</li>
+<li>where a in (1,3) and b in (2, 4)会转换成 (a=1 and b=2) or (a=1 and b=4) or (a=3 and b=2) or (a=3 and b=4)</li>
 </ul>
 
 <h3 id="第十一讲-字符串索引">第十一讲 字符串索引</h3>
@@ -865,10 +874,13 @@ B --&gt; |时刻B| C[提交事务 处于commit状态]</code></pre></td></tr></ta
 </div>
 <ul>
 <li>时刻A crash: binlog未写入，redo log未提交，事务会回滚</li>
-<li>时刻B</li>
+<li>时刻B
+
+<ul>
 <li>如果binglog完整则提交事务</li>
 <li>binlog不完整则回滚
 <br /></li>
+</ul></li>
 </ul>
 
 <h5 id="binlog如何验证完整性">binlog如何验证完整性</h5>
@@ -1426,7 +1438,7 @@ select * from t where id&gt;10 and id&lt;=15 for update;</pre></td></tr></table>
 
 <ul>
 <li>0，只write（写入文件系统page cache）</li>
-<li>1, 每次都致谢fsync,持久化到磁盘</li>
+<li>1, 每次都fsync,持久化到磁盘</li>
 <li>n, 积累n个事务才fsync（通常n为100~1000之间）</li>
 </ul></li>
 <li>binlog_group_commit_sync_delay 参数 表示延迟n微秒后fysync， 判断顺序会先判断参数sync_binlog，满足后才会对该参数判断</li>
@@ -1444,7 +1456,7 @@ select * from t where id&gt;10 and id&lt;=15 for update;</pre></td></tr></table>
 <li>1， 每次都持久化到磁盘</li>
 <li>2， 只write到page cache</li>
 </ul></li>
-<li>InnoDB后台线程会每个一秒将buffer中的日志调用write和fsync持久到磁盘</li>
+<li>InnoDB后台线程会每隔一秒将buffer中的日志调用write和fsync持久到磁盘</li>
 <li>组提交（group commit）: fsync的时候会将当前所有事务一起fsync</li>
 </ul>
 
@@ -1473,7 +1485,7 @@ select * from t where id&gt;10 and id&lt;=15 for update;</pre></td></tr></table>
 <h5 id="格式优缺点">格式优缺点</h5>
 
 <ul>
-<li>statement可能导致主备不一致</li>
+<li>statement可能导致主备不一致（如删除操作主从库选择的索引可能不一样）</li>
 <li>row格式占用空间大</li>
 <li>mixed MySQL自己判断SQL语句是否会引起主备不一致，如有可能就用row格式，否则用statement格式</li>
 <li>mixed格式中使用了now函数的语句会用statements格式，因为binlog记录了上下文<code>SET TIMESTAMP=xxxxxxx</code></li>
@@ -1540,7 +1552,7 @@ T3: 备库B执行完成这个事务</p></li>
 
 <ul>
 <li>同一个事务放到同一个worker</li>
-<li>同一行的事务放到同一个workder</li>
+<li>涉及同一行数据的事务放到同一个workder</li>
 </ul></li>
 
 <li><p>Mysql5.6开始持DB级别的并行复制</p></li>
@@ -2128,7 +2140,7 @@ T3: 备库B执行完成这个事务</p></li>
 
 <h4 id="batched-key-access-bka">Batched Key Access(BKA)</h4>
 
-<p>BKA是对 Index Nested-Loop Join(NLJ)的优化: 将驱动表的数据缓存做到join_buffer中, 一次性的将数据传给被驱动表取匹配</p>
+<p>BKA是对 Index Nested-Loop Join(NLJ)的优化: 将驱动表的数据缓存存到join_buffer中, 一次性的将数据传给被驱动表取匹配</p>
 
 <p><img src="/image/mysql_in_action/35_2.png" alt="35_2" /></p>
 
@@ -2146,7 +2158,7 @@ T3: 备库B执行完成这个事务</p></li>
 <ul>
 <li>可能会多次扫描被驱动表，占用磁盘IO</li>
 <li>join需要执行M*N次对比，占用CPU</li>
-<li>影响buufer pool的命中率
+<li>影响buffer pool的命中率
 
 <ul>
 <li>如果数据量小于buffer pool的3/8(即能完全放入old区域)，多次扫描可能导致数据进入lru的头部</li>
@@ -2423,9 +2435,12 @@ mysql5.7支持了generated column机制，用来实现列数据的关联更新</
 
 <h4 id="批量申请自增id策略">批量申请自增id策略</h4>
 
-<p>对于批量插入数据的语句
-- 第一次申请分配1个
-- 第n次分配2^(n-1)个</p>
+<p>对于批量插入数据的语句</p>
+
+<ul>
+<li>第一次申请分配1个</li>
+<li>第n次分配2^(n-1)个</li>
+</ul>
 
 <h3 id="第40讲-insert语句锁为什么这么多">第40讲 insert语句锁为什么这么多</h3>
 

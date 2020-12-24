@@ -241,7 +241,7 @@ master_repl_offset和slave_repl_offset之间的写操作发送给从库，如果
 
 &lt;ul&gt;
 &lt;li&gt;redo log: InnoDB引擎特有的的日志系统；大小固定，循环写；物理日志，记录的是数据页做的改动&lt;/li&gt;
-&lt;li&gt;binlog: Server层的日志, 逻辑日志，sql语句的原始逻辑&lt;/li&gt;
+&lt;li&gt;binlog: Server层的日志, 逻辑日志，记录的是sql语句的原始逻辑&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h4 id=&#34;更新流程-浅绿色框表示在innodb内部执行&#34;&gt;更新流程（浅绿色框表示在InnoDB内部执行）&lt;/h4&gt;
@@ -253,7 +253,8 @@ master_repl_offset和slave_repl_offset之间的写操作发送给从库，如果
 &lt;li&gt;相关参数设定：
 
 &lt;ul&gt;
-&lt;li&gt;innodb_flush_log_at_trx_commit=1表示每次失误的redo log 都持久化到磁盘       - sync_binlog=1表示每次的binlog都持久化到磁盘&lt;/li&gt;
+&lt;li&gt;innodb_flush_log_at_trx_commit=1表示每次事务的redo log 都持久化到磁盘&lt;br /&gt;&lt;/li&gt;
+&lt;li&gt;sync_binlog=1表示每次的binlog都持久化到磁盘&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
@@ -426,7 +427,7 @@ master_repl_offset和slave_repl_offset之间的写操作发送给从库，如果
 &lt;h4 id=&#34;全局锁&#34;&gt;全局锁&lt;/h4&gt;
 
 &lt;ul&gt;
-&lt;li&gt;效果： 加上全局锁是的整个服务处于只读状态&lt;/li&gt;
+&lt;li&gt;效果： 加上全局锁时整个服务处于只读状态&lt;/li&gt;
 
 &lt;li&gt;&lt;p&gt;加锁命令：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
@@ -443,9 +444,13 @@ master_repl_offset和slave_repl_offset之间的写操作发送给从库，如果
 &lt;li&gt;典型使用场景：做全库逻辑备份&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;注:
-- 对于使用InnoDB的库备份是可用 &lt;code&gt;msyqldump --single-transaction&lt;/code&gt;
-- 全库只读也可用&lt;code&gt;set global readonly=true&lt;/code&gt;的方式,但这个对超级用户无效&lt;/p&gt;
+&lt;p&gt;注:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;对于使用InnoDB的库备份是可用 &lt;code&gt;msyqldump --single-transaction&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;全库只读也可用&lt;code&gt;set global readonly=true&lt;/code&gt;的方式,但这个对超级用户无效&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;h4 id=&#34;表级锁&#34;&gt;表级锁&lt;/h4&gt;
 
@@ -533,7 +538,7 @@ master_repl_offset和slave_repl_offset之间的写操作发送给从库，如果
 &lt;li&gt;更新数据都是先读后写，读指读当前的值（current read）, 如果当前的记录的行锁被其他事务占用，就需要等待&lt;/li&gt;
 &lt;li&gt;读语句加上lock in share mode或for update 也是当前读&lt;/li&gt;
 &lt;li&gt;读提交隔离级别下，每个语句执行前都会重新算出一个视图&lt;/li&gt;
-&lt;li&gt;重复读隔离级别下， 事务启动是会建立一个视图&lt;/li&gt;
+&lt;li&gt;重复读隔离级别下， 第一个执行操作时会建立一个视图，后续复用这个视图&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h3 id=&#34;第九讲-唯一索引和普通索引的抉择&#34;&gt;第九讲 唯一索引和普通索引的抉择&lt;/h3&gt;
@@ -565,7 +570,7 @@ master_repl_offset和slave_repl_offset之间的写操作发送给从库，如果
 
 &lt;li&gt;&lt;p&gt;change buffer用的是buffer pool里面的内存，innodb_change_buffer_max_size设置其百分比&lt;/p&gt;&lt;/li&gt;
 
-&lt;li&gt;&lt;p&gt;redo log 会记录在内存数据页更新数据的操作和change buffer的操作；redo log 主要节省的是随机写磁盘的IO消耗，改为顺序写，而change buffer主要节省的是堆积读存盘的IO消耗&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;redo log 会记录在内存数据页更新数据的操作和change buffer的操作；redo log 主要节省的是随机写磁盘的IO消耗，改为顺序写，而change buffer主要节省的是随机读存盘的IO消耗&lt;/p&gt;&lt;/li&gt;
 
 &lt;li&gt;&lt;p&gt;change buffer的数据会持久化到ibdata系统表里，内存不足或checkpoint的时候会触发落盘&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -574,9 +579,13 @@ master_repl_offset和slave_repl_offset之间的写操作发送给从库，如果
 
 &lt;h4 id=&#34;优化器选择索引的逻辑&#34;&gt;优化器选择索引的逻辑&lt;/h4&gt;
 
-&lt;p&gt;采样统计预估扫描行情
-- 方式：选择N个数据页，统计这些页面的不同值，得到一个平均值，然后乘以这个索引的页数，得到这个索引的基数cardinality，基数越大，表示区分度也好
-- 更新： 当变更的数据行数超过1/M，会自动触发重新做索引统计&lt;/p&gt;
+&lt;p&gt;采样统计预估扫描行情&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;方式：选择N个数据页，统计这些页面的不同值，得到一个平均值，然后乘以这个索引的页数，得到这个索引的基数cardinality，基数越大，表示区分度也好&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;更新： 当变更的数据行数超过1/M，会自动触发重新做索引统计&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;p&gt;回表也会被优化器列入考虑因素&lt;/p&gt;
 
@@ -593,7 +602,7 @@ master_repl_offset和slave_repl_offset之间的写操作发送给从库，如果
 &lt;h4 id=&#34;评论区拾遗&#34;&gt;评论区拾遗&lt;/h4&gt;
 
 &lt;ul&gt;
-&lt;li&gt;where a in (1,3) and b in (2, 4)会转换成 (a=1 and b=2) or (a=1 and b=4) or &amp;hellip;&lt;/li&gt;
+&lt;li&gt;where a in (1,3) and b in (2, 4)会转换成 (a=1 and b=2) or (a=1 and b=4) or (a=3 and b=2) or (a=3 and b=4)&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h3 id=&#34;第十一讲-字符串索引&#34;&gt;第十一讲 字符串索引&lt;/h3&gt;
@@ -762,10 +771,13 @@ B --&amp;gt; |时刻B| C[提交事务 处于commit状态]&lt;/code&gt;&lt;/pre&g
 &lt;/div&gt;
 &lt;ul&gt;
 &lt;li&gt;时刻A crash: binlog未写入，redo log未提交，事务会回滚&lt;/li&gt;
-&lt;li&gt;时刻B&lt;/li&gt;
+&lt;li&gt;时刻B
+
+&lt;ul&gt;
 &lt;li&gt;如果binglog完整则提交事务&lt;/li&gt;
 &lt;li&gt;binlog不完整则回滚
 &lt;br /&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h5 id=&#34;binlog如何验证完整性&#34;&gt;binlog如何验证完整性&lt;/h5&gt;
@@ -1323,7 +1335,7 @@ select * from t where id&amp;gt;10 and id&amp;lt;=15 for update;&lt;/pre&gt;&lt;
 
 &lt;ul&gt;
 &lt;li&gt;0，只write（写入文件系统page cache）&lt;/li&gt;
-&lt;li&gt;1, 每次都致谢fsync,持久化到磁盘&lt;/li&gt;
+&lt;li&gt;1, 每次都fsync,持久化到磁盘&lt;/li&gt;
 &lt;li&gt;n, 积累n个事务才fsync（通常n为100~1000之间）&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;li&gt;binlog_group_commit_sync_delay 参数 表示延迟n微秒后fysync， 判断顺序会先判断参数sync_binlog，满足后才会对该参数判断&lt;/li&gt;
@@ -1341,7 +1353,7 @@ select * from t where id&amp;gt;10 and id&amp;lt;=15 for update;&lt;/pre&gt;&lt;
 &lt;li&gt;1， 每次都持久化到磁盘&lt;/li&gt;
 &lt;li&gt;2， 只write到page cache&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;InnoDB后台线程会每个一秒将buffer中的日志调用write和fsync持久到磁盘&lt;/li&gt;
+&lt;li&gt;InnoDB后台线程会每隔一秒将buffer中的日志调用write和fsync持久到磁盘&lt;/li&gt;
 &lt;li&gt;组提交（group commit）: fsync的时候会将当前所有事务一起fsync&lt;/li&gt;
 &lt;/ul&gt;
 
@@ -1370,7 +1382,7 @@ select * from t where id&amp;gt;10 and id&amp;lt;=15 for update;&lt;/pre&gt;&lt;
 &lt;h5 id=&#34;格式优缺点&#34;&gt;格式优缺点&lt;/h5&gt;
 
 &lt;ul&gt;
-&lt;li&gt;statement可能导致主备不一致&lt;/li&gt;
+&lt;li&gt;statement可能导致主备不一致（如删除操作主从库选择的索引可能不一样）&lt;/li&gt;
 &lt;li&gt;row格式占用空间大&lt;/li&gt;
 &lt;li&gt;mixed MySQL自己判断SQL语句是否会引起主备不一致，如有可能就用row格式，否则用statement格式&lt;/li&gt;
 &lt;li&gt;mixed格式中使用了now函数的语句会用statements格式，因为binlog记录了上下文&lt;code&gt;SET TIMESTAMP=xxxxxxx&lt;/code&gt;&lt;/li&gt;
@@ -1437,7 +1449,7 @@ T3: 备库B执行完成这个事务&lt;/p&gt;&lt;/li&gt;
 
 &lt;ul&gt;
 &lt;li&gt;同一个事务放到同一个worker&lt;/li&gt;
-&lt;li&gt;同一行的事务放到同一个workder&lt;/li&gt;
+&lt;li&gt;涉及同一行数据的事务放到同一个workder&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 
 &lt;li&gt;&lt;p&gt;Mysql5.6开始持DB级别的并行复制&lt;/p&gt;&lt;/li&gt;
@@ -2025,7 +2037,7 @@ T3: 备库B执行完成这个事务&lt;/p&gt;&lt;/li&gt;
 
 &lt;h4 id=&#34;batched-key-access-bka&#34;&gt;Batched Key Access(BKA)&lt;/h4&gt;
 
-&lt;p&gt;BKA是对 Index Nested-Loop Join(NLJ)的优化: 将驱动表的数据缓存做到join_buffer中, 一次性的将数据传给被驱动表取匹配&lt;/p&gt;
+&lt;p&gt;BKA是对 Index Nested-Loop Join(NLJ)的优化: 将驱动表的数据缓存存到join_buffer中, 一次性的将数据传给被驱动表取匹配&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/mysql_in_action/35_2.png&#34; alt=&#34;35_2&#34; /&gt;&lt;/p&gt;
 
@@ -2043,7 +2055,7 @@ T3: 备库B执行完成这个事务&lt;/p&gt;&lt;/li&gt;
 &lt;ul&gt;
 &lt;li&gt;可能会多次扫描被驱动表，占用磁盘IO&lt;/li&gt;
 &lt;li&gt;join需要执行M*N次对比，占用CPU&lt;/li&gt;
-&lt;li&gt;影响buufer pool的命中率
+&lt;li&gt;影响buffer pool的命中率
 
 &lt;ul&gt;
 &lt;li&gt;如果数据量小于buffer pool的3/8(即能完全放入old区域)，多次扫描可能导致数据进入lru的头部&lt;/li&gt;
@@ -2320,9 +2332,12 @@ mysql5.7支持了generated column机制，用来实现列数据的关联更新&l
 
 &lt;h4 id=&#34;批量申请自增id策略&#34;&gt;批量申请自增id策略&lt;/h4&gt;
 
-&lt;p&gt;对于批量插入数据的语句
-- 第一次申请分配1个
-- 第n次分配2^(n-1)个&lt;/p&gt;
+&lt;p&gt;对于批量插入数据的语句&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;第一次申请分配1个&lt;/li&gt;
+&lt;li&gt;第n次分配2^(n-1)个&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;h3 id=&#34;第40讲-insert语句锁为什么这么多&#34;&gt;第40讲 insert语句锁为什么这么多&lt;/h3&gt;
 
