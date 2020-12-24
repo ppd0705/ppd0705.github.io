@@ -6,10 +6,19 @@
     <description>Recent content in MySQL on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 25 Aug 2020 21:05:35 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 24 Dec 2020 11:50:33 +0800</lastBuildDate>
     
 	<atom:link href="https://ppd0705.github.io/tags/mysql/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>MySQL自问自答</title>
+      <link>https://ppd0705.github.io/post/mysql_qa/</link>
+      <pubDate>Thu, 24 Dec 2020 11:50:33 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/mysql_qa/</guid>
+      <description>1. redo log 和bin log的区别？ binlog属于服务层日志，记录的是SQL的原始逻辑，主要用来归档；而redo log属于InnoDB引擎特有的日</description>
+    </item>
     
     <item>
       <title>[笔记]MySQL实战45讲</title>
