@@ -23,7 +23,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 
 <meta name="author" content="PPD" />
-  <meta name="description" content="第2讲 数据结构： Redis有哪些慢操作 基本数据结构 五种数据类型 - String - List - Hash - Set - Sorted Set 底层数据结构 全局键值对 桶中的元素都是指向具体值的指针 通过" />
+  <meta name="description" content="第2讲 数据结构： Redis有哪些慢操作 基本数据结构 五种数据类型 String List Hash Set Sorted Set 底层数据结构 全局键值对 桶中的元素都是指向具体值的指针 通过链表解决冲" />
 
   <meta name="keywords" content="PPD, blog" />
 
@@ -58,26 +58,26 @@
 
 
 <meta property="og:title" content="[笔记]Redis核心技术与实战" />
-<meta property="og:description" content="第2讲 数据结构： Redis有哪些慢操作 基本数据结构 五种数据类型 - String - List - Hash - Set - Sorted Set 底层数据结构 全局键值对 桶中的元素都是指向具体值的指针 通过" />
+<meta property="og:description" content="第2讲 数据结构： Redis有哪些慢操作 基本数据结构 五种数据类型 String List Hash Set Sorted Set 底层数据结构 全局键值对 桶中的元素都是指向具体值的指针 通过链表解决冲" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://ppd0705.github.io/post/redis_core_technologies/" />
 <meta property="article:published_time" content="2020-08-31T21:34:46&#43;08:00"/>
 <meta property="article:modified_time" content="2020-08-31T21:34:46&#43;08:00"/>
 
 <meta itemprop="name" content="[笔记]Redis核心技术与实战">
-<meta itemprop="description" content="第2讲 数据结构： Redis有哪些慢操作 基本数据结构 五种数据类型 - String - List - Hash - Set - Sorted Set 底层数据结构 全局键值对 桶中的元素都是指向具体值的指针 通过">
+<meta itemprop="description" content="第2讲 数据结构： Redis有哪些慢操作 基本数据结构 五种数据类型 String List Hash Set Sorted Set 底层数据结构 全局键值对 桶中的元素都是指向具体值的指针 通过链表解决冲">
 
 
 <meta itemprop="datePublished" content="2020-08-31T21:34:46&#43;08:00" />
 <meta itemprop="dateModified" content="2020-08-31T21:34:46&#43;08:00" />
-<meta itemprop="wordCount" content="1969">
+<meta itemprop="wordCount" content="1965">
 
 
 
 <meta itemprop="keywords" content="Redis," />
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]Redis核心技术与实战"/>
-<meta name="twitter:description" content="第2讲 数据结构： Redis有哪些慢操作 基本数据结构 五种数据类型 - String - List - Hash - Set - Sorted Set 底层数据结构 全局键值对 桶中的元素都是指向具体值的指针 通过"/>
+<meta name="twitter:description" content="第2讲 数据结构： Redis有哪些慢操作 基本数据结构 五种数据类型 String List Hash Set Sorted Set 底层数据结构 全局键值对 桶中的元素都是指向具体值的指针 通过链表解决冲"/>
 
 <!--[if lte IE 9]>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
@@ -299,7 +299,7 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 1969 words </span>
+        <span class="more-meta"> 1965 words </span>
           <span class="more-meta"> 4 min read </span>
 
         
@@ -321,12 +321,15 @@
 
 <h3 id="基本数据结构">基本数据结构</h3>
 
-<p>五种数据类型
-- String
-- List
-- Hash
-- Set
-- Sorted Set</p>
+<p>五种数据类型</p>
+
+<ul>
+<li>String</li>
+<li>List</li>
+<li>Hash</li>
+<li>Set</li>
+<li>Sorted Set</li>
+</ul>
 
 <p>底层数据结构</p>
 
@@ -346,7 +349,7 @@
 <ul>
 <li>使用两个全局哈希表，默认使用表1</li>
 <li>rehash时给表2分配更大的空间</li>
-<li>渐进式地将表1的数据拷贝到表2，每处理一个请求，将一个桶中的所有数据拷贝</li>
+<li>渐进式地将表1的数据拷贝到表2，每处理一个请求，将一个桶中的所有数据拷贝走</li>
 <li>同时也有后台周期(如100ms)迁移任务</li>
 <li>释放表1的空间
 <br /></li>

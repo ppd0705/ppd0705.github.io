@@ -6,10 +6,19 @@
     <description>Recent content in Posts on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 24 Dec 2020 11:50:33 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 27 Dec 2020 18:25:30 +0800</lastBuildDate>
     
 	<atom:link href="https://ppd0705.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Redis自问自答</title>
+      <link>https://ppd0705.github.io/post/redis_qa/</link>
+      <pubDate>Sun, 27 Dec 2020 18:25:30 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/redis_qa/</guid>
+      <description>1. 有哪些数据类型？底层分别使用什么数据结构？ 1 2 3 4 5 6 7 8 type def struct redisObject { // 类型 unsigned type // 编码方式 unsigned encoding // 指向底层数据结构的指针 void *ptr } robj String: int: 底层使用l</description>
+    </item>
     
     <item>
       <title>MySQL自问自答</title>
@@ -26,7 +35,7 @@
       <pubDate>Mon, 31 Aug 2020 21:34:46 +0800</pubDate>
       
       <guid>https://ppd0705.github.io/post/redis_core_technologies/</guid>
-      <description>第2讲 数据结构： Redis有哪些慢操作 基本数据结构 五种数据类型 - String - List - Hash - Set - Sorted Set 底层数据结构 全局键值对 桶中的元素都是指向具体值的指针 通过</description>
+      <description>第2讲 数据结构： Redis有哪些慢操作 基本数据结构 五种数据类型 String List Hash Set Sorted Set 底层数据结构 全局键值对 桶中的元素都是指向具体值的指针 通过链表解决冲</description>
     </item>
     
     <item>
@@ -180,15 +189,6 @@
       
       <guid>https://ppd0705.github.io/post/python_standard_libary_1/</guid>
       <description>threading Lock: 可被其他线程释放 .RLock: 与Lock的区别在于可被锁拥有者多次获取，只能被被锁拥有者释放，释放次数等于获取次数才算完全释放 Condition: condition实</description>
-    </item>
-    
-    <item>
-      <title>Python标准库functools</title>
-      <link>https://ppd0705.github.io/post/functools/</link>
-      <pubDate>Mon, 21 Oct 2019 04:17:14 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/functools/</guid>
-      <description>functools主要有3个函数：partial, wraps, lru_cache partial: 利用一个类装饰器把现函数和参数保存起来, 后续调用的时候再补充和更新参数 1 2 3 4 5 6 7</description>
     </item>
     
   </channel>

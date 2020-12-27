@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>PPD&#39;s blog</title>
+  <title>Redis自问自答 - PPD&#39;s blog</title>
   
 
 <meta name="renderer" content="webkit" />
@@ -23,7 +23,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 
 <meta name="author" content="PPD" />
-  <meta name="description" content="PPD&#39;s blog" />
+  <meta name="description" content="1. 有哪些数据类型？底层分别使用什么数据结构？ 1 2 3 4 5 6 7 8 type def struct redisObject { // 类型 unsigned type // 编码方式 unsigned encoding // 指向底层数据结构的指针 void *ptr } robj String: int: 底层使用l" />
+
   <meta name="keywords" content="PPD, blog" />
 
 
@@ -34,8 +35,7 @@
 <meta name="generator" content="Hugo 0.55.6" />
 
 
-<link rel="canonical" href="https://ppd0705.github.io/" />
-<link href="%7balternate%20%7bRSS%20application/rss&#43;xml%20%20index%20alternate%20%20false%20false%20true%20false%20false%200%7d%20/index.xml%20https://ppd0705.github.io/index.xml%7d" rel="alternate" type="application/rss+xml" title="PPD&#39;s blog" />
+<link rel="canonical" href="https://ppd0705.github.io/post/redis_qa/" />
 
 
 
@@ -57,19 +57,27 @@
 
 
 
-<meta property="og:title" content="PPD&#39;s blog" />
-<meta property="og:description" content="PPD&#39;s blog" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://ppd0705.github.io/" />
+<meta property="og:title" content="Redis自问自答" />
+<meta property="og:description" content="1. 有哪些数据类型？底层分别使用什么数据结构？ 1 2 3 4 5 6 7 8 type def struct redisObject { // 类型 unsigned type // 编码方式 unsigned encoding // 指向底层数据结构的指针 void *ptr } robj String: int: 底层使用l" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ppd0705.github.io/post/redis_qa/" />
+<meta property="article:published_time" content="2020-12-27T18:25:30&#43;08:00"/>
+<meta property="article:modified_time" content="2020-12-27T18:25:30&#43;08:00"/>
 
-<meta property="og:updated_time" content="2020-12-27T18:25:30&#43;08:00"/>
+<meta itemprop="name" content="Redis自问自答">
+<meta itemprop="description" content="1. 有哪些数据类型？底层分别使用什么数据结构？ 1 2 3 4 5 6 7 8 type def struct redisObject { // 类型 unsigned type // 编码方式 unsigned encoding // 指向底层数据结构的指针 void *ptr } robj String: int: 底层使用l">
 
-<meta itemprop="name" content="PPD&#39;s blog">
-<meta itemprop="description" content="PPD&#39;s blog">
 
+<meta itemprop="datePublished" content="2020-12-27T18:25:30&#43;08:00" />
+<meta itemprop="dateModified" content="2020-12-27T18:25:30&#43;08:00" />
+<meta itemprop="wordCount" content="1691">
+
+
+
+<meta itemprop="keywords" content="Redis," />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="PPD&#39;s blog"/>
-<meta name="twitter:description" content="PPD&#39;s blog"/>
+<meta name="twitter:title" content="Redis自问自答"/>
+<meta name="twitter:description" content="1. 有哪些数据类型？底层分别使用什么数据结构？ 1 2 3 4 5 6 7 8 type def struct redisObject { // 类型 unsigned type // 编码方式 unsigned encoding // 指向底层数据结构的指针 void *ptr } robj String: int: 底层使用l"/>
 
 <!--[if lte IE 9]>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
@@ -213,7 +221,7 @@
   <ul id="menu" class="menu">
     
     
-        <li class="menu-item active">
+        <li class="menu-item">
         
           
           
@@ -278,381 +286,265 @@
     <main id="main" class="main bg-llight">
       <div class="content-wrapper">
         <div id="content" class="content container">
-          
-  <section id="posts" class="posts">
+          <article class="post bg-white">
     
-    
-    
-      <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
+    <header class="post-header">
+      <h1 class="post-title">Redis自问自答</h1>
       
-      <a class="post-link" href="/post/functools/">Python标准库functools</a>
-    </h1>
-    
-    <div class="post-meta">
-      <time datetime="2019-10-21" class="post-time">
-        2019-10-21 04:17:14
-      </time>
-      <div class="post-category">
-          <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
-          
-        </div>
-      <span class="more-meta"> 916 words </span>
-      <span class="more-meta"> 2 min read </span>
-      
-      
-      
-    </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      functools主要有3个函数：partial, wraps, lru_cache partial: 利用一个类装饰器把现函数和参数保存起来, 后续调用的时候再补充和更新参数 1 2 3 4 5 6 7
-    </div>
-    <div class="read-more">
-      <a href="/post/functools/" class="read-more-link">Read more</a>
-    </div>
-    
-  </div>
-</article>
+      <div class="post-meta">
+        <time datetime="2020-12-27" class="post-time">
+          2020-12-27 18:25:30
+        </time>
+        <div class="post-category">
+            <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
+            
+          </div>
+        <span class="more-meta"> 1691 words </span>
+          <span class="more-meta"> 4 min read </span>
+
+        
+        
+
+        
+        
+      </div>
+    </header>
 
     
-      <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
-      
-      <a class="post-link" href="/post/redis_procotol_1/">Redis协议初探及redis-py源码节选</a>
-    </h1>
     
-    <div class="post-meta">
-      <time datetime="2019-10-05" class="post-time">
-        2019-10-05 20:28:20
-      </time>
-      <div class="post-category">
-          <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
-          
-        </div>
-      <span class="more-meta"> 744 words </span>
-      <span class="more-meta"> 2 min read </span>
-      
-      
-      
-    </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      通讯协议 基于TCP协议 数据以\r\n分隔，数据类型五种，按第一个字节来区分 simple string: ”+“， 状态回复 1 +OK\r\n error: &ldquo;-&ldquo;， 错误回复
-    </div>
-    <div class="read-more">
-      <a href="/post/redis_procotol_1/" class="read-more-link">Read more</a>
-    </div>
-    
-  </div>
-</article>
 
     
-      <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
+    <div class="post-content">
       
-      <a class="post-link" href="/post/mongo_procotol_1/">Mongo协议初探及pymongo源码节选</a>
-    </h1>
-    
-    <div class="post-meta">
-      <time datetime="2019-10-05" class="post-time">
-        2019-10-05 11:21:34
-      </time>
-      <div class="post-category">
-          <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
-          
-        </div>
-      <span class="more-meta"> 1069 words </span>
-      <span class="more-meta"> 3 min read </span>
-      
-      
-      
+
+<h3 id="1-有哪些数据类型-底层分别使用什么数据结构">1. 有哪些数据类型？底层分别使用什么数据结构？</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-C" data-lang="C"><span class="n">type</span> <span class="n">def</span> <span class="k">struct</span> <span class="n">redisObject</span> <span class="p">{</span>
+    <span class="c1">// 类型
+</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="n">type</span>
+    <span class="c1">// 编码方式
+</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="n">encoding</span>
+    <span class="c1">// 指向底层数据结构的指针
+</span><span class="c1"></span>    <span class="kt">void</span> <span class="o">*</span><span class="n">ptr</span>
+<span class="p">}</span> <span class="n">robj</span></code></pre></td></tr></table>
+</div>
+</div>
+<ul>
+<li>String:
+
+<ul>
+<li>int: 底层使用long类型存储</li>
+<li>raw: 简单动态字符串SDS（含总长和剩余长度信息），字符长度大于39 byte</li>
+<li>embstr: 字符串长度&lt;= 39 byte，redisObject和sdshdr结构在一块连续的内存中，浮点数也使用这种结构存储</li>
+</ul></li>
+<li>List
+
+<ul>
+<li>ziplist: 当元素个数小于512且元素长度小于64字节时使用</li>
+<li>linkedlist</li>
+</ul></li>
+<li>Hash
+
+<ul>
+<li>ziplist: 当元素个数小于512且元素长度小于64字节时使用</li>
+<li>hashtable</li>
+</ul></li>
+<li>Set
+
+<ul>
+<li>intset: 当元素个数小于512且元素全是整数时使用</li>
+<li>hashtable</li>
+</ul></li>
+<li>SortedSet
+
+<ul>
+<li>ziplist: 当元素个数小于128且元素长度小于64字节时使用</li>
+<li>skiplist: 底层实际使用了skiplist和dict两种结构，且他们会通过指针来共享成员和分数</li>
+</ul></li>
+</ul>
+
+<h3 id="2-持久化方式有哪些">2. 持久化方式有哪些？</h3>
+
+<h4 id="aof-append-only-file">AOF(Append Only File)</h4>
+
+<p>AOF是写后日志，已追加的方式记录的是每一条写命令</p>
+
+<p>三种写回策略
+- Always: 每个写命令执行完后立即将日志写回磁盘
+- Everysec: 将日志写入文件缓存，每秒执行fsyncl落盘
+- No: 操作系统决定格式将缓冲区的内存写会磁盘</p>
+
+<p>AOF重写机制
+fork一个子进程bgrewriteaof,逐一将每个键值对用一条命令记录并写入临时文件，完成后会通过信号通知主进程，主进程会将AOF重新缓冲区的内容写入临时文件中，这时临时文件保存的内容和数据库一致，对临时文件改名，原子的覆盖 现有的AOF文件</p>
+
+<h4 id="rdb-redis-database">RDB(Redis DataBase)</h4>
+
+<p>fork一个子进程将全量的数据以二进制的方式写入RDB文件</p>
+
+<p>Redis4.0推出了混合使用AOF和RDB的方式，在两个RBD快照之间使用AOF日志记录期间的所有命令，等下一次做全量快照时，可以清空AOF日志</p>
+
+<h3 id="3-主从同步是怎么样的">3. 主从同步是怎么样的？</h3>
+
+<h4 id="初始同步">初始同步</h4>
+
+<ul>
+<li>从库发送`psync ? -1命令申请全量复制</li>
+<li>主库执行<code>bgsave</code>生成RBD文件，发送给从库加载数据</li>
+<li>主库将期间新的写入操作replication buffer中的数据发送给从库</li>
+</ul>
+
+<h4 id="增量同步">增量同步</h4>
+
+<p>主库有一个repl_backlog_buffer环形缓冲区，主库依据自己的master_repl_offset和从库的slave_repl_offset之间的操作发给从库</p>
+
+<h3 id="4-如何保证高可用">4. 如何保证高可用？</h3>
+
+<p>通过哨兵机制保证高可用，哨兵负责监控节点、选主和通知</p>
+
+<ul>
+<li>监控：哨兵会周期性的给主/从节点发ping命令，如果规定时间内没有响应，对于从库将其标记为下线状态，对于主库则进行切换主库流程</li>
+<li>选主：
+
+<ul>
+<li>客观下线：当有<code>quronum</code>个哨兵判断主库下线，才判断为客观下线</li>
+<li>筛选打分：
+
+<ul>
+<li>去除已下线和总是断连的从节点</li>
+<li>选择复制进度最高的节点</li>
+<li>如果多个选ID最小的</li>
+</ul></li>
+</ul></li>
+<li>通知：
+
+<ul>
+<li>新主库选好后，会给所有从库发信主库连接信息，随之从库会设置主库，重新从新主库同步数据</li>
+<li>另外也会在<code>switch-master</code>频道里面发送主库信息，客户端可以通过订阅收到消息</li>
+</ul></li>
+</ul>
+
+<h3 id="5-哨兵集群是如何工作的">5. 哨兵集群是如何工作的？</h3>
+
+<ul>
+<li>相互发现：通过pub/sub主库的<code>__sentinel:hello__</code>频道来相互发现，随之建立网络连接</li>
+<li>发现从库：通过<code>INFO</code>命令获取从库信息</li>
+<li>Leader选举：当哨兵拿到<code>quronum</code>个主观下线后，就将主库标记为客观下线，随后发起选举命令，如果获得&gt;=N/2+1且&gt;=<code>quronum</code>张票，则选为Leader（注：如果此轮没有产生Leader,会过段时间重试；每个哨兵的定时器执行周期都会加上一个小小的随机时间偏移，目的是让每个哨兵执行上述操作的时间能稍微错开些，也是为了避免它们都同时判定主库下线，同时选举Leader）</li>
+</ul>
+
+<h3 id="6-cluster分片集群是如何工作的">6. Cluster分片集群是如何工作的？</h3>
+
+<ul>
+<li>集群分为16384（2^14 == 2KB）个hash slot哈希槽，key通过CRC算法得到一个16bit的值，再对16384取模，确定落在哪个槽中</li>
+<li>创建cluster时会自动给每个实例分配16384/N个槽，也可以手动指定</li>
+<li>实例之间通过相互传递消息获取最新哈希槽分布信息，</li>
+
+<li><p>客户端和集群连接时，会获得哈希槽对应节点的分布信息，并缓存在本地，之后如果分布信息变更后，客户端把命名发送给了旧的节点，旧的节点会将新节点的地址信息告知客户端，其中有 两种状态:</p>
+
+<ul>
+<li>哈希槽已经迁移完毕，旧节点会返回<code>MOVED</code>信息，客户端的缓存也会更新
+<br /></li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-redis" data-lang="redis"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-redis" data-lang="redis">GET hello:key
+(error) MOVED 13320 172.16.19.5:6379</code></pre></td></tr></table>
+</div>
+</div>
+<ul>
+<li>哈希槽正在迁移，旧节点会返回<code>ASK</code>信息
+<br /></li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-redis" data-lang="redis"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-redis" data-lang="redis">GET hello:key
+(error) ASK 13320 172.16.19.5:6379</code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+
     </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      通讯协议 组成 head: 消息头 payload length(int32): 消息长度 request_id(int32)： 请求ID response_to(int32): 服务端响应对应请求的reques_id(请求类型为OP_QUE
-    </div>
-    <div class="read-more">
-      <a href="/post/mongo_procotol_1/" class="read-more-link">Read more</a>
-    </div>
-    
-  </div>
-</article>
 
     
-      <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
-      
-      <a class="post-link" href="/post/mysql_procotol_1/">MySQL协议初探及pymysql源码节选</a>
-    </h1>
     
-    <div class="post-meta">
-      <time datetime="2019-09-04" class="post-time">
-        2019-09-04 01:10:03
-      </time>
-      <div class="post-category">
-          <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
-          
-        </div>
-      <span class="more-meta"> 718 words </span>
-      <span class="more-meta"> 2 min read </span>
-      
-      
-      
-    </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      总体交互过程 登录流程 TCP连接建立 1 2 3 4 5 # Connection.connection sock = socket.create_connection((host, port),connection_timeout) sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1) sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1) _rfile = _makefile(sock, &#39;rb&#39;) Server向Client发送Handshake packet：包
-    </div>
-    <div class="read-more">
-      <a href="/post/mysql_procotol_1/" class="read-more-link">Read more</a>
-    </div>
-    
-  </div>
-</article>
+
 
     
-      <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
-      
-      <a class="post-link" href="/post/setuptools_doc_notes/">Setuptools_doc_notes</a>
-    </h1>
     
-    <div class="post-meta">
-      <time datetime="2019-08-20" class="post-time">
-        2019-08-20 08:34:39
-      </time>
-      <div class="post-category">
-          <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
-          
-        </div>
-      <span class="more-meta"> 561 words </span>
-      <span class="more-meta"> 2 min read </span>
-      
-      
-      
-    </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      版本规则 正式版本由一串被.符号分隔开的数据组成 2.1，代表release 2 的第一个子版本 2.1 == 2.1.0 == 2.01 预发布版本，通常在版本号后加字母tag， 如
-    </div>
-    <div class="read-more">
-      <a href="/post/setuptools_doc_notes/" class="read-more-link">Read more</a>
-    </div>
-    
-  </div>
-</article>
 
-    
-      <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
-      
-      <a class="post-link" href="/post/java_basic_3/">Java_basic_3</a>
-    </h1>
-    
-    <div class="post-meta">
-      <time datetime="2019-07-31" class="post-time">
-        2019-07-31 22:32:54
-      </time>
-      <div class="post-category">
-          <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
-          
-        </div>
-      <span class="more-meta"> 385 words </span>
-      <span class="more-meta"> 1 min read </span>
-      
-      
-      
-    </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      异常 异常类继承自Throwable, 分为Eroor和Exception两类 Error是无需捕获的严重异常 Exception分为Runtime
-    </div>
-    <div class="read-more">
-      <a href="/post/java_basic_3/" class="read-more-link">Read more</a>
-    </div>
-    
-  </div>
-</article>
-
-    
-      <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
-      
-      <a class="post-link" href="/post/java_basic_2/">Java_basic_2</a>
-    </h1>
-    
-    <div class="post-meta">
-      <time datetime="2019-07-29" class="post-time">
-        2019-07-29 21:53:34
-      </time>
-      <div class="post-category">
-          <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="https://ppd0705.github.io/tags/redis/">Redis</a>
           
         </div>
-      <span class="more-meta"> 346 words </span>
-      <span class="more-meta"> 1 min read </span>
+
       
-      
-      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/post/mysql_qa/">
+            <span class="next-text nav-default">MySQL自问自答</span>
+            <span class="prev-text nav-mobile">Next</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "ppd0705/ppd0705.github.io"
+            issue-term="utteranc"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
     </div>
-  </header>
   
-  <div class="post-content">
-    
-    <div class="post-summary">
-      String 不可变 使用Unicode编码表示 早期JDK以char[]存储，新版本用byte[] StringBuilder 可变对象，新增字符时，不会创建新的临时对象 append
-    </div>
-    <div class="read-more">
-      <a href="/post/java_basic_2/" class="read-more-link">Read more</a>
-    </div>
-    
-  </div>
-</article>
+
+  
+
+  
+
+  
 
     
-      <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
-      
-      <a class="post-link" href="/post/java_basic_1/">Java_basic_1</a>
-    </h1>
-    
-    <div class="post-meta">
-      <time datetime="2019-07-27" class="post-time">
-        2019-07-27 21:49:48
-      </time>
-      <div class="post-category">
-          <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
-          
-        </div>
-      <span class="more-meta"> 1195 words </span>
-      <span class="more-meta"> 3 min read </span>
-      
-      
-      
-    </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      碎碎念： 最近总算给自己打气开始了解Java语言。以下均来自廖雪峰Java教程的笔记 基本单位为class 通常大写字母开头 基本变量类型 整数： byte, short,
-    </div>
-    <div class="read-more">
-      <a href="/post/java_basic_1/" class="read-more-link">Read more</a>
-    </div>
-    
-  </div>
-</article>
-
-    
-      <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
-      
-      <a class="post-link" href="/post/first/">First</a>
-    </h1>
-    
-    <div class="post-meta">
-      <time datetime="2019-06-28" class="post-time">
-        2019-06-28 22:14:50
-      </time>
-      <div class="post-category">
-          <a href="https://ppd0705.github.io/categories/%E7%94%9F%E6%B4%BB/"> 生活 </a>
-          
-        </div>
-      <span class="more-meta"> 46 words </span>
-      <span class="more-meta"> 1 min read </span>
-      
-      
-      
-    </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      写东西一直就是我不擅长的事情 语文作文800字总是觉得凑不够 那就开始写吧 毕竟我也没有什么擅长的
-    </div>
-    <div class="read-more">
-      <a href="/post/first/" class="read-more-link">Read more</a>
-    </div>
-    
-  </div>
-</article>
-
-    
-  </section>
-
-  
-  
-
-
-
-  
-  
-  
-
-  
-  
-
-  
-  
-
-  
-  
-
-  
-  
-  <nav class="pagination">
-    <ul>
-      
-      <li >
-        <a href="/">1</a>
-      </li>
-      
-      <li >
-        <a href="/page/2/">2</a>
-      </li>
-      
-      <li  class="active" >
-        <a href="/page/3/">3</a>
-      </li>
-      
-    </ul>
-  </nav>
-
-  
-  
-
-
-
-
 
         </div>
       </div>

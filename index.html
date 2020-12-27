@@ -62,7 +62,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://ppd0705.github.io/" />
 
-<meta property="og:updated_time" content="2020-12-24T11:50:33&#43;08:00"/>
+<meta property="og:updated_time" content="2020-12-27T18:25:30&#43;08:00"/>
 
 <meta itemprop="name" content="PPD&#39;s blog">
 <meta itemprop="description" content="PPD&#39;s blog">
@@ -287,6 +287,42 @@
   <header class="post-header">
     <h1 class="post-title">
       
+      <a class="post-link" href="/post/redis_qa/">Redis自问自答</a>
+    </h1>
+    
+    <div class="post-meta">
+      <time datetime="2020-12-27" class="post-time">
+        2020-12-27 18:25:30
+      </time>
+      <div class="post-category">
+          <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
+          
+        </div>
+      <span class="more-meta"> 1691 words </span>
+      <span class="more-meta"> 4 min read </span>
+      
+      
+      
+    </div>
+  </header>
+  
+  <div class="post-content">
+    
+    <div class="post-summary">
+      1. 有哪些数据类型？底层分别使用什么数据结构？ 1 2 3 4 5 6 7 8 type def struct redisObject { // 类型 unsigned type // 编码方式 unsigned encoding // 指向底层数据结构的指针 void *ptr } robj String: int: 底层使用l
+    </div>
+    <div class="read-more">
+      <a href="/post/redis_qa/" class="read-more-link">Read more</a>
+    </div>
+    
+  </div>
+</article>
+
+    
+      <article class="post bg-white">
+  <header class="post-header">
+    <h1 class="post-title">
+      
       <a class="post-link" href="/post/mysql_qa/">MySQL自问自答</a>
     </h1>
     
@@ -334,7 +370,7 @@
           <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
           
         </div>
-      <span class="more-meta"> 1969 words </span>
+      <span class="more-meta"> 1965 words </span>
       <span class="more-meta"> 4 min read </span>
       
       
@@ -345,7 +381,7 @@
   <div class="post-content">
     
     <div class="post-summary">
-      第2讲 数据结构： Redis有哪些慢操作 基本数据结构 五种数据类型 - String - List - Hash - Set - Sorted Set 底层数据结构 全局键值对 桶中的元素都是指向具体值的指针 通过
+      第2讲 数据结构： Redis有哪些慢操作 基本数据结构 五种数据类型 String List Hash Set Sorted Set 底层数据结构 全局键值对 桶中的元素都是指向具体值的指针 通过链表解决冲
     </div>
     <div class="read-more">
       <a href="/post/redis_core_technologies/" class="read-more-link">Read more</a>
@@ -601,42 +637,6 @@
     </div>
     <div class="read-more">
       <a href="/post/uvicorn_note/" class="read-more-link">Read more</a>
-    </div>
-    
-  </div>
-</article>
-
-    
-      <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
-      
-      <a class="post-link" href="/post/asgi_note/">ASGI摘抄</a>
-    </h1>
-    
-    <div class="post-meta">
-      <time datetime="2020-03-04" class="post-time">
-        2020-03-04 08:25:38
-      </time>
-      <div class="post-category">
-          <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
-          
-        </div>
-      <span class="more-meta"> 566 words </span>
-      <span class="more-meta"> 2 min read </span>
-      
-      
-      
-    </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      Asynchronous Server Gateway Interface Onverview two components protocol server: terminates socket and translates them into connections and per-connection event messages application: lives in inside a server, is instantiated once per connection, and handles event messages as they happen difference between two components applications are instant objects that are fed events rather than simple callable, and must run as asyncio-compativle corountines two separate parts of a connection: a connection scope; events
-    </div>
-    <div class="read-more">
-      <a href="/post/asgi_note/" class="read-more-link">Read more</a>
     </div>
     
   </div>

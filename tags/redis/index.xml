@@ -6,10 +6,19 @@
     <description>Recent content in Redis on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 31 Aug 2020 21:34:46 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 27 Dec 2020 18:25:30 +0800</lastBuildDate>
     
 	<atom:link href="https://ppd0705.github.io/tags/redis/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Redis自问自答</title>
+      <link>https://ppd0705.github.io/post/redis_qa/</link>
+      <pubDate>Sun, 27 Dec 2020 18:25:30 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/redis_qa/</guid>
+      <description>1. 有哪些数据类型？底层分别使用什么数据结构？ 1 2 3 4 5 6 7 8 type def struct redisObject { // 类型 unsigned type // 编码方式 unsigned encoding // 指向底层数据结构的指针 void *ptr } robj String: int: 底层使用l</description>
+    </item>
     
     <item>
       <title>[笔记]Redis核心技术与实战</title>
@@ -17,7 +26,7 @@
       <pubDate>Mon, 31 Aug 2020 21:34:46 +0800</pubDate>
       
       <guid>https://ppd0705.github.io/post/redis_core_technologies/</guid>
-      <description>第2讲 数据结构： Redis有哪些慢操作 基本数据结构 五种数据类型 - String - List - Hash - Set - Sorted Set 底层数据结构 全局键值对 桶中的元素都是指向具体值的指针 通过</description>
+      <description>第2讲 数据结构： Redis有哪些慢操作 基本数据结构 五种数据类型 String List Hash Set Sorted Set 底层数据结构 全局键值对 桶中的元素都是指向具体值的指针 通过链表解决冲</description>
     </item>
     
     <item>
