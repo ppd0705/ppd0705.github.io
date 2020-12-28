@@ -359,14 +359,14 @@ fork一个子进程bgrewriteaof,逐一将每个键值对用一条命令记录并
 &lt;li&gt;InnoDB
 
 &lt;ul&gt;
-&lt;li&gt;索引使用B+数据&lt;/li&gt;
+&lt;li&gt;索引使用B+树&lt;/li&gt;
 &lt;li&gt;使用redo log保证crush safe&lt;/li&gt;
 &lt;li&gt;支持行锁和事务&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;li&gt;MyISAM
 
 &lt;ul&gt;
-&lt;li&gt;索引使用B+数据&lt;/li&gt;
+&lt;li&gt;索引使用B树&lt;/li&gt;
 &lt;li&gt;不支持行锁和事务&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;li&gt;Memory
