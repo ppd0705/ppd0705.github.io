@@ -70,7 +70,7 @@
 
 <meta itemprop="datePublished" content="2020-12-27T18:25:30&#43;08:00" />
 <meta itemprop="dateModified" content="2020-12-27T18:25:30&#43;08:00" />
-<meta itemprop="wordCount" content="1691">
+<meta itemprop="wordCount" content="2647">
 
 
 
@@ -299,8 +299,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 1691 words </span>
-          <span class="more-meta"> 4 min read </span>
+        <span class="more-meta"> 2647 words </span>
+          <span class="more-meta"> 6 min read </span>
 
         
         
@@ -473,14 +473,130 @@ fork一个子进程bgrewriteaof,逐一将每个键值对用一条命令记录并
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code class="language-redis" data-lang="redis"><span class="lnt">1
 </span><span class="lnt">2
+</span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-redis" data-lang="redis">GET hello:key
-(error) ASK 13320 172.16.19.5:6379</code></pre></td></tr></table>
+(error) ASK 13320 172.16.19.5:6379
+    </code></pre></td></tr></table>
 </div>
 </div></li>
 </ul>
 
+<h3 id="7-事务的实现">7. 事务的实现？</h3>
+
+<p>通过结合<code>WATCH</code>、<code>MULTI</code>和<code>EXEC</code>命令实现事务，执行<code>EXEC</code>时会检查<code>WATCH</code>的键是否有变更，如有则取消事务</p>
+
+<p>原子性：如果执行事务命令队列中的某个命令出错，仍会继续执行下去，无法回滚</p>
+
+<h3 id="8-有哪些耗时操作">8. 有哪些耗时操作？</h3>
+
+<ul>
+<li>全量查询和聚合等复杂操作</li>
+<li>bigkey删除：释放大量内存很耗时  (用专门负责删除的子线程来处理)</li>
+<li>AOF写回磁盘  （频率设置为everysec后用专门负责AOF日志落盘的子线程来处理）</li>
+</ul>
+
+<h3 id="9-有哪些淘汰缓存策略">9. 有哪些淘汰缓存策略？</h3>
+
+<h4 id="不进行淘汰-noeviction">不进行淘汰：noeviction</h4>
+
+<h4 id="对所有数据进行淘汰">对所有数据进行淘汰</h4>
+
+<ul>
+<li>allkeys-lru</li>
+<li>allkeys-random</li>
+<li>allkeys-lfu</li>
+</ul>
+
+<h4 id="对设置了过期时间-无论有没有到期-的数据进行淘汰">对设置了过期时间（无论有没有到期）的数据进行淘汰</h4>
+
+<ul>
+<li>volatile-random: 随机删除</li>
+<li>volatile-ttl: 越早过期的数据越先被删除</li>
+<li>volatile-lru: 每个RedisObject有一个lru字段，记录最新访问时间，淘汰数据时会随机选取N个数据作为一个候选集合，将lru字段最小的数据淘汰</li>
+<li>volatile-lfu: 在lru的基础上为每个数据统计访问次数，优先淘汰次数低的；范围次数相同的情况下淘汰lru更小的</li>
+</ul>
+
+<h3 id="10-有哪些缓存使用模式">10. 有哪些缓存使用模式？</h3>
+
+<ul>
+<li>Cache Aside只读缓存:
+
+<ul>
+<li>读操作命中缓存则直接返回，否则从后端数据库加载到缓存中再返回</li>
+<li>写操作直接更新数据库然后删除缓存</li>
+</ul></li>
+<li>Read/Write Throught  同步直写
+
+<ul>
+<li>写操作会更新缓存和数据库，然后给客户端返回</li>
+</ul></li>
+<li>Read/Write Write Back 异步写回
+
+<ul>
+<li>写操作先更新缓存，等到缓存要淘汰时将它们写回数据库</li>
+</ul></li>
+</ul>
+
+<p>如果需要给写请求加速，选择读写缓存；如果写请求很少选择只读缓存</p>
+
+<h3 id="11-有哪些缓存异常">11. 有哪些缓存异常</h3>
+
+<h4 id="缓存雪崩-大量请求无法在redis中进行处理-导致数据库层压力激增">缓存雪崩： 大量请求无法在Redis中进行处理，导致数据库层压力激增</h4>
+
+<p>通常因为大量数据同时过期，可以给数据过期时间加一个小的随机数</p>
+
+<p>可通过服务降级来应对</p>
+
+<h4 id="缓存击穿-热点请求没有在缓存中处理">缓存击穿：热点请求没有在缓存中处理</h4>
+
+<p>通常发生在热点数据过期时，可以对热点数据不设置过期时间</p>
+
+<h4 id="缓存穿透-访问的数据既不在redis中也不在数据库中">缓存穿透：访问的数据既不在redis中也不在数据库中</h4>
+
+<p>解决方案：a. redis缓存一个缺省值 b. 查询数据库时先通过查询布隆过滤器快速判断数据是否存在</p>
+
+<h3 id="12-分布式锁实现">12. 分布式锁实现？</h3>
+
+<h4 id="单个redis">单个redis</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-redis" data-lang="redis"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-redis" data-lang="redis">SET lock_key unique_value NX PX 10000
+DO SOMETHING
+DEL lock_key</code></pre></td></tr></table>
+</div>
+</div>
+<p>使用SETNX和DEL, 为了DEL可能异常，需要给key设置过期时间</p>
+
+<h4 id="多个redis节点-redlock">多个redis节点 Redlock</h4>
+
+<p>分为三步：
+- 客户端获取当前时间
+- 按顺序依次想N个redis示例执行加锁操作，加锁操作设置超时时间，超时则认为该示例加锁失败
+- 计算加锁总耗时</p>
+
+<p>如果获取了N/2+1把锁且总耗时没有超过锁的有效时间则认为加锁成功
+    - 哈希槽正在迁移，旧节点会返回<code>ASK</code>信息</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">```redis
+GET hello:key
+(error) ASK 13320 172.16.19.5:6379
+```</pre></td></tr></table>
+</div>
+</div>
     </div>
 
     

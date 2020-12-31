@@ -176,14 +176,130 @@ fork一个子进程bgrewriteaof,逐一将每个键值对用一条命令记录并
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
 &lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-redis&#34; data-lang=&#34;redis&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
 &lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class=&#34;lntd&#34;&gt;
 &lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-redis&#34; data-lang=&#34;redis&#34;&gt;GET hello:key
-(error) ASK 13320 172.16.19.5:6379&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+(error) ASK 13320 172.16.19.5:6379
+    &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;/li&gt;
 &lt;/ul&gt;
-</description>
+
+&lt;h3 id=&#34;7-事务的实现&#34;&gt;7. 事务的实现？&lt;/h3&gt;
+
+&lt;p&gt;通过结合&lt;code&gt;WATCH&lt;/code&gt;、&lt;code&gt;MULTI&lt;/code&gt;和&lt;code&gt;EXEC&lt;/code&gt;命令实现事务，执行&lt;code&gt;EXEC&lt;/code&gt;时会检查&lt;code&gt;WATCH&lt;/code&gt;的键是否有变更，如有则取消事务&lt;/p&gt;
+
+&lt;p&gt;原子性：如果执行事务命令队列中的某个命令出错，仍会继续执行下去，无法回滚&lt;/p&gt;
+
+&lt;h3 id=&#34;8-有哪些耗时操作&#34;&gt;8. 有哪些耗时操作？&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;全量查询和聚合等复杂操作&lt;/li&gt;
+&lt;li&gt;bigkey删除：释放大量内存很耗时  (用专门负责删除的子线程来处理)&lt;/li&gt;
+&lt;li&gt;AOF写回磁盘  （频率设置为everysec后用专门负责AOF日志落盘的子线程来处理）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;9-有哪些淘汰缓存策略&#34;&gt;9. 有哪些淘汰缓存策略？&lt;/h3&gt;
+
+&lt;h4 id=&#34;不进行淘汰-noeviction&#34;&gt;不进行淘汰：noeviction&lt;/h4&gt;
+
+&lt;h4 id=&#34;对所有数据进行淘汰&#34;&gt;对所有数据进行淘汰&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;allkeys-lru&lt;/li&gt;
+&lt;li&gt;allkeys-random&lt;/li&gt;
+&lt;li&gt;allkeys-lfu&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;对设置了过期时间-无论有没有到期-的数据进行淘汰&#34;&gt;对设置了过期时间（无论有没有到期）的数据进行淘汰&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;volatile-random: 随机删除&lt;/li&gt;
+&lt;li&gt;volatile-ttl: 越早过期的数据越先被删除&lt;/li&gt;
+&lt;li&gt;volatile-lru: 每个RedisObject有一个lru字段，记录最新访问时间，淘汰数据时会随机选取N个数据作为一个候选集合，将lru字段最小的数据淘汰&lt;/li&gt;
+&lt;li&gt;volatile-lfu: 在lru的基础上为每个数据统计访问次数，优先淘汰次数低的；范围次数相同的情况下淘汰lru更小的&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;10-有哪些缓存使用模式&#34;&gt;10. 有哪些缓存使用模式？&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Cache Aside只读缓存:
+
+&lt;ul&gt;
+&lt;li&gt;读操作命中缓存则直接返回，否则从后端数据库加载到缓存中再返回&lt;/li&gt;
+&lt;li&gt;写操作直接更新数据库然后删除缓存&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Read/Write Throught  同步直写
+
+&lt;ul&gt;
+&lt;li&gt;写操作会更新缓存和数据库，然后给客户端返回&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Read/Write Write Back 异步写回
+
+&lt;ul&gt;
+&lt;li&gt;写操作先更新缓存，等到缓存要淘汰时将它们写回数据库&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;如果需要给写请求加速，选择读写缓存；如果写请求很少选择只读缓存&lt;/p&gt;
+
+&lt;h3 id=&#34;11-有哪些缓存异常&#34;&gt;11. 有哪些缓存异常&lt;/h3&gt;
+
+&lt;h4 id=&#34;缓存雪崩-大量请求无法在redis中进行处理-导致数据库层压力激增&#34;&gt;缓存雪崩： 大量请求无法在Redis中进行处理，导致数据库层压力激增&lt;/h4&gt;
+
+&lt;p&gt;通常因为大量数据同时过期，可以给数据过期时间加一个小的随机数&lt;/p&gt;
+
+&lt;p&gt;可通过服务降级来应对&lt;/p&gt;
+
+&lt;h4 id=&#34;缓存击穿-热点请求没有在缓存中处理&#34;&gt;缓存击穿：热点请求没有在缓存中处理&lt;/h4&gt;
+
+&lt;p&gt;通常发生在热点数据过期时，可以对热点数据不设置过期时间&lt;/p&gt;
+
+&lt;h4 id=&#34;缓存穿透-访问的数据既不在redis中也不在数据库中&#34;&gt;缓存穿透：访问的数据既不在redis中也不在数据库中&lt;/h4&gt;
+
+&lt;p&gt;解决方案：a. redis缓存一个缺省值 b. 查询数据库时先通过查询布隆过滤器快速判断数据是否存在&lt;/p&gt;
+
+&lt;h3 id=&#34;12-分布式锁实现&#34;&gt;12. 分布式锁实现？&lt;/h3&gt;
+
+&lt;h4 id=&#34;单个redis&#34;&gt;单个redis&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-redis&#34; data-lang=&#34;redis&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-redis&#34; data-lang=&#34;redis&#34;&gt;SET lock_key unique_value NX PX 10000
+DO SOMETHING
+DEL lock_key&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;使用SETNX和DEL, 为了DEL可能异常，需要给key设置过期时间&lt;/p&gt;
+
+&lt;h4 id=&#34;多个redis节点-redlock&#34;&gt;多个redis节点 Redlock&lt;/h4&gt;
+
+&lt;p&gt;分为三步：
+- 客户端获取当前时间
+- 按顺序依次想N个redis示例执行加锁操作，加锁操作设置超时时间，超时则认为该示例加锁失败
+- 计算加锁总耗时&lt;/p&gt;
+
+&lt;p&gt;如果获取了N/2+1把锁且总耗时没有超过锁的有效时间则认为加锁成功
+    - 哈希槽正在迁移，旧节点会返回&lt;code&gt;ASK&lt;/code&gt;信息&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;```redis
+GET hello:key
+(error) ASK 13320 172.16.19.5:6379
+```&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description>
       
     </item>
     
