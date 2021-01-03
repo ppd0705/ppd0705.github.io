@@ -6,10 +6,19 @@
     <description>Recent content in 生活 on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 01 Feb 2020 12:20:47 +0700</lastBuildDate>
+    <lastBuildDate>Sun, 03 Jan 2021 22:14:43 +0800</lastBuildDate>
     
 	<atom:link href="https://ppd0705.github.io/categories/%E7%94%9F%E6%B4%BB/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>2020年度总结</title>
+      <link>https://ppd0705.github.io/post/2020_summary/</link>
+      <pubDate>Sun, 03 Jan 2021 22:14:43 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/2020_summary/</guid>
+      <description>工作 年初立了go away的flag，最终在10月份实现了，在ricequant工作了3年+1个星期，算是完整服役吧！公司不盈利且发展缓慢，还</description>
+    </item>
     
     <item>
       <title>Saul</title>

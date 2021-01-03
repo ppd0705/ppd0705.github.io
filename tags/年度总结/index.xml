@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>年度总结 on PPD&#39;s blog</title>
+    <link>https://ppd0705.github.io/tags/%E5%B9%B4%E5%BA%A6%E6%80%BB%E7%BB%93/</link>
+    <description>Recent content in 年度总结 on PPD&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 03 Jan 2021 22:14:43 +0800</lastBuildDate>
+    
+	<atom:link href="https://ppd0705.github.io/tags/%E5%B9%B4%E5%BA%A6%E6%80%BB%E7%BB%93/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>2020年度总结</title>
+      <link>https://ppd0705.github.io/post/2020_summary/</link>
+      <pubDate>Sun, 03 Jan 2021 22:14:43 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/2020_summary/</guid>
+      <description>工作 年初立了go away的flag，最终在10月份实现了，在ricequant工作了3年+1个星期，算是完整服役吧！公司不盈利且发展缓慢，还</description>
+    </item>
+    
+  </channel>
+</rss>

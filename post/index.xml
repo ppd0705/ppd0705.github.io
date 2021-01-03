@@ -6,10 +6,19 @@
     <description>Recent content in Posts on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 27 Dec 2020 18:25:30 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 03 Jan 2021 22:14:43 +0800</lastBuildDate>
     
 	<atom:link href="https://ppd0705.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>2020年度总结</title>
+      <link>https://ppd0705.github.io/post/2020_summary/</link>
+      <pubDate>Sun, 03 Jan 2021 22:14:43 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/2020_summary/</guid>
+      <description>工作 年初立了go away的flag，最终在10月份实现了，在ricequant工作了3年+1个星期，算是完整服役吧！公司不盈利且发展缓慢，还</description>
+    </item>
     
     <item>
       <title>Redis自问自答</title>
@@ -180,15 +189,6 @@
       
       <guid>https://ppd0705.github.io/post/python_standard_libary_heapq/</guid>
       <description>底层设计: 完全二叉树（除了最后一层，其他层都是满的，最后一层的节点都靠左排列） 每个节点的值都小于等于左右子节点的值 使用list存储 入堆hea</description>
-    </item>
-    
-    <item>
-      <title>Python标准库之并发相关库</title>
-      <link>https://ppd0705.github.io/post/python_standard_libary_1/</link>
-      <pubDate>Sun, 27 Oct 2019 15:26:47 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/python_standard_libary_1/</guid>
-      <description>threading Lock: 可被其他线程释放 .RLock: 与Lock的区别在于可被锁拥有者多次获取，只能被被锁拥有者释放，释放次数等于获取次数才算完全释放 Condition: condition实</description>
     </item>
     
   </channel>

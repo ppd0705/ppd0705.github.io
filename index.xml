@@ -6,10 +6,66 @@
     <description>Recent content on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 27 Dec 2020 18:25:30 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 03 Jan 2021 22:14:43 +0800</lastBuildDate>
     
         <atom:link href="https://ppd0705.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>2020年度总结</title>
+      <link>https://ppd0705.github.io/post/2020_summary/</link>
+      <pubDate>Sun, 03 Jan 2021 22:14:43 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/2020_summary/</guid>
+      
+        <description>
+
+&lt;h2 id=&#34;工作&#34;&gt;工作&lt;/h2&gt;
+
+&lt;p&gt;年初立了&lt;code&gt;go away&lt;/code&gt;的flag，最终在10月份实现了，在ricequant工作了3年+1个星期，算是完整服役吧！公司不盈利且发展缓慢，还是活得挺艰难的，期间同事入入出出，基本上换得不剩几个老人了，还是挺影响士气的。&lt;/p&gt;
+
+&lt;p&gt;从去年年底开始在自己主动申请下总算做了一点新东西，今年主要做了一些web相关的项目，了解和使用了一下FastAPI，发现相当好用和便于维护，和老板推荐了一下，后面公司的新的web服务基本上都用了这个框架。&lt;/p&gt;
+
+&lt;p&gt;年初在柬埔寨敲下了第一行golang的hello world，于是渐渐了熟悉起来，使用golang刷了近200道算法，抄完了&lt;code&gt;7-days golang&lt;/code&gt;的全部项目，也用golang将工作中的一个实时数据项目用golang重写了，性能瞬间提升4倍。golang的后端生态相当大，算是开了我这个井底之蛙的眼。&lt;/p&gt;
+
+&lt;p&gt;离职后也对这份工作有一些反思，觉得后续工作应该更加主动和老板交流，多主动争取机会，适当哭一哭没有奶可吃还是很有必要的！另外还是少一些苦干，适当拒绝一些脏活，留一些时间用来多研究一些项目上用的技术的底层原理。&lt;/p&gt;
+
+&lt;h2 id=&#34;个人&#34;&gt;个人&lt;/h2&gt;
+
+&lt;p&gt;今年算是最“自律”的一年，之所以给自律打引号是觉得我并没有更自律，只是因为想清楚了一些东西，以及建立了一下微习惯让别人会觉得我更自律了。&lt;/p&gt;
+
+&lt;p&gt;之前报过一次英语流利说的课程以及极客大学算法训练营都没有完成，但今年这两个都很好的完成了，有一段时间我在路上，但我仍如常上课，我在多个候车/机厅读英语，我在酒店写代码，哈哈，现在想想还是有一点成就感的。&lt;/p&gt;
+
+&lt;p&gt;今年也有了稳定的运动习惯，固定每周二/四/七早上跑步三公里，并且做好热身和拉伸，至今还完成的蛮好，这个习惯应该算我今年最大的收获吧&lt;/p&gt;
+
+&lt;p&gt;今年看了不少代码，python标准库，redis/mongo/mysql数据库python客户端，FastAPI等; 另外也接触了golang，C# 和lua，golang现在算我的心头好吧，感觉很python代码要加type hint以便于更好维护以及避开GIL利用多核的性能，这不就是golang嘛！&lt;/p&gt;
+
+&lt;p&gt;今年头一次跨出了国门，在柬埔寨待了半个月，在大象自然公园与世隔绝待了一周，很高兴能为大象服务一周，也交了一个热爱画画不用智能手机的英国朋友；在暹粒利用了突突车、自行车和摩托车游览了不同景点，体验了不同交通工具逛景点的感觉&lt;/p&gt;
+
+&lt;p&gt;11月从上海到拉萨走了9个城市，见了很少有机会见的同学、朋友；一路上尽量放开自己，比如不客套地坦然地接受对方请我吃饭，比如住到赵冲家，比如和李锟同睡一张床，比如和陌生人拼饭拼车，这也算是难得的一次经历吧&lt;/p&gt;
+
+&lt;p&gt;最后我想清楚了一下人生的三个关键字：健康、自我价值和亲密关系。虽然更具体的方面我没有答案，但这看似宽泛的三个关键字也已可以给我做选择提供一些参考。&lt;/p&gt;
+
+&lt;h2 id=&#34;展望&#34;&gt;展望&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;多觉察，做课题分离，关注自己想做的，放下自己无法掌控的&lt;/li&gt;
+&lt;li&gt;找到一份合适的工作（有技术交流氛围）&lt;/li&gt;
+&lt;li&gt;深入学习golang（再啃一遍《Go语言设计与实现》，完成极客大学Go进阶训练营）&lt;/li&gt;
+&lt;li&gt;学习C++（极客大学课程）&lt;/li&gt;
+&lt;li&gt;学习MIT分布式系统课程 (做笔记)&lt;/li&gt;
+&lt;li&gt;学习CSAPP  (做笔记)&lt;/li&gt;
+&lt;li&gt;学习DDIA (做笔记)&lt;/li&gt;
+&lt;li&gt;学习K8S (做笔记)&lt;/li&gt;
+&lt;li&gt;继续跑步（每周三次三公里，参加一次半马）&lt;/li&gt;
+&lt;li&gt;继续学习英语（或许可以试试参加掘金的翻译计划）&lt;/li&gt;
+&lt;li&gt;学习画画（画十五幅画）&lt;/li&gt;
+&lt;li&gt;和家人出去旅行一趟&lt;/li&gt;
+&lt;li&gt;见四次朋友&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+      
+    </item>
     
     <item>
       <title>Redis自问自答</title>
@@ -7002,96 +7058,6 @@ dotnet run&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;ul&gt;
 &lt;li&gt;等效于sorted(iterrable, key=key)[:n]&lt;/li&gt;
 &lt;li&gt;用前n个元素构建一个大顶堆，后续元素与堆顶堆顶比较，如果小于堆顶则替换之并下沉&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-      
-    </item>
-    
-    <item>
-      <title>Python标准库之并发相关库</title>
-      <link>https://ppd0705.github.io/post/python_standard_libary_1/</link>
-      <pubDate>Sun, 27 Oct 2019 15:26:47 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/python_standard_libary_1/</guid>
-      
-        <description>
-
-&lt;h4 id=&#34;threading&#34;&gt;threading&lt;/h4&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Lock: 可被其他线程释放&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;.RLock: 与Lock的区别在于可被锁拥有者多次获取，只能被被锁拥有者释放，释放次数等于获取次数才算完全释放&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Condition:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;condition实例自带公共锁，调用wait 或者notify之前需要获取公共锁&lt;/li&gt;
-&lt;li&gt;调用wait时会为当前线程创建一个waiter锁(Lock)并获取，放入dequeue,然后释放公共锁，再次获取waiter锁（因为没有释放, 获取操作会阻塞），最终会重新获取公共锁&lt;/li&gt;
-&lt;li&gt;调用notify时，会将dequeue中的锁释放&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Semaphore: 基于Condition， 限制同时acquire的数量，并利用notify来通知waiter&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Event: 基于Condition，通过一个flag变量来更新状态&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;h4 id=&#34;queue&#34;&gt;queue&lt;/h4&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Queue: 基于一个dequeue 和 一个Lock 和共用Lock 的三个Condition&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;dequeue: 数据get和put&lt;/li&gt;
-&lt;li&gt;not_empty(Condition): 用于get&lt;/li&gt;
-&lt;li&gt;not_ful(Condition): 用于put&lt;/li&gt;
-&lt;li&gt;all_task_done(Condition):用于task_done和join&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;PriortyQueue: 继承Queue,区别在于&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;使用list存储数据&lt;/li&gt;
-&lt;li&gt;使用heapq对数据进行排序&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;h4 id=&#34;multiprocessing&#34;&gt;multiprocessing&lt;/h4&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Process 通过配置context(或者用默认context)来选择通过什么模式启动子进程, linux下默认用fork模式&lt;/li&gt;
-&lt;li&gt;Lock 通过底层的SemLock实现&lt;/li&gt;
-&lt;li&gt;SimpleQueue: 使用Pipe通信，读和写各用一个锁来保证并发安全&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Queue put会先放数据到进程的dequeue中缓冲，同时启动一个线程将dequeue中的数据写入到公共Pipe&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Pool:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;启动n个子进程，通过两个SimpleQueue:in_queue接受task、out_queue返回task的结果&lt;/li&gt;
-&lt;li&gt;主进程启动一个线程接收task_queue的任务，放入in_queue&lt;/li&gt;
-&lt;li&gt;主进程启动一个线程接收out_queue的结果，放入一个cache dict中&lt;/li&gt;
-&lt;li&gt;apply： 构建一个ApplyResult实例，用一个Event来通知task的状态（_handle_results会更新Event状态）
-&lt;br /&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&#34;concurrent-futures&#34;&gt;concurrent.futures&lt;/h4&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Waiter: 统计拥有的futures的状态，根据同步设置（第一次完成、第一次报错、全部完成）等来set Event&lt;/li&gt;
-&lt;li&gt;Future: 存储task的状态结果&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&#34;参考&#34;&gt;参考&lt;/h4&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://stackoverflow.com/questions/31665328/python-3-multiprocessing-queue-deadlock-when-calling-join-before-the-queue-is-em&#34;&gt;queue卡死&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://juejin.im/post/5b0abab451882538c220440b&#34;&gt;python进程间通信的五种方式（文件 pipe socket 消息队列 ）样例&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
       
