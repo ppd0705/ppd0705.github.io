@@ -6,10 +6,95 @@
     <description>Recent content on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 03 Jan 2021 22:14:43 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 21 Jan 2021 20:09:11 +0800</lastBuildDate>
     
         <atom:link href="https://ppd0705.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>2021找工作小记</title>
+      <link>https://ppd0705.github.io/post/find_job_2021/</link>
+      <pubDate>Thu, 21 Jan 2021 20:09:11 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/find_job_2021/</guid>
+      
+        <description>
+
+&lt;h3 id=&#34;前言&#34;&gt;前言&lt;/h3&gt;
+
+&lt;p&gt;最近三周密集进行了一波波面试，很多公司已经可以支持视频面试，总共参加了十几家公司的面试，包括一些大厂和小厂，其中字节和shoppe止于最后一轮技术面，最后收到四个offer，最终选了一个钱少加班少但面试给我感觉较好的的offer。&lt;/p&gt;
+
+&lt;h3 id=&#34;面试内容&#34;&gt;面试内容&lt;/h3&gt;
+
+&lt;p&gt;一般大公司更看重底层原理，小公司更看重项目经历。我投的都是Python开发，很多公司根本不会问Python问题，更多的还是问算法和数据结构、操作系统、网络、数据库等底层基础&lt;/p&gt;
+
+&lt;h4 id=&#34;算法与数据结构&#34;&gt;算法与数据结构&lt;/h4&gt;
+
+&lt;p&gt;这次遇到的算法都是考的简单和中等的，而且简单的偏多，可能只是为了检验一下基础的逻辑性吧&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;反转链表&lt;/li&gt;
+&lt;li&gt;返回每层的第一个左节点&lt;/li&gt;
+&lt;li&gt;最长无重复子串&lt;/li&gt;
+&lt;li&gt;实现atoi&lt;/li&gt;
+&lt;li&gt;有效括号组合&lt;/li&gt;
+&lt;li&gt;栈实现队列&lt;/li&gt;
+&lt;li&gt;找出两数之和小于X的个数&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;python&#34;&gt;Python&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;python函数调用是传参还是传值？&lt;/li&gt;
+&lt;li&gt;元类是什么？有什么作用&lt;/li&gt;
+&lt;li&gt;装饰器是什么？&lt;/li&gt;
+&lt;li&gt;实现一个单例？&lt;/li&gt;
+&lt;li&gt;字典是怎么实现的？&lt;/li&gt;
+&lt;li&gt;垃圾回收是怎么样的？&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;操作系统&#34;&gt;操作系统&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;进程、线程和协程的异同&lt;/li&gt;
+&lt;li&gt;互斥锁和自旋锁的区别&lt;/li&gt;
+&lt;li&gt;堆和栈的区别&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;网络&#34;&gt;网络&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;TCP三次握手和挥手&lt;/li&gt;
+&lt;li&gt;TCP和UDP异同&lt;/li&gt;
+&lt;li&gt;网络IO的类型&lt;/li&gt;
+&lt;li&gt;select和epoll的异同&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;数据库&#34;&gt;数据库&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;redis的数据类型及其底层数据结构&lt;/li&gt;
+&lt;li&gt;如何使用redis实现分布式锁&lt;/li&gt;
+&lt;li&gt;mongodb是CAP的哪种&lt;/li&gt;
+&lt;li&gt;mysql的索引类型&lt;/li&gt;
+&lt;li&gt;mysql的隔离界别&lt;/li&gt;
+&lt;li&gt;什么是幻读？默认隔离级别会发生幻读吗？&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;反思和总结&#34;&gt;反思和总结&lt;/h3&gt;
+
+&lt;p&gt;求职也是一个自发发现和突破的过程，这次求职其实发现自己很在乎别人的认可，但是完全依赖外部的评价会让人容易迷失&lt;/p&gt;
+
+&lt;p&gt;需要准备，更需要实战，算法刷了近两百道，极客时间MySQL专栏也看了三遍，但面试的时候还是遇到不少欠缺的。&lt;/p&gt;
+
+&lt;p&gt;可以的话还是骑驴找马吧，面试还是很看重机缘的&lt;/p&gt;
+
+&lt;p&gt;不立不破，敢于失败敢于立flag&lt;/p&gt;
+
+&lt;p&gt;面对真实的自己&lt;/p&gt;
+</description>
+      
+    </item>
     
     <item>
       <title>2020年度总结</title>
@@ -1030,7 +1115,7 @@ master_repl_offset和slave_repl_offset之间的写操作发送给从库，如果
 &lt;/ul&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h4 id=&#34;元数据锁&#34;&gt;元数据锁&lt;/h4&gt;
+&lt;h5 id=&#34;元数据mld锁&#34;&gt;元数据MLD锁&lt;/h5&gt;
 
 &lt;ul&gt;
 &lt;li&gt;获取： 自动获取&lt;/li&gt;
@@ -1047,9 +1132,22 @@ master_repl_offset和slave_repl_offset之间的写操作发送给从库，如果
 &lt;ul&gt;
 &lt;li&gt;读锁之间不互斥&lt;/li&gt;
 &lt;li&gt;读写锁之间、写写锁之间互斥，会发生阻塞
-&lt;br /&gt;
 &lt;br /&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;评论区拾遗&#34;&gt;评论区拾遗&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;OnlineDDL 过程
+
+&lt;ol&gt;
+&lt;li&gt;拿MDL写锁  (避免并发DDL)&lt;/li&gt;
+&lt;li&gt;降级成MDL读锁&lt;/li&gt;
+&lt;li&gt;真正做DDL&lt;/li&gt;
+&lt;li&gt;升级成MDL写锁&lt;/li&gt;
+&lt;li&gt;释放MDL锁&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h3 id=&#34;第七讲-行锁&#34;&gt;第七讲 行锁&lt;/h3&gt;
@@ -1145,7 +1243,7 @@ master_repl_offset和slave_repl_offset之间的写操作发送给从库，如果
 &lt;li&gt;新建更适合的索引或者删除多余的索引&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h4 id=&#34;评论区拾遗&#34;&gt;评论区拾遗&lt;/h4&gt;
+&lt;h4 id=&#34;评论区拾遗-1&#34;&gt;评论区拾遗&lt;/h4&gt;
 
 &lt;ul&gt;
 &lt;li&gt;where a in (1,3) and b in (2, 4)会转换成 (a=1 and b=2) or (a=1 and b=4) or (a=3 and b=2) or (a=3 and b=4)&lt;/li&gt;
@@ -1264,7 +1362,7 @@ master_repl_offset和slave_repl_offset之间的写操作发送给从库，如果
 &lt;li&gt;&lt;p&gt;optimize talbe = recreate table + analyze table(对索引信息做重新统计)&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h4 id=&#34;评论区拾遗-1&#34;&gt;评论区拾遗&lt;/h4&gt;
+&lt;h4 id=&#34;评论区拾遗-2&#34;&gt;评论区拾遗&lt;/h4&gt;
 
 &lt;ul&gt;
 &lt;li&gt;truntace table t 等于 drop table + create table&lt;/li&gt;
@@ -7011,53 +7109,6 @@ dotnet run&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://lotabout.me/2017/understand-python-asyncio/&#34;&gt;asyncio理解&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://zhuanlan.zhihu.com/p/64991670&#34;&gt;asyncio实现&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-      
-    </item>
-    
-    <item>
-      <title>Python标准库heapq</title>
-      <link>https://ppd0705.github.io/post/python_standard_libary_heapq/</link>
-      <pubDate>Mon, 28 Oct 2019 01:24:40 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/python_standard_libary_heapq/</guid>
-      
-        <description>
-
-&lt;h4 id=&#34;底层设计&#34;&gt;底层设计:&lt;/h4&gt;
-
-&lt;ul&gt;
-&lt;li&gt;完全二叉树（除了最后一层，其他层都是满的，最后一层的节点都靠左排列）&lt;/li&gt;
-&lt;li&gt;每个节点的值都小于等于左右子节点的值&lt;/li&gt;
-&lt;li&gt;使用list存储&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&#34;入堆heappush&#34;&gt;入堆heappush：&lt;/h4&gt;
-
-&lt;ul&gt;
-&lt;li&gt;先放入list尾部&lt;/li&gt;
-&lt;li&gt;依次和上一层的父节点比较，如果比父节点小则交换(_siftdown上浮)&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&#34;移除堆顶元素heappop&#34;&gt;移除堆顶元素heappop：&lt;/h4&gt;
-
-&lt;ul&gt;
-&lt;li&gt;记录最后要返回的结果即heap[0]&lt;/li&gt;
-&lt;li&gt;将heap[-1]弹出并赋值给heap[0],从堆顶依次和左右节点中的大节点交换（_siftup下沉)&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&#34;有序堆heapify&#34;&gt;有序堆heapify：&lt;/h4&gt;
-
-&lt;ul&gt;
-&lt;li&gt;从非叶子节点到根节点逆序依次下沉&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&#34;返回一个无序列表前n个最小值nsmallest&#34;&gt;返回一个无序列表前n个最小值nsmallest：&lt;/h4&gt;
-
-&lt;ul&gt;
-&lt;li&gt;等效于sorted(iterrable, key=key)[:n]&lt;/li&gt;
-&lt;li&gt;用前n个元素构建一个大顶堆，后续元素与堆顶堆顶比较，如果小于堆顶则替换之并下沉&lt;/li&gt;
 &lt;/ul&gt;
 </description>
       
