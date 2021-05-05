@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>[笔记]VueJS学习 - PPD&#39;s blog</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="PPD" />
+  <meta name="description" content="Vue实例 1 2 3 4 5 6 var vm = new Vue({ el: &amp;#34;#app&amp;#34;, data: { a: 100 } }) el: 对应的元素 data: 数据 Vue实例有很多方法如 - $watch: 监控变量，可定义回调函数 1 2 3 vm.$watch(&amp;#39;a&amp;#39;, function(newVal, oldVal){ }) 生命周期 V" />
+
+  <meta name="keywords" content="PPD, blog" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.55.6" />
+
+
+<link rel="canonical" href="https://ppd0705.github.io/post/learning_vue/" />
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.ec807d8b802a40889537c26e014f733206312ea440d42e1f0dabed80918de1ac.css" integrity="sha256-7IB9i4AqQIiVN8JuAU9zMgYxLqRA1C4fDavtgJGN4aw=" media="screen" crossorigin="anonymous">
+
+
+
+
+
+<meta property="og:title" content="[笔记]VueJS学习" />
+<meta property="og:description" content="Vue实例 1 2 3 4 5 6 var vm = new Vue({ el: &#34;#app&#34;, data: { a: 100 } }) el: 对应的元素 data: 数据 Vue实例有很多方法如 - $watch: 监控变量，可定义回调函数 1 2 3 vm.$watch(&#39;a&#39;, function(newVal, oldVal){ }) 生命周期 V" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ppd0705.github.io/post/learning_vue/" />
+<meta property="article:published_time" content="2021-05-05T10:22:36&#43;08:00"/>
+<meta property="article:modified_time" content="2021-05-05T10:22:36&#43;08:00"/>
+
+<meta itemprop="name" content="[笔记]VueJS学习">
+<meta itemprop="description" content="Vue实例 1 2 3 4 5 6 var vm = new Vue({ el: &#34;#app&#34;, data: { a: 100 } }) el: 对应的元素 data: 数据 Vue实例有很多方法如 - $watch: 监控变量，可定义回调函数 1 2 3 vm.$watch(&#39;a&#39;, function(newVal, oldVal){ }) 生命周期 V">
+
+
+<meta itemprop="datePublished" content="2021-05-05T10:22:36&#43;08:00" />
+<meta itemprop="dateModified" content="2021-05-05T10:22:36&#43;08:00" />
+<meta itemprop="wordCount" content="2060">
+
+
+
+<meta itemprop="keywords" content="JavaScript,VueJS," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="[笔记]VueJS学习"/>
+<meta name="twitter:description" content="Vue实例 1 2 3 4 5 6 var vm = new Vue({ el: &#34;#app&#34;, data: { a: 100 } }) el: 对应的元素 data: 数据 Vue实例有很多方法如 - $watch: 监控变量，可定义回调函数 1 2 3 vm.$watch(&#39;a&#39;, function(newVal, oldVal){ }) 生命周期 V"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">PPD's blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://ppd0705.github.io/">Home</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://ppd0705.github.io/post/">Archives</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://ppd0705.github.io/tags/">Tags</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://ppd0705.github.io/categories/">Categories</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://ppd0705.github.io/about">About</a>
+          
+        
+      </li>
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      PPD's blog
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://ppd0705.github.io/">Home</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://ppd0705.github.io/post/">Archives</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://ppd0705.github.io/tags/">Tags</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://ppd0705.github.io/categories/">Categories</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://ppd0705.github.io/about">About</a>
+          
+
+        
+
+      </li>
+    
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">[笔记]VueJS学习</h1>
+      
+      <div class="post-meta">
+        <time datetime="2021-05-05" class="post-time">
+          2021-05-05 10:22:36
+        </time>
+        <div class="post-category">
+            <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
+            
+          </div>
+        <span class="more-meta"> 2060 words </span>
+          <span class="more-meta"> 5 min read </span>
+
+        
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    
+    <div class="post-content">
+      
+
+<h3 id="vue实例">Vue实例</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-Vue" data-lang="Vue"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-Vue" data-lang="Vue">var vm = new  Vue({
+    el: &#34;#app&#34;,
+    data: {
+        a: 100
+    }
+})</code></pre></td></tr></table>
+</div>
+</div>
+<p>el: 对应的元素
+data: 数据</p>
+
+<p>Vue实例有很多方法如
+- <code>$watch</code>: 监控变量，可定义回调函数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-Vue" data-lang="Vue"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-Vue" data-lang="Vue">vm.$watch(&#39;a&#39;, function(newVal, oldVal){
+    
+})</code></pre></td></tr></table>
+</div>
+</div>
+<h3 id="生命周期">生命周期</h3>
+
+<p><img src="evernotecid://3487788A-1852-4593-9A87-CA680D111422/appyinxiangcom/19474765/ENResource/p164" alt="6f2c97f045ba988851b02056c01c8d62.png" /></p>
+
+<p>Vue对象定义的时候可以以属性的方式定义生命周期钩子</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-Vue" data-lang="Vue"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-Vue" data-lang="Vue">var vm = new Vue({
+    
+    created: function(){
+        console.log(&#39;created&#39;);
+    },
+})</code></pre></td></tr></table>
+</div>
+</div>
+<h3 id="插值">插值</h3>
+
+<ul>
+<li>文本插值使用<code>{{ msg }}</code></li>
+<li>html元素插值使用<code>v-html</code>, 如<code>&lt;p v-html=&quot;msg&quot;&gt;&lt;/p&gt;</code></li>
+<li>特性使用v-bind动态绑定,如 <code>&lt;p v-bind:class=&quot;classAtrr&quot;&gt;hi&lt;/p&gt;</code></li>
+<li>js表达式
+
+<ul>
+<li>如算术运算 <code>{{ number + 1}}</code></li>
+<li>三元表达式 <code>{{ ok ? 'Yes' : 'No' }}</code></li>
+<li>函数运算 <code>{{ msg.split(' '),reverse().join('') }}</code></li>
+</ul></li>
+</ul>
+
+<h3 id="指令">指令</h3>
+
+<p>指令是带有<code>v-</code>前缀的特殊特性
+- v-text=&ldquo;val&rdquo;: 更新元素的textContent， <span v-text-"msg"></span> 等价于 <span>{{msg}}</span>
+- v-if=&lsquo;boolean exp&rsquo;, 根据表达式的值来有条件的渲染元素， 可以和v-else-if、v-else结合
+- v-show=&lsquo;boolean exp&rsquo;, 会渲染元素，但会根据表达式来切换CSS属性display
+- v-for=&lsquo;iterators exp&rsquo;, 基于Iterrable多次渲染元素
+- v-on:event=&ldquo;method&rdquo;, 缩写为<code>@</code>
+- v-bind:arrOrProp=&ldquo;xxx&rdquo;, 绑定class/stypel/src等属性，缩写为<code>:</code>
+- v-model: 表单控件绑定</p>
+
+<h3 id="组件">组件</h3>
+
+<p>组件指可复用的Vue实例</p>
+
+<h4 id="属性">属性</h4>
+
+<ul>
+<li>props: 自定义属性，可以利用v-bind来动态船体 prop</li>
+<li>template: 组件模板</li>
+<li>data: 必须是一个函数，以便每个实例都有一份独立的数据拷贝</li>
+<li>computed: data中计算性的属性放在这里，相比methods，computed属性会有缓存，只有依赖项改变时才会重新计算结果</li>
+<li>created: 实例已完成以下的配置：数据观测 (data observer)，属性和方法的运算，watch/event 事件回调。<code>this</code> 指向 vm 实例</li>
+<li>mounted: el 被新创建的 vm.$el 替换, 挂在成功</li>
+<li>render:</li>
+<li>watch: 数据变化时执行异步或开销较大的操作时</li>
+</ul>
+
+<h4 id="实例-property">实例 property</h4>
+
+<p>$refs: 一个对象，持有注册过 ref attribute 的所有 DOM 元素和组件实例, 仅可读</p>
+
+<p>$router: 路由器，.push(&ldquo;/&rdquo;)访问根目录
+$route： 当前路由，可以被watch来监听路由变化， 只读
+$store: 全局单例状态树</p>
+
+<h4 id="vuex状态管理">Vuex状态管理</h4>
+
+<p>全局单例管理共享状态</p>
+
+<h5 id="store-数据对象-相当于vue-data">store 数据对象，相当于vue.data</h5>
+
+<h5 id="getters">getters</h5>
+
+<p>通过属性访问，相当于计算属性, 会有缓存</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-Vue" data-lang="Vue"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-Vue" data-lang="Vue">const store = new Vuex.Store({
+  state: {
+    todos: [
+      { id: 1, text: &#39;...&#39;, done: true },
+      { id: 2, text: &#39;...&#39;, done: false }
+    ]
+  },
+  getters: {
+    doneTodos: state =&gt; {
+      return state.todos.filter(todo =&gt; todo.done)
+    }
+  }
+})
+
+store.getters.doneTodos // -&gt; [{ id: 1, text: &#39;...&#39;, done: true }]</code></pre></td></tr></table>
+</div>
+</div>
+<p>通过方法访问可以方便查询store数据，没有缓存</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-Vue" data-lang="Vue"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-Vue" data-lang="Vue">getters: {
+  // ...
+  getTodoById: (state) =&gt; (id) =&gt; {
+    return state.todos.find(todo =&gt; todo.id === id)
+  }
+}
+
+store.getters.getTodoById(2) // -&gt; { id: 2, text: &#39;...&#39;, done: false }</code></pre></td></tr></table>
+</div>
+</div>
+<h5 id="mutation">Mutation</h5>
+
+<p>更改store的唯一方法，在mutations中声明回调函数，使用commit来触发</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-Vue" data-lang="Vue"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-Vue" data-lang="Vue">const store = new Vuex.Store({
+  state: {
+    count: 1
+  },
+  mutations: {
+    increment (state) {
+      // 变更状态
+      state.count++
+    }
+  }
+})
+
+store.commit(&#39;increment&#39;)</code></pre></td></tr></table>
+</div>
+</div>
+<p>提交除了使用commit 也可以使用mapMutations来将其生设为方法</p>
+
+<p>mutation必须是同步函数</p>
+
+<h5 id="actions">Actions</h5>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-Vue" data-lang="Vue"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-Vue" data-lang="Vue">const store = new Vuex.Store({
+  state: {
+    count: 0
+  },
+  mutations: {
+    increment (state) {
+      state.count++
+    }
+  },
+  actions: {
+    increment (context) {
+      context.commit(&#39;increment&#39;)
+    }
+  }
+  
+  //  可以使用参数结构来简化代码
+  // actions: {
+  // increment ({ commit }) {
+  //  commit(&#39;increment&#39;)
+  // }
+}
+})</code></pre></td></tr></table>
+</div>
+</div>
+<p>action提交的是mutation而不是直接更改状态</p>
+
+<p><code>store.dispatch('increment')</code></p>
+
+<p>action可以包含任意异步操作</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-Vue" data-lang="Vue"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-Vue" data-lang="Vue"> incrementAsync ({ commit }) {
+    setTimeout(() =&gt; {
+      commit(&#39;increment&#39;)
+    }, 1000)
+  }</code></pre></td></tr></table>
+</div>
+</div>
+<h5 id="mudules">Mudules</h5>
+
+<p>使用modules将store分割成模块，每个模块拥有自己的state、mutation、acttion等</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-Vue" data-lang="Vue"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-Vue" data-lang="Vue">const moduleA = {
+  state: () =&gt; ({ ... }),
+  mutations: { ... },
+  actions: { ... },
+  getters: { ... }
+}
+
+const moduleB = {
+  state: () =&gt; ({ ... }),
+  mutations: { ... },
+  actions: { ... }
+}
+
+const store = new Vuex.Store({
+  modules: {
+    a: moduleA,
+    b: moduleB
+  }
+})
+
+store.state.a // -&gt; moduleA 的状态
+store.state.b // -&gt; moduleB 的状态</code></pre></td></tr></table>
+</div>
+</div>
+<p>默认情况模块内部的getter、actition和mutation等是注册在全局的，可以添加<code>namespaced: true</code>使其成为带命名空间的模块</p>
+
+<p>在带命名空间里可以使用<code>rootState</code>访问全局内容</p>
+
+<h4 id="注册">注册</h4>
+
+<ul>
+<li>全局注册
+Vue.component(&lsquo;name&rsquo;, options)</li>
+
+<li><p>局部注册</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-Vue" data-lang="Vue"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-Vue" data-lang="Vue">var ComponentA = {...}
+new  Vue ({
+components: {
+    &#39;component-a&#39;: ComponentA,
+},
+})</code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="单文件组件">单文件组件</h4>
+
+<p>三大部分</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-Vue" data-lang="Vue"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-Vue" data-lang="Vue">&lt;template&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+&lt;/script&gt;
+
+&lt;style scoped&gt;
+&lt;/style&gt;</code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+
+<h3 id="vue-ruter路由导航">Vue-Ruter路由导航</h3>
+
+<h4 id="基本标签">基本标签</h4>
+
+<ul>
+<li><p>router-link</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-Vue" data-lang="Vue"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-Vue" data-lang="Vue">&lt;router-link to=&#34;/about&#34;&gt;Go to About&lt;/router-link&gt;</code></pre></td></tr></table>
+</div>
+</div>
+<p>用来想a标签一样创建链接，但可以不重新加载页面</p>
+
+<ul>
+<li>router-view
+显示与url对应的组件，可以放到你想布局的任何地方</li>
+</ul>
+
+<h4 id="路由匹配">路由匹配</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-Vue" data-lang="Vue"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-Vue" data-lang="Vue">const User = {
+template: &#39;&lt;div&gt;User {{ $route.params.id }}&lt;/div&gt;&#39;,
+}
+
+const routes = [
+// 动态段以冒号开始
+{ path: &#39;/users/:id&#39;, component: User },
+]</code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+
+<h4 id="嵌套路由">嵌套路由</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-Vue" data-lang="Vue"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-Vue" data-lang="Vue">const User = {
+  template: `
+    &lt;div class=&#34;user&#34;&gt;
+      &lt;h2&gt;User {{ $route.params.id }}&lt;/h2&gt;
+      &lt;router-view&gt;&lt;/router-view&gt;
+    &lt;/div&gt;
+  `,
+}
+
+const routes = [
+  {
+    path: &#39;/user/:id&#39;,
+    component: User,
+    children: [
+      {
+        // 当 /user/:id/profile 匹配成功 
+        // UserProfile 将被渲染到 User 的 &lt;router-view&gt; 内部
+        path: &#39;profile&#39;,
+        component: UserProfile,
+      },
+      {
+        // 当 /user/:id/posts 匹配成功
+        // UserPosts 将被渲染到 User 的 &lt;router-view&gt; 内部
+        path: &#39;posts&#39;,
+        component: UserPosts,
+      },
+    ],
+  },
+]</code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="编程式路由">编程式路由</h4>
+
+<h3 id="导航到其他位置">导航到其他位置</h3>
+
+<p>使用<code>&lt;router-link to=&quot;...&quot;&gt;</code>标签时，内部其实调用的是<code>router.push</code>方法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-JS" data-lang="JS"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-JS" data-lang="JS"><span class="c1">// 带有路径的对象
+</span><span class="c1"></span><span class="nx">router</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span> <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;/users/eduardo&#39;</span> <span class="p">})</span>
+
+<span class="c1">// 命名的路由，并加上参数，让路由建立 url
+</span><span class="c1"></span><span class="nx">router</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="nx">params</span><span class="o">:</span> <span class="p">{</span> <span class="nx">username</span><span class="o">:</span> <span class="s1">&#39;eduardo&#39;</span> <span class="p">}</span> <span class="p">})</span>
+</code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="替换当前位置">替换当前位置</h4>
+
+<p>router.relace 类似于router.push，当不会向history添加新纪录</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-JS" data-lang="JS"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-JS" data-lang="JS"><span class="nx">router</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span> <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;/home&#39;</span><span class="p">,</span> <span class="nx">replace</span><span class="o">:</span> <span class="kc">true</span> <span class="p">})</span>
+<span class="c1">// 相当于
+</span><span class="c1"></span><span class="nx">router</span><span class="p">.</span><span class="nx">replace</span><span class="p">({</span> <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;/home&#39;</span> <span class="p">})</span>
+</code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="横跨历史">横跨历史</h4>
+
+<p>类似于window.history.go(n)</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-JS" data-lang="JS"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-JS" data-lang="JS"><span class="c1">// 向前移动一条记录，与 router.forward() 相同
+</span><span class="c1"></span><span class="nx">router</span><span class="p">.</span><span class="nx">go</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1">// 返回一条记录，与router.back() 相同
+</span><span class="c1"></span><span class="nx">router</span><span class="p">.</span><span class="nx">go</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1">// 前进 3 条记录
+</span><span class="c1"></span><span class="nx">router</span><span class="p">.</span><span class="nx">go</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="命名视图">命名视图</h4>
+
+<p>当想同级展示多个视图时，可使用命名视图</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="o">&lt;</span><span class="nx">router</span><span class="o">-</span><span class="nx">view</span> <span class="k">class</span><span class="o">=</span><span class="s2">&#34;view left-sidebar&#34;</span> <span class="nx">name</span><span class="o">=</span><span class="s2">&#34;LeftSidebar&#34;</span><span class="o">&gt;&lt;</span><span class="err">/router-view&gt;</span>
+<span class="o">&lt;</span><span class="nx">router</span><span class="o">-</span><span class="nx">view</span> <span class="k">class</span><span class="o">=</span><span class="s2">&#34;view main-content&#34;</span><span class="o">&gt;&lt;</span><span class="err">/router-view&gt;</span>
+<span class="o">&lt;</span><span class="nx">router</span><span class="o">-</span><span class="nx">view</span> <span class="k">class</span><span class="o">=</span><span class="s2">&#34;view right-sidebar&#34;</span> <span class="nx">name</span><span class="o">=</span><span class="s2">&#34;RightSidebar&#34;</span><span class="o">&gt;&lt;</span><span class="err">/router-view&gt;</span>
+
+<span class="k">const</span> <span class="nx">router</span> <span class="o">=</span> <span class="nx">createRouter</span><span class="p">({</span>
+  <span class="nx">history</span><span class="o">:</span> <span class="nx">createWebHashHistory</span><span class="p">(),</span>
+  <span class="nx">routes</span><span class="o">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span>
+      <span class="nx">components</span><span class="o">:</span> <span class="p">{</span>
+        <span class="k">default</span><span class="o">:</span> <span class="nx">Home</span><span class="p">,</span>
+        <span class="c1">// LeftSidebar: LeftSidebar 的缩写
+</span><span class="c1"></span>        <span class="nx">LeftSidebar</span><span class="p">,</span>
+        <span class="c1">// 它们与 `&lt;router-view&gt;` 上的 `name` 属性匹配
+</span><span class="c1"></span>        <span class="nx">RightSidebar</span><span class="p">,</span>
+      <span class="p">},</span>
+    <span class="p">},</span>
+  <span class="p">],</span>
+<span class="p">})</span>
+</code></pre></td></tr></table>
+</div>
+</div>
+<h3 id="reference">reference</h3>
+
+<ul>
+<li><a href="https://vuex.vuejs.org/zh/guide/">Vuex-全局状态管理</a></li>
+<li><a href="https://next.router.vuejs.org/zh/guide/">Vue-Router路由插件</a></li>
+<li><a href="https://v3.cn.vuejs.org/guide/introduction.html">Vue-文档</a></li>
+</ul>
+
+    </div>
+
+    
+    
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="https://ppd0705.github.io/tags/javascript/">JavaScript</a>
+          <a href="https://ppd0705.github.io/tags/vuejs/">VueJS</a>
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/post/go_concurrent_note/">
+            <span class="next-text nav-default">[笔记]Go并发编程实战</span>
+            <span class="prev-text nav-mobile">Next</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "ppd0705/ppd0705.github.io"
+            issue-term="utteranc"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+  
+
+  
+
+  
+
+  
+
+    
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="icon-links">
+  
+  
+    <a href="ppd0705@icloud.com" rel="me noopener" class="iconfont"
+      title="email"  target="_blank"
+      >
+      <svg class="icon" viewBox="0 0 1451 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M664.781909 681.472759 0 97.881301C0 3.997201 71.046997 0 71.046997 0L474.477909 0 961.649408 0 1361.641813 0C1361.641813 0 1432.688811 3.997201 1432.688811 97.881301L771.345323 681.472759C771.345323 681.472759 764.482731 685.154773 753.594283 688.65053L753.594283 688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858L682.561621 688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759L664.781909 681.472759ZM718.063616 811.603883C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633 0 212.052267 0 212.052267L0 942.809523C0 942.809523 0 1024 83.726336 1024L682.532949 1024 753.579947 1024 1348.948139 1024C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523L1432.688811 212.052267C1432.688811 212.052267 893.138176 701.759633 817.019477 767.734955 777.248 802.205449 742.347691 811.03081 718.063616 811.603883L718.063616 811.603883Z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://github.com/ppd0705" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://www.douban.com/people/ppd0705/" rel="me noopener" class="iconfont"
+      title="douban"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M926.917973 37.80608C959.65184 37.80608 986.19392 64.34816 986.19392 97.082027L986.19392 926.917973C986.19392 959.65184 959.65184 986.19392 926.917973 986.19392L97.082027 986.19392C64.34816 986.19392 37.80608 959.65184 37.80608 926.917973L37.80608 97.082027C37.80608 64.34816 64.34816 37.80608 97.082027 37.80608zM176.653653 176.19968 176.653653 252.678827 825.658027 252.678827 825.658027 176.19968zM217.719467 316.146347 217.719467 628.08064 273.524053 628.08064 341.292373 770.39616 157.259093 770.39616 157.259093 845.417813 842.949973 845.417813 842.949973 770.39616 654.226773 770.39616 722.899627 628.08064 783.67744 628.08064 783.67744 316.146347zM684.885333 392.891733 684.885333 553.987413 312.576 553.987413 312.576 392.891733zM570.770773 770.39616 426.653013 770.39616 359.621973 628.08064 639.443627 628.08064z"></path>
+</svg>
+
+    </a>
+
+
+<a href="https://ppd0705.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+   
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+      2019 -
+    2021
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        PPD
+        
+      </span></span>
+
+  
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
