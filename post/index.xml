@@ -6,10 +6,19 @@
     <description>Recent content in Posts on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 05 May 2021 10:22:36 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 28 Jun 2021 07:28:37 +0800</lastBuildDate>
     
 	<atom:link href="https://ppd0705.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>[笔记]Go项目开发实战</title>
+      <link>https://ppd0705.github.io/post/go_develop_in_action/</link>
+      <pubDate>Mon, 28 Jun 2021 07:28:37 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/go_develop_in_action/</guid>
+      <description>规范设计 开源规范 开源协议概述 MIT是相对自由开发的协议 文档规范 最重要的三类文档：README文档、项目文档和API文档 README规范 主要用</description>
+    </item>
     
     <item>
       <title>[笔记]VueJS学习</title>
@@ -180,15 +189,6 @@
       
       <guid>https://ppd0705.github.io/post/elephant_park/</guid>
       <description>缘起 19年国庆时无意在豆瓣上看到一个人写因为母亲去世想排解一些内心的伤痛而去泰国的大象自然公园度过一周，无意勾起了我对奶奶的思念。这个陪伴我</description>
-    </item>
-    
-    <item>
-      <title>MySQL事务隔离</title>
-      <link>https://ppd0705.github.io/post/mysql_transaction_isolation/</link>
-      <pubDate>Mon, 02 Dec 2019 22:00:57 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/mysql_transaction_isolation/</guid>
-      <description>四种隔离级别 读未提交(read uncommitted)： 事务还未提交时能被其他事务看到 读提交(read committed)： 事务提交后才能被</description>
     </item>
     
   </channel>

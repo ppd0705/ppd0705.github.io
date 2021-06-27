@@ -6,10 +6,19 @@
     <description>Recent content in 计算机 on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 05 May 2021 10:22:36 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 28 Jun 2021 07:28:37 +0800</lastBuildDate>
     
 	<atom:link href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>[笔记]Go项目开发实战</title>
+      <link>https://ppd0705.github.io/post/go_develop_in_action/</link>
+      <pubDate>Mon, 28 Jun 2021 07:28:37 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/go_develop_in_action/</guid>
+      <description>规范设计 开源规范 开源协议概述 MIT是相对自由开发的协议 文档规范 最重要的三类文档：README文档、项目文档和API文档 README规范 主要用</description>
+    </item>
     
     <item>
       <title>[笔记]VueJS学习</title>
@@ -180,15 +189,6 @@
       
       <guid>https://ppd0705.github.io/post/python_standard_libary_heapq/</guid>
       <description>底层设计: 完全二叉树（除了最后一层，其他层都是满的，最后一层的节点都靠左排列） 每个节点的值都小于等于左右子节点的值 使用list存储 入堆hea</description>
-    </item>
-    
-    <item>
-      <title>Python标准库之并发相关库</title>
-      <link>https://ppd0705.github.io/post/python_standard_libary_1/</link>
-      <pubDate>Sun, 27 Oct 2019 15:26:47 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/python_standard_libary_1/</guid>
-      <description>threading Lock: 可被其他线程释放 .RLock: 与Lock的区别在于可被锁拥有者多次获取，只能被被锁拥有者释放，释放次数等于获取次数才算完全释放 Condition: condition实</description>
     </item>
     
   </channel>
