@@ -70,7 +70,7 @@
 
 <meta itemprop="datePublished" content="2021-06-28T07:28:37&#43;08:00" />
 <meta itemprop="dateModified" content="2021-06-28T07:28:37&#43;08:00" />
-<meta itemprop="wordCount" content="1983">
+<meta itemprop="wordCount" content="2449">
 
 
 
@@ -299,8 +299,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 1983 words </span>
-          <span class="more-meta"> 4 min read </span>
+        <span class="more-meta"> 2449 words </span>
+          <span class="more-meta"> 5 min read </span>
 
         
         
@@ -639,6 +639,111 @@ This reverts commit fjsdf34353534vdf</pre></td></tr></table>
 </ul>
 
 <h3 id="目录结构设计">目录结构设计</h3>
+
+<p><img src="/image/go_develop_in_action/6_1.webp" alt="project-layer" /></p>
+
+<ol>
+<li><p>/web
+web目录主要存放web静态资源</p></li>
+
+<li><p>/cmd
+一个项目可能有多个组件，每个组件的main函数所在文件夹放在该目录</p></li>
+
+<li><p>/internal
+存放私有应用的代码，不能被其他项目导入</p></li>
+</ol>
+
+<p>项目内应用之间共享代码存放于/internal/pkg</p>
+
+<p>开发建议：最开始将共享代码都放/internal/pkg，做好对外发布的准备时再转到/pkg目录</p>
+
+<p>IAM项目internal目录结构 如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">├── apiserver
+│   ├── api
+│   │   └── v1
+│   │       └── user
+│   ├── options
+│   ├── config
+│   ├── service
+│   │   └── user.go
+│   ├── store
+│   │   ├── mysql
+│   │   │   └── user.go
+│   │   ├── fake
+│   └── testing
+├── authzserver
+│   ├── api
+│   │   └── v1
+│   ├── options
+│   ├── store
+│   └── testing
+├── iamctl
+│   ├── cmd
+│   │   ├── cmd.go
+│   │   ├── info
+└── pkg
+    ├── code
+    ├── middleware
+    ├── options
+    └── validation</pre></td></tr></table>
+</div>
+</div>
+<p>主要分为三大类</p>
+
+<ul>
+<li>/internal/pkg: 内部共享包存放目录</li>
+<li>/internal/iamctl: 对于大型项目，可能会存在客户端工具</li>
+<li>/internal/apiserver: 应用目录</li>
+</ul>
+
+<p>针对具体的应用目录，也会根据功能来划分：</p>
+
+<ul>
+<li>/internal/apiserver/api/v1: HTTP API接口具体实现</li>
+<li>/internal/apiserver/options: command flag</li>
+<li>/internal/apiserver/service: 业务逻辑代码</li>
+<li>/internal/apiserver/store/mysql: 数据库交互</li>
+</ul>
+
+<p>/internal/pkg通常也会划分：</p>
+
+<ul>
+<li>/internal/pkg/code: 业务Code码</li>
+<li>/internal/pkg/validation: 通用验证函数</li>
+<li>/internal/pkg/code: HTTP处理链</li>
+</ul>
 
 <h3 id="工作流设计">工作流设计</h3>
 
