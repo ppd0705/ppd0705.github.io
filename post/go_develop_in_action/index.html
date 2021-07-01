@@ -7,7 +7,7 @@
   
 
 <meta name="renderer" content="webkit" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes"/>
 
 <meta name="MobileOptimized" content="width"/>
 <meta name="HandheldFriendly" content="true"/>
@@ -39,6 +39,8 @@
 
 
 
+
+
 <link rel="icon" href="/favicon.ico" />
 
 
@@ -51,7 +53,7 @@
 
 
 
-<link rel="stylesheet" href="/sass/jane.min.ec807d8b802a40889537c26e014f733206312ea440d42e1f0dabed80918de1ac.css" integrity="sha256-7IB9i4AqQIiVN8JuAU9zMgYxLqRA1C4fDavtgJGN4aw=" media="screen" crossorigin="anonymous">
+<link rel="stylesheet" href="/sass/jane.min.b3a8813c06e6d785beba22bf8264e174fa2cb3a396b22f9ba24e2c00c18aaf7f.css" integrity="sha256-s6iBPAbm14W&#43;uiK/gmThdPoss6OWsi&#43;bok4sAMGKr38=" media="screen" crossorigin="anonymous">
 
 
 
@@ -70,7 +72,7 @@
 
 <meta itemprop="datePublished" content="2021-06-28T07:28:37&#43;08:00" />
 <meta itemprop="dateModified" content="2021-06-28T07:28:37&#43;08:00" />
-<meta itemprop="wordCount" content="3311">
+<meta itemprop="wordCount" content="4605">
 
 
 
@@ -142,6 +144,8 @@
         
       </li>
     
+
+    
   </ul>
 </nav>
 
@@ -203,6 +207,8 @@
     </div>
     </div>
 </div>
+
+  
 
   
 
@@ -276,6 +282,10 @@
 
       </li>
     
+
+    
+    
+
     
   </ul>
 </nav>
@@ -299,8 +309,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 3311 words </span>
-          <span class="more-meta"> 7 min read </span>
+        <span class="more-meta"> 4605 words </span>
+          <span class="more-meta"> 10 min read </span>
 
         
         
@@ -880,7 +890,143 @@ This reverts commit fjsdf34353534vdf</pre></td></tr></table>
 
 <h3 id="工作流设计">工作流设计</h3>
 
+<h4 id="功能分支工作流">功能分支工作流</h4>
+
+<p>开发新功能时，基于master分支新建一个功能分支，在功能分支上进行开发，开发完之后合并到master</p>
+
+<p>该模式适合小规模、人员固定的项目</p>
+
+<h4 id="git-flow工作流">Git Flow工作流</h4>
+
+<p>Git Flow定义了5种分支： master、develop、release、 feature、hotfix，详细介绍如下</p>
+
+<p><img src="/image/go_develop_in_action/7_1.webp" alt="git-flow" /></p>
+
+<p>假设当前在一个future分支开发，突然发现了线上bug，需要hotfix，则流程如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">$ git stash <span class="c1"># 1. 开发工作只完成了一半，还不想提交，可以临时保存修改至堆栈区</span>
+$ git checkout -b hotfix/print-error master <span class="c1"># 2. 从 master 建立 hotfix 分支</span>
+$ vi main.go <span class="c1"># 3. 修复 bug，callmainfunction -&gt; call main function</span>
+$ git commit -a -m <span class="s1">&#39;fix print message error bug&#39;</span> <span class="c1"># 4. 提交修复</span>
+$ git checkout develop <span class="c1"># 5. 切换到 develop 分支</span>
+$ git merge --no-ff hotfix/print-error <span class="c1"># 6. 把 hotfix 分支合并到 develop 分支</span>
+$ git checkout master <span class="c1"># 7. 切换到 master 分支</span>
+$ git merge --no-ff hotfix/print-error <span class="c1"># 8. 把 hotfix 分支合并到 master</span>
+$ git tag -a v0.9.1 -m <span class="s2">&#34;fix log bug&#34;</span> <span class="c1"># 9. master 分支打 tag</span>
+$ go build -v . <span class="c1"># 10. 编译代码，并将编译好的二进制更新到生产环境</span>
+$ git branch -d hotfix/print-error <span class="c1"># 11. 修复好后，删除 hotfix/xxx 分支</span>
+$ git checkout feature/print-hello-world <span class="c1"># 12. 切换到开发分支下</span>
+$ git merge --no-ff develop <span class="c1"># 13. 因为 develop 有更新，这里最好同步更新下</span>
+$ git stash pop <span class="c1"># 14. 恢复到修复前的工作状态</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>该模式适合人员固定、规模较大的项目</p>
+
+<h4 id="forking工作流">Forking工作流</h4>
+
+<p>开源项目常用模式</p>
+
+<p><img src="/image/go_develop_in_action/7_2.webp" alt="git-forking" /></p>
+
 <h3 id="研发流程设计">研发流程设计</h3>
+
+<h4 id="研发流程">研发流程</h4>
+
+<p>通常研发流程包括6个阶段
+1. 需求阶段
+2. 设计阶段
+3. 开发阶段
+4. 测试阶段
+5. 发布阶段
+6. 运营阶段</p>
+
+<p><img src="/image/go_develop_in_action/8_1.png" alt="git-forking" /></p>
+
+<p>每个阶段结束时，需要一个最终产物，可以是文档、代码或者部署组件，这个产物是下一个阶段的输入</p>
+
+<h4 id="研发模式">研发模式</h4>
+
+<p>研发模式有三种： 瀑布模式、迭代模式和敏捷模式</p>
+
+<h5 id="瀑布模式">瀑布模式</h5>
+
+<p>瀑布墨迹按照预先规划好的阶段来推进研发进度，流程清晰,但研发周期长，交付后变更困难
+<img src="/image/go_develop_in_action/8_2.webp" alt="git-forking" /></p>
+
+<h5 id="迭代模式">迭代模式</h5>
+
+<p>研发任务被切分为一系列轮次，先把主要功能搭建起来，在通过客户反馈不断完善</p>
+
+<h5 id="敏捷模式">敏捷模式</h5>
+
+<p>敏捷模式把大需求分成多个、可分阶段完成的小迭代，每个迭代交付都是一个可用的软件，开发过程中，软件一直处于可用状态</p>
+
+<p>迭代模式关注研发流程。而敏捷模式不仅会关注研发流程，还会关注之外的一些东西，例如：团队协作，需求拆分</p>
+
+<h4 id="ci-cd">CI/CD</h4>
+
+<p>CI/CD通过自动化的手段来快速执行代码检查、测试、构建和部署任务，从而提高研发效率</p>
+
+<ul>
+<li>CI：Continuous Integration，持续集成</li>
+<li>CD：Continuous Delivery，持续交付</li>
+<li>CD：Continuous Deployment，持续部署</li>
+</ul>
+
+<p><img src="/image/go_develop_in_action/8_3.webp" alt="git-forking" /></p>
+
+<p>持续集成的核心在代码，持续交付的核心在可交付的产物，持续部署的核心在自动部署</p>
+
+<h5 id="持续集成">持续集成</h5>
+
+<p>在代码push到git仓库后，CI工具会进行扫描、测试和构建，并将结果反馈给开发者</p>
+
+<p>CI流程可以将问题在开发阶段就暴露出来，这会让开发人员交付代码时更有信心</p>
+
+<h5 id="持续交付">持续交付</h5>
+
+<p>在持续集成的基础上，就构建产物自动部署到目标环境（测试、预发布）</p>
+
+<h5 id="持续部署">持续部署</h5>
+
+<p>在持续交付的基础上，将经过充分测试的代码自动部署到生产环境，整个流程不在需要审核，完全自动化</p>
+
+<h4 id="devops">DevOps</h4>
+
+<p>DevOps是一组过程、方法和系统的统称，用于促进开发、运维、质量部门之间的协作整合
+<img src="/image/go_develop_in_action/8_4.webp" alt="git-forking" /></p>
+
+<p>目前常用的Ops手段： AIOps、ChatOps、GitOps</p>
+
+<h5 id="chatops">ChatOps</h5>
+
+<p>通过发送指令给聊天机器人，执行某个任务
+ChatOps对操作者友好，信息透明可追溯</p>
+
+<h5 id="gitops">GitOps</h5>
+
+<p>基于Git和K8S实现云原生的持续交付</p>
+
+<h5 id="aiops">AIOps</h5>
+
+<p>利用AI技术来智能化运维IT系统</p>
 
 <h3 id="设计方法">设计方法</h3>
 
@@ -963,6 +1109,8 @@ This reverts commit fjsdf34353534vdf</pre></td></tr></table>
   
 
     
+
+  
 
         </div>
       </div>
@@ -1082,11 +1230,19 @@ This reverts commit fjsdf34353534vdf</pre></td></tr></table>
 
 
 
+
+
+
+
+
+
   
     <script type="text/javascript" src="/js/load-photoswipe.js"></script>
     <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
     <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
   
+
+
 
 
 
