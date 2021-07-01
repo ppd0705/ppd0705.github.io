@@ -70,7 +70,7 @@
 
 <meta itemprop="datePublished" content="2021-06-28T07:28:37&#43;08:00" />
 <meta itemprop="dateModified" content="2021-06-28T07:28:37&#43;08:00" />
-<meta itemprop="wordCount" content="2449">
+<meta itemprop="wordCount" content="3311">
 
 
 
@@ -299,8 +299,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 2449 words </span>
-          <span class="more-meta"> 5 min read </span>
+        <span class="more-meta"> 3311 words </span>
+          <span class="more-meta"> 7 min read </span>
 
         
         
@@ -642,22 +642,25 @@ This reverts commit fjsdf34353534vdf</pre></td></tr></table>
 
 <p><img src="/image/go_develop_in_action/6_1.webp" alt="project-layer" /></p>
 
-<ol>
-<li><p>/web
-web目录主要存放web静态资源</p></li>
+<h4 id="目录介绍">目录介绍</h4>
 
-<li><p>/cmd
-一个项目可能有多个组件，每个组件的main函数所在文件夹放在该目录</p></li>
+<h5 id="1-web">1. /web</h5>
 
-<li><p>/internal
-存放私有应用的代码，不能被其他项目导入</p></li>
-</ol>
+<p>web目录主要存放web静态资源</p>
+
+<h5 id="2-cmd">2. /cmd</h5>
+
+<p>一个项目可能有多个组件，每个组件的main函数所在文件夹放在该目录</p>
+
+<h5 id="3-internal">3. /internal</h5>
+
+<p>存放私有应用的代码，不能被其他项目导入</p>
 
 <p>项目内应用之间共享代码存放于/internal/pkg</p>
 
 <p>开发建议：最开始将共享代码都放/internal/pkg，做好对外发布的准备时再转到/pkg目录</p>
 
-<p>IAM项目internal目录结构 如下：</p>
+<p>IAM项目internal目录结构如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><span class="lnt"> 1
@@ -743,6 +746,136 @@ web目录主要存放web静态资源</p></li>
 <li>/internal/pkg/code: 业务Code码</li>
 <li>/internal/pkg/validation: 通用验证函数</li>
 <li>/internal/pkg/code: HTTP处理链</li>
+</ul>
+
+<h5 id="4-pkg">4. /pkg</h5>
+
+<p>pkg目录存放外部应用可以使用的代码库，应谨慎考虑</p>
+
+<h5 id="5-vendor">5. /vendor</h5>
+
+<p>项目依赖，通过<code>go mod vendor</code>创建</p>
+
+<h5 id="6-third-party">6. /third_party</h5>
+
+<p>外部帮助工具，比如fork了一个第三方go包，并做了小改动，可以放置该目录</p>
+
+<h5 id="7-test">7. /test</h5>
+
+<p>存放其他外部测试应用和测试数据</p>
+
+<h5 id="8-configs">8. /configs</h5>
+
+<p>存放配置文件模板或默认配置</p>
+
+<h5 id="9-deployments">9. /deployments</h5>
+
+<p>存放系统和容器编排部署模板和配置</p>
+
+<h5 id="10-init">10. /init</h5>
+
+<p>存放初始化系统和进程管理配置文件，如systemd、supervisord等</p>
+
+<h5 id="11-makefile">11. /Makefile</h5>
+
+<p>项目管理文件</p>
+
+<h5 id="12-scripts">12. /scripts</h5>
+
+<p>存放脚本文件，通常可能分为三个目录</p>
+
+<ul>
+<li>/scripts/make-rules: 存放maker文件，实现Makerfile文件中的各个功能</li>
+<li>/scripts/lib: 存放shell脚本</li>
+<li>/scripts/intall: 如果项目支持自动化部署，可以将部署脚本放在该目录</li>
+</ul>
+
+<h5 id="13-build">13. /build</h5>
+
+<p>存放安装包和持续集成相关的文件，通常可能包含三个目录</p>
+
+<ul>
+<li>/build/package: 存放容器（Docker）、系统(deb,rpm)的包配置和脚本</li>
+<li>/build/ci: 存放CI（travis，circle）的配置文件</li>
+<li>/build/docker: 存放子项目各个组件的Dockerfile文件</li>
+</ul>
+
+<h5 id="14-tools">14. /tools</h5>
+
+<p>存放这个项目的支持工具，这些工具可导入来自/pkg和/internal目录的代码</p>
+
+<h5 id="15-githooks">15. /githooks</h5>
+
+<p>git钩子</p>
+
+<h5 id="16-assets">16. /assets</h5>
+
+<p>项目使用的其他资源（图片、CSS、Javascript等）</p>
+
+<h5 id="17-website">17. /website</h5>
+
+<p>放置项目网站相关的数据</p>
+
+<h5 id="18-readme-md">18. /README.md</h5>
+
+<p>一般包含项目介绍、功能介绍、快速按照、使用指引、详细文档连接和开发指引等
+文件较长时可以用<a href="https://github.com/nochso/tocenize">tocenize</a>加目录</p>
+
+<h5 id="19-docs">19. /docs</h5>
+
+<p>存放设计文档、开放文档和用户文档等，可能包含下面几个目录</p>
+
+<p>/docs/devel/{en-US, zh-CN}: 存放开发文档
+/docs/guide/{en-US, zh-CN}: 存放用户手册
+/docs/images: 存放图片文件</p>
+
+<h5 id="20-contributing-md">20. /CONTRIBUTING.md</h5>
+
+<p>用来说明如何贡献代码，规范协同流程</p>
+
+<h5 id="21-api">21. /api</h5>
+
+<p>存放项目提供的各种不同类型的API接口定义文件，可能有openapi、swagger等目录</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">├── openapi/
+│   └── README.md
+└── swagger/
+    ├── docs/
+    ├── README.md
+    └── swagger.yaml</pre></td></tr></table>
+</div>
+</div>
+<h5 id="22-license">22. /LICENSE</h5>
+
+<p>版权文件</p>
+
+<p>如果需要给源码文件加license头时，可以使用<a href="https://github.com/marmotedu/addlicense">addlicense</a></p>
+
+<p>项目依赖第三方包使用的license检查使用<a href="https://github.com/ribice/glice">glice</a></p>
+
+<h5 id="23-changelog">23. /CHANGELOG</h5>
+
+<p>项目更新日志，可结合Angular规范和git-chglog自动生成内容</p>
+
+<h5 id="24-examples">24. /examples</h5>
+
+<p>存放代码示例</p>
+
+<h4 id="其他建议">其他建议</h4>
+
+<ul>
+<li>不使用/model目录，按功能拆分到使用的模块中</li>
+<li>目录和包尽量使用单数</li>
+<li>小项目可以先包含cmd、pkg、internal三个目录</li>
 </ul>
 
 <h3 id="工作流设计">工作流设计</h3>
