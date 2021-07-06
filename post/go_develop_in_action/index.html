@@ -72,7 +72,7 @@
 
 <meta itemprop="datePublished" content="2021-06-28T07:28:37&#43;08:00" />
 <meta itemprop="dateModified" content="2021-06-28T07:28:37&#43;08:00" />
-<meta itemprop="wordCount" content="4605">
+<meta itemprop="wordCount" content="4831">
 
 
 
@@ -309,7 +309,7 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 4605 words </span>
+        <span class="more-meta"> 4831 words </span>
           <span class="more-meta"> 10 min read </span>
 
         
@@ -1029,6 +1029,69 @@ ChatOps对操作者友好，信息透明可追溯</p>
 <p>利用AI技术来智能化运维IT系统</p>
 
 <h3 id="设计方法">设计方法</h3>
+
+<p><img src="/image/go_develop_in_action/10_1.webp" alt="go-application" /></p>
+
+<h4 id="代码结构">代码结构</h4>
+
+<p>按功能拆分目录而非按MVC等模块拆封</p>
+
+<h4 id="代码规范">代码规范</h4>
+
+<p>可参考Uber的规范：<a href="https://github.com/uber-go/guide/blob/master/style.md">Go Style Guide</a></p>
+
+<p>可使用惊呆检查工具：<a href="https://github.com/golangci/golangci-lint">golangcli-lint</a></p>
+
+<p>官方CodeReview实践：<a href="https://github.com/golang/go/wiki/CodeReviewComments">Go Code Review Comments</a></p>
+
+<h4 id="代码质量">代码质量</h4>
+
+<p>测试相关工具：</p>
+
+<ul>
+<li>官方Mock框架： <a href="https://github.com/golang/mock">golang/mock</a></li>
+<li>数据库Mock： <a href="https://github.com/DATA-DOG/go-sqlmock">golang/mock</a></li>
+<li>HTTP Mock： <a href="https://github.com/jarcoal/httpmock">golang/mock</a></li>
+<li>万能Mock： <a href="https://github.com/bouk/monkey">golang/mock</a></li>
+</ul>
+
+<p>覆盖率检查</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">$ go <span class="nb">test</span> -race -cover  -coverprofile<span class="o">=</span>./coverage.out -timeout<span class="o">=</span>10m -short -v ./...
+$ go tool cover -func ./coverage.out</code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="编程哲学">编程哲学</h4>
+
+<ul>
+<li>面向接口编程</li>
+<li>面向对象编程</li>
+</ul>
+
+<h4 id="软件设计方法">软件设计方法</h4>
+
+<ul>
+<li>设计模式</li>
+<li>SOLD原则</li>
+</ul>
+
+<h4 id="高效项目管理">高效项目管理</h4>
+
+<ul>
+<li>使用Makefile管理项目</li>
+
+<li><p>自动生成代码
+<img src="/image/go_develop_in_action/10_2.webp" alt="automate-code" /></p></li>
+
+<li><p>对接CI、CD</p></li>
+
+<li><p>编写高质量的文档</p></li>
+</ul>
 
 <h3 id="设计模式">设计模式</h3>
 

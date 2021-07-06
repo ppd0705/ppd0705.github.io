@@ -723,6 +723,69 @@ ChatOps对操作者友好，信息透明可追溯&lt;/p&gt;
 
 &lt;h3 id=&#34;设计方法&#34;&gt;设计方法&lt;/h3&gt;
 
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/10_1.webp&#34; alt=&#34;go-application&#34; /&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;代码结构&#34;&gt;代码结构&lt;/h4&gt;
+
+&lt;p&gt;按功能拆分目录而非按MVC等模块拆封&lt;/p&gt;
+
+&lt;h4 id=&#34;代码规范&#34;&gt;代码规范&lt;/h4&gt;
+
+&lt;p&gt;可参考Uber的规范：&lt;a href=&#34;https://github.com/uber-go/guide/blob/master/style.md&#34;&gt;Go Style Guide&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;可使用惊呆检查工具：&lt;a href=&#34;https://github.com/golangci/golangci-lint&#34;&gt;golangcli-lint&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;官方CodeReview实践：&lt;a href=&#34;https://github.com/golang/go/wiki/CodeReviewComments&#34;&gt;Go Code Review Comments&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;代码质量&#34;&gt;代码质量&lt;/h4&gt;
+
+&lt;p&gt;测试相关工具：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;官方Mock框架： &lt;a href=&#34;https://github.com/golang/mock&#34;&gt;golang/mock&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;数据库Mock： &lt;a href=&#34;https://github.com/DATA-DOG/go-sqlmock&#34;&gt;golang/mock&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;HTTP Mock： &lt;a href=&#34;https://github.com/jarcoal/httpmock&#34;&gt;golang/mock&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;万能Mock： &lt;a href=&#34;https://github.com/bouk/monkey&#34;&gt;golang/mock&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;覆盖率检查&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;$ go &lt;span class=&#34;nb&#34;&gt;test&lt;/span&gt; -race -cover  -coverprofile&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;./coverage.out -timeout&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;10m -short -v ./...
+$ go tool cover -func ./coverage.out&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;h4 id=&#34;编程哲学&#34;&gt;编程哲学&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;面向接口编程&lt;/li&gt;
+&lt;li&gt;面向对象编程&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;软件设计方法&#34;&gt;软件设计方法&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;设计模式&lt;/li&gt;
+&lt;li&gt;SOLD原则&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;高效项目管理&#34;&gt;高效项目管理&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;使用Makefile管理项目&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;自动生成代码
+&lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/10_2.webp&#34; alt=&#34;automate-code&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;对接CI、CD&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;编写高质量的文档&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
 &lt;h3 id=&#34;设计模式&#34;&gt;设计模式&lt;/h3&gt;
 
 &lt;h2 id=&#34;基础功能设计和开发&#34;&gt;基础功能设计和开发&lt;/h2&gt;
