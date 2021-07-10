@@ -1407,6 +1407,82 @@ $ go tool cover -func ./coverage.out&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&
 
 &lt;h3 id=&#34;api风格&#34;&gt;API风格&lt;/h3&gt;
 
+&lt;h4 id=&#34;restful-api设计原则&#34;&gt;Restful API设计原则&lt;/h4&gt;
+
+&lt;h5 id=&#34;uri设计&#34;&gt;URI设计&lt;/h5&gt;
+
+&lt;p&gt;通常情况下：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;资源使用名词复数表示&lt;/li&gt;
+&lt;li&gt;URI结尾不包含&lt;code&gt;/&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;推荐使用&lt;code&gt;-&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;使用小写&lt;/li&gt;
+&lt;li&gt;避免层级过深，超过2层时将其他资源转为？参数，比如&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;/schools/tsinghua/classes/rooma/students/zhang &lt;span class=&#34;c1&#34;&gt;# 不推荐&lt;/span&gt;
+/students?school&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;qinghua&lt;span class=&#34;p&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;class&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;rooma &lt;span class=&#34;c1&#34;&gt;# 推荐&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;实际场景中某些操作不能很好地映射为资源，可以参考如下做法：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;将一个操作变成一个资源的属性，比如禁用用户可以设计URI: /users/zhangsan?active=false&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;将操作当做是一个资源的嵌套资源，如github star:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;PUT /gits/:id/star
+DELETE /gits/:id/star&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;有时也可以打破规范，如登录操作URI设计为：/login&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h5 id=&#34;rest资源操作和http方法之间的映射&#34;&gt;REST资源操作和HTTP方法之间的映射&lt;/h5&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/12_1.webp&#34; alt=&#34;resource-operation&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;对资源的操作应蛮子安全性和幂等性：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;安全性：不会改变资源状态，可以理解为只读&lt;/li&gt;
+&lt;li&gt;幂等性：执行1次和执行N次，对资源状态改变的效果是等价的&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/12_2.webp&#34; alt=&#34;idempotence&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;POST一般用在新建和批量删除这两种场景，批量删除更建议使用：DELETE /users?id=1,2,3&lt;/p&gt;
+
+&lt;h5 id=&#34;统一分页-过滤-排序-搜索功能&#34;&gt;统一分页/过滤/排序/搜索功能&lt;/h5&gt;
+
+&lt;ul&gt;
+&lt;li&gt;分页：在列出一个Collection所有Member时应该提供分页功能，如：/users?offset=0&amp;amp;limit=20&lt;/li&gt;
+&lt;li&gt;过滤：当不用返回一个资源的全部属性时可以指定，如：/users?fields=email,username,address&lt;/li&gt;
+&lt;li&gt;排序：根据指定字段排序，如：/users?sort=age,desc&lt;/li&gt;
+&lt;li&gt;搜索：当一个资源的Member太多时，可能需要提供搜索功能，搜索建议按模糊搜索来匹配&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h5 id=&#34;域名&#34;&gt;域名&lt;/h5&gt;
+
+&lt;p&gt;主要有两种方式：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://abc.com/api&#34;&gt;https://abc.com/api&lt;/a&gt; 适用该域名只有一套API系统的情况&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://project.api.abc.com&#34;&gt;https://project.api.abc.com&lt;/a&gt; 适用域名下有多个系统API&lt;/li&gt;
+&lt;/ul&gt;
+
 &lt;h3 id=&#34;makefile&#34;&gt;Makefile&lt;/h3&gt;
 
 &lt;h2 id=&#34;参考&#34;&gt;参考&lt;/h2&gt;

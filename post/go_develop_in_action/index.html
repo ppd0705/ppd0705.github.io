@@ -72,7 +72,7 @@
 
 <meta itemprop="datePublished" content="2021-06-28T07:28:37&#43;08:00" />
 <meta itemprop="dateModified" content="2021-06-28T07:28:37&#43;08:00" />
-<meta itemprop="wordCount" content="6331">
+<meta itemprop="wordCount" content="6914">
 
 
 
@@ -309,8 +309,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 6331 words </span>
-          <span class="more-meta"> 13 min read </span>
+        <span class="more-meta"> 6914 words </span>
+          <span class="more-meta"> 14 min read </span>
 
         
         
@@ -1713,6 +1713,82 @@ $ go tool cover -func ./coverage.out</code></pre></td></tr></table>
 <h2 id="基础功能设计和开发">基础功能设计和开发</h2>
 
 <h3 id="api风格">API风格</h3>
+
+<h4 id="restful-api设计原则">Restful API设计原则</h4>
+
+<h5 id="uri设计">URI设计</h5>
+
+<p>通常情况下：</p>
+
+<ul>
+<li>资源使用名词复数表示</li>
+<li>URI结尾不包含<code>/</code></li>
+<li>推荐使用<code>-</code></li>
+<li>使用小写</li>
+<li>避免层级过深，超过2层时将其他资源转为？参数，比如</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">/schools/tsinghua/classes/rooma/students/zhang <span class="c1"># 不推荐</span>
+/students?school<span class="o">=</span>qinghua<span class="p">&amp;</span><span class="nv">class</span><span class="o">=</span>rooma <span class="c1"># 推荐</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>实际场景中某些操作不能很好地映射为资源，可以参考如下做法：</p>
+
+<ul>
+<li>将一个操作变成一个资源的属性，比如禁用用户可以设计URI: /users/zhangsan?active=false</li>
+
+<li><p>将操作当做是一个资源的嵌套资源，如github star:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">PUT /gits/:id/star
+DELETE /gits/:id/star</pre></td></tr></table>
+</div>
+</div></li>
+
+<li><p>有时也可以打破规范，如登录操作URI设计为：/login</p></li>
+</ul>
+
+<h5 id="rest资源操作和http方法之间的映射">REST资源操作和HTTP方法之间的映射</h5>
+
+<p><img src="/image/go_develop_in_action/12_1.webp" alt="resource-operation" /></p>
+
+<p>对资源的操作应蛮子安全性和幂等性：</p>
+
+<ul>
+<li>安全性：不会改变资源状态，可以理解为只读</li>
+<li>幂等性：执行1次和执行N次，对资源状态改变的效果是等价的</li>
+</ul>
+
+<p><img src="/image/go_develop_in_action/12_2.webp" alt="idempotence" /></p>
+
+<p>POST一般用在新建和批量删除这两种场景，批量删除更建议使用：DELETE /users?id=1,2,3</p>
+
+<h5 id="统一分页-过滤-排序-搜索功能">统一分页/过滤/排序/搜索功能</h5>
+
+<ul>
+<li>分页：在列出一个Collection所有Member时应该提供分页功能，如：/users?offset=0&amp;limit=20</li>
+<li>过滤：当不用返回一个资源的全部属性时可以指定，如：/users?fields=email,username,address</li>
+<li>排序：根据指定字段排序，如：/users?sort=age,desc</li>
+<li>搜索：当一个资源的Member太多时，可能需要提供搜索功能，搜索建议按模糊搜索来匹配</li>
+</ul>
+
+<h5 id="域名">域名</h5>
+
+<p>主要有两种方式：</p>
+
+<ul>
+<li><a href="https://abc.com/api">https://abc.com/api</a> 适用该域名只有一套API系统的情况</li>
+<li><a href="https://project.api.abc.com">https://project.api.abc.com</a> 适用域名下有多个系统API</li>
+</ul>
 
 <h3 id="makefile">Makefile</h3>
 
