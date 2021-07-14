@@ -1483,6 +1483,22 @@ DELETE /gits/:id/star&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;li&gt;&lt;a href=&#34;https://project.api.abc.com&#34;&gt;https://project.api.abc.com&lt;/a&gt; 适用域名下有多个系统API&lt;/li&gt;
 &lt;/ul&gt;
 
+&lt;h4 id=&#34;rcp-api&#34;&gt;RCP API&lt;/h4&gt;
+
+&lt;p&gt;RPC（Remote Procedure Call）即远程过程调用，通俗地来讲就是服务端实现了一个函数，
+客户端使用RPC框架提供的接口，想调用本地函数一样调用这个函数，并获取返回值。&lt;/p&gt;
+
+&lt;p&gt;protobuf3可以使用&lt;code&gt;optional&lt;/code&gt;关键字来支持显示判断是否传入该字段&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;golang会将该字段转为指针类型，可以判断是否为&lt;code&gt;nil&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;python可以通过&lt;code&gt;HasField&lt;/code&gt;方法来判断&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;可以通过grpc-gateway来同时支持restful-api&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/13_1.webp&#34; alt=&#34;rpc-vs-rest&#34; /&gt;&lt;/p&gt;
+
 &lt;h3 id=&#34;makefile&#34;&gt;Makefile&lt;/h3&gt;
 
 &lt;h2 id=&#34;参考&#34;&gt;参考&lt;/h2&gt;
@@ -1490,6 +1506,7 @@ DELETE /gits/:id/star&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://time.geekbang.org/column/intro/418&#34;&gt;课程资源-Go 语言项目开发实战&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://www.techgrow.cn/posts/5bd5a253.html&#34;&gt;gcc升级&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/protocolbuffers/protobuf/blob/master/docs/implementing_proto3_presence.md&#34;&gt;proto3支持optional&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
       

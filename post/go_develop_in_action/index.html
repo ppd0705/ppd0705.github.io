@@ -72,7 +72,7 @@
 
 <meta itemprop="datePublished" content="2021-06-28T07:28:37&#43;08:00" />
 <meta itemprop="dateModified" content="2021-06-28T07:28:37&#43;08:00" />
-<meta itemprop="wordCount" content="6914">
+<meta itemprop="wordCount" content="7134">
 
 
 
@@ -309,8 +309,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 6914 words </span>
-          <span class="more-meta"> 14 min read </span>
+        <span class="more-meta"> 7134 words </span>
+          <span class="more-meta"> 15 min read </span>
 
         
         
@@ -1790,6 +1790,22 @@ DELETE /gits/:id/star</pre></td></tr></table>
 <li><a href="https://project.api.abc.com">https://project.api.abc.com</a> 适用域名下有多个系统API</li>
 </ul>
 
+<h4 id="rcp-api">RCP API</h4>
+
+<p>RPC（Remote Procedure Call）即远程过程调用，通俗地来讲就是服务端实现了一个函数，
+客户端使用RPC框架提供的接口，想调用本地函数一样调用这个函数，并获取返回值。</p>
+
+<p>protobuf3可以使用<code>optional</code>关键字来支持显示判断是否传入该字段</p>
+
+<ul>
+<li>golang会将该字段转为指针类型，可以判断是否为<code>nil</code></li>
+<li>python可以通过<code>HasField</code>方法来判断</li>
+</ul>
+
+<p>可以通过grpc-gateway来同时支持restful-api</p>
+
+<p><img src="/image/go_develop_in_action/13_1.webp" alt="rpc-vs-rest" /></p>
+
 <h3 id="makefile">Makefile</h3>
 
 <h2 id="参考">参考</h2>
@@ -1797,6 +1813,7 @@ DELETE /gits/:id/star</pre></td></tr></table>
 <ul>
 <li><a href="https://time.geekbang.org/column/intro/418">课程资源-Go 语言项目开发实战</a></li>
 <li><a href="https://www.techgrow.cn/posts/5bd5a253.html">gcc升级</a></li>
+<li><a href="https://github.com/protocolbuffers/protobuf/blob/master/docs/implementing_proto3_presence.md">proto3支持optional</a></li>
 </ul>
 
     </div>
