@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.6" />
+<meta name="generator" content="Hugo 0.86.0-DEV" />
 
 
 <link rel="canonical" href="https://ppd0705.github.io/post/gunicorn_note/" />
@@ -62,22 +62,15 @@
 <meta property="og:title" content="gunicorn笔记" />
 <meta property="og:description" content="简介 gunicorn是一遵守WSGI协议的web服务器， 其整体架构是Master/Workers模型。master进程通过信号机制管理wor" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://ppd0705.github.io/post/gunicorn_note/" />
-<meta property="article:published_time" content="2020-02-20T21:29:37&#43;08:00"/>
-<meta property="article:modified_time" content="2020-02-20T21:29:37&#43;08:00"/>
+<meta property="og:url" content="https://ppd0705.github.io/post/gunicorn_note/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2020-02-20T21:29:37+08:00" />
+<meta property="article:modified_time" content="2020-02-20T21:29:37+08:00" />
 
 <meta itemprop="name" content="gunicorn笔记">
-<meta itemprop="description" content="简介 gunicorn是一遵守WSGI协议的web服务器， 其整体架构是Master/Workers模型。master进程通过信号机制管理wor">
-
-
-<meta itemprop="datePublished" content="2020-02-20T21:29:37&#43;08:00" />
-<meta itemprop="dateModified" content="2020-02-20T21:29:37&#43;08:00" />
+<meta itemprop="description" content="简介 gunicorn是一遵守WSGI协议的web服务器， 其整体架构是Master/Workers模型。master进程通过信号机制管理wor"><meta itemprop="datePublished" content="2020-02-20T21:29:37+08:00" />
+<meta itemprop="dateModified" content="2020-02-20T21:29:37+08:00" />
 <meta itemprop="wordCount" content="674">
-
-
-
-<meta itemprop="keywords" content="Python," />
-<meta name="twitter:card" content="summary"/>
+<meta itemprop="keywords" content="Python," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="gunicorn笔记"/>
 <meta name="twitter:description" content="简介 gunicorn是一遵守WSGI协议的web服务器， 其整体架构是Master/Workers模型。master进程通过信号机制管理wor"/>
 
@@ -303,7 +296,7 @@
       
       <div class="post-meta">
         <time datetime="2020-02-20" class="post-time">
-          2020-02-20 21:29:37
+          2020-02-20
         </time>
         <div class="post-category">
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
@@ -322,19 +315,38 @@
 
     
     
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Table of Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li>
+          <ul>
+            <li>
+              <ul>
+                <li><a href="#简介">简介</a></li>
+                <li><a href="#信号处理">信号处理</a></li>
+                <li><a href="#监控">监控</a></li>
+                <li><a href="#参考">参考</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
 
     
     <div class="post-content">
-      
-
-<h4 id="简介">简介</h4>
-
+      <h4 id="简介">简介</h4>
 <p>gunicorn是一遵守WSGI协议的web服务器， 其整体架构是Master/Workers模型。master进程通过信号机制管理worker进程；而实际的请求由worker进程处理，worker类型有多种(sync, gevent, asycnio, tornado&hellip;)可通过参数指定。</p>
-
 <h4 id="信号处理">信号处理</h4>
-
 <h5 id="master">Master</h5>
-
 <ul>
 <li>CHLD（子进程退出事发给父进程）: 通过os.waitpid得异常pid并pop出woker队列，关闭改woker.tmp</li>
 <li>HUP(重载workers): 更新配置，新建linsener,新建workers, 给旧wokers发TERM信号</li>
@@ -347,9 +359,7 @@
 <li>USR2: os.execvpe, 新启master/wokers, 新master是老master的子进程, 这个和HUP信号的区别在于会重新加载gunicorn，且旧workers不会退出</li>
 <li>WINCH(窗口大小改变的信号): 针对gunicorn后台运行时，给所有woker发TERM信号，把worker数改为0</li>
 </ul>
-
 <h5 id="workers">Workers</h5>
-
 <ul>
 <li>QUIT(停止): alive=False, sys.exit(0)</li>
 <li>INT:  同QUIT</li>
@@ -358,16 +368,12 @@
 <li>ABRT: alive=False，sys.exit(1)</li>
 <li>WINCH: 忽略</li>
 </ul>
-
 <h4 id="监控">监控</h4>
-
 <ul>
 <li>Master: 通过worker的tmpfile的st_ctime来判断子进程是否正常，如果为否则发送ABRT信号给对应子进程</li>
 <li>Workers: worker会创建一个tmpfile,并一直刷新st_ctime; 同时ppid是否有变，如果变了则直接退出</li>
 </ul>
-
 <h4 id="参考">参考</h4>
-
 <ul>
 <li><a href="http://docs.gunicorn.org/en/stable/design.html">官方文档</a></li>
 <li><a href="https://docs.oracle.com/cd/E19455-01/806-4750/signals-7/index.html">sigchld</a></li>
@@ -436,7 +442,7 @@
     <div class="post bg-white">
       <script src="https://utteranc.es/client.js"
             repo= "ppd0705/ppd0705.github.io"
-            issue-term="utteranc"
+            issue-term="pathname"
             theme="github-light"
             crossorigin="anonymous"
             async>

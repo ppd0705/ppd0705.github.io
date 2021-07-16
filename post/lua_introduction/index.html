@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.6" />
+<meta name="generator" content="Hugo 0.86.0-DEV" />
 
 
 <link rel="canonical" href="https://ppd0705.github.io/post/lua_introduction/" />
@@ -62,22 +62,15 @@
 <meta property="og:title" content="Lua基本使用" />
 <meta property="og:description" content="前言：最近在了解API网关apisix， 其中的配置都是用的lua, 于是开始了解lua。 语法 注释 行注释 -- 块注释 1 2 3 --[[块 注释 --]] 变量 布尔类" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://ppd0705.github.io/post/lua_introduction/" />
-<meta property="article:published_time" content="2020-04-08T20:32:24&#43;08:00"/>
-<meta property="article:modified_time" content="2020-04-08T20:32:24&#43;08:00"/>
+<meta property="og:url" content="https://ppd0705.github.io/post/lua_introduction/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2020-04-08T20:32:24+08:00" />
+<meta property="article:modified_time" content="2020-04-08T20:32:24+08:00" />
 
 <meta itemprop="name" content="Lua基本使用">
-<meta itemprop="description" content="前言：最近在了解API网关apisix， 其中的配置都是用的lua, 于是开始了解lua。 语法 注释 行注释 -- 块注释 1 2 3 --[[块 注释 --]] 变量 布尔类">
-
-
-<meta itemprop="datePublished" content="2020-04-08T20:32:24&#43;08:00" />
-<meta itemprop="dateModified" content="2020-04-08T20:32:24&#43;08:00" />
+<meta itemprop="description" content="前言：最近在了解API网关apisix， 其中的配置都是用的lua, 于是开始了解lua。 语法 注释 行注释 -- 块注释 1 2 3 --[[块 注释 --]] 变量 布尔类"><meta itemprop="datePublished" content="2020-04-08T20:32:24+08:00" />
+<meta itemprop="dateModified" content="2020-04-08T20:32:24+08:00" />
 <meta itemprop="wordCount" content="1091">
-
-
-
-<meta itemprop="keywords" content="Lua," />
-<meta name="twitter:card" content="summary"/>
+<meta itemprop="keywords" content="Lua," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Lua基本使用"/>
 <meta name="twitter:description" content="前言：最近在了解API网关apisix， 其中的配置都是用的lua, 于是开始了解lua。 语法 注释 行注释 -- 块注释 1 2 3 --[[块 注释 --]] 变量 布尔类"/>
 
@@ -303,7 +296,7 @@
       
       <div class="post-meta">
         <time datetime="2020-04-08" class="post-time">
-          2020-04-08 20:32:24
+          2020-04-08
         </time>
         <div class="post-category">
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
@@ -322,35 +315,59 @@
 
     
     
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Table of Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#语法">语法</a>
+              <ul>
+                <li><a href="#注释">注释</a></li>
+                <li><a href="#变量">变量</a></li>
+                <li><a href="#控制语句">控制语句</a></li>
+                <li><a href="#函数">函数</a></li>
+                <li><a href="#table">table</a></li>
+                <li><a href="#metatable-和-metamethod">MetaTable 和 MetaMethod</a></li>
+                <li><a href="#面向对象">&ldquo;面向对象&rdquo;</a></li>
+                <li><a href="#模块">模块</a></li>
+              </ul>
+            </li>
+            <li><a href="#参考">参考</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
 
     
     <div class="post-content">
-      
-
-<p>前言：最近在了解API网关apisix， 其中的配置都是用的lua, 于是开始了解lua。</p>
-
+      <p>前言：最近在了解API网关apisix， 其中的配置都是用的lua, 于是开始了解lua。</p>
 <h3 id="语法">语法</h3>
-
 <h4 id="注释">注释</h4>
-
 <ul>
 <li>行注释 <code>--</code></li>
 <li>块注释</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="cm">--[[块
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="cm">--[[块
 </span><span class="cm">注释
-</span><span class="cm">--]]</span></code></pre></td></tr></table>
+</span><span class="cm">--]]</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="变量">变量</h4>
-
+</div><h4 id="变量">变量</h4>
 <ul>
 <li>布尔类型 nil, false 都认为<code>false</code>,其他包括数字0都是<code>ture</code></li>
 <li>double</li>
@@ -358,32 +375,30 @@
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="n">a</span> <span class="o">=</span> <span class="s1">&#39;alo</span><span class="se">\n</span><span class="s1">123&#34;&#39;</span>
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="n">a</span> <span class="o">=</span> <span class="s1">&#39;alo</span><span class="se">\n</span><span class="s1">123&#34;&#39;</span>
 <span class="n">a</span> <span class="o">=</span> <span class="s2">&#34;alo</span><span class="se">\n</span><span class="s2">123</span><span class="se">\&#34;</span><span class="s2">&#34;</span>
 <span class="n">a</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\97</span><span class="s1">lo</span><span class="se">\10\049</span><span class="s1">23&#34;&#39;</span>
 <span class="n">a</span> <span class="o">=</span> <span class="s">[[alo
-</span><span class="s">123&#34;]]</span></code></pre></td></tr></table>
+</span><span class="s">123&#34;]]</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li>用<code>local</code>声明变量为局部变量，否则默认为全部变量</li>
 </ul>
-
 <h4 id="控制语句">控制语句</h4>
-
 <ul>
 <li>while循环</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -392,21 +407,21 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span>
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="n">num</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="kr">while</span> <span class="n">num</span> <span class="o">&lt;=</span> <span class="mi">100</span> <span class="kr">do</span>
     <span class="n">sum</span> <span class="o">=</span> <span class="n">sum</span> <span class="o">+</span> <span class="n">num</span>
     <span class="n">num</span> <span class="o">=</span> <span class="n">num</span> <span class="o">+</span> <span class="mi">1</span>
 <span class="kr">end</span>
-<span class="n">print</span><span class="p">(</span><span class="s2">&#34;sum =&#34;</span><span class="p">,</span> <span class="n">sum</span><span class="p">)</span></code></pre></td></tr></table>
+<span class="n">print</span><span class="p">(</span><span class="s2">&#34;sum =&#34;</span><span class="p">,</span> <span class="n">sum</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li>if-else</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -417,7 +432,7 @@
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="n">a</span> <span class="o">=</span> <span class="mi">10</span> 
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="n">a</span> <span class="o">=</span> <span class="mi">10</span> 
 <span class="n">b</span> <span class="o">=</span> <span class="mi">200</span>
 <span class="kr">if</span> <span class="n">a</span> <span class="o">==</span> <span class="mi">100</span> <span class="ow">and</span> <span class="n">b</span> <span class="o">~=</span> <span class="mi">200</span> <span class="kr">then</span>
     <span class="n">print</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
@@ -425,15 +440,15 @@
     <span class="n">print</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 <span class="kr">else</span>
     <span class="n">print</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-<span class="kr">end</span></code></pre></td></tr></table>
+<span class="kr">end</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li>for</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -444,7 +459,7 @@
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span> 
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span> 
 <span class="kr">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">100</span> <span class="kr">do</span> 
     <span class="n">sum</span> <span class="o">=</span> <span class="n">sum</span> <span class="o">+</span> <span class="n">i</span>
 <span class="kr">end</span>
@@ -452,55 +467,54 @@
 <span class="kr">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span> <span class="kr">do</span>
     <span class="n">sum</span> <span class="o">=</span> <span class="n">sum</span> <span class="o">-</span> <span class="n">i</span>
 <span class="kr">end</span>
-<span class="n">print</span><span class="p">(</span><span class="n">sum</span><span class="p">)</span></code></pre></td></tr></table>
+<span class="n">print</span><span class="p">(</span><span class="n">sum</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li>until</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="n">sum</span> <span class="o">=</span> <span class="mi">2</span>
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="n">sum</span> <span class="o">=</span> <span class="mi">2</span>
 <span class="kr">repeat</span>
     <span class="n">sum</span> <span class="o">=</span> <span class="n">sum</span> <span class="o">^</span> <span class="mi">2</span>
     <span class="n">print</span><span class="p">(</span><span class="n">sum</span><span class="p">)</span>
-<span class="kr">until</span> <span class="n">sum</span> <span class="o">&gt;</span> <span class="mi">1000</span></code></pre></td></tr></table>
+<span class="kr">until</span> <span class="n">sum</span> <span class="o">&gt;</span> <span class="mi">1000</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="函数">函数</h4>
-
+</div><h4 id="函数">函数</h4>
 <ul>
 <li>递归</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="kr">function</span> <span class="nf">fib</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="kr">function</span> <span class="nf">fib</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
     <span class="kr">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="kr">then</span> <span class="kr">return</span> <span class="mi">1</span> <span class="kr">end</span>
     <span class="kr">return</span> <span class="n">fib</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">fib</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 <span class="kr">end</span>
-<span class="n">print</span><span class="p">(</span><span class="n">fib</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span></code></pre></td></tr></table>
+<span class="n">print</span><span class="p">(</span><span class="n">fib</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li>闭包</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -513,7 +527,7 @@
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="kr">function</span> <span class="nf">newCounter</span><span class="p">()</span>
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="kr">function</span> <span class="nf">newCounter</span><span class="p">()</span>
     <span class="kd">local</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="kr">return</span> <span class="kr">function</span><span class="p">()</span>  <span class="c1">-- anonymous function</span>
         <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
@@ -523,15 +537,15 @@
 
 <span class="n">c</span> <span class="o">=</span> <span class="n">newCounter</span><span class="p">()</span>
 <span class="n">print</span><span class="p">(</span><span class="n">c</span><span class="p">())</span> <span class="c1">-- 1</span>
-<span class="n">print</span><span class="p">(</span><span class="n">c</span><span class="p">())</span> <span class="c1">-- 2</span></code></pre></td></tr></table>
+<span class="n">print</span><span class="p">(</span><span class="n">c</span><span class="p">())</span> <span class="c1">-- 2</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li>返回值：杜宇的被丢弃，少了的变量为nil</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -540,22 +554,23 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="kr">function</span> <span class="nf">getUserInfo</span><span class="p">(</span><span class="n">id</span><span class="p">)</span>
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="kr">function</span> <span class="nf">getUserInfo</span><span class="p">(</span><span class="n">id</span><span class="p">)</span>
     <span class="n">print</span><span class="p">(</span><span class="n">id</span><span class="p">)</span>
     <span class="kr">return</span> <span class="s2">&#34;hello&#34;</span><span class="p">,</span> <span class="mi">123</span>
 <span class="kr">end</span>
 <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">getUserInfo</span><span class="p">()</span>
 <span class="n">print</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
-<span class="c1">-- id 和 c 均为nil</span></code></pre></td></tr></table>
+<span class="c1">-- id 和 c 均为nil</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="table">table</h4>
-
-<p>table可以用nil以外的对象做key和value, 可以用来描述原始的数组、字典等
-- 字典</p>
+</div><h4 id="table">table</h4>
+<p>table可以用nil以外的对象做key和value, 可以用来描述原始的数组、字典等</p>
+<ul>
+<li>字典</li>
+</ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -564,51 +579,50 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="n">a</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="o">=</span><span class="s2">&#34;foo&#34;</span><span class="p">,</span> <span class="n">age</span><span class="o">=</span><span class="mi">20</span><span class="p">}</span>
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="n">a</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="o">=</span><span class="s2">&#34;foo&#34;</span><span class="p">,</span> <span class="n">age</span><span class="o">=</span><span class="mi">20</span><span class="p">}</span>
 <span class="n">a.sex</span> <span class="o">=</span> <span class="s1">&#39;m&#39;</span>
 
 <span class="c1">-- 遍历</span>
 <span class="kr">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="kr">in</span> <span class="n">pairs</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="kr">do</span>
     <span class="n">print</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
-<span class="kr">end</span></code></pre></td></tr></table>
+<span class="kr">end</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>注：全局变量存在_G的table</p>
-
+</div><p>注：全局变量存在_G的table</p>
 <ul>
 <li>数组
-
 <ul>
 <li>下标从1开始</li>
 <li>可以混合类型</li>
-<li>数组长度使用<code>#arr</code>获取
-<br /></li>
-</ul></li>
+<li>数组长度使用<code>#arr</code>获取</li>
+</ul>
+</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
+</span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="n">arr</span> <span class="o">=</span> <span class="p">{</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">}</span>
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="n">arr</span> <span class="o">=</span> <span class="p">{</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">}</span>
 <span class="n">arr</span> <span class="o">=</span> <span class="p">{[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="mi">3</span><span class="o">=</span><span class="p">[</span><span class="mi">30</span><span class="p">]}</span>
 
 <span class="c1">-- 获取长度</span>
-<span class="n">print</span><span class="p">(</span><span class="o">#</span><span class="n">a</span><span class="p">)</span></code></pre></td></tr></table>
-</div>
-</div>
-<h4 id="metatable-和-metamethod">MetaTable 和 MetaMethod</h4>
+<span class="n">print</span><span class="p">(</span><span class="o">#</span><span class="n">a</span><span class="p">)</span>
 
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="metatable-和-metamethod">MetaTable 和 MetaMethod</h4>
 <ul>
 <li>内建MetaMethod方法</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -625,7 +639,7 @@
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="n">__add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>                     <span class="err">对应表达式</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="n">__add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>                     <span class="err">对应表达式</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
 <span class="n">__sub</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>                     <span class="err">对应表达式</span> <span class="n">a</span> <span class="o">-</span> <span class="n">b</span>
 <span class="n">__mul</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>                     <span class="err">对应表达式</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
 <span class="n">__div</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>                     <span class="err">对应表达式</span> <span class="n">a</span> <span class="o">/</span> <span class="n">b</span>
@@ -639,15 +653,15 @@
 <span class="n">__le</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>                      <span class="err">对应表达式</span> <span class="n">a</span> <span class="o">&lt;=</span> <span class="n">b</span>
 <span class="n">__index</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>                   <span class="err">对应表达式</span> <span class="n">a.b</span>
 <span class="n">__newindex</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>             <span class="err">对应表达式</span> <span class="n">a.b</span> <span class="o">=</span> <span class="n">c</span>
-<span class="n">__call</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">...)</span>                  <span class="err">对应表达式</span> <span class="n">a</span><span class="p">(...)</span></code></pre></td></tr></table>
+<span class="n">__call</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">...)</span>                  <span class="err">对应表达式</span> <span class="n">a</span><span class="p">(...)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li>setmetatable： 实现重载操作符等功能</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -671,7 +685,7 @@
 </span><span class="lnt">22
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="c1">-- 重载__add 实现分数加法</span>
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="c1">-- 重载__add 实现分数加法</span>
 <span class="n">fraction_a</span> <span class="o">=</span> <span class="p">{</span><span class="n">numerator</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">denominator</span><span class="o">=</span><span class="mi">3</span><span class="p">}</span>
 
 <span class="n">fraction_b</span> <span class="o">=</span> <span class="p">{</span><span class="n">numerator</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">denominator</span><span class="o">=</span><span class="mi">4</span><span class="p">}</span>
@@ -692,11 +706,12 @@
 <span class="n">fraction_s</span> <span class="o">=</span> <span class="n">fraction_a</span> <span class="o">+</span> <span class="n">fraction_b</span>
 <span class="c1">-- fraction_s = fraction_op.__add(fraction_a, fraction_b)</span>
 <span class="kr">for</span> <span class="n">k</span> <span class="p">,</span><span class="n">v</span> <span class="kr">in</span> <span class="n">pairs</span><span class="p">(</span><span class="n">fraction_s</span><span class="p">)</span> <span class="kr">do</span>
-    <span class="n">print</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span></code></pre></td></tr></table>
+    <span class="n">print</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
 </div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -709,7 +724,7 @@
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="c1">-- 重载__index，当调用table[key]在本身找不到是回去__index指向的对象中查找</span>
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="c1">-- 重载__index，当调用table[key]在本身找不到是回去__index指向的对象中查找</span>
 <span class="n">window_prototype</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">100</span><span class="p">}</span>
 
 <span class="n">myWin</span> <span class="o">=</span> <span class="p">{</span><span class="n">title</span><span class="o">=</span><span class="s2">&#34;Hello&#34;</span><span class="p">}</span>
@@ -719,13 +734,13 @@
 <span class="kr">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="kr">in</span> <span class="n">pairs</span><span class="p">(</span><span class="n">myWin</span><span class="p">)</span> <span class="kr">do</span>
     <span class="n">print</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
 <span class="kr">end</span>
-<span class="n">print</span><span class="p">(</span><span class="n">myWin.x</span><span class="p">)</span></code></pre></td></tr></table>
+<span class="n">print</span><span class="p">(</span><span class="n">myWin.x</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="面向对象">&ldquo;面向对象&rdquo;</h4>
+</div><h4 id="面向对象">&ldquo;面向对象&rdquo;</h4>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -756,7 +771,7 @@
 </span><span class="lnt">29
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="n">Person</span><span class="o">=</span><span class="p">{}</span>
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="n">Person</span><span class="o">=</span><span class="p">{}</span>
 <span class="kr">function</span> <span class="nc">Person</span><span class="p">:</span><span class="nf">new</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
     <span class="kd">local</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">p</span>
     <span class="kr">if</span> <span class="p">(</span><span class="n">obj</span> <span class="o">==</span> <span class="kc">nil</span><span class="p">)</span> <span class="kr">then</span>
@@ -784,48 +799,46 @@
 <span class="kr">end</span>
 <span class="kr">function</span> <span class="nc">Student</span><span class="p">:</span><span class="nf">toString</span><span class="p">()</span>
     <span class="kr">return</span> <span class="s2">&#34;Student : &#34;</span><span class="o">..</span> <span class="n">self.year</span><span class="o">..</span><span class="s2">&#34; : &#34;</span> <span class="o">..</span> <span class="n">self.name</span>
-<span class="kr">end</span></code></pre></td></tr></table>
+<span class="kr">end</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="模块">模块</h4>
-
+</div><h4 id="模块">模块</h4>
 <ul>
 <li>单次载入</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="n">require</span><span class="p">(</span><span class="s2">&#34;model_name&#34;</span><span class="p">)</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="n">require</span><span class="p">(</span><span class="s2">&#34;model_name&#34;</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li>多次载入</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="n">dofile</span><span class="p">(</span><span class="s2">&#34;model_name&#34;</span><span class="p">)</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="n">dofile</span><span class="p">(</span><span class="s2">&#34;model_name&#34;</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li>惰性载入</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="kd">local</span> <span class="n">hello</span> <span class="o">=</span> <span class="n">loadfile</span><span class="p">(</span><span class="s2">&#34;model_name&#34;</span><span class="p">)</span>
-<span class="n">hello</span><span class="p">()</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="kd">local</span> <span class="n">hello</span> <span class="o">=</span> <span class="n">loadfile</span><span class="p">(</span><span class="s2">&#34;model_name&#34;</span><span class="p">)</span>
+<span class="n">hello</span><span class="p">()</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="参考">参考</h3>
-
+</div><h3 id="参考">参考</h3>
 <ul>
 <li><a href="https://coolshell.cn/articles/10739.html">酷壳Lua简明教程</a></li>
 <li><a href="https://www.codingnow.com/2000/download/lua_manual.html">lua参考手册(云风翻译版)</a></li>
@@ -893,7 +906,7 @@
     <div class="post bg-white">
       <script src="https://utteranc.es/client.js"
             repo= "ppd0705/ppd0705.github.io"
-            issue-term="utteranc"
+            issue-term="pathname"
             theme="github-light"
             crossorigin="anonymous"
             async>

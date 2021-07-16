@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.6" />
+<meta name="generator" content="Hugo 0.86.0-DEV" />
 
 
 <link rel="canonical" href="https://ppd0705.github.io/post/uvicorn_note/" />
@@ -62,22 +62,15 @@
 <meta property="og:title" content="Uvicorn源码笔记" />
 <meta property="og:description" content="简介 Unicorn是一个遵守ASGI协议的web服务器，使用asycnio框架，要求python3.6&#43;，支持HTTP1.1和WebSock" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://ppd0705.github.io/post/uvicorn_note/" />
-<meta property="article:published_time" content="2020-03-04T08:25:53&#43;08:00"/>
-<meta property="article:modified_time" content="2020-03-04T08:25:53&#43;08:00"/>
+<meta property="og:url" content="https://ppd0705.github.io/post/uvicorn_note/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2020-03-04T08:25:53+08:00" />
+<meta property="article:modified_time" content="2020-03-04T08:25:53+08:00" />
 
 <meta itemprop="name" content="Uvicorn源码笔记">
-<meta itemprop="description" content="简介 Unicorn是一个遵守ASGI协议的web服务器，使用asycnio框架，要求python3.6&#43;，支持HTTP1.1和WebSock">
-
-
-<meta itemprop="datePublished" content="2020-03-04T08:25:53&#43;08:00" />
-<meta itemprop="dateModified" content="2020-03-04T08:25:53&#43;08:00" />
+<meta itemprop="description" content="简介 Unicorn是一个遵守ASGI协议的web服务器，使用asycnio框架，要求python3.6&#43;，支持HTTP1.1和WebSock"><meta itemprop="datePublished" content="2020-03-04T08:25:53+08:00" />
+<meta itemprop="dateModified" content="2020-03-04T08:25:53+08:00" />
 <meta itemprop="wordCount" content="490">
-
-
-
-<meta itemprop="keywords" content="Python," />
-<meta name="twitter:card" content="summary"/>
+<meta itemprop="keywords" content="Python," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Uvicorn源码笔记"/>
 <meta name="twitter:description" content="简介 Unicorn是一个遵守ASGI协议的web服务器，使用asycnio框架，要求python3.6&#43;，支持HTTP1.1和WebSock"/>
 
@@ -303,7 +296,7 @@
       
       <div class="post-meta">
         <time datetime="2020-03-04" class="post-time">
-          2020-03-04 08:25:53
+          2020-03-04
         </time>
         <div class="post-category">
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
@@ -322,78 +315,80 @@
 
     
     
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Table of Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#简介">简介</a></li>
+            <li><a href="#部分模块介绍">部分模块介绍</a>
+              <ul>
+                <li><a href="#config">config</a></li>
+                <li><a href="#middleware">middleware</a></li>
+                <li><a href="#protocols">protocols</a></li>
+                <li><a href="#workers">workers</a></li>
+              </ul>
+            </li>
+            <li><a href="#参考">参考</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
 
     
     <div class="post-content">
-      
-
-<h3 id="简介">简介</h3>
-
+      <h3 id="简介">简介</h3>
 <p>Unicorn是一个遵守ASGI协议的web服务器，使用asycnio框架，要求python3.6+，支持HTTP1.1和WebSockets。</p>
-
 <h3 id="部分模块介绍">部分模块介绍</h3>
-
 <h4 id="config">config</h4>
-
 <ul>
 <li>参数解析设定</li>
 <li>加载app, 中间件</li>
 <li>绑定socket</li>
 </ul>
-
 <h4 id="middleware">middleware</h4>
-
-<h5 id="middleware-wsgi">middleware.wsgi</h5>
-
+<h5 id="middlewarewsgi">middleware.wsgi</h5>
 <ul>
 <li>将同步调用start_response和app方法放到线程池里面执行，通过queue和event来通知sender</li>
 </ul>
-
-<h5 id="middleware-degbug">middleware.degbug</h5>
-
+<h5 id="middlewaredegbug">middleware.degbug</h5>
 <ul>
 <li>捕捉traceback.format_exc()返回给请求端</li>
 </ul>
-
-<h5 id="middleware-message-logger">middleware.message_logger</h5>
-
+<h5 id="middlewaremessage_logger">middleware.message_logger</h5>
 <ul>
 <li>打印详细日志</li>
 </ul>
-
-<h5 id="middleware-proxy-headers">middleware.proxy_headers</h5>
-
+<h5 id="middlewareproxy_headers">middleware.proxy_headers</h5>
 <ul>
 <li>使用LB时,解析来自client的真正procotol和host</li>
 </ul>
-
 <h4 id="protocols">protocols</h4>
-
 <p>ServerState: 在不同protocols之间共享server的信息如连接数，完成请求数据量,当前tasks</p>
-
 <h5 id="http">http</h5>
-
 <ul>
 <li>继承async.Protocol，实现data_received方法处理请求</li>
 <li>实现了send和revceive方法,</li>
 <li>需要升级到websocket时替换protocol_class即可</li>
 <li>http parser可选h11(python 实现)、httptools(C实现，默认先选)</li>
 </ul>
-
 <h5 id="websocket">websocket</h5>
-
 <ul>
 <li>默认WebSocketProtocol</li>
 </ul>
-
 <h4 id="workers">workers</h4>
-
 <ul>
 <li>UvicornWorker: gunicorn的Worker子类，官方推荐生产环境使用gunicorn</li>
 </ul>
-
 <h3 id="参考">参考</h3>
-
 <ul>
 <li><a href="https://www.uvicorn.org/">官方文档</a></li>
 <li><a href="https://github.com/python-hyper/h11/issues/9">h11和https比较</a></li>
@@ -462,7 +457,7 @@
     <div class="post bg-white">
       <script src="https://utteranc.es/client.js"
             repo= "ppd0705/ppd0705.github.io"
-            issue-term="utteranc"
+            issue-term="pathname"
             theme="github-light"
             crossorigin="anonymous"
             async>

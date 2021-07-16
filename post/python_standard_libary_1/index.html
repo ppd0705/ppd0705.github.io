@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.6" />
+<meta name="generator" content="Hugo 0.86.0-DEV" />
 
 
 <link rel="canonical" href="https://ppd0705.github.io/post/python_standard_libary_1/" />
@@ -62,22 +62,15 @@
 <meta property="og:title" content="Python标准库之并发相关库" />
 <meta property="og:description" content="threading Lock: 可被其他线程释放 .RLock: 与Lock的区别在于可被锁拥有者多次获取，只能被被锁拥有者释放，释放次数等于获取次数才算完全释放 Condition: condition实" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://ppd0705.github.io/post/python_standard_libary_1/" />
-<meta property="article:published_time" content="2019-10-27T15:26:47&#43;08:00"/>
-<meta property="article:modified_time" content="2019-10-27T15:26:47&#43;08:00"/>
+<meta property="og:url" content="https://ppd0705.github.io/post/python_standard_libary_1/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2019-10-27T15:26:47+08:00" />
+<meta property="article:modified_time" content="2019-10-27T15:26:47+08:00" />
 
 <meta itemprop="name" content="Python标准库之并发相关库">
-<meta itemprop="description" content="threading Lock: 可被其他线程释放 .RLock: 与Lock的区别在于可被锁拥有者多次获取，只能被被锁拥有者释放，释放次数等于获取次数才算完全释放 Condition: condition实">
-
-
-<meta itemprop="datePublished" content="2019-10-27T15:26:47&#43;08:00" />
-<meta itemprop="dateModified" content="2019-10-27T15:26:47&#43;08:00" />
+<meta itemprop="description" content="threading Lock: 可被其他线程释放 .RLock: 与Lock的区别在于可被锁拥有者多次获取，只能被被锁拥有者释放，释放次数等于获取次数才算完全释放 Condition: condition实"><meta itemprop="datePublished" content="2019-10-27T15:26:47+08:00" />
+<meta itemprop="dateModified" content="2019-10-27T15:26:47+08:00" />
 <meta itemprop="wordCount" content="874">
-
-
-
-<meta itemprop="keywords" content="Python," />
-<meta name="twitter:card" content="summary"/>
+<meta itemprop="keywords" content="Python," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Python标准库之并发相关库"/>
 <meta name="twitter:description" content="threading Lock: 可被其他线程释放 .RLock: 与Lock的区别在于可被锁拥有者多次获取，只能被被锁拥有者释放，释放次数等于获取次数才算完全释放 Condition: condition实"/>
 
@@ -303,7 +296,7 @@
       
       <div class="post-meta">
         <time datetime="2019-10-27" class="post-time">
-          2019-10-27 15:26:47
+          2019-10-27
         </time>
         <div class="post-category">
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
@@ -322,84 +315,109 @@
 
     
     
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Table of Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li>
+          <ul>
+            <li>
+              <ul>
+                <li><a href="#threading">threading</a></li>
+                <li><a href="#queue">queue</a></li>
+                <li><a href="#multiprocessing">multiprocessing</a></li>
+                <li><a href="#concurrentfutures">concurrent.futures</a></li>
+                <li><a href="#参考">参考</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
 
     
     <div class="post-content">
-      
-
-<h4 id="threading">threading</h4>
-
+      <h4 id="threading">threading</h4>
 <ul>
-<li>Lock: 可被其他线程释放</li>
-
-<li><p>.RLock: 与Lock的区别在于可被锁拥有者多次获取，只能被被锁拥有者释放，释放次数等于获取次数才算完全释放</p></li>
-
-<li><p>Condition:</p>
-
+<li>
+<p>Lock: 可被其他线程释放</p>
+</li>
+<li>
+<p>.RLock: 与Lock的区别在于可被锁拥有者多次获取，只能被被锁拥有者释放，释放次数等于获取次数才算完全释放</p>
+</li>
+<li>
+<p>Condition:</p>
 <ul>
 <li>condition实例自带公共锁，调用wait 或者notify之前需要获取公共锁</li>
 <li>调用wait时会为当前线程创建一个waiter锁(Lock)并获取，放入dequeue,然后释放公共锁，再次获取waiter锁（因为没有释放, 获取操作会阻塞），最终会重新获取公共锁</li>
 <li>调用notify时，会将dequeue中的锁释放</li>
-</ul></li>
-
-<li><p>Semaphore: 基于Condition， 限制同时acquire的数量，并利用notify来通知waiter</p></li>
-
-<li><p>Event: 基于Condition，通过一个flag变量来更新状态</p></li>
 </ul>
-
-<hr />
-
+</li>
+<li>
+<p>Semaphore: 基于Condition， 限制同时acquire的数量，并利用notify来通知waiter</p>
+</li>
+<li>
+<p>Event: 基于Condition，通过一个flag变量来更新状态</p>
+</li>
+</ul>
+<hr>
 <h4 id="queue">queue</h4>
-
 <ul>
-<li><p>Queue: 基于一个dequeue 和 一个Lock 和共用Lock 的三个Condition</p>
-
+<li>
+<p>Queue: 基于一个dequeue 和 一个Lock 和共用Lock 的三个Condition</p>
 <ul>
 <li>dequeue: 数据get和put</li>
 <li>not_empty(Condition): 用于get</li>
 <li>not_ful(Condition): 用于put</li>
 <li>all_task_done(Condition):用于task_done和join</li>
-</ul></li>
-
-<li><p>PriortyQueue: 继承Queue,区别在于</p>
-
+</ul>
+</li>
+<li>
+<p>PriortyQueue: 继承Queue,区别在于</p>
 <ul>
 <li>使用list存储数据</li>
 <li>使用heapq对数据进行排序</li>
-</ul></li>
 </ul>
-
-<hr />
-
+</li>
+</ul>
+<hr>
 <h4 id="multiprocessing">multiprocessing</h4>
-
 <ul>
-<li>Process 通过配置context(或者用默认context)来选择通过什么模式启动子进程, linux下默认用fork模式</li>
-<li>Lock 通过底层的SemLock实现</li>
-<li>SimpleQueue: 使用Pipe通信，读和写各用一个锁来保证并发安全</li>
-
-<li><p>Queue put会先放数据到进程的dequeue中缓冲，同时启动一个线程将dequeue中的数据写入到公共Pipe</p></li>
-
-<li><p>Pool:</p>
-
+<li>
+<p>Process 通过配置context(或者用默认context)来选择通过什么模式启动子进程, linux下默认用fork模式</p>
+</li>
+<li>
+<p>Lock 通过底层的SemLock实现</p>
+</li>
+<li>
+<p>SimpleQueue: 使用Pipe通信，读和写各用一个锁来保证并发安全</p>
+</li>
+<li>
+<p>Queue put会先放数据到进程的dequeue中缓冲，同时启动一个线程将dequeue中的数据写入到公共Pipe</p>
+</li>
+<li>
+<p>Pool:</p>
 <ul>
 <li>启动n个子进程，通过两个SimpleQueue:in_queue接受task、out_queue返回task的结果</li>
 <li>主进程启动一个线程接收task_queue的任务，放入in_queue</li>
 <li>主进程启动一个线程接收out_queue的结果，放入一个cache dict中</li>
-<li>apply： 构建一个ApplyResult实例，用一个Event来通知task的状态（_handle_results会更新Event状态）
-<br /></li>
-</ul></li>
+<li>apply： 构建一个ApplyResult实例，用一个Event来通知task的状态（_handle_results会更新Event状态）</li>
 </ul>
-
-<h4 id="concurrent-futures">concurrent.futures</h4>
-
+</li>
+</ul>
+<h4 id="concurrentfutures">concurrent.futures</h4>
 <ul>
 <li>Waiter: 统计拥有的futures的状态，根据同步设置（第一次完成、第一次报错、全部完成）等来set Event</li>
 <li>Future: 存储task的状态结果</li>
 </ul>
-
 <h4 id="参考">参考</h4>
-
 <ul>
 <li><a href="https://stackoverflow.com/questions/31665328/python-3-multiprocessing-queue-deadlock-when-calling-join-before-the-queue-is-em">queue卡死</a></li>
 <li><a href="https://juejin.im/post/5b0abab451882538c220440b">python进程间通信的五种方式（文件 pipe socket 消息队列 ）样例</a></li>
@@ -467,7 +485,7 @@
     <div class="post bg-white">
       <script src="https://utteranc.es/client.js"
             repo= "ppd0705/ppd0705.github.io"
-            issue-term="utteranc"
+            issue-term="pathname"
             theme="github-light"
             crossorigin="anonymous"
             async>

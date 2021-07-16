@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.6" />
+<meta name="generator" content="Hugo 0.86.0-DEV" />
 
 
 <link rel="canonical" href="https://ppd0705.github.io/post/mysql_qa/" />
@@ -62,22 +62,15 @@
 <meta property="og:title" content="MySQL自问自答" />
 <meta property="og:description" content="1. redo log 和bin log的区别？ binlog属于服务层日志，记录的是SQL的原始逻辑，主要用来归档；而redo log属于InnoDB引擎特有的日" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://ppd0705.github.io/post/mysql_qa/" />
-<meta property="article:published_time" content="2020-12-24T11:50:33&#43;08:00"/>
-<meta property="article:modified_time" content="2020-12-24T11:50:33&#43;08:00"/>
+<meta property="og:url" content="https://ppd0705.github.io/post/mysql_qa/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2020-12-24T11:50:33+08:00" />
+<meta property="article:modified_time" content="2020-12-24T11:50:33+08:00" />
 
 <meta itemprop="name" content="MySQL自问自答">
-<meta itemprop="description" content="1. redo log 和bin log的区别？ binlog属于服务层日志，记录的是SQL的原始逻辑，主要用来归档；而redo log属于InnoDB引擎特有的日">
-
-
-<meta itemprop="datePublished" content="2020-12-24T11:50:33&#43;08:00" />
-<meta itemprop="dateModified" content="2020-12-24T11:50:33&#43;08:00" />
+<meta itemprop="description" content="1. redo log 和bin log的区别？ binlog属于服务层日志，记录的是SQL的原始逻辑，主要用来归档；而redo log属于InnoDB引擎特有的日"><meta itemprop="datePublished" content="2020-12-24T11:50:33+08:00" />
+<meta itemprop="dateModified" content="2020-12-24T11:50:33+08:00" />
 <meta itemprop="wordCount" content="2211">
-
-
-
-<meta itemprop="keywords" content="MySQL," />
-<meta name="twitter:card" content="summary"/>
+<meta itemprop="keywords" content="MySQL," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="MySQL自问自答"/>
 <meta name="twitter:description" content="1. redo log 和bin log的区别？ binlog属于服务层日志，记录的是SQL的原始逻辑，主要用来归档；而redo log属于InnoDB引擎特有的日"/>
 
@@ -303,7 +296,7 @@
       
       <div class="post-meta">
         <time datetime="2020-12-24" class="post-time">
-          2020-12-24 11:50:33
+          2020-12-24
         </time>
         <div class="post-category">
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
@@ -322,85 +315,86 @@
 
     
     
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Table of Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#1-redo-log-和bin-log的区别">1. redo log 和bin log的区别？</a></li>
+            <li><a href="#2-可以用redo-log替代binlog吗">2. 可以用redo log替代binlog吗？</a></li>
+            <li><a href="#3-两阶段提交的流程">3. 两阶段提交的流程？</a></li>
+            <li><a href="#4-为什么需要两阶段提交">4. 为什么需要两阶段提交？</a></li>
+            <li><a href="#5-有哪些隔离级别底层实现机制是什么">5. 有哪些隔离级别？底层实现机制是什么？</a></li>
+            <li><a href="#6-多版本并发控制mvcc怎么实现的">6. 多版本并发控制（MVCC）怎么实现的？</a></li>
+            <li><a href="#7-索引为什么没有用二叉树而用多叉树">7. 索引为什么没有用二叉树而用多叉树？</a></li>
+            <li><a href="#8-主键索引clustered-index和二级索引secondary-index有什么异同">8. 主键索引（clustered index）和二级索引（secondary index）有什么异同？</a></li>
+            <li><a href="#9-为什么优先使用自增主键什么情况使用业务字段做主键">9. 为什么优先使用自增主键？什么情况使用业务字段做主键？</a></li>
+            <li><a href="#10-change-buffer的使用场景">10. change buffer的使用场景</a></li>
+            <li><a href="#11-什么是幻读怎么解决">11. 什么是幻读？怎么解决？</a></li>
+            <li><a href="#12-binlog有哪些格式具体是什么样的">12. binlog有哪些格式，具体是什么样的？</a></li>
+            <li><a href="#13-主从同步流程是什么样的">13. 主从同步流程是什么样的？</a></li>
+            <li><a href="#14-内存管理淘汰算法是什么样的">14. 内存管理淘汰算法是什么样的？</a></li>
+            <li><a href="#15-join有哪些种类">15. join有哪些种类？</a></li>
+            <li><a href="#16-有哪些引擎各自有什么特点">16. 有哪些引擎，各自有什么特点？</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
 
     
     <div class="post-content">
-      
-
-<h3 id="1-redo-log-和bin-log的区别">1. redo log 和bin log的区别？</h3>
-
+      <h3 id="1-redo-log-和bin-log的区别">1. redo log 和bin log的区别？</h3>
 <p>binlog属于服务层日志，记录的是SQL的原始逻辑，主要用来归档；而redo log属于InnoDB引擎特有的日志，记录的是物理页的具体改动，容量大小固定，循环写。</p>
-
 <h3 id="2-可以用redo-log替代binlog吗">2. 可以用redo log替代binlog吗？</h3>
-
 <p>不可以，首先因为redo log只有InnoDB特有；其次redo log大小固定，无法替代binlog的归档功能。</p>
-
 <h3 id="3-两阶段提交的流程">3. 两阶段提交的流程？</h3>
-
 <ul>
 <li>更新操作写入内存后会将操作写入redo log日志，此时redo log处于<code>prepare</code>状态</li>
 <li>写入binlog</li>
-<li>提交事务后，引擎将刚刚的redo log改为<code>commit</code>状态
-<br /></li>
+<li>提交事务后，引擎将刚刚的redo log改为<code>commit</code>状态</li>
 </ul>
-
 <p>注：只要binlog保存完整，即使后面crush了也算事务成功，redo log和binlog有个共同字段XID</p>
-
 <h3 id="4-为什么需要两阶段提交">4. 为什么需要两阶段提交？</h3>
-
 <p>因为redo log和binlog是两个独立的逻辑，如果不用两阶段提交，而采用先写redo log再写binlog或者先写binlog再写redo log都无法保证两者逻辑上的一致性，这样会导致数据库的状态和用binlog恢复出来的库的状态可能不一致</p>
-
-<h3 id="5-有哪些隔离级别-底层实现机制是什么">5. 有哪些隔离级别？底层实现机制是什么？</h3>
-
+<h3 id="5-有哪些隔离级别底层实现机制是什么">5. 有哪些隔离级别？底层实现机制是什么？</h3>
 <p>共有四种隔离级别：</p>
-
 <ul>
 <li>read uncommited读未提交：事务未提交时其做的变更可以被其他事务看到</li>
 <li>read commited读已提交：事务提交后其做的变更才可以被其他事务看到</li>
 <li>repeatable read可重复读：事务执行过程中看到的数据和事务启动时看到的数据一致</li>
-<li>serializable串行化： 读写冲突时，事务按先后 顺序执行
-<br /></li>
+<li>serializable串行化： 读写冲突时，事务按先后 顺序执行</li>
 </ul>
-
 <p>底层实现机制：</p>
-
 <ul>
 <li>serializable串行化使用锁来避免并发</li>
 <li>RC和RR使用视图机制，RC每执行一个SQL对创建一个视图；而RR在事务启动的时候会创建一个视图，整个存在期间用这个视图（注：UPDATE操作时会读当前并更新视图）</li>
-<li>RU直接返回最新的数据
-<br /></li>
+<li>RU直接返回最新的数据</li>
 </ul>
-
-<h3 id="6-多版本并发控制-mvcc-怎么实现的">6. 多版本并发控制（MVCC）怎么实现的？</h3>
-
+<h3 id="6-多版本并发控制mvcc怎么实现的">6. 多版本并发控制（MVCC）怎么实现的？</h3>
 <p>每条记录在更新时同时会有一个回滚操作日志（undo log），通过该日志可以回滚到前一个状态，一条记录可以有多个回滚日志，对应着多个版本，版本使用row trx_id表示， 和事务的transaction id相同</p>
-
 <h3 id="7-索引为什么没有用二叉树而用多叉树">7. 索引为什么没有用二叉树而用多叉树？</h3>
-
 <p>原因是查找的复杂度和树高有关（logN），相同节点树的情况下显然二叉树的高度最大</p>
-
-<h3 id="8-主键索引-clustered-index-和二级索引-secondary-index-有什么异同">8. 主键索引（clustered index）和二级索引（secondary index）有什么异同？</h3>
-
+<h3 id="8-主键索引clustered-index和二级索引secondary-index有什么异同">8. 主键索引（clustered index）和二级索引（secondary index）有什么异同？</h3>
 <p>两者都是使用B+树的数据结构，二级索引的叶子节点存储的是主键的值，主键索引的叶子节点存储的是整行数据</p>
-
-<h3 id="9-为什么优先使用自增主键-什么情况使用业务字段做主键">9. 为什么优先使用自增主键？什么情况使用业务字段做主键？</h3>
-
+<h3 id="9-为什么优先使用自增主键什么情况使用业务字段做主键">9. 为什么优先使用自增主键？什么情况使用业务字段做主键？</h3>
 <ul>
 <li>性能方面：自增主键的插入时追加操作，不会触发叶子节点的分裂</li>
 <li>空间方面：主键长度越小，二级索引的叶子节点也就越小，二级索引就越省空间</li>
 <li>当只有一个索引且该为唯一索引时适合使用业务字段做索引，这种情况没有二级索引不用回表</li>
 </ul>
-
 <h3 id="10-change-buffer的使用场景">10. change buffer的使用场景</h3>
-
 <p>change buffer适用于非唯一索引且读多写少的场景，change buffer会缓存更新操作，等空闲时间再merge，减少了随机读磁盘的IO消耗</p>
-
-<h3 id="11-什么是幻读-怎么解决">11. 什么是幻读？怎么解决？</h3>
-
+<h3 id="11-什么是幻读怎么解决">11. 什么是幻读？怎么解决？</h3>
 <p>幻读：是指可重复读隔离级别下且为当前读时同一个事务前后两次查询相同范围的数据时看到的不一样</p>
-
 <p>解决：引入间隙锁（gap lock），锁住行之间的间隙，防止插入操作；不过行锁会降低并发读，甚至带来死锁</p>
-
 <table>
 <thead>
 <tr>
@@ -408,42 +402,33 @@
 <th>sessionB</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
 <td>begin; select * from t where id=9 for update</td>
 <td></td>
 </tr>
-
 <tr>
 <td></td>
 <td>begin; select * from t where id=9 for update</td>
 </tr>
-
 <tr>
 <td></td>
 <td>insert into values(9,9,9)</td>
 </tr>
-
 <tr>
 <td>insert into values(9,9,9)</td>
 <td></td>
 </tr>
 </tbody>
 </table>
-
-<h3 id="12-binlog有哪些格式-具体是什么样的">12. binlog有哪些格式，具体是什么样的？</h3>
-
+<h3 id="12-binlog有哪些格式具体是什么样的">12. binlog有哪些格式，具体是什么样的？</h3>
 <p>有三种格式：</p>
-
 <ul>
 <li>statement: 记录的是原始SQL语句，比较省空间，但可能导致主从不同步</li>
 <li>row: 记录的是操作具体的数据，不会导致主从不一致，但比较占空间</li>
 <li>mixed: 上面两者的混合体，数据库判断是否会引起主从不一致，如果是就选row,否则用statement</li>
 </ul>
-
 <h3 id="13-主从同步流程是什么样的">13. 主从同步流程是什么样的？</h3>
-
 <ul>
 <li>从库<code>change master</code> 设置master addr info/usr info/file postion等信息</li>
 <li>从库<code>start slave</code>之后其启动两个线程：io_thread负责和主库长连接通信，sql_thread负责读取中转日志、解析并执行</li>
@@ -451,63 +436,57 @@
 <li>io_thread接收bin log写到本地文件，称为relay log中转日志</li>
 <li>sql_thread读取中转日志，解析并执行命令</li>
 </ul>
-
 <h3 id="14-内存管理淘汰算法是什么样的">14. 内存管理淘汰算法是什么样的？</h3>
-
 <p>使用了改进的LRU算法，将缓存区以5:3的比例分为young和old两个区域，新访问的数据会先保存在old区域，存活超过1s后才会移动到young区，这样能保证全表扫描的情况下buffer bool仍能正常响应请求</p>
-
 <h3 id="15-join有哪些种类">15. join有哪些种类？</h3>
-
 <p>注：假设驱动表和被驱动表关联的行数分别为N、M；join buffer能存L条数据</p>
-
 <ul>
-<li>Index Nested-Loop Join(NLJ)
-
+<li>
+<p>Index Nested-Loop Join(NLJ)</p>
 <ul>
 <li>被驱动表命中索引</li>
 <li>依次从驱动表取一行数据去被驱动表中查找(假设需要回表的话复杂度为2 * logM)</li>
 <li>总查询行数为 N + N * (2 * logM)</li>
-</ul></li>
-
-<li><p>Batch Key Access(BKA)</p>
-
+</ul>
+</li>
+<li>
+<p>Batch Key Access(BKA)</p>
 <ul>
 <li>基于NLJ做了优化，将驱动表的数据分批存入join buffer中，一次性的将buffer中的数据传给被驱动表匹配</li>
-</ul></li>
-
-<li><p>Block Nested-Loop Join(BNL)</p>
-
+</ul>
+</li>
+<li>
+<p>Block Nested-Loop Join(BNL)</p>
 <ul>
 <li>被驱动表没有索引，将驱动表的数据分配存入join buffer，被驱动表按行一次和buffer中的数据比较</li>
 <li>总查询行数 N + M*(N/L)</li>
 <li>不足：多次扫描被驱动表可能会导致污染LRU缓存，可以使用建临时表加索引的方式优化成BKA类型</li>
-</ul></li>
 </ul>
-
-<h3 id="16-有哪些引擎-各自有什么特点">16. 有哪些引擎，各自有什么特点？</h3>
-
+</li>
+</ul>
+<h3 id="16-有哪些引擎各自有什么特点">16. 有哪些引擎，各自有什么特点？</h3>
 <ul>
 <li>InnoDB
-
 <ul>
 <li>索引使用B+树</li>
 <li>使用redo log保证crush safe</li>
 <li>支持行锁和事务</li>
-</ul></li>
+</ul>
+</li>
 <li>MyISAM
-
 <ul>
 <li>索引使用B树</li>
 <li>不支持行锁和事务</li>
-</ul></li>
+</ul>
+</li>
 <li>Memory
-
 <ul>
 <li>数据完全在内存中</li>
 <li>默认使用hash索引</li>
 <li>不支持行锁和事务</li>
 <li>常用于临时表，没有并发也不需要持久化</li>
-</ul></li>
+</ul>
+</li>
 </ul>
 
     </div>
@@ -572,7 +551,7 @@
     <div class="post bg-white">
       <script src="https://utteranc.es/client.js"
             repo= "ppd0705/ppd0705.github.io"
-            issue-term="utteranc"
+            issue-term="pathname"
             theme="github-light"
             crossorigin="anonymous"
             async>

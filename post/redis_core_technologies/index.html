@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.6" />
+<meta name="generator" content="Hugo 0.86.0-DEV" />
 
 
 <link rel="canonical" href="https://ppd0705.github.io/post/redis_core_technologies/" />
@@ -62,22 +62,15 @@
 <meta property="og:title" content="[笔记]Redis核心技术与实战" />
 <meta property="og:description" content="第2讲 数据结构： Redis有哪些慢操作 基本数据结构 五种数据类型 String List Hash Set Sorted Set 底层数据结构 全局键值对 桶中的元素都是指向具体值的指针 通过链表解决冲" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://ppd0705.github.io/post/redis_core_technologies/" />
-<meta property="article:published_time" content="2020-08-31T21:34:46&#43;08:00"/>
-<meta property="article:modified_time" content="2020-08-31T21:34:46&#43;08:00"/>
+<meta property="og:url" content="https://ppd0705.github.io/post/redis_core_technologies/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2020-08-31T21:34:46+08:00" />
+<meta property="article:modified_time" content="2020-08-31T21:34:46+08:00" />
 
 <meta itemprop="name" content="[笔记]Redis核心技术与实战">
-<meta itemprop="description" content="第2讲 数据结构： Redis有哪些慢操作 基本数据结构 五种数据类型 String List Hash Set Sorted Set 底层数据结构 全局键值对 桶中的元素都是指向具体值的指针 通过链表解决冲">
-
-
-<meta itemprop="datePublished" content="2020-08-31T21:34:46&#43;08:00" />
-<meta itemprop="dateModified" content="2020-08-31T21:34:46&#43;08:00" />
-<meta itemprop="wordCount" content="1965">
-
-
-
-<meta itemprop="keywords" content="Redis," />
-<meta name="twitter:card" content="summary"/>
+<meta itemprop="description" content="第2讲 数据结构： Redis有哪些慢操作 基本数据结构 五种数据类型 String List Hash Set Sorted Set 底层数据结构 全局键值对 桶中的元素都是指向具体值的指针 通过链表解决冲"><meta itemprop="datePublished" content="2020-08-31T21:34:46+08:00" />
+<meta itemprop="dateModified" content="2020-08-31T21:34:46+08:00" />
+<meta itemprop="wordCount" content="1961">
+<meta itemprop="keywords" content="Redis," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]Redis核心技术与实战"/>
 <meta name="twitter:description" content="第2讲 数据结构： Redis有哪些慢操作 基本数据结构 五种数据类型 String List Hash Set Sorted Set 底层数据结构 全局键值对 桶中的元素都是指向具体值的指针 通过链表解决冲"/>
 
@@ -303,13 +296,13 @@
       
       <div class="post-meta">
         <time datetime="2020-08-31" class="post-time">
-          2020-08-31 21:34:46
+          2020-08-31
         </time>
         <div class="post-category">
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 1965 words </span>
+        <span class="more-meta"> 1961 words </span>
           <span class="more-meta"> 4 min read </span>
 
         
@@ -322,17 +315,64 @@
 
     
     
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Table of Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#第2讲-数据结构-redis有哪些慢操作">第2讲 数据结构： Redis有哪些慢操作</a>
+          <ul>
+            <li><a href="#基本数据结构">基本数据结构</a></li>
+            <li><a href="#全局键值对">全局键值对</a></li>
+            <li><a href="#集合数据操作效率">集合数据操作效率</a>
+              <ul>
+                <li><a href="#压缩列表">压缩列表</a></li>
+                <li><a href="#跳表">跳表</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#第3讲-高性能模型-redis单线程为什么那么快">第3讲 高性能模型： Redis单线程为什么那么快</a>
+          <ul>
+            <li><a href="#快的原因">快的原因</a></li>
+            <li><a href="#同步io模型">同步IO模型</a></li>
+            <li><a href="#非阻塞io">非阻塞IO</a></li>
+          </ul>
+        </li>
+        <li><a href="#第4讲-aofappend-only-file日志">第4讲 AOF(append only file)日志</a>
+          <ul>
+            <li><a href="#三种写策略">三种写策略</a></li>
+            <li><a href="#aof重写">AOF重写</a></li>
+          </ul>
+        </li>
+        <li><a href="#第5讲-rdb内存快照">第5讲 RDB内存快照</a>
+          <ul>
+            <li><a href="#内存快照和aof日志混合使用">内存快照和AOF日志混合使用</a></li>
+          </ul>
+        </li>
+        <li><a href="#第6讲-主从库如何实现数据一致">第6讲 主从库如何实现数据一致</a>
+          <ul>
+            <li><a href="#读写分离">读写分离</a></li>
+            <li><a href="#主从库间的第一次同步">主从库间的第一次同步</a></li>
+            <li><a href="#级联模式减轻主库压力">级联模式减轻主库压力</a></li>
+            <li><a href="#长连接命令传播">长连接命令传播</a></li>
+            <li><a href="#主从增量同步">主从增量同步</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
 
     
     <div class="post-content">
-      
-
-<h2 id="第2讲-数据结构-redis有哪些慢操作">第2讲 数据结构： Redis有哪些慢操作</h2>
-
+      <h2 id="第2讲-数据结构-redis有哪些慢操作">第2讲 数据结构： Redis有哪些慢操作</h2>
 <h3 id="基本数据结构">基本数据结构</h3>
-
 <p>五种数据类型</p>
-
 <ul>
 <li>String</li>
 <li>List</li>
@@ -340,177 +380,118 @@
 <li>Set</li>
 <li>Sorted Set</li>
 </ul>
-
 <p>底层数据结构</p>
-
-<p><img src="/image/redis_key_technologies/8219f7yy651e566d47cc9f661b399f01.jpg" alt="2_1.jpg" /></p>
-
+<p><img src="/image/redis_key_technologies/8219f7yy651e566d47cc9f661b399f01.jpg" alt="2_1.jpg"></p>
 <h3 id="全局键值对">全局键值对</h3>
-
-<p><img src="/image/redis_key_technologies/1cc8eaed5d1ca4e3cdbaa5a3d48dfb5f.jpg" alt="2_2.jpg" /></p>
-
+<p><img src="/image/redis_key_technologies/1cc8eaed5d1ca4e3cdbaa5a3d48dfb5f.jpg" alt="2_2.jpg"></p>
 <ul>
-<li><p>桶中的元素都是指向具体值的指针</p></li>
-
-<li><p>通过链表解决冲突</p></li>
-
-<li><p>rehash</p>
-
+<li>
+<p>桶中的元素都是指向具体值的指针</p>
+</li>
+<li>
+<p>通过链表解决冲突</p>
+</li>
+<li>
+<p>rehash</p>
 <ul>
 <li>使用两个全局哈希表，默认使用表1</li>
 <li>rehash时给表2分配更大的空间</li>
 <li>渐进式地将表1的数据拷贝到表2，每处理一个请求，将一个桶中的所有数据拷贝走</li>
 <li>同时也有后台周期(如100ms)迁移任务</li>
-<li>释放表1的空间
-<br /></li>
-</ul></li>
+<li>释放表1的空间</li>
 </ul>
-
-<p><img src="/image/redis_key_technologies/73fb212d0b0928d96a0d7d6ayy76da0c.jpg" alt="2_3.jpg" /></p>
-
+</li>
+</ul>
+<p><img src="/image/redis_key_technologies/73fb212d0b0928d96a0d7d6ayy76da0c.jpg" alt="2_3.jpg"></p>
 <h3 id="集合数据操作效率">集合数据操作效率</h3>
-
 <h4 id="压缩列表">压缩列表</h4>
-
 <p>类似数组，在表头前有三个字段zlbytes(列表长度)、zltail(表尾偏移量)、zlen（entry个数）, 表尾有一个字段zlend(结束标志位)</p>
-
-<p><img src="/image/redis_key_technologies/9587e483f6ea82f560ff10484aaca4a0.jpg" alt="2_4.jpg" /></p>
-
+<p><img src="/image/redis_key_technologies/9587e483f6ea82f560ff10484aaca4a0.jpg" alt="2_4.jpg"></p>
 <h4 id="跳表">跳表</h4>
-
 <p>在链表的基础上，增加了多级索引，实现数据的快速定位</p>
-
-<p><img src="/image/redis_key_technologies/1eca7135d38de2yy16681c2bbc4f3fb4.jpg" alt="2_5.jpg" /></p>
-
+<p><img src="/image/redis_key_technologies/1eca7135d38de2yy16681c2bbc4f3fb4.jpg" alt="2_5.jpg"></p>
 <h2 id="第3讲-高性能模型-redis单线程为什么那么快">第3讲 高性能模型： Redis单线程为什么那么快</h2>
-
 <p>Redis单线程是指网络IO和键值对读写是有同一个线程完成的
 其他功能如持久化、异步删除等是有额外线程执行的</p>
-
 <h3 id="快的原因">快的原因</h3>
-
 <ul>
 <li>大部分操作在内存中完成</li>
 <li>高效的数据结构</li>
 <li>IO多路复用机制</li>
 </ul>
-
 <h3 id="同步io模型">同步IO模型</h3>
-
-<p><img src="/image/redis_key_technologies/3_1.jpg" alt="3_1.jpg" /></p>
-
+<p><img src="/image/redis_key_technologies/3_1.jpg" alt="3_1.jpg"></p>
 <p>阻塞点：accept, recv, send</p>
-
 <h3 id="非阻塞io">非阻塞IO</h3>
-
 <p>IO复用是指一个线程同时处理多个IO流</p>
-
-<p><img src="/image/redis_key_technologies/3_2.jpg" alt="3_2.jpg" /></p>
-
-<h2 id="第4讲-aof-append-only-file-日志">第4讲 AOF(append only file)日志</h2>
-
+<p><img src="/image/redis_key_technologies/3_2.jpg" alt="3_2.jpg"></p>
+<h2 id="第4讲-aofappend-only-file日志">第4讲 AOF(append only file)日志</h2>
 <p>AOF是写后日志,先执行命令后记录日志，避免了额外的检查开销</p>
-
-<p><img src="/image/redis_key_technologies/4_1.jpg" alt="4_1.jpg" /></p>
-
+<p><img src="/image/redis_key_technologies/4_1.jpg" alt="4_1.jpg"></p>
 <p>具体记录的是每条命令，以文本方式保存</p>
-
-<p><img src="/image/redis_key_technologies/4_2.jpg" alt="4_2.jpg" /></p>
-
+<p><img src="/image/redis_key_technologies/4_2.jpg" alt="4_2.jpg"></p>
 <h3 id="三种写策略">三种写策略</h3>
-
 <ul>
 <li>Always: 每执行一个命令完，立马写磁盘</li>
 <li>Everysec：先把日志写入缓存区，每秒写一次磁盘</li>
 <li>No： 把日志写入缓存区，由操作系统决定何时写入磁盘</li>
 </ul>
-
-<p><img src="/image/redis_key_technologies/4_3.jpg" alt="4_3.jpg" /></p>
-
+<p><img src="/image/redis_key_technologies/4_3.jpg" alt="4_3.jpg"></p>
 <h3 id="aof重写">AOF重写</h3>
-
 <p>fork一个子进程bgrewriteaof，
 子进程读取所有的键值对，然后对每一个键值对用一条命令记录它的写入到临时文件，
 主进程在重写期间会将新的写操作会同时写到AOF缓冲和AOF重写缓冲，
 等重写完成后，子进程会发信号给父进程，
 父进程将新的AOF重写缓冲追加到临时文件，
 父进程用临时文件替换原有的AOF文件。</p>
-
-<p><img src="/image/redis_key_technologies/4_4.jpg" alt="4_4.jpg" /></p>
-
+<p><img src="/image/redis_key_technologies/4_4.jpg" alt="4_4.jpg"></p>
 <p>潜在阻塞点</p>
-
 <ul>
 <li>fork过程是阻塞的，虽然copy-on-write, 但fork还是需要拷贝内存表(虚拟内存和物理内存的映射索引表)</li>
 <li>fork后对父进程操作现有的key,会真正拷贝对应的内存数据，申请新的内存空间</li>
 </ul>
-
 <h2 id="第5讲-rdb内存快照">第5讲 RDB内存快照</h2>
-
 <p>内存快照是指内存中的数据在某一个时刻的状态的记录</p>
-
 <p>bgsave会fork一个子进程将内存的数据写入RDB文件</p>
-
-<p><img src="/image/redis_key_technologies/5_1.jpg" alt="5_1.jpg" /></p>
-
+<p><img src="/image/redis_key_technologies/5_1.jpg" alt="5_1.jpg"></p>
 <h3 id="内存快照和aof日志混合使用">内存快照和AOF日志混合使用</h3>
-
 <p>两次备份快照期间，中间的写操作用AOF日志记录，开始新的快照备份时清空AOF日志</p>
-
-<p><img src="/image/redis_key_technologies/5_2.jpg" alt="5_2.jpg" /></p>
-
+<p><img src="/image/redis_key_technologies/5_2.jpg" alt="5_2.jpg"></p>
 <h2 id="第6讲-主从库如何实现数据一致">第6讲 主从库如何实现数据一致</h2>
-
 <h3 id="读写分离">读写分离</h3>
-
 <ul>
 <li>读操作：主库从库都可以接收</li>
 <li>写操作：首先到主库执行，然后将写操作同步给从库</li>
 </ul>
-
-<p><img src="/image/redis_key_technologies/6_1.png" alt="6_1.png" /></p>
-
+<p><img src="/image/redis_key_technologies/6_1.png" alt="6_1.png"></p>
 <h3 id="主从库间的第一次同步">主从库间的第一次同步</h3>
-
 <ol>
-<li>从库发送<code>psync master_runID offset</code>，因为是第一次复制，将runID设为&rdquo;?&ldquo;，offset设为-1，表示全量复制</li>
+<li>从库发送<code>psync master_runID offset</code>，因为是第一次复制，将runID设为&quot;?&quot;，offset设为-1，表示全量复制</li>
 <li>主库发送<code>FULLRESYNC runID offset</code>，发送主库runID和当前复制进度；同时因为是第一次全量复制，主库会执行bgsave,生成RBD文件，
 发送给从库，从库收到文件后，会清空当前数据库，然后加载RDB文件，这一阶段新的写操作会记录在这专门给这个slave的replication buffer中</li>
 <li>主库将replication buffer发送给从库</li>
 </ol>
-
 <p>注： Redis先把数据写到buffer中，然后再把buffer中的数据发到client socket中再通过网络发送出去。
 从库作为一个client，也会分配一个buffer，只不过这个buffer专门用来传播用户的写命令到从库，保证主从数据一致，我们通常把它叫做replication buffer。
 通过client-output-buffer-limit控制这个buffer的大小</p>
-
-<p><img src="/image/redis_key_technologies/6_2.jpg" alt="6_2.jpg" /></p>
-
+<p><img src="/image/redis_key_technologies/6_2.jpg" alt="6_2.jpg"></p>
 <h3 id="级联模式减轻主库压力">级联模式减轻主库压力</h3>
-
-<p>通过&rdquo;主 - 从 - 从&rdquo;模式将主库生成RBD和传输RBD的压力以级联的方式分散到从库上</p>
-
-<p><img src="/image/redis_key_technologies/6_3.jpg" alt="6_3.jpg" /></p>
-
+<p>通过&quot;主 - 从 - 从&quot;模式将主库生成RBD和传输RBD的压力以级联的方式分散到从库上</p>
+<p><img src="/image/redis_key_technologies/6_3.jpg" alt="6_3.jpg"></p>
 <h3 id="长连接命令传播">长连接命令传播</h3>
-
 <p>主从库之间完成了全量复制之后，他们会维护一个长连接，主库会通过这个连接将后续收到的写操作
 同步给从库</p>
-
 <h3 id="主从增量同步">主从增量同步</h3>
-
 <p>主从库断连后，主库会将断连期间的写操作继续写到repl_backlog_buffer环形缓冲区中。
 主库会记录自己写到的位置master_repl_offset，从库则会记录自己已经读到的位置slave_repl_offset</p>
-
 <ul>
 <li>主从库恢复连接后，从库会发送psync命令告知当前的slave_repl_offset, 如果没有被覆写，主库会将
 master_repl_offset和slave_repl_offset之间的写操作发送给从库，如果被覆写会进行全量复制</li>
 <li>环形缓冲区通过repl_backlog_size控制，需要结合主库的写入速度和主从库建的网络传输速度考虑</li>
 </ul>
-
 <p>注：repl_backlog_buffer用于主从间的增量同步。主节点只有一个repl_backlog_buffer缓冲区，各个从节点的offset偏移量都是相对该缓冲区而言的；
- replication buffer用于主节点与各个从节点间数据通信，每个连接都独享一个buffer</p>
-
-<p><img src="/image/redis_key_technologies/6_4.jpg" alt="6_4.jpg" /></p>
+replication buffer用于主节点与各个从节点间数据通信，每个连接都独享一个buffer</p>
+<p><img src="/image/redis_key_technologies/6_4.jpg" alt="6_4.jpg"></p>
 
     </div>
 
@@ -574,7 +555,7 @@ master_repl_offset和slave_repl_offset之间的写操作发送给从库，如果
     <div class="post bg-white">
       <script src="https://utteranc.es/client.js"
             repo= "ppd0705/ppd0705.github.io"
-            issue-term="utteranc"
+            issue-term="pathname"
             theme="github-light"
             crossorigin="anonymous"
             async>

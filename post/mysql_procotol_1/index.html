@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.6" />
+<meta name="generator" content="Hugo 0.86.0-DEV" />
 
 
 <link rel="canonical" href="https://ppd0705.github.io/post/mysql_procotol_1/" />
@@ -62,22 +62,15 @@
 <meta property="og:title" content="MySQL协议初探及pymysql源码节选" />
 <meta property="og:description" content="总体交互过程 登录流程 TCP连接建立 1 2 3 4 5 # Connection.connection sock = socket.create_connection((host, port),connection_timeout) sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1) sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1) _rfile = _makefile(sock, &#39;rb&#39;) Server向Client发送Handshake packet：包" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://ppd0705.github.io/post/mysql_procotol_1/" />
-<meta property="article:published_time" content="2019-09-04T01:10:03&#43;08:00"/>
-<meta property="article:modified_time" content="2019-09-04T01:10:03&#43;08:00"/>
+<meta property="og:url" content="https://ppd0705.github.io/post/mysql_procotol_1/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2019-09-04T01:10:03+08:00" />
+<meta property="article:modified_time" content="2019-09-04T01:10:03+08:00" />
 
 <meta itemprop="name" content="MySQL协议初探及pymysql源码节选">
-<meta itemprop="description" content="总体交互过程 登录流程 TCP连接建立 1 2 3 4 5 # Connection.connection sock = socket.create_connection((host, port),connection_timeout) sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1) sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1) _rfile = _makefile(sock, &#39;rb&#39;) Server向Client发送Handshake packet：包">
-
-
-<meta itemprop="datePublished" content="2019-09-04T01:10:03&#43;08:00" />
-<meta itemprop="dateModified" content="2019-09-04T01:10:03&#43;08:00" />
-<meta itemprop="wordCount" content="718">
-
-
-
-<meta itemprop="keywords" content="MySQL,Python," />
-<meta name="twitter:card" content="summary"/>
+<meta itemprop="description" content="总体交互过程 登录流程 TCP连接建立 1 2 3 4 5 # Connection.connection sock = socket.create_connection((host, port),connection_timeout) sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1) sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1) _rfile = _makefile(sock, &#39;rb&#39;) Server向Client发送Handshake packet：包"><meta itemprop="datePublished" content="2019-09-04T01:10:03+08:00" />
+<meta itemprop="dateModified" content="2019-09-04T01:10:03+08:00" />
+<meta itemprop="wordCount" content="682">
+<meta itemprop="keywords" content="MySQL,Python," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="MySQL协议初探及pymysql源码节选"/>
 <meta name="twitter:description" content="总体交互过程 登录流程 TCP连接建立 1 2 3 4 5 # Connection.connection sock = socket.create_connection((host, port),connection_timeout) sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1) sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1) _rfile = _makefile(sock, &#39;rb&#39;) Server向Client发送Handshake packet：包"/>
 
@@ -303,13 +296,13 @@
       
       <div class="post-meta">
         <time datetime="2019-09-04" class="post-time">
-          2019-09-04 01:10:03
+          2019-09-04
         </time>
         <div class="post-category">
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 718 words </span>
+        <span class="more-meta"> 682 words </span>
           <span class="more-meta"> 2 min read </span>
 
         
@@ -322,67 +315,85 @@
 
     
     
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Table of Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li>
+          <ul>
+            <li>
+              <ul>
+                <li><a href="#总体交互过程">总体交互过程</a></li>
+                <li><a href="#登录流程">登录流程</a></li>
+                <li><a href="#认证细节">认证细节</a></li>
+                <li><a href="#服务端数据包">服务端数据包</a></li>
+                <li><a href="#客户端数据包">客户端数据包</a></li>
+                <li><a href="#cursor">cursor</a></li>
+                <li><a href="#参考">参考</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
 
     
     <div class="post-content">
-      
-
-<h4 id="总体交互过程">总体交互过程</h4>
-
-<p><img src="/image/mysql_interaction.png" alt="交互示意" /></p>
-
+      <h4 id="总体交互过程">总体交互过程</h4>
+<p><img src="/image/mysql_interaction.png" alt="交互示意"></p>
 <h4 id="登录流程">登录流程</h4>
-
 <ul>
-<li>TCP连接建立
-<br /></li>
+<li>TCP连接建立</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="c1"># Connection.connection </span>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># Connection.connection </span>
 <span class="n">sock</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">create_connection</span><span class="p">((</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">),</span><span class="n">connection_timeout</span><span class="p">)</span>
 <span class="n">sock</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">IPPROTO_TCP</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">TCP_NODELAY</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>                       
 <span class="n">sock</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">SOL_SOCKET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SO_KEEPALIVE</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">_rfile</span> <span class="o">=</span> <span class="n">_makefile</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> </code></pre></td></tr></table>
+<span class="n">_rfile</span> <span class="o">=</span> <span class="n">_makefile</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> 
+</code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li>Server向Client发送Handshake packet：包含server版本信息， 随机挑战数等</li>
 <li>Client与Server发送Auth packet</li>
-<li>Server向Client发送OK packet或者ERR packet
-<br /></li>
+<li>Server向Client发送OK packet或者ERR packet</li>
 </ul>
-
 <h4 id="认证细节">认证细节</h4>
-
 <ul>
-<li><p>CHAP协议</p>
-
+<li>
+<p>CHAP协议</p>
 <ol>
 <li>the server sends the random scramble to the client.</li>
 <li>client sends the encrypted password back to the server.</li>
-<li>the server checks the password.
-<br /></li>
-</ol></li>
-
-<li><p>客户端加密</p>
-
+<li>the server checks the password.</li>
+</ol>
+</li>
+<li>
+<p>客户端加密</p>
 <ol>
 <li>stage1 = sha1(password)</li>
-<li>crypt = (sha1(scramble + sha1(stage1))) ^ stage1
-<br /></li>
-</ol></li>
+<li>crypt = (sha1(scramble + sha1(stage1))) ^ stage1</li>
+</ol>
+</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -400,7 +411,7 @@
 </span><span class="lnt">16
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">scramble_native_password</span><span class="p">(</span><span class="n">password</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">scramble_native_password</span><span class="p">(</span><span class="n">password</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
     <span class="c1"># password为明文密码</span>
     <span class="c1"># message即random scramble</span>
     <span class="n">stage1</span> <span class="o">=</span> <span class="n">sha1_new</span><span class="p">(</span><span class="n">password</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
@@ -415,93 +426,84 @@
     <span class="n">result</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="n">message1</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)):</span>
         <span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">^=</span> <span class="n">message2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-    <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></code></pre></td></tr></table>
+    <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
+</div><ul>
+<li>
+<p>服务端验证 (基于异或的自反性： A ^ B ^ A = B)</p>
 <ul>
-<li><p>服务端验证 (基于异或的自反性： A ^ B ^ A = B)</p>
-
-<ul>
-<li>stage1&rsquo; = crypt ^ (sha1(scramble + mysql.user.password))</li>
-<li>sha1(stage1&rsquo;) == mysql.user.password
-<br /></li>
+<li>stage1' = crypt ^ (sha1(scramble + mysql.user.password))</li>
+<li>sha1(stage1') == mysql.user.password</li>
 </ul>
-
-<p><em>注：即使mysql.user.password泄露也无法认证，因为不知道stage1</em></p></li>
+<p><em>注：即使mysql.user.password泄露也无法认证，因为不知道stage1</em></p>
+</li>
 </ul>
-
 <h4 id="服务端数据包">服务端数据包</h4>
-
 <ul>
 <li>组成
-
 <ul>
 <li>head(4 byte)
-
 <ul>
 <li>payload_length (3 byte)</li>
 <li>sequense_id (1 byte)</li>
-</ul></li>
+</ul>
+</li>
 <li>payload</li>
-</ul></li>
+</ul>
+</li>
 <li>最大长度（2 ** 24 - 1）,payload等于最大长度时，会拆成多个包，即最后一个包长度总小于最大长度</li>
-<li>head 解析
-<br /></li>
+<li>head 解析</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="c1"># Connection._read_packet</span>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># Connection._read_packet</span>
 <span class="n">packet_header</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_bytes</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>        
 <span class="n">btrl</span><span class="p">,</span> <span class="n">btrh</span><span class="p">,</span> <span class="n">packet_number</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&lt;HBB&#39;</span><span class="p">,</span> <span class="n">packet_header</span><span class="p">)</span>
 <span class="n">bytes_to_read</span> <span class="o">=</span> <span class="n">btrl</span> <span class="o">+</span> <span class="p">(</span><span class="n">btrh</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span><span class="p">)</span>
-   </code></pre></td></tr></table>
+   
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><em>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注：strucut没有3 byte的类型，故需要分别读H(2 byte)和B(1 byte),然后进行拼接, 小端编码低位在前，所以实际值为 H + B &lt;&lt; 16</em></p>
-
+</div><p><em>      注：strucut没有3 byte的类型，故需要分别读H(2 byte)和B(1 byte),然后进行拼接, 小端编码低位在前，所以实际值为 H + B &laquo; 16</em></p>
 <ul>
 <li>包的种类：
-
 <ul>
 <li>OK: header = 0 and length of packet &gt; 7</li>
 <li>EOF(deprecated since 5.7.5): header = 0xfe and length of packet &lt; 9</li>
 <li>ERROR: header = 0xff</li>
-<li>Result Set: header in [1, 250]
-<br /></li>
-</ul></li>
+<li>Result Set: header in [1, 250]</li>
 </ul>
-
+</li>
+</ul>
 <h4 id="客户端数据包">客户端数据包</h4>
-
 <ul>
 <li>组成
-
 <ul>
 <li>head(4 byte)
-
 <ul>
 <li>payload_length (3 byte)</li>
 <li>sequense_id (1 byte)</li>
-</ul></li>
+</ul>
+</li>
 <li>payload
-
 <ul>
 <li>command(1 byte)</li>
-<li>arguments
-<br /></li>
-</ul></li>
-</ul></li>
+<li>arguments</li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -519,33 +521,30 @@
 </span><span class="lnt">16
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python">    <span class="c1"># Connection._execute_command</span>
-    <span class="n">packet_size</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">MAX_PACKET_LEN</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># +1 is for command</span>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python">  <span class="c1"># Connection._execute_command</span>
+  <span class="n">packet_size</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">MAX_PACKET_LEN</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># +1 is for command</span>
 
-    <span class="n">prelude</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;iB&#39;</span><span class="p">,</span> <span class="n">packet_size</span><span class="p">,</span> <span class="n">command</span><span class="p">)</span>
-    <span class="n">packet</span> <span class="o">=</span> <span class="n">prelude</span> <span class="o">+</span> <span class="n">sql</span><span class="p">[:</span><span class="n">packet_size</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_write_bytes</span><span class="p">(</span><span class="n">packet</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_next_seq_id</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="k">if</span> <span class="n">packet_size</span> <span class="o">&lt;</span> <span class="n">MAX_PACKET_LEN</span><span class="p">:</span>
-        <span class="k">return</span>
-    <span class="n">sql</span> <span class="o">=</span> <span class="n">sql</span><span class="p">[</span><span class="n">packet_size</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span>
-    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-        <span class="n">packet_size</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">MAX_PACKET_LEN</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sql</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">write_packet</span><span class="p">(</span><span class="n">sql</span><span class="p">[:</span><span class="n">packet_size</span><span class="p">])</span>
-        <span class="n">sql</span> <span class="o">=</span> <span class="n">sql</span><span class="p">[</span><span class="n">packet_size</span><span class="p">:]</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">sql</span> <span class="ow">and</span> <span class="n">packet_size</span> <span class="o">&lt;</span> <span class="n">MAX_PACKET_LEN</span><span class="p">:</span>
-            <span class="k">break</span></code></pre></td></tr></table>
+  <span class="n">prelude</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;iB&#39;</span><span class="p">,</span> <span class="n">packet_size</span><span class="p">,</span> <span class="n">command</span><span class="p">)</span>
+  <span class="n">packet</span> <span class="o">=</span> <span class="n">prelude</span> <span class="o">+</span> <span class="n">sql</span><span class="p">[:</span><span class="n">packet_size</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+  <span class="bp">self</span><span class="o">.</span><span class="n">_write_bytes</span><span class="p">(</span><span class="n">packet</span><span class="p">)</span>
+  <span class="bp">self</span><span class="o">.</span><span class="n">_next_seq_id</span> <span class="o">=</span> <span class="mi">1</span>
+  <span class="k">if</span> <span class="n">packet_size</span> <span class="o">&lt;</span> <span class="n">MAX_PACKET_LEN</span><span class="p">:</span>
+      <span class="k">return</span>
+  <span class="n">sql</span> <span class="o">=</span> <span class="n">sql</span><span class="p">[</span><span class="n">packet_size</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span>
+  <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+      <span class="n">packet_size</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">MAX_PACKET_LEN</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sql</span><span class="p">))</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">write_packet</span><span class="p">(</span><span class="n">sql</span><span class="p">[:</span><span class="n">packet_size</span><span class="p">])</span>
+      <span class="n">sql</span> <span class="o">=</span> <span class="n">sql</span><span class="p">[</span><span class="n">packet_size</span><span class="p">:]</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="n">sql</span> <span class="ow">and</span> <span class="n">packet_size</span> <span class="o">&lt;</span> <span class="n">MAX_PACKET_LEN</span><span class="p">:</span>
+          <span class="k">break</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="cursor">cursor</h4>
-
+</div><h4 id="cursor">cursor</h4>
 <ul>
 <li>Cursor： 默认curosr</li>
 <li>SSCursor: 不预先将结果一次性全部读入缓存中, 适用于获取大数据时</li>
 </ul>
-
 <h4 id="参考">参考</h4>
-
 <ul>
 <li><a href="https://dev.mysql.com/doc/internals/en/sending-more-than-16mbyte.html">https://dev.mysql.com/doc/internals/en/sending-more-than-16mbyte.html</a></li>
 <li><a href="https://www.python.org/dev/peps/pep-0249/#cursor-objects">https://www.python.org/dev/peps/pep-0249/#cursor-objects</a></li>
@@ -620,7 +619,7 @@
     <div class="post bg-white">
       <script src="https://utteranc.es/client.js"
             repo= "ppd0705/ppd0705.github.io"
-            issue-term="utteranc"
+            issue-term="pathname"
             theme="github-light"
             crossorigin="anonymous"
             async>

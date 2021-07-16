@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.6" />
+<meta name="generator" content="Hugo 0.86.0-DEV" />
 
 
 <link rel="canonical" href="https://ppd0705.github.io/post/go_concurrent_note/" />
@@ -62,22 +62,15 @@
 <meta property="og:title" content="[笔记]Go并发编程实战" />
 <meta property="og:description" content="01| Mutex介绍 实现机制 临界区： 一个被共享的资源，或者一个整体的一组共享资源 使用互斥锁，限定临界区只能同时由一个线程持有 同步原语：可以看做解" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://ppd0705.github.io/post/go_concurrent_note/" />
-<meta property="article:published_time" content="2021-05-05T10:17:59&#43;08:00"/>
-<meta property="article:modified_time" content="2021-05-05T10:17:59&#43;08:00"/>
+<meta property="og:url" content="https://ppd0705.github.io/post/go_concurrent_note/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2021-05-05T10:17:59+08:00" />
+<meta property="article:modified_time" content="2021-05-05T10:17:59+08:00" />
 
 <meta itemprop="name" content="[笔记]Go并发编程实战">
-<meta itemprop="description" content="01| Mutex介绍 实现机制 临界区： 一个被共享的资源，或者一个整体的一组共享资源 使用互斥锁，限定临界区只能同时由一个线程持有 同步原语：可以看做解">
-
-
-<meta itemprop="datePublished" content="2021-05-05T10:17:59&#43;08:00" />
-<meta itemprop="dateModified" content="2021-05-05T10:17:59&#43;08:00" />
-<meta itemprop="wordCount" content="8518">
-
-
-
-<meta itemprop="keywords" content="Golang," />
-<meta name="twitter:card" content="summary"/>
+<meta itemprop="description" content="01| Mutex介绍 实现机制 临界区： 一个被共享的资源，或者一个整体的一组共享资源 使用互斥锁，限定临界区只能同时由一个线程持有 同步原语：可以看做解"><meta itemprop="datePublished" content="2021-05-05T10:17:59+08:00" />
+<meta itemprop="dateModified" content="2021-05-05T10:17:59+08:00" />
+<meta itemprop="wordCount" content="8506">
+<meta itemprop="keywords" content="Golang," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]Go并发编程实战"/>
 <meta name="twitter:description" content="01| Mutex介绍 实现机制 临界区： 一个被共享的资源，或者一个整体的一组共享资源 使用互斥锁，限定临界区只能同时由一个线程持有 同步原语：可以看做解"/>
 
@@ -303,14 +296,14 @@
       
       <div class="post-meta">
         <time datetime="2021-05-05" class="post-time">
-          2021-05-05 10:17:59
+          2021-05-05
         </time>
         <div class="post-category">
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 8518 words </span>
-          <span class="more-meta"> 18 min read </span>
+        <span class="more-meta"> 8506 words </span>
+          <span class="more-meta"> 17 min read </span>
 
         
         
@@ -322,82 +315,255 @@
 
     
     
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Table of Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#01-mutex介绍">01| Mutex介绍</a>
+          <ul>
+            <li><a href="#实现机制">实现机制</a></li>
+            <li><a href="#基本使用">基本使用</a></li>
+          </ul>
+        </li>
+        <li><a href="#02-mutex实现原理">02| Mutex实现原理</a>
+          <ul>
+            <li><a href="#第一版-初版">第一版： 初版</a></li>
+            <li><a href="#第二版2011-06-30-给新人机会">第二版（2011-06-30） 给新人机会</a></li>
+            <li><a href="#第三版2015-02-多给些机会">第三版（2015-02） 多给些机会</a></li>
+            <li><a href="#第四版-解决饥饿">第四版 解决饥饿</a></li>
+          </ul>
+        </li>
+        <li><a href="#03-mutex易错场景盘点">03| Mutex易错场景盘点</a>
+          <ul>
+            <li><a href="#1-lockunlock未成对出现">1. Lock/Unlock未成对出现</a></li>
+            <li><a href="#2-copy已使用的mutex">2. Copy已使用的Mutex</a></li>
+            <li><a href="#3-重入">3. 重入</a></li>
+            <li><a href="#4-死锁">4. 死锁</a></li>
+          </ul>
+        </li>
+        <li><a href="#04-mutex拓展额外功能">04| Mutex拓展额外功能</a>
+          <ul>
+            <li><a href="#增加trylock方法">增加<code>TryLock</code>方法</a></li>
+            <li><a href="#获取等待者的数量">获取等待者的数量</a></li>
+            <li><a href="#实现线程安全队列">实现线程安全队列</a></li>
+          </ul>
+        </li>
+        <li><a href="#05--rwmutex-读写锁的实现原理和避坑指南">05 | RWMutex: 读写锁的实现原理和避坑指南</a>
+          <ul>
+            <li><a href="#读写优先级">读写优先级</a></li>
+            <li><a href="#内部结构">内部结构</a></li>
+            <li><a href="#rlockrunock实现">Rlock/RUnock实现</a></li>
+            <li><a href="#lock的实现">Lock的实现</a></li>
+            <li><a href="#unlock">Unlock</a></li>
+          </ul>
+        </li>
+        <li><a href="#06-waitgroup-协同等待任务编排利器">06| WaitGroup: 协同等待，任务编排利器</a>
+          <ul>
+            <li><a href="#add和done实现">Add和Done实现</a></li>
+            <li><a href="#wait实现">Wait实现</a></li>
+            <li><a href="#nocopy-辅助vet检查">noCopy: 辅助vet检查</a></li>
+          </ul>
+        </li>
+        <li><a href="#07--cond-条件变量实现机制">07 | Cond: 条件变量实现机制</a></li>
+        <li><a href="#08-once-简约而不简单的并发原语">08| Once: 简约而不简单的并发原语</a>
+          <ul>
+            <li><a href="#实现">实现</a></li>
+          </ul>
+        </li>
+        <li><a href="#09--map-如何实现线程安全的map类型">09 | map: 如何实现线程安全的map类型</a>
+          <ul>
+            <li><a href="#方案1使用rwlock读写锁">方案1：使用RWLock读写锁</a></li>
+            <li><a href="#方案2-在方法1基础上对数据分片使用多个map">方案2： 在方法1基础上，对数据分片，使用多个map</a></li>
+            <li><a href="#方案3官方实现">方案3：官方实现</a></li>
+          </ul>
+        </li>
+        <li><a href="#10--pool">10 | Pool</a>
+          <ul>
+            <li><a href="#get方法">Get方法</a></li>
+            <li><a href="#put方法">Put方法</a></li>
+            <li><a href="#其他">其他</a></li>
+          </ul>
+        </li>
+        <li><a href="#11--context-上下文">11 | Context: 上下文</a>
+          <ul>
+            <li><a href="#使用场景">使用场景</a></li>
+            <li><a href="#基本实现">基本实现</a>
+              <ul>
+                <li><a href="#interface">interface</a></li>
+                <li><a href="#使用惯例">使用惯例</a></li>
+                <li><a href="#基础实例">基础实例</a></li>
+                <li><a href="#拓展类型">拓展类型</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#12-atomic-原则操作">12| atomic: 原则操作</a>
+          <ul>
+            <li><a href="#基本方法">基本方法</a></li>
+            <li><a href="#value类型">Value类型</a></li>
+          </ul>
+        </li>
+        <li><a href="#13-channel-另辟蹊径解决并发问题">13| Channel: 另辟蹊径解决并发问题</a>
+          <ul>
+            <li><a href="#基本类型">基本类型</a></li>
+            <li><a href="#实现原理">实现原理</a>
+              <ul>
+                <li><a href="#chan数据结构">chan数据结构</a></li>
+                <li><a href="#核心方法">核心方法</a></li>
+              </ul>
+            </li>
+            <li><a href="#场景错误">场景错误</a></li>
+          </ul>
+        </li>
+        <li><a href="#channel14-典型应用">Channel|14 典型应用</a>
+          <ul>
+            <li><a href="#使用反射操作channel">使用反射操作Channel</a></li>
+            <li><a href="#应用场景">应用场景</a>
+              <ul>
+                <li><a href="#消息交流">消息交流</a></li>
+                <li><a href="#数据传递">数据传递</a></li>
+                <li><a href="#信号通知">信号通知</a></li>
+                <li><a href="#锁">锁</a></li>
+                <li><a href="#任务编排">任务编排</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#15-go如何保证并发读写顺序">15| Go如何保证并发读写顺序</a>
+          <ul>
+            <li><a href="#happens-before">happens-before</a>
+              <ul>
+                <li><a href="#概念">概念</a></li>
+                <li><a href="#goroutine内部">goroutine内部</a></li>
+                <li><a href="#goroutine之间">goroutine之间</a></li>
+              </ul>
+            </li>
+            <li><a href="#实例">实例</a>
+              <ul>
+                <li><a href="#init函数">init函数</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#16-semaphore信号量">16 |Semaphore信号量</a>
+          <ul>
+            <li><a href="#官方实现">官方实现</a></li>
+            <li><a href="#channel实现">Channel实现</a></li>
+          </ul>
+        </li>
+        <li><a href="#17--singleflight和cyclicbarrier">17 | SingleFlight和CyclicBarrier</a>
+          <ul>
+            <li><a href="#singleflight实现原理">SingleFlight实现原理</a></li>
+            <li><a href="#cyclicbarrier循环栅栏">CyclicBarrier循环栅栏</a></li>
+          </ul>
+        </li>
+        <li><a href="#18-分组操作处理一组子任务">18| 分组操作：处理一组子任务</a>
+          <ul>
+            <li><a href="#errgroup">ErrGroup</a></li>
+            <li><a href="#gollback">gollback</a></li>
+            <li><a href="#hunch">Hunch</a></li>
+            <li><a href="#schedgroup">schedgroup</a></li>
+          </ul>
+        </li>
+        <li><a href="#19-分布式环境-使用etcd的选举互斥锁和读写锁">19| 分布式环境 使用etcd的选举、互斥锁和读写锁</a>
+          <ul>
+            <li><a href="#leader选举">Leader选举</a></li>
+            <li><a href="#互斥锁">互斥锁</a></li>
+            <li><a href="#读写锁">读写锁</a></li>
+          </ul>
+        </li>
+        <li><a href="#20-分布式环境-使用etcd的队列栅栏和stm">20| 分布式环境 使用etcd的队列、栅栏和STM</a>
+          <ul>
+            <li><a href="#队列">队列</a></li>
+            <li><a href="#栅栏">栅栏</a></li>
+            <li><a href="#stmsoftware-transactioal-memory">STM(Software Transactioal Memory)</a>
+              <ul>
+                <li><a href="#etcd事务操作">etcd事务操作</a></li>
+                <li><a href="#stm">STM</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
 
     
     <div class="post-content">
-      
-
-<h2 id="01-mutex介绍">01| Mutex介绍</h2>
-
+      <h2 id="01-mutex介绍">01| Mutex介绍</h2>
 <h3 id="实现机制">实现机制</h3>
-
 <p>临界区： 一个被共享的资源，或者一个整体的一组共享资源</p>
-
 <p>使用互斥锁，限定临界区只能同时由一个线程持有</p>
-
-<p>同步原语：可以看做解决并发问题的一个基础数据结构
-- 使用场景
-  - 共享资源，Mutex、RwMutex
-  - 任务边盖, WaitGroup、Channel
-  - 消息传递, Channel</p>
-
+<p>同步原语：可以看做解决并发问题的一个基础数据结构</p>
+<ul>
+<li>使用场景
+<ul>
+<li>共享资源，Mutex、RwMutex</li>
+<li>任务边盖, WaitGroup、Channel</li>
+<li>消息传递, Channel</li>
+</ul>
+</li>
+</ul>
 <h3 id="基本使用">基本使用</h3>
-
 <p>接口Locker</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Locker</span> <span class="kd">interface</span> <span class="p">{</span>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Locker</span> <span class="kd">interface</span> <span class="p">{</span>
     <span class="nf">Lock</span><span class="p">()</span>
     <span class="nf">Unlock</span><span class="p">()</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>Mutex实现了Locker的方法</p>
-
+</div><p>Mutex实现了Locker的方法</p>
 <p>Mutex可以嵌入到其他struct中使用，初始化的时候不必初始化Mutex</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Counter</span> <span class="kd">struct</span> <span class="p">{</span>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Counter</span> <span class="kd">struct</span> <span class="p">{</span>
     <span class="nx">mu</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Mutex</span>
     <span class="nx">Count</span> <span class="kt">uint64</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>可以将操作锁和业务逻辑封装成一个方法</p>
+</div><p>可以将操作锁和业务逻辑封装成一个方法</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">Counter</span><span class="p">)</span> <span class="nf">Incr</span><span class="p">()</span> <span class="p">{</span>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">Counter</span><span class="p">)</span> <span class="nf">Incr</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">c</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
     <span class="nx">c</span><span class="p">.</span><span class="nx">Counter</span><span class="o">++</span>
     <span class="nx">c</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nx">Unlock</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="02-mutex实现原理">02| Mutex实现原理</h2>
-
+</div><h2 id="02-mutex实现原理">02| Mutex实现原理</h2>
 <h3 id="第一版-初版">第一版： 初版</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -432,9 +598,11 @@
 </span><span class="lnt">33
 </span><span class="lnt">34
 </span><span class="lnt">35
+</span><span class="lnt">36
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go">   <span class="c1">// CAS操作，当时还没有抽象出atomic包
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go">
+   <span class="c1">// CAS操作，当时还没有抽象出atomic包
 </span><span class="c1"></span>    <span class="kd">func</span> <span class="nf">cas</span><span class="p">(</span><span class="nx">val</span> <span class="o">*</span><span class="kt">int32</span><span class="p">,</span> <span class="nx">old</span><span class="p">,</span> <span class="nx">new</span> <span class="kt">int32</span><span class="p">)</span> <span class="kt">bool</span>
     <span class="kd">func</span> <span class="nf">semacquire</span><span class="p">(</span><span class="o">*</span><span class="kt">int32</span><span class="p">)</span>
     <span class="kd">func</span> <span class="nf">semrelease</span><span class="p">(</span><span class="o">*</span><span class="kt">int32</span><span class="p">)</span>
@@ -468,15 +636,14 @@
 </span><span class="c1"></span>            <span class="k">return</span>
         <span class="p">}</span>
         <span class="nf">semrelease</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">m</span><span class="p">.</span><span class="nx">sema</span><span class="p">)</span> <span class="c1">// 唤醒其它阻塞的goroutine
-</span><span class="c1"></span>    <span class="p">}</span>    </code></pre></td></tr></table>
+</span><span class="c1"></span>    <span class="p">}</span>    
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="第二版-2011-06-30-给新人机会">第二版（2011-06-30） 给新人机会</h3>
-
+</div><h3 id="第二版2011-06-30-给新人机会">第二版（2011-06-30） 给新人机会</h3>
 <p>主要改动是新来的goroutine也有机会获得锁，甚至一个goroutine可以连续获得锁</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -489,7 +656,7 @@
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Mutex</span> <span class="kd">struct</span> <span class="p">{</span>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Mutex</span> <span class="kd">struct</span> <span class="p">{</span>
     <span class="nx">state</span> <span class="kt">int32</span>
     <span class="nx">sema</span>  <span class="kt">uint32</span>
 <span class="p">}</span>
@@ -499,13 +666,13 @@
     <span class="nx">mutexLocked</span> <span class="p">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="kc">iota</span> <span class="c1">// mutex is locked
 </span><span class="c1"></span>    <span class="nx">mutexWoken</span>
     <span class="nx">mutexWaiterShift</span> <span class="p">=</span> <span class="kc">iota</span>
-<span class="p">)</span></code></pre></td></tr></table>
+<span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>state是一个复合字段，最低位表示是否被持有，第二低位表示是否有唤醒的goroutine，剩余的位表示等待此锁的goroutine数</p>
+</div><p>state是一个复合字段，最低位表示是否被持有，第二低位表示是否有唤醒的goroutine，剩余的位表示等待此锁的goroutine数</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -532,9 +699,11 @@
 </span><span class="lnt">25
 </span><span class="lnt">26
 </span><span class="lnt">27
+</span><span class="lnt">28
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go">   <span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="o">*</span><span class="nx">Mutex</span><span class="p">)</span> <span class="nf">Lock</span><span class="p">()</span> <span class="p">{</span>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go">
+   <span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="o">*</span><span class="nx">Mutex</span><span class="p">)</span> <span class="nf">Lock</span><span class="p">()</span> <span class="p">{</span>
         <span class="c1">// Fast path: 幸运case，能够直接获取到锁
 </span><span class="c1"></span>        <span class="k">if</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">CompareAndSwapInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">m</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">mutexLocked</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span>
@@ -560,11 +729,12 @@
 </span><span class="c1"></span>                <span class="nx">awoke</span> <span class="p">=</span> <span class="kc">true</span>
             <span class="p">}</span>
         <span class="p">}</span>
-    <span class="p">}</span></code></pre></td></tr></table>
+    <span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
 </div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -584,9 +754,11 @@
 </span><span class="lnt">18
 </span><span class="lnt">19
 </span><span class="lnt">20
+</span><span class="lnt">21
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go">   <span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="o">*</span><span class="nx">Mutex</span><span class="p">)</span> <span class="nf">Unlock</span><span class="p">()</span> <span class="p">{</span>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go">
+   <span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="o">*</span><span class="nx">Mutex</span><span class="p">)</span> <span class="nf">Unlock</span><span class="p">()</span> <span class="p">{</span>
         <span class="c1">// Fast path: drop lock bit.
 </span><span class="c1"></span>        <span class="nx">new</span> <span class="o">:=</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">AddInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">m</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span> <span class="o">-</span><span class="nx">mutexLocked</span><span class="p">)</span> <span class="c1">//去掉锁标志
 </span><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span><span class="nx">new</span><span class="o">+</span><span class="nx">mutexLocked</span><span class="p">)</span><span class="o">&amp;</span><span class="nx">mutexLocked</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span> <span class="c1">//本来就没有加锁
@@ -605,15 +777,14 @@
             <span class="p">}</span>
             <span class="nx">old</span> <span class="p">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">state</span>
         <span class="p">}</span>
-    <span class="p">}</span></code></pre></td></tr></table>
+    <span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="第三版-2015-02-多给些机会">第三版（2015-02） 多给些机会</h3>
-
+</div><h3 id="第三版2015-02-多给些机会">第三版（2015-02） 多给些机会</h3>
 <p>加入自旋等待：新来的gorutine或者被唤醒的goroutine首次获取不到锁是会通过自旋尝试几次检查所是否已经被释放</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -652,9 +823,11 @@
 </span><span class="lnt">37
 </span><span class="lnt">38
 </span><span class="lnt">39
+</span><span class="lnt">40
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go">   <span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="o">*</span><span class="nx">Mutex</span><span class="p">)</span> <span class="nf">Lock</span><span class="p">()</span> <span class="p">{</span>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go">
+   <span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="o">*</span><span class="nx">Mutex</span><span class="p">)</span> <span class="nf">Lock</span><span class="p">()</span> <span class="p">{</span>
         <span class="c1">// Fast path: 幸运之路，正好获取到锁
 </span><span class="c1"></span>        <span class="k">if</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">CompareAndSwapInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">m</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">mutexLocked</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span>
@@ -692,86 +865,69 @@
 </span><span class="c1"></span>                <span class="nx">iter</span> <span class="p">=</span> <span class="mi">0</span>
             <span class="p">}</span>
         <span class="p">}</span>
-    <span class="p">}</span></code></pre></td></tr></table>
+    <span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="第四版-解决饥饿">第四版 解决饥饿</h3>
-
+</div><h3 id="第四版-解决饥饿">第四版 解决饥饿</h3>
 <p>因为新来的gorotine也参与竞争，可能每次都被新来的gorotine抢到锁，极端情况下等待中的goroutine可能会一直拿不到锁，产生饥饿问题</p>
-
 <p>不公平的等待时间限制在1毫秒</p>
-
-<p>state：
-- mutexLocker, 1bit, 表示是否被持有，
-- mutexWoken, 1bit, 表示是否有唤醒的goroutine，
-- mutexStarving, 1bit, 表示是否有饥饿问题
-- mutexWaiters, 剩余的位, 表示等待此锁的goroutine数</p>
-
+<p>state：</p>
+<ul>
+<li>mutexLocker, 1bit, 表示是否被持有，</li>
+<li>mutexWoken, 1bit, 表示是否有唤醒的goroutine，</li>
+<li>mutexStarving, 1bit, 表示是否有饥饿问题</li>
+<li>mutexWaiters, 剩余的位, 表示等待此锁的goroutine数</li>
+</ul>
 <h2 id="03-mutex易错场景盘点">03| Mutex易错场景盘点</h2>
-
-<h3 id="1-lock-unlock未成对出现">1. Lock/Unlock未成对出现</h3>
-
+<h3 id="1-lockunlock未成对出现">1. Lock/Unlock未成对出现</h3>
 <h3 id="2-copy已使用的mutex">2. Copy已使用的Mutex</h3>
-
 <p>因为Mutex是个有状态的对象，state字段记录了锁的状态，如果复制Mutex给一个新的变量，那么新的变量一开始就可能被加锁了</p>
-
 <p>可以使用<code>go vet</code>检测</p>
-
 <h3 id="3-重入">3. 重入</h3>
-
 <p>Mutex不支持重入，因为没有记录归属哪个goroutine</p>
-
-<p>自定义实现方式
-- Lock时记录对应的goroutine id
-- 由goroutine提供一个token，用来表示自己</p>
-
+<p>自定义实现方式</p>
+<ul>
+<li>Lock时记录对应的goroutine id</li>
+<li>由goroutine提供一个token，用来表示自己</li>
+</ul>
 <h3 id="4-死锁">4. 死锁</h3>
-
-<p>四个必要条件
-- 互斥
-- 持有和等待
-- 不可剥夺
-- 环路等待</p>
-
+<p>四个必要条件</p>
+<ul>
+<li>互斥</li>
+<li>持有和等待</li>
+<li>不可剥夺</li>
+<li>环路等待</li>
+</ul>
 <h2 id="04-mutex拓展额外功能">04| Mutex拓展额外功能</h2>
-
-<h3 id="增加-trylock-方法">增加<code>TryLock</code>方法</h3>
-
+<h3 id="增加trylock方法">增加<code>TryLock</code>方法</h3>
 <p>通过<code>unsafe.Pointer(&amp;m.Mutex)</code>拿到state值，判断是否可以获取锁</p>
-
 <h3 id="获取等待者的数量">获取等待者的数量</h3>
-
 <p><code>atomic.LoadInt32((*int32)(unsafe.Pointer(&amp;m.Mutex))) &gt;&gt; mutexWaiterShift</code></p>
-
 <h3 id="实现线程安全队列">实现线程安全队列</h3>
-
-<h2 id="05-rwmutex-读写锁的实现原理和避坑指南">05 | RWMutex: 读写锁的实现原理和避坑指南</h2>
-
+<h2 id="05--rwmutex-读写锁的实现原理和避坑指南">05 | RWMutex: 读写锁的实现原理和避坑指南</h2>
 <h3 id="读写优先级">读写优先级</h3>
-
 <ul>
 <li>read-preferring：reader优先获取锁</li>
 <li>write-prefering：如果有write在等待锁，会阻止后面新来的reader获取到锁</li>
 <li>不设定优先级</li>
 </ul>
-
 <p>Golang使用了write-preferring方案</p>
-
 <h3 id="内部结构">内部结构</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span><span class="lnt">8
-</span><span class="lnt">9
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">RWMutex</span> <span class="kd">struct</span> <span class="p">{</span>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">RWMutex</span> <span class="kd">struct</span> <span class="p">{</span>
   <span class="nx">w</span>           <span class="nx">Mutex</span>   <span class="c1">// 互斥锁解决多个writer的竞争
 </span><span class="c1"></span>  <span class="nx">writerSem</span>   <span class="kt">uint32</span>  <span class="c1">// writer信号量
 </span><span class="c1"></span>  <span class="nx">readerSem</span>   <span class="kt">uint32</span>  <span class="c1">// reader信号量
@@ -779,13 +935,14 @@
 </span><span class="c1"></span>  <span class="nx">readerWait</span>  <span class="kt">int32</span>   <span class="c1">// writer需要等待reader的数量
 </span><span class="c1"></span><span class="p">}</span>
 
-<span class="kd">const</span> <span class="nx">rwmutexMaxReaders</span> <span class="p">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">30</span>  <span class="o">//</span> <span class="nx">最大reader数量</span></code></pre></td></tr></table>
+<span class="kd">const</span> <span class="nx">rwmutexMaxReaders</span> <span class="p">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">30</span>  <span class="c1">// 最大reader数量
+</span><span class="c1"></span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="rlock-runock实现">Rlock/RUnock实现</h3>
+</div><h3 id="rlockrunock实现">Rlock/RUnock实现</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -802,9 +959,11 @@
 </span><span class="lnt">15
 </span><span class="lnt">16
 </span><span class="lnt">17
+</span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">rw</span> <span class="o">*</span><span class="nx">RWMutex</span><span class="p">)</span> <span class="nf">RLock</span><span class="p">()</span> <span class="p">{</span>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go">
+<span class="kd">func</span> <span class="p">(</span><span class="nx">rw</span> <span class="o">*</span><span class="nx">RWMutex</span><span class="p">)</span> <span class="nf">RLock</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">if</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">AddInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">rw</span><span class="p">.</span><span class="nx">readerCount</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="p">&lt;</span> <span class="mi">0</span> <span class="p">{</span>
             <span class="c1">// rw.readerCount是负值的时候，意味着此时有writer等待请求锁，因为writer优先级高，所以把后来的reader阻塞休眠
 </span><span class="c1"></span>        <span class="nf">runtime_SemacquireMutex</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">rw</span><span class="p">.</span><span class="nx">readerSem</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
@@ -820,56 +979,24 @@
         <span class="c1">// 最后一个reader了，writer终于有机会获得锁了
 </span><span class="c1"></span>        <span class="nf">runtime_Semrelease</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">rw</span><span class="p">.</span><span class="nx">writerSem</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>RLock上锁：
-- readerCount+1
-- 如果readerCount小于0表示有writer在请求锁，于是reader阻塞休眠</p>
-
-<p>RUnlock解锁：
-- readerCount-1
-- 如果readerCount&lt;0, readerWait-1
-- 如果readerWait ==0, 表示没有要等的reader了，唤醒writer</p>
-
+</div><p>RLock上锁：</p>
+<ul>
+<li>readerCount+1</li>
+<li>如果readerCount小于0表示有writer在请求锁，于是reader阻塞休眠</li>
+</ul>
+<p>RUnlock解锁：</p>
+<ul>
+<li>readerCount-1</li>
+<li>如果readerCount&lt;0, readerWait-1</li>
+<li>如果readerWait ==0, 表示没有要等的reader了，唤醒writer</li>
+</ul>
 <h3 id="lock的实现">Lock的实现</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">rw</span> <span class="o">*</span><span class="nx">RWMutex</span><span class="p">)</span> <span class="nf">Lock</span><span class="p">()</span> <span class="p">{</span>
-    <span class="c1">// 首先解决其他writer竞争问题
-</span><span class="c1"></span>    <span class="nx">rw</span><span class="p">.</span><span class="nx">w</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
-    <span class="c1">// 反转readerCount，告诉reader有writer竞争锁
-</span><span class="c1"></span>    <span class="nx">r</span> <span class="o">:=</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">AddInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">rw</span><span class="p">.</span><span class="nx">readerCount</span><span class="p">,</span> <span class="o">-</span><span class="nx">rwmutexMaxReaders</span><span class="p">)</span> <span class="o">+</span> <span class="nx">rwmutexMaxReaders</span>
-    <span class="c1">// 如果当前有reader持有锁，那么需要等待
-</span><span class="c1"></span>    <span class="k">if</span> <span class="nx">r</span> <span class="o">!=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">AddInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">rw</span><span class="p">.</span><span class="nx">readerWait</span><span class="p">,</span> <span class="nx">r</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">{</span>
-        <span class="nf">runtime_SemacquireMutex</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">rw</span><span class="p">.</span><span class="nx">writerSem</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
-</div>
-</div>
-<ul>
-<li>上锁</li>
-<li>反转readerCount</li>
-<li>如果readerCount != 0 ， readWait加上readerCount</li>
-<li>如果reaWait !=0, 表示要等待reader</li>
-</ul>
-
-<h3 id="unlock">Unlock</h3>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -882,7 +1009,44 @@
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">rw</span> <span class="o">*</span><span class="nx">RWMutex</span><span class="p">)</span> <span class="nf">Unlock</span><span class="p">()</span> <span class="p">{</span>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go">
+<span class="kd">func</span> <span class="p">(</span><span class="nx">rw</span> <span class="o">*</span><span class="nx">RWMutex</span><span class="p">)</span> <span class="nf">Lock</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// 首先解决其他writer竞争问题
+</span><span class="c1"></span>    <span class="nx">rw</span><span class="p">.</span><span class="nx">w</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+    <span class="c1">// 反转readerCount，告诉reader有writer竞争锁
+</span><span class="c1"></span>    <span class="nx">r</span> <span class="o">:=</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">AddInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">rw</span><span class="p">.</span><span class="nx">readerCount</span><span class="p">,</span> <span class="o">-</span><span class="nx">rwmutexMaxReaders</span><span class="p">)</span> <span class="o">+</span> <span class="nx">rwmutexMaxReaders</span>
+    <span class="c1">// 如果当前有reader持有锁，那么需要等待
+</span><span class="c1"></span>    <span class="k">if</span> <span class="nx">r</span> <span class="o">!=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">AddInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">rw</span><span class="p">.</span><span class="nx">readerWait</span><span class="p">,</span> <span class="nx">r</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">{</span>
+        <span class="nf">runtime_SemacquireMutex</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">rw</span><span class="p">.</span><span class="nx">writerSem</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>上锁</li>
+<li>反转readerCount</li>
+<li>如果readerCount != 0 ， readWait加上readerCount</li>
+<li>如果reaWait !=0, 表示要等待reader</li>
+</ul>
+<h3 id="unlock">Unlock</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go">
+<span class="kd">func</span> <span class="p">(</span><span class="nx">rw</span> <span class="o">*</span><span class="nx">RWMutex</span><span class="p">)</span> <span class="nf">Unlock</span><span class="p">()</span> <span class="p">{</span>
     <span class="c1">// 告诉reader没有活跃的writer了
 </span><span class="c1"></span>    <span class="nx">r</span> <span class="o">:=</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">AddInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">rw</span><span class="p">.</span><span class="nx">readerCount</span><span class="p">,</span> <span class="nx">rwmutexMaxReaders</span><span class="p">)</span>
     
@@ -892,19 +1056,18 @@
     <span class="p">}</span>
     <span class="c1">// 释放内部的互斥锁
 </span><span class="c1"></span>    <span class="nx">rw</span><span class="p">.</span><span class="nx">w</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li>readerCount 加上 rwmutexMaxReaders</li>
 <li>唤醒所有的reader</li>
 <li>释放锁</li>
 </ul>
-
-<h2 id="06-waitgroup-协同等待-任务编排利器">06| WaitGroup: 协同等待，任务编排利器</h2>
+<h2 id="06-waitgroup-协同等待任务编排利器">06| WaitGroup: 协同等待，任务编排利器</h2>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -925,9 +1088,11 @@
 </span><span class="lnt">19
 </span><span class="lnt">20
 </span><span class="lnt">21
+</span><span class="lnt">22
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">WaitGroup</span> <span class="kd">struct</span> <span class="p">{</span>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go">
+<span class="kd">type</span> <span class="nx">WaitGroup</span> <span class="kd">struct</span> <span class="p">{</span>
     <span class="c1">// 避免复制使用的一个技巧，可以告诉vet工具违反了复制使用的规则
 </span><span class="c1"></span>    <span class="nx">noCopy</span> <span class="nx">noCopy</span>
     <span class="c1">// 64bit(8bytes)的值分成两段，高32bit是计数值，低32bit是waiter的计数
@@ -947,17 +1112,15 @@
         <span class="c1">// 如果地址是32bit对齐的，数组后两个元素用来做state，它可以用来做64bit的原子操作，第一个元素32bit用来做信号量
 </span><span class="c1"></span>        <span class="k">return</span> <span class="p">(</span><span class="o">*</span><span class="kt">uint64</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">wg</span><span class="p">.</span><span class="nx">state1</span><span class="p">[</span><span class="mi">1</span><span class="p">])),</span> <span class="o">&amp;</span><span class="nx">wg</span><span class="p">.</span><span class="nx">state1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>64位对齐的state的情况</p>
-
-<p><img src="evernotecid://B83B2912-41F7-4D6F-B1B7-09037F69A270/appyinxiangcom/19474765/ENResource/p118" alt="71b5fad6284140986d04c0b6f87aedea.jpeg" /></p>
-
+</div><p>64位对齐的state的情况</p>
+<p><img src="evernotecid://B83B2912-41F7-4D6F-B1B7-09037F69A270/appyinxiangcom/19474765/ENResource/p118" alt="71b5fad6284140986d04c0b6f87aedea.jpeg"></p>
 <h3 id="add和done实现">Add和Done实现</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -983,7 +1146,7 @@
 </span><span class="lnt">24
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">wg</span> <span class="o">*</span><span class="nx">WaitGroup</span><span class="p">)</span> <span class="nf">Add</span><span class="p">(</span><span class="nx">delta</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">wg</span> <span class="o">*</span><span class="nx">WaitGroup</span><span class="p">)</span> <span class="nf">Add</span><span class="p">(</span><span class="nx">delta</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">statep</span><span class="p">,</span> <span class="nx">semap</span> <span class="o">:=</span> <span class="nx">wg</span><span class="p">.</span><span class="nf">state</span><span class="p">()</span>
     <span class="c1">// 高32bit是计数值v，所以把delta左移32，增加到计数上
 </span><span class="c1"></span>    <span class="nx">state</span> <span class="o">:=</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">AddUint64</span><span class="p">(</span><span class="nx">statep</span><span class="p">,</span> <span class="nb">uint64</span><span class="p">(</span><span class="nx">delta</span><span class="p">)</span><span class="o">&lt;&lt;</span><span class="mi">32</span><span class="p">)</span>
@@ -1006,13 +1169,13 @@
 <span class="c1">// Done方法实际就是计数器减1
 </span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">wg</span> <span class="o">*</span><span class="nx">WaitGroup</span><span class="p">)</span> <span class="nf">Done</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="wait实现">Wait实现</h3>
+</div><h3 id="wait实现">Wait实现</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1032,9 +1195,11 @@
 </span><span class="lnt">18
 </span><span class="lnt">19
 </span><span class="lnt">20
+</span><span class="lnt">21
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">wg</span> <span class="o">*</span><span class="nx">WaitGroup</span><span class="p">)</span> <span class="nf">Wait</span><span class="p">()</span> <span class="p">{</span>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go">
+<span class="kd">func</span> <span class="p">(</span><span class="nx">wg</span> <span class="o">*</span><span class="nx">WaitGroup</span><span class="p">)</span> <span class="nf">Wait</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">statep</span><span class="p">,</span> <span class="nx">semap</span> <span class="o">:=</span> <span class="nx">wg</span><span class="p">.</span><span class="nf">state</span><span class="p">()</span>
     
     <span class="k">for</span> <span class="p">{</span>
@@ -1053,32 +1218,35 @@
 </span><span class="c1"></span>            <span class="k">return</span>
         <span class="p">}</span>
     <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="nocopy-辅助vet检查">noCopy: 辅助vet检查</h3>
+</div><h3 id="nocopy-辅助vet检查">noCopy: 辅助vet检查</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">noCopy</span> <span class="kd">struct</span><span class="p">{}</span>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go">
+<span class="kd">type</span> <span class="nx">noCopy</span> <span class="kd">struct</span><span class="p">{}</span>
 
 <span class="c1">// Lock is a no-op used by -copylocks checker from `go vet`.
 </span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="o">*</span><span class="nx">noCopy</span><span class="p">)</span> <span class="nf">Lock</span><span class="p">()</span>   <span class="p">{}</span>
-<span class="kd">func</span> <span class="p">(</span><span class="o">*</span><span class="nx">noCopy</span><span class="p">)</span> <span class="nf">Unlock</span><span class="p">()</span> <span class="p">{}</span></code></pre></td></tr></table>
-</div>
-</div>
-<p>noCopy类型是用来帮助vet检查用的类型，用来检查对象在第一次使用之后是否被复制使用</p>
+<span class="kd">func</span> <span class="p">(</span><span class="o">*</span><span class="nx">noCopy</span><span class="p">)</span> <span class="nf">Unlock</span><span class="p">()</span> <span class="p">{}</span>
 
-<h2 id="07-cond-条件变量实现机制">07 | Cond: 条件变量实现机制</h2>
+</code></pre></td></tr></table>
+</div>
+</div><p>noCopy类型是用来帮助vet检查用的类型，用来检查对象在第一次使用之后是否被复制使用</p>
+<h2 id="07--cond-条件变量实现机制">07 | Cond: 条件变量实现机制</h2>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1104,7 +1272,7 @@
 </span><span class="lnt">24
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Cond</span> <span class="kd">struct</span> <span class="p">{</span>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Cond</span> <span class="kd">struct</span> <span class="p">{</span>
     <span class="nx">noCopy</span> <span class="nx">noCopy</span>
     <span class="nx">L</span> <span class="nx">Locker</span>
     <span class="nx">notify</span> <span class="nx">notifyList</span>
@@ -1127,15 +1295,14 @@
 <span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">Cond</span><span class="p">)</span> <span class="nf">BroadCast</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">c</span><span class="p">.</span><span class="nx">checker</span><span class="p">.</span><span class="nf">check</span><span class="p">()</span>
     <span class="nf">runtime_notifyListNotifyAll</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">c</span><span class="p">.</span><span class="nx">notify</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="08-once-简约而不简单的并发原语">08| Once: 简约而不简单的并发原语</h2>
-
+</div><h2 id="08-once-简约而不简单的并发原语">08| Once: 简约而不简单的并发原语</h2>
 <h3 id="实现">实现</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1156,7 +1323,7 @@
 </span><span class="lnt">19
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Once</span> <span class="kd">struct</span> <span class="p">{</span>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Once</span> <span class="kd">struct</span> <span class="p">{</span>
     <span class="nx">done</span> <span class="kt">uint32</span>
     <span class="nx">m</span> <span class="nx">Mutex</span>
 <span class="p">}</span>
@@ -1174,25 +1341,19 @@
         <span class="k">defer</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">StoreUint32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">o</span><span class="p">.</span><span class="nx">done</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="nf">f</span><span class="p">()</span>
     <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="09-map-如何实现线程安全的map类型">09 | map: 如何实现线程安全的map类型</h2>
-
+</div><h2 id="09--map-如何实现线程安全的map类型">09 | map: 如何实现线程安全的map类型</h2>
 <p>map不能并发读写，写的时候需要加锁</p>
-
-<h3 id="方案1-使用rwlock读写锁">方案1：使用RWLock读写锁</h3>
-
-<h3 id="方案2-在方法1基础上-对数据分片-使用多个map">方案2： 在方法1基础上，对数据分片，使用多个map</h3>
-
-<h3 id="方案3-官方实现">方案3：官方实现</h3>
-
-<h2 id="10-pool">10 | Pool</h2>
-
+<h3 id="方案1使用rwlock读写锁">方案1：使用RWLock读写锁</h3>
+<h3 id="方案2-在方法1基础上对数据分片使用多个map">方案2： 在方法1基础上，对数据分片，使用多个map</h3>
+<h3 id="方案3官方实现">方案3：官方实现</h3>
+<h2 id="10--pool">10 | Pool</h2>
 <h3 id="get方法">Get方法</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1248,9 +1409,11 @@
 </span><span class="lnt">54
 </span><span class="lnt">55
 </span><span class="lnt">56
+</span><span class="lnt">57
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">Get</span><span class="p">()</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go">
+<span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">Get</span><span class="p">()</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
     <span class="c1">// 把当前goroutine固定在当前的P上
 </span><span class="c1"></span>    <span class="nx">l</span><span class="p">,</span> <span class="nx">pid</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nf">pin</span><span class="p">()</span>
     <span class="nx">x</span> <span class="o">:=</span> <span class="nx">l</span><span class="p">.</span><span class="nx">private</span> <span class="c1">// 优先从local的private字段取，快速
@@ -1305,13 +1468,13 @@
 </span><span class="c1"></span>    <span class="nx">atomic</span><span class="p">.</span><span class="nf">StoreUintptr</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">p</span><span class="p">.</span><span class="nx">victimSize</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="kc">nil</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="put方法">Put方法</h3>
+</div><h3 id="put方法">Put方法</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1327,7 +1490,7 @@
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">Put</span><span class="p">(</span><span class="nx">x</span> <span class="kd">interface</span><span class="p">{})</span> <span class="p">{</span>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">Put</span><span class="p">(</span><span class="nx">x</span> <span class="kd">interface</span><span class="p">{})</span> <span class="p">{</span>
     <span class="k">if</span> <span class="nx">x</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span> <span class="c1">// nil值直接丢弃
 </span><span class="c1"></span>        <span class="k">return</span>
     <span class="p">}</span>
@@ -1340,19 +1503,19 @@
 </span><span class="c1"></span>        <span class="nx">l</span><span class="p">.</span><span class="nx">shared</span><span class="p">.</span><span class="nf">pushHead</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span>
     <span class="p">}</span>
     <span class="nf">runtime_procUnpin</span><span class="p">()</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>可能的问题
-- 内存泄漏：回收过大的对象，如slice cap变得很大后仍Put回去。 可以不回收大于一定大小的对象
-- 内存浪费：buffer比较大，实际使用只需要较小的buffer。 可以将buffer分层</p>
-
+</div><p>可能的问题</p>
+<ul>
+<li>内存泄漏：回收过大的对象，如slice cap变得很大后仍Put回去。 可以不回收大于一定大小的对象</li>
+<li>内存浪费：buffer比较大，实际使用只需要较小的buffer。 可以将buffer分层</li>
+</ul>
 <h3 id="其他">其他</h3>
-
 <p>net/rpc Server端Requst和Reponse使用链表结构保留和复用对象</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1379,7 +1542,7 @@
 </span><span class="lnt">25
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Request</span> <span class="kd">struct</span> <span class="p">{</span>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Request</span> <span class="kd">struct</span> <span class="p">{</span>
 	<span class="nx">ServiceMethod</span> <span class="kt">string</span>   <span class="c1">// format: &#34;Service.Method&#34;
 </span><span class="c1"></span>	<span class="nx">Seq</span>           <span class="kt">uint64</span>   <span class="c1">// sequence number chosen by client
 </span><span class="c1"></span>	<span class="nx">next</span>          <span class="o">*</span><span class="nx">Request</span> <span class="c1">// for free list in Server
@@ -1403,26 +1566,22 @@
 	<span class="nx">req</span><span class="p">.</span><span class="nx">next</span> <span class="p">=</span> <span class="nx">server</span><span class="p">.</span><span class="nx">freeReq</span>
 	<span class="nx">server</span><span class="p">.</span><span class="nx">freeReq</span> <span class="p">=</span> <span class="nx">req</span>
 	<span class="nx">server</span><span class="p">.</span><span class="nx">reqLock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="11-context-上下文">11 | Context: 上下文</h2>
-
+</div><h2 id="11--context-上下文">11 | Context: 上下文</h2>
 <h3 id="使用场景">使用场景</h3>
-
 <ul>
 <li>上下文信息传递</li>
 <li>控制子goroutine的运行</li>
 <li>超时控制</li>
 <li>调用取消</li>
 </ul>
-
 <h3 id="基本实现">基本实现</h3>
-
 <h4 id="interface">interface</h4>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1430,35 +1589,29 @@
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Context</span> <span class="kd">interface</span> <span class="p">{</span>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Context</span> <span class="kd">interface</span> <span class="p">{</span>
     <span class="nf">Deadline</span><span class="p">()</span> <span class="p">(</span><span class="nx">deadline</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span><span class="p">,</span> <span class="nx">ok</span> <span class="kt">bool</span><span class="p">)</span>
     <span class="nf">Done</span><span class="p">()</span> <span class="o">&lt;-</span> <span class="kd">chan</span> <span class="kd">struct</span> <span class="p">{}</span>
     <span class="nf">Err</span><span class="p">()</span> <span class="kt">error</span>
     <span class="nf">Value</span><span class="p">(</span><span class="nx">key</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kd">interface</span><span class="p">{}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>如果Done没有被close, Err返回nil, 否则返回Done被close的原因</p>
-
+</div><p>如果Done没有被close, Err返回nil, 否则返回Done被close的原因</p>
 <h4 id="使用惯例">使用惯例</h4>
-
 <ul>
 <li>一般将Context放在第一个函数参数位置</li>
 <li>不把nil当做Context参数的值，使用context.Background()</li>
 <li>Context只用来临时上下文透传，不能持久化到缓存或者数据库</li>
 <li>key的类型应该是自己定义的类型，否则容易在包之间使用时产生冲突（具体视情况而定）</li>
 </ul>
-
 <h4 id="基础实例">基础实例</h4>
-
 <p>Background和todo 均是emptyCtx的实例</p>
-
 <h4 id="拓展类型">拓展类型</h4>
-
 <h5 id="withvalue">WithValue</h5>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1471,7 +1624,7 @@
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">valueCtx</span> <span class="kd">struct</span> <span class="p">{</span>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">valueCtx</span> <span class="kd">struct</span> <span class="p">{</span>
     <span class="nx">Context</span>
     <span class="nx">key</span><span class="p">,</span> <span class="nx">val</span> <span class="kd">interface</span><span class="p">()</span>
 <span class="p">}</span>
@@ -1481,15 +1634,14 @@
 		<span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nx">val</span>
 	<span class="p">}</span>
 	<span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nx">Context</span><span class="p">.</span><span class="nf">Value</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>valueCtx持有一个键值对，Value方法优先比较自己的key, 不匹配则一次调用父ctx的Value方法</p>
-
+</div><p>valueCtx持有一个键值对，Value方法优先比较自己的key, 不匹配则一次调用父ctx的Value方法</p>
 <h5 id="withcancel">WithCancel</h5>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1501,7 +1653,7 @@
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">WithCancel</span><span class="p">(</span><span class="nx">parent</span> <span class="nx">Context</span><span class="p">)</span> <span class="p">(</span><span class="nx">ctx</span> <span class="nx">Context</span><span class="p">,</span> <span class="nx">cancel</span> <span class="nx">CancelFunc</span><span class="p">)</span> <span class="p">{</span>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">WithCancel</span><span class="p">(</span><span class="nx">parent</span> <span class="nx">Context</span><span class="p">)</span> <span class="p">(</span><span class="nx">ctx</span> <span class="nx">Context</span><span class="p">,</span> <span class="nx">cancel</span> <span class="nx">CancelFunc</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">c</span> <span class="o">:=</span> <span class="nf">newCancelCtx</span><span class="p">(</span><span class="nx">parent</span><span class="p">)</span>
     <span class="nf">propagateCancel</span><span class="p">(</span><span class="nx">parent</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">c</span><span class="p">)</span><span class="c1">// 把c朝上传播
 </span><span class="c1"></span>    <span class="k">return</span> <span class="o">&amp;</span><span class="nx">c</span><span class="p">,</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span> <span class="nx">c</span><span class="p">.</span><span class="nf">cancel</span><span class="p">(</span><span class="kc">true</span><span class="p">,</span> <span class="nx">Canceled</span><span class="p">)</span> <span class="p">}</span>
@@ -1510,40 +1662,40 @@
 <span class="c1">// newCancelCtx returns an initialized cancelCtx.
 </span><span class="c1"></span><span class="kd">func</span> <span class="nf">newCancelCtx</span><span class="p">(</span><span class="nx">parent</span> <span class="nx">Context</span><span class="p">)</span> <span class="nx">cancelCtx</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">cancelCtx</span><span class="p">{</span><span class="nx">Context</span><span class="p">:</span> <span class="nx">parent</span><span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>propagateCancel会顺着parent找是否有cancelCtx
-- 如果parent有cancelCtx则加入到cancelCtx的child, cancelCtx取消的时候cancel它
-- 如果没有则启动一个goroutine来监听parent是否close</p>
-
+</div><p>propagateCancel会顺着parent找是否有cancelCtx</p>
+<ul>
+<li>如果parent有cancelCtx则加入到cancelCtx的child, cancelCtx取消的时候cancel它</li>
+<li>如果没有则启动一个goroutine来监听parent是否close</li>
+</ul>
 <p>cancel会向下传递，如果子孙context也是cancelCtx,也会被cancle</p>
-
-<h5 id="withtimeout-withdeadline">WithTimeout、WithDeadline</h5>
-
+<h5 id="withtimeoutwithdeadline">WithTimeout、WithDeadline</h5>
 <p>WithTimeout其实和WithDeadline一样</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">WithTimeout</span><span class="p">(</span><span class="nx">parent</span> <span class="nx">Context</span><span class="p">,</span> <span class="nx">timeout</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span><span class="p">)</span> <span class="p">(</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">CancelFunc</span><span class="p">)</span> <span class="p">{</span>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">WithTimeout</span><span class="p">(</span><span class="nx">parent</span> <span class="nx">Context</span><span class="p">,</span> <span class="nx">timeout</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span><span class="p">)</span> <span class="p">(</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">CancelFunc</span><span class="p">)</span> <span class="p">{</span>
 <span class="k">return</span> <span class="nf">WithDeadline</span><span class="p">(</span><span class="nx">parent</span><span class="p">,</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">Add</span><span class="p">(</span><span class="nx">timeout</span><span class="p">))</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>如果deadline ctx 截止时间晚于parent的，则返回canelCtx，因为parent取消时会同时取消child ctx</p>
-
+</div><p>如果deadline ctx 截止时间晚于parent的，则返回canelCtx，因为parent取消时会同时取消child ctx</p>
 <p>否则会返回timerCtx
-timerCtx的Donw被Close掉主要有某个事件触发
-- 截止时间到了
-- parent ctx 取消
-- 自身的cancel函数被调用</p>
+timerCtx的Donw被Close掉主要有某个事件触发</p>
+<ul>
+<li>截止时间到了</li>
+<li>parent ctx 取消</li>
+<li>自身的cancel函数被调用</li>
+</ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1570,7 +1722,7 @@ timerCtx的Donw被Close掉主要有某个事件触发
 </span><span class="lnt">25
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">WithDeadline</span><span class="p">(</span><span class="nx">parent</span> <span class="nx">Context</span><span class="p">,</span> <span class="nx">d</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span><span class="p">)</span> <span class="p">(</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">CancelFunc</span><span class="p">)</span> <span class="p">{</span>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">WithDeadline</span><span class="p">(</span><span class="nx">parent</span> <span class="nx">Context</span><span class="p">,</span> <span class="nx">d</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span><span class="p">)</span> <span class="p">(</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">CancelFunc</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// 如果parent的截止时间更早，直接返回一个cancelCtx即可
 </span><span class="c1"></span>    <span class="k">if</span> <span class="nx">cur</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">parent</span><span class="p">.</span><span class="nf">Deadline</span><span class="p">();</span> <span class="nx">ok</span> <span class="o">&amp;&amp;</span> <span class="nx">cur</span><span class="p">.</span><span class="nf">Before</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nf">WithCancel</span><span class="p">(</span><span class="nx">parent</span><span class="p">)</span>
@@ -1594,13 +1746,11 @@ timerCtx的Donw被Close掉主要有某个事件触发
         <span class="p">})</span>
     <span class="p">}</span>
     <span class="k">return</span> <span class="nx">c</span><span class="p">,</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span> <span class="nx">c</span><span class="p">.</span><span class="nf">cancel</span><span class="p">(</span><span class="kc">true</span><span class="p">,</span> <span class="nx">Canceled</span><span class="p">)</span> <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="12-atomic-原则操作">12| atomic: 原则操作</h2>
-
+</div><h2 id="12-atomic-原则操作">12| atomic: 原则操作</h2>
 <h3 id="基本方法">基本方法</h3>
-
 <ul>
 <li>Add</li>
 <li>CompareAndSwap</li>
@@ -1608,68 +1758,46 @@ timerCtx的Donw被Close掉主要有某个事件触发
 <li>Load</li>
 <li>Store</li>
 </ul>
-
 <h3 id="value类型">Value类型</h3>
-
 <p>原子地存取对象</p>
-
 <h2 id="13-channel-另辟蹊径解决并发问题">13| Channel: 另辟蹊径解决并发问题</h2>
-
-<p><img src="evernotecid://B83B2912-41F7-4D6F-B1B7-09037F69A270/appyinxiangcom/19474765/ENResource/p121" alt="5108954ea36559860e5e5aaa42b2f998.jpeg" /></p>
-
+<p><img src="evernotecid://B83B2912-41F7-4D6F-B1B7-09037F69A270/appyinxiangcom/19474765/ENResource/p121" alt="5108954ea36559860e5e5aaa42b2f998.jpeg"></p>
 <h3 id="基本类型">基本类型</h3>
-
 <ul>
 <li>双向chan： chan int</li>
 <li>只能接收：chan &lt;- int</li>
 <li>只能发送：&lt;-chan int</li>
 </ul>
-
 <h3 id="实现原理">实现原理</h3>
-
 <h4 id="chan数据结构">chan数据结构</h4>
-
 <ul>
 <li>循环队列</li>
 <li>链表</li>
 </ul>
-
 <h4 id="核心方法">核心方法</h4>
-
 <ul>
 <li>send</li>
 <li>recieve</li>
 <li>close</li>
 </ul>
-
 <h3 id="场景错误">场景错误</h3>
-
 <ul>
 <li>关闭为nil的chan</li>
 <li>关闭已经close的chan</li>
 <li>send已经close的chan</li>
 </ul>
-
-<h2 id="channel-14-典型应用">Channel|14 典型应用</h2>
-
+<h2 id="channel14-典型应用">Channel|14 典型应用</h2>
 <h3 id="使用反射操作channel">使用反射操作Channel</h3>
-
 <h3 id="应用场景">应用场景</h3>
-
 <h4 id="消息交流">消息交流</h4>
-
 <h4 id="数据传递">数据传递</h4>
-
 <h4 id="信号通知">信号通知</h4>
-
 <h4 id="锁">锁</h4>
-
 <h4 id="任务编排">任务编排</h4>
-
 <h5 id="ordone模式">orDone模式</h5>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1693,7 +1821,7 @@ timerCtx的Donw被Close掉主要有某个事件触发
 </span><span class="lnt">22
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">or</span><span class="p">(</span><span class="nx">channels</span> <span class="o">...&lt;-</span><span class="kd">chan</span> <span class="kd">interface</span><span class="p">{})</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">or</span><span class="p">(</span><span class="nx">channels</span> <span class="o">...&lt;-</span><span class="kd">chan</span> <span class="kd">interface</span><span class="p">{})</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
 	<span class="k">switch</span> <span class="nb">len</span><span class="p">(</span><span class="nx">channels</span><span class="p">)</span> <span class="p">{</span>
 	<span class="k">case</span> <span class="mi">0</span><span class="p">:</span>
 		<span class="k">return</span> <span class="kc">nil</span>
@@ -1714,17 +1842,15 @@ timerCtx的Donw被Close掉主要有某个事件触发
 	<span class="p">}()</span>
 	<span class="k">return</span> <span class="nx">orDone</span>
 
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h5 id="扇入模式">扇入模式</h5>
-
+</div><h5 id="扇入模式">扇入模式</h5>
 <h5 id="扇出模式">扇出模式</h5>
-
 <h5 id="stream流">Stream流</h5>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1740,7 +1866,7 @@ timerCtx的Donw被Close掉主要有某个事件触发
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">asStream</span><span class="p">(</span><span class="nx">done</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{},</span> <span class="nx">values</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">asStream</span><span class="p">(</span><span class="nx">done</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{},</span> <span class="nx">values</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
 	<span class="nx">s</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">interface</span><span class="p">{})</span>
 	<span class="k">go</span> <span class="kd">func</span><span class="p">(){</span>
 		<span class="k">defer</span> <span class="nb">close</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
@@ -1753,13 +1879,13 @@ timerCtx的Donw被Close掉主要有某个事件触发
 		<span class="p">}</span>
 	<span class="p">}()</span>
 	<span class="k">return</span> <span class="nx">s</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h5 id="map-reduce模式">map-reduce模式</h5>
+</div><h5 id="map-reduce模式">map-reduce模式</h5>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1786,7 +1912,7 @@ timerCtx的Donw被Close掉主要有某个事件触发
 </span><span class="lnt">25
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">mapChan</span><span class="p">(</span><span class="nx">in</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="kd">interface</span><span class="p">{},</span> <span class="nx">fn</span> <span class="kd">func</span><span class="p">(</span><span class="kd">interface</span><span class="p">{})</span> <span class="kd">interface</span><span class="p">{})</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">mapChan</span><span class="p">(</span><span class="nx">in</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="kd">interface</span><span class="p">{},</span> <span class="nx">fn</span> <span class="kd">func</span><span class="p">(</span><span class="kd">interface</span><span class="p">{})</span> <span class="kd">interface</span><span class="p">{})</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
 	<span class="nx">out</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">interface</span><span class="p">{})</span>
 	<span class="k">if</span> <span class="nx">in</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
 		<span class="nb">close</span><span class="p">(</span><span class="nx">out</span><span class="p">)</span>
@@ -1810,35 +1936,26 @@ timerCtx的Donw被Close掉主要有某个事件触发
 		<span class="nx">out</span> <span class="p">=</span> <span class="nf">fn</span><span class="p">(</span><span class="nx">out</span><span class="p">,</span> <span class="nx">v</span><span class="p">)</span>
 	<span class="p">}</span>
 	<span class="k">return</span> <span class="nx">out</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="15-go如何保证并发读写顺序">15| Go如何保证并发读写顺序</h2>
-
+</div><h2 id="15-go如何保证并发读写顺序">15| Go如何保证并发读写顺序</h2>
 <h3 id="happens-before">happens-before</h3>
-
 <h4 id="概念">概念</h4>
-
 <ul>
 <li>如果事件e1 happens before 事件e2， 那么可以说e2 happends after e1</li>
-
-<li><p>如果事件e1 不happens before e2，也不happens after e2，那么e1和e2同时发生</p>
-
-<h4 id="goroutine内部">goroutine内部</h4>
-
-<p>程序执行顺序和代码指定的顺序一样，即使有CPU或编译器的读写重排，从行为上来看也和代码指定的顺序一样，即内部重排对读写顺序没有影响</p></li>
+<li>如果事件e1 不happens before e2，也不happens after e2，那么e1和e2同时发生</li>
 </ul>
-
+<h4 id="goroutine内部">goroutine内部</h4>
+<p>程序执行顺序和代码指定的顺序一样，即使有CPU或编译器的读写重排，从行为上来看也和代码指定的顺序一样，即内部重排对读写顺序没有影响</p>
 <h4 id="goroutine之间">goroutine之间</h4>
-
-<p>假设对变量v写操作记为w，读操作记为r, 那么要保证r能观察到w的结果，则应该：
-- w happens before r
-- 其他的w&rsquo;不会和w、r同时发生,也不会再w和r之间发生</p>
-
+<p>假设对变量v写操作记为w，读操作记为r, 那么要保证r能观察到w的结果，则应该：</p>
+<ul>
+<li>w happens before r</li>
+<li>其他的w&rsquo;不会和w、r同时发生,也不会再w和r之间发生</li>
+</ul>
 <h3 id="实例">实例</h3>
-
 <h4 id="init函数">init函数</h4>
-
 <ul>
 <li>初始化是在单一的goroutine执行的</li>
 <li>如果包p导入了包q，那么q的init函数happens before于p的任何初始化代码</li>
@@ -1846,13 +1963,11 @@ timerCtx的Donw被Close掉主要有某个事件触发
 <li>容一个文件中的变量是按顺序逐个初始化的，除非有依赖关系</li>
 <li>同一个包下的多个文件是按文件名排序进行初始化的</li>
 </ul>
-
 <h2 id="16-semaphore信号量">16 |Semaphore信号量</h2>
-
 <h3 id="官方实现">官方实现</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">  1
+<pre tabindex="0" class="chroma"><code><span class="lnt">  1
 </span><span class="lnt">  2
 </span><span class="lnt">  3
 </span><span class="lnt">  4
@@ -2009,7 +2124,7 @@ timerCtx的Donw被Close掉主要有某个事件触发
 </span><span class="lnt">155
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Weighted</span> <span class="kd">struct</span> <span class="p">{</span>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Weighted</span> <span class="kd">struct</span> <span class="p">{</span>
     <span class="nx">size</span>    <span class="kt">int64</span>         <span class="c1">// 最大资源数
 </span><span class="c1"></span>    <span class="nx">cur</span>     <span class="kt">int64</span>         <span class="c1">// 当前已被使用的资源
 </span><span class="c1"></span>    <span class="nx">mu</span>      <span class="nx">sync</span><span class="p">.</span><span class="nx">Mutex</span>    <span class="c1">// 互斥锁，对字段的保护
@@ -2163,13 +2278,13 @@ timerCtx的Donw被Close掉主要有某个事件触发
 </span><span class="c1"></span>      <span class="k">return</span> <span class="kc">nil</span>
     <span class="p">}</span>
   <span class="p">}</span>
-  </code></pre></td></tr></table>
+  
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="channel实现">Channel实现</h3>
+</div><h3 id="channel实现">Channel实现</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -2192,9 +2307,11 @@ timerCtx的Donw被Close掉主要有某个事件触发
 </span><span class="lnt">21
 </span><span class="lnt">22
 </span><span class="lnt">23
+</span><span class="lnt">24
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go">  <span class="c1">// Semaphore 数据结构，并且还实现了Locker接口
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go">
+  <span class="c1">// Semaphore 数据结构，并且还实现了Locker接口
 </span><span class="c1"></span>  <span class="kd">type</span> <span class="nx">semaphore</span> <span class="kd">struct</span> <span class="p">{</span>
     <span class="nx">sync</span><span class="p">.</span><span class="nx">Locker</span>
     <span class="nx">ch</span> <span class="kd">chan</span> <span class="kd">struct</span><span class="p">{}</span>
@@ -2216,15 +2333,14 @@ timerCtx的Donw被Close掉主要有某个事件触发
   <span class="c1">// 释放资源
 </span><span class="c1"></span>  <span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">semaphore</span><span class="p">)</span> <span class="nf">Unlock</span><span class="p">()</span> <span class="p">{</span>
     <span class="o">&lt;-</span><span class="nx">s</span><span class="p">.</span><span class="nx">ch</span>
-  <span class="p">}</span></code></pre></td></tr></table>
+  <span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="17-singleflight和cyclicbarrier">17 | SingleFlight和CyclicBarrier</h2>
-
+</div><h2 id="17--singleflight和cyclicbarrier">17 | SingleFlight和CyclicBarrier</h2>
 <h3 id="singleflight实现原理">SingleFlight实现原理</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -2290,9 +2406,11 @@ timerCtx的Donw被Close掉主要有某个事件触发
 </span><span class="lnt">64
 </span><span class="lnt">65
 </span><span class="lnt">66
+</span><span class="lnt">67
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go">  <span class="c1">// 代表一个正在处理的请求，或者已经处理完的请求
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go">
+  <span class="c1">// 代表一个正在处理的请求，或者已经处理完的请求
 </span><span class="c1"></span><span class="kd">type</span> <span class="nx">call</span> <span class="kd">struct</span> <span class="p">{</span>
     <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
   
@@ -2357,67 +2475,52 @@ timerCtx的Donw被Close掉主要有某个事件触发
 		<span class="nx">ch</span> <span class="o">&lt;-</span> <span class="nx">Result</span><span class="p">{</span><span class="nx">c</span><span class="p">.</span><span class="nx">val</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">err</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">dups</span> <span class="p">&gt;</span> <span class="mi">0</span><span class="p">}</span>
 	<span class="p">}</span>
 	<span class="nx">g</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="cyclicbarrier循环栅栏">CyclicBarrier循环栅栏</h3>
-
+</div><h3 id="cyclicbarrier循环栅栏">CyclicBarrier循环栅栏</h3>
 <p>允许一组goroutine彼此等待，到达一个共同的执行点后放行</p>
-
 <p>CyclicBarrier更适合用在固定数量的goroutine等待同一个执行点的场景，且可以复用</p>
-
-<h2 id="18-分组操作-处理一组子任务">18| 分组操作：处理一组子任务</h2>
-
+<h2 id="18-分组操作处理一组子任务">18| 分组操作：处理一组子任务</h2>
 <h3 id="errgroup">ErrGroup</h3>
-
 <h3 id="gollback">gollback</h3>
-
 <h3 id="hunch">Hunch</h3>
-
 <h3 id="schedgroup">schedgroup</h3>
-
-<h2 id="19-分布式环境-使用etcd的选举-互斥锁和读写锁">19| 分布式环境 使用etcd的选举、互斥锁和读写锁</h2>
-
+<h2 id="19-分布式环境-使用etcd的选举互斥锁和读写锁">19| 分布式环境 使用etcd的选举、互斥锁和读写锁</h2>
 <h3 id="leader选举">Leader选举</h3>
-
 <h3 id="互斥锁">互斥锁</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">NewLocker</span><span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">Session</span><span class="p">,</span> <span class="nx">pfx</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Locker</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go">
+<span class="kd">func</span> <span class="nf">NewLocker</span><span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">Session</span><span class="p">,</span> <span class="nx">pfx</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Locker</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="读写锁">读写锁</h3>
-
-<h2 id="20-分布式环境-使用etcd的队列-栅栏和stm">20| 分布式环境 使用etcd的队列、栅栏和STM</h2>
-
+</div><h3 id="读写锁">读写锁</h3>
+<h2 id="20-分布式环境-使用etcd的队列栅栏和stm">20| 分布式环境 使用etcd的队列、栅栏和STM</h2>
 <h3 id="队列">队列</h3>
-
 <h3 id="栅栏">栅栏</h3>
-
-<h3 id="stm-software-transactioal-memory">STM(Software Transactioal Memory)</h3>
-
+<h3 id="stmsoftware-transactioal-memory">STM(Software Transactioal Memory)</h3>
 <h4 id="etcd事务操作">etcd事务操作</h4>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="nf">Txn</span><span class="p">().</span><span class="nf">If</span><span class="p">(</span><span class="nx">cond1</span><span class="p">,</span> <span class="nx">cond2</span><span class="p">,</span> <span class="o">...</span><span class="p">).</span><span class="nf">Then</span><span class="p">(</span><span class="nx">op1</span><span class="p">,</span> <span class="nx">op2</span><span class="p">,</span> <span class="o">...</span><span class="p">,).</span><span class="nf">Else</span><span class="p">(</span><span class="nx">op1</span><span class="err">’</span><span class="p">,</span> <span class="nx">op2</span><span class="err">’</span><span class="p">,</span> <span class="err">…</span><span class="p">)</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="nf">Txn</span><span class="p">().</span><span class="nf">If</span><span class="p">(</span><span class="nx">cond1</span><span class="p">,</span> <span class="nx">cond2</span><span class="p">,</span> <span class="o">...</span><span class="p">).</span><span class="nf">Then</span><span class="p">(</span><span class="nx">op1</span><span class="p">,</span> <span class="nx">op2</span><span class="p">,</span> <span class="o">...</span><span class="p">,).</span><span class="nf">Else</span><span class="p">(</span><span class="nx">op1</span><span class="err">’</span><span class="p">,</span> <span class="nx">op2</span><span class="err">’</span><span class="p">,</span> <span class="err">…</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>事务分为条件块、成功块、和失败块
+</div><p>事务分为条件块、成功块、和失败块
 条件块用来检测事务是否成功
 如果成功就执行Then，否则执行Else</p>
-
 <h4 id="stm">STM</h4>
-
 <p>为了简化事务操作，对API进行了封装</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -2427,14 +2530,15 @@ timerCtx的Donw被Close掉主要有某个事件触发
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">STM</span> <span class="kd">interface</span> <span class="p">{</span>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">STM</span> <span class="kd">interface</span> <span class="p">{</span>
   <span class="nf">Get</span><span class="p">(</span><span class="nx">key</span> <span class="o">...</span><span class="kt">string</span><span class="p">)</span> <span class="kt">string</span>
   <span class="nf">Put</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">val</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">opts</span> <span class="o">...</span><span class="nx">v3</span><span class="p">.</span><span class="nx">OpOption</span><span class="p">)</span>
   <span class="nf">Rev</span><span class="p">(</span><span class="nx">key</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">int64</span>
   <span class="nf">Del</span><span class="p">(</span><span class="nx">key</span> <span class="kt">string</span><span class="p">)</span>
 <span class="p">}</span>
 
-<span class="nx">apply</span> <span class="kd">func</span><span class="p">(</span><span class="nx">STM</span><span class="p">)</span> <span class="kt">error</span></code></pre></td></tr></table>
+<span class="nx">apply</span> <span class="kd">func</span><span class="p">(</span><span class="nx">STM</span><span class="p">)</span> <span class="kt">error</span>
+</code></pre></td></tr></table>
 </div>
 </div>
     </div>
@@ -2499,7 +2603,7 @@ timerCtx的Donw被Close掉主要有某个事件触发
     <div class="post bg-white">
       <script src="https://utteranc.es/client.js"
             repo= "ppd0705/ppd0705.github.io"
-            issue-term="utteranc"
+            issue-term="pathname"
             theme="github-light"
             crossorigin="anonymous"
             async>

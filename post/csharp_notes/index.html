@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.6" />
+<meta name="generator" content="Hugo 0.86.0-DEV" />
 
 
 <link rel="canonical" href="https://ppd0705.github.io/post/csharp_notes/" />
@@ -62,22 +62,15 @@
 <meta property="og:title" content="[笔记]C# 基本语法" />
 <meta property="og:description" content="前言：最近在维护一个获取http接口的数据然后填充到Excel的工具，于是接触到了C#，总体感觉下来，C#关键字多，语法多，功能强大，LIN" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://ppd0705.github.io/post/csharp_notes/" />
-<meta property="article:published_time" content="2020-05-25T22:44:02&#43;08:00"/>
-<meta property="article:modified_time" content="2020-05-25T22:44:02&#43;08:00"/>
+<meta property="og:url" content="https://ppd0705.github.io/post/csharp_notes/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2020-05-25T22:44:02+08:00" />
+<meta property="article:modified_time" content="2020-05-25T22:44:02+08:00" />
 
 <meta itemprop="name" content="[笔记]C# 基本语法">
-<meta itemprop="description" content="前言：最近在维护一个获取http接口的数据然后填充到Excel的工具，于是接触到了C#，总体感觉下来，C#关键字多，语法多，功能强大，LIN">
-
-
-<meta itemprop="datePublished" content="2020-05-25T22:44:02&#43;08:00" />
-<meta itemprop="dateModified" content="2020-05-25T22:44:02&#43;08:00" />
-<meta itemprop="wordCount" content="2143">
-
-
-
-<meta itemprop="keywords" content="C#," />
-<meta name="twitter:card" content="summary"/>
+<meta itemprop="description" content="前言：最近在维护一个获取http接口的数据然后填充到Excel的工具，于是接触到了C#，总体感觉下来，C#关键字多，语法多，功能强大，LIN"><meta itemprop="datePublished" content="2020-05-25T22:44:02+08:00" />
+<meta itemprop="dateModified" content="2020-05-25T22:44:02+08:00" />
+<meta itemprop="wordCount" content="2147">
+<meta itemprop="keywords" content="C#," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]C# 基本语法"/>
 <meta name="twitter:description" content="前言：最近在维护一个获取http接口的数据然后填充到Excel的工具，于是接触到了C#，总体感觉下来，C#关键字多，语法多，功能强大，LIN"/>
 
@@ -303,13 +296,13 @@
       
       <div class="post-meta">
         <time datetime="2020-05-25" class="post-time">
-          2020-05-25 22:44:02
+          2020-05-25
         </time>
         <div class="post-category">
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 2143 words </span>
+        <span class="more-meta"> 2147 words </span>
           <span class="more-meta"> 5 min read </span>
 
         
@@ -322,17 +315,51 @@
 
     
     
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Table of Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li>
+          <ul>
+            <li>
+              <ul>
+                <li><a href="#基本结构">基本结构</a></li>
+                <li><a href="#基本语法">基本语法</a></li>
+                <li><a href="#项目构建">项目构建</a></li>
+                <li><a href="#类型和变量">类型和变量</a></li>
+                <li><a href="#语句">语句</a></li>
+                <li><a href="#类和对象">类和对象</a></li>
+                <li><a href="#成员">成员</a></li>
+                <li><a href="#可访问性">可访问性</a></li>
+                <li><a href="#类型参数泛型">类型参数（泛型）</a></li>
+                <li><a href="#字段">字段</a></li>
+                <li><a href="#方法">方法</a></li>
+                <li><a href="#其他">其他</a></li>
+                <li><a href="#数组">数组</a></li>
+                <li><a href="#接口">接口</a></li>
+                <li><a href="#委托">委托</a></li>
+              </ul>
+            </li>
+            <li><a href="#参考">参考</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
 
     
     <div class="post-content">
-      
-
-<p>前言：最近在维护一个获取http接口的数据然后填充到Excel的工具，于是接触到了C#，总体感觉下来，C#关键字多，语法多，功能强大，LINQ感觉实现了一个C#版本的SQL。</p>
-
+      <p>前言：最近在维护一个获取http接口的数据然后填充到Excel的工具，于是接触到了C#，总体感觉下来，C#关键字多，语法多，功能强大，LINQ感觉实现了一个C#版本的SQL。</p>
 <h4 id="基本结构">基本结构</h4>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -346,12 +373,12 @@
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>  <span class="cm">/* 引入System命名空间 */</span>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>  <span class="cm">/* 引入System命名空间 */</span>
 <span class="k">namespace</span> <span class="nn">HelloWorldApplication</span> <span class="cm">/* 命名空间声明 */</span>
 <span class="p">{</span>
    <span class="k">class</span> <span class="nc">HelloWorld</span> <span class="cm">/* 类 */</span>
    <span class="p">{</span>
-      <span class="k">static</span> <span class="k">void</span> <span class="n">Main</span><span class="p">(</span><span class="kt">string</span><span class="na">[]</span> <span class="n">args</span><span class="p">)</span> <span class="cm">/* Main方法*/</span>
+      <span class="k">static</span> <span class="k">void</span> <span class="n">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="cm">/* Main方法*/</span>
       <span class="p">{</span>
          <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;Hello World&#34;</span><span class="p">);</span>
          <span class="n">Console</span><span class="p">.</span><span class="n">ReadKey</span><span class="p">();</span>
@@ -360,104 +387,91 @@
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="基本语法">基本语法</h4>
-
+</div><h4 id="基本语法">基本语法</h4>
 <ul>
 <li>语句以<code>;</code>结尾</li>
 <li>大小写敏感</li>
 <li>程序入口为<code>Main</code>方法</li>
 </ul>
-
 <h4 id="项目构建">项目构建</h4>
-
 <ul>
 <li>创建</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">dotnet new console -o myApp</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">dotnet new console -o myApp
+</code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li>运行</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">cd</span> myApp
-dotnet run</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">cd</span> myApp
+dotnet run
+</code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="类型和变量">类型和变量</h4>
-
+</div><h4 id="类型和变量">类型和变量</h4>
 <h5 id="值类型">值类型</h5>
-
 <ul>
 <li>简单类型
-
 <ul>
 <li>有符号的整型： sbyte、short、int、long</li>
 <li>无符号整型： byte、ushort、unit、ulong</li>
 <li>字符: char</li>
 <li>小数： float、double、decimal</li>
 <li>布尔： bool</li>
+</ul>
+</li>
 <li>枚举类型： enum E{&hellip;}</li>
 <li>结构类型： strcut S {&hellip;}</li>
 <li>null</li>
-</ul></li>
 </ul>
-
 <h5 id="引用类型">引用类型</h5>
-
 <ul>
 <li>类
-
 <ul>
 <li>object 所有类型的基类</li>
 <li>string</li>
 <li>Class C {&hellip;} 自定义类</li>
-</ul></li>
+</ul>
+</li>
 <li>接口类型 interface I {&hellip;}</li>
 <li>数组类型 如int[]、 int[,]</li>
-<li>委托类型 delegate int D(&hellip;)
-<br /></li>
+<li>委托类型 delegate int D(&hellip;)</li>
 </ul>
-
 <h5 id="引用类型-1">引用类型</h5>
-
 <h4 id="语句">语句</h4>
-
 <ul>
 <li>if</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="k">if</span> <span class="p">(...)</span>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="k">if</span> <span class="p">(...)</span>
 <span class="p">{}</span>
 <span class="k">else</span>
 <span class="p">{}</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li>switch</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -470,7 +484,7 @@ dotnet run</code></pre></td></tr></table>
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="k">switch</span> <span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="k">switch</span> <span class="p">(</span><span class="n">n</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">case</span> <span class="m">0</span><span class="p">:</span>
         <span class="p">...</span>
@@ -483,78 +497,73 @@ dotnet run</code></pre></td></tr></table>
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li>while</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="k">while</span> <span class="p">(</span><span class="n">i</span> <span class="p">&lt;</span> <span class="m">100</span><span class="p">)</span>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="k">while</span> <span class="p">(</span><span class="n">i</span> <span class="p">&lt;</span> <span class="m">100</span><span class="p">)</span>
 <span class="p">{}</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li>do-while</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="k">do</span>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="k">do</span>
 <span class="p">{</span>
 <span class="p">...</span>
 <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="n">i</span> <span class="p">&gt;</span> <span class="m">100</span><span class="p">);</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li>for</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="p">&lt;</span> <span class="m">100</span><span class="p">;</span> <span class="n">i</span><span class="p">++;)</span>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="p">&lt;</span> <span class="m">100</span><span class="p">;</span> <span class="n">i</span><span class="p">++;)</span>
 <span class="p">{</span>
     <span class="p">...</span>
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li>foreach</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="kt">int</span><span class="na">[]</span> <span class="n">l</span> <span class="p">=</span> <span class="p">{</span><span class="m">1</span><span class="p">,</span> <span class="m">2</span><span class="p">,</span> <span class="m">3</span><span class="p">};</span>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="kt">int</span><span class="p">[]</span> <span class="n">l</span> <span class="p">=</span> <span class="p">{</span><span class="m">1</span><span class="p">,</span> <span class="m">2</span><span class="p">,</span> <span class="m">3</span><span class="p">};</span>
 <span class="k">foreach</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="k">in</span> <span class="n">l</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li>goto</li>
 <li>yield</li>
 <li>checked/unchecked</li>
@@ -563,7 +572,7 @@ dotnet run</code></pre></td></tr></table>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -575,7 +584,7 @@ dotnet run</code></pre></td></tr></table>
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="n">try</span>
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="n">try</span>
 <span class="p">{</span>
 <span class="p">...</span>
 <span class="p">}</span>
@@ -584,18 +593,17 @@ dotnet run</code></pre></td></tr></table>
 <span class="p">}</span>
 <span class="n">finally</span>
 <span class="p">{</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li>lock</li>
 <li>using</li>
 </ul>
-
 <h4 id="类和对象">类和对象</h4>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -623,9 +631,11 @@ dotnet run</code></pre></td></tr></table>
 </span><span class="lnt">26
 </span><span class="lnt">27
 </span><span class="lnt">28
+</span><span class="lnt">29
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="cm">/* 申明 */</span>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#">
+<span class="cm">/* 申明 */</span>
 <span class="k">public</span> <span class="k">class</span> <span class="nc">Point</span>
 <span class="p">{</span>
     <span class="k">public</span> <span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">;</span>
@@ -655,13 +665,10 @@ dotnet run</code></pre></td></tr></table>
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="成员">成员</h4>
-
+</div><h4 id="成员">成员</h4>
 <ul>
 <li>分为静态成员和实例成员，静态属于类，实例成员属于类实例</li>
 <li>成员类型
-
 <ul>
 <li>常量</li>
 <li>字段</li>
@@ -673,11 +680,10 @@ dotnet run</code></pre></td></tr></table>
 <li>构造函数</li>
 <li>终结器</li>
 <li>类型</li>
-</ul></li>
 </ul>
-
+</li>
+</ul>
 <h4 id="可访问性">可访问性</h4>
-
 <ul>
 <li>public 访问不受限制</li>
 <li>protectd 访问仅限于此类或派生类</li>
@@ -686,11 +692,10 @@ dotnet run</code></pre></td></tr></table>
 <li>private 仅限于此类</li>
 <li>private protected 此类或者当前程序集的派生类</li>
 </ul>
-
-<h4 id="类型参数-泛型">类型参数（泛型）</h4>
+<h4 id="类型参数泛型">类型参数（泛型）</h4>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -700,7 +705,7 @@ dotnet run</code></pre></td></tr></table>
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="cm">/* 类名后用尖括号申明类型参数列表 */</span>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="cm">/* 类名后用尖括号申明类型参数列表 */</span>
 <span class="k">public</span> <span class="k">class</span> <span class="nc">Pair</span><span class="p">&lt;</span><span class="n">TFirst</span><span class="p">,</span> <span class="n">TSecond</span><span class="p">&gt;</span>
 <span class="p">{</span>
     <span class="k">public</span> <span class="n">TFirst</span> <span class="n">First</span><span class="p">;</span>
@@ -710,13 +715,11 @@ dotnet run</code></pre></td></tr></table>
 <span class="n">Pair</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;</span> <span class="n">pair</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Pair</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;</span> <span class="p">{</span><span class="n">First</span> <span class="p">=</span> <span class="m">1</span><span class="p">,</span> <span class="n">Second</span> <span class="p">=</span> <span class="s">&#34;two&#34;</span><span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="字段">字段</h4>
-
+</div><h4 id="字段">字段</h4>
 <p>静态字段无论创建多少个类实例，都只有一个副本</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -724,7 +727,7 @@ dotnet run</code></pre></td></tr></table>
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="k">public</span> <span class="k">class</span> <span class="nc">Color</span>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="k">public</span> <span class="k">class</span> <span class="nc">Color</span>
 <span class="p">{</span>
     <span class="k">public</span> <span class="k">static</span> <span class="k">readonly</span> <span class="n">Color</span> <span class="n">Black</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Color</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">);</span>
     <span class="k">public</span> <span class="k">static</span> <span class="k">readonly</span> <span class="n">Color</span> <span class="n">White</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Color</span><span class="p">(</span><span class="m">255</span><span class="p">,</span> <span class="m">255</span><span class="p">,</span> <span class="m">255</span><span class="p">);</span>
@@ -732,18 +735,15 @@ dotnet run</code></pre></td></tr></table>
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="方法">方法</h4>
-
+</div><h4 id="方法">方法</h4>
 <h5 id="参数">参数</h5>
-
 <ul>
 <li>值参数： 传值， 可以指定默认值</li>
 <li>引用参数： 传引用 使用ref修饰</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -754,7 +754,7 @@ dotnet run</code></pre></td></tr></table>
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="k">static</span> <span class="k">void</span> <span class="n">Swap</span><span class="p">(</span><span class="n">ret</span> <span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="n">ret</span> <span class="kt">int</span> <span class="n">y</span><span class="p">)</span>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="k">static</span> <span class="k">void</span> <span class="n">Swap</span><span class="p">(</span><span class="n">ret</span> <span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="n">ret</span> <span class="kt">int</span> <span class="n">y</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="kt">int</span> <span class="n">temp</span> <span class="p">=</span> <span class="n">x</span><span class="p">;</span>
     <span class="n">x</span> <span class="p">=</span> <span class="n">y</span><span class="p">;</span>
@@ -765,13 +765,12 @@ dotnet run</code></pre></td></tr></table>
 <span class="n">Swap</span><span class="p">(</span><span class="k">ref</span> <span class="n">i</span><span class="p">,</span> <span class="k">ref</span> <span class="n">y</span><span class="p">);</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li>输出参数: 传引用， 使用out修饰</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -780,7 +779,7 @@ dotnet run</code></pre></td></tr></table>
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="k">static</span> <span class="k">void</span> <span class="n">Divide</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">,</span> <span class="k">out</span> <span class="kt">int</span> <span class="n">result</span><span class="p">,</span> <span class="k">out</span> <span class="kt">int</span> <span class="n">remainder</span><span class="p">)</span>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="k">static</span> <span class="k">void</span> <span class="n">Divide</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">,</span> <span class="k">out</span> <span class="kt">int</span> <span class="n">result</span><span class="p">,</span> <span class="k">out</span> <span class="kt">int</span> <span class="n">remainder</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">result</span> <span class="p">=</span> <span class="n">x</span> <span class="p">/</span> <span class="n">y</span><span class="p">;</span>
     <span class="n">remainer</span> <span class="p">=</span> <span class="n">x</span> <span class="p">%</span> <span class="n">y</span><span class="p">;</span>
@@ -789,13 +788,12 @@ dotnet run</code></pre></td></tr></table>
 <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;{0} {1}&#34;</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">rem</span><span class="p">);</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li>参数数组 使用params修饰，只能位于最后，只能是一维数组</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -803,24 +801,21 @@ dotnet run</code></pre></td></tr></table>
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="k">public</span> <span class="k">class</span> <span class="nc">Console</span>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="k">public</span> <span class="k">class</span> <span class="nc">Console</span>
 <span class="p">{</span>
-    <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="n">Write</span><span class="p">(</span><span class="kt">string</span> <span class="n">fmt</span><span class="p">,</span> <span class="k">params</span> <span class="kt">object</span><span class="na">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
-    <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="n">WriteLine</span><span class="p">(</span><span class="kt">string</span> <span class="n">fmt</span><span class="p">,</span> <span class="k">params</span> <span class="kt">object</span><span class="na">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="n">Write</span><span class="p">(</span><span class="kt">string</span> <span class="n">fmt</span><span class="p">,</span> <span class="k">params</span> <span class="kt">object</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="n">WriteLine</span><span class="p">(</span><span class="kt">string</span> <span class="n">fmt</span><span class="p">,</span> <span class="k">params</span> <span class="kt">object</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
     <span class="c1">// ...
 </span><span class="c1"></span><span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<h5 id="方法主体和局部变量">方法主体和局部变量</h5>
-
+</div><h5 id="方法主体和局部变量">方法主体和局部变量</h5>
 <h5 id="静态和实例方法">静态和实例方法</h5>
-
 <p>使用static声明的方法是静态方法，静态方法只能访问静态成员
 不使用static声明的方法是实例方法，实例方法可是访问静态和实例成员,可以使用this显示访问</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -841,9 +836,10 @@ dotnet run</code></pre></td></tr></table>
 </span><span class="lnt">19
 </span><span class="lnt">20
 </span><span class="lnt">21
+</span><span class="lnt">22
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="k">class</span> <span class="nc">Entity</span>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="k">class</span> <span class="nc">Entity</span>
 <span class="p">{</span>
     <span class="k">static</span> <span class="kt">int</span> <span class="n">nextSerialNo</span><span class="p">;</span>
     <span class="kt">int</span> <span class="n">serialNo</span><span class="p">;</span>
@@ -864,21 +860,19 @@ dotnet run</code></pre></td></tr></table>
         <span class="n">nextSerialNo</span> <span class="p">=</span> <span class="k">value</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">}</span>
+
 </code></pre></td></tr></table>
 </div>
-</div>
-<h5 id="虚方法-重载方法和抽象方法">虚方法、重载方法和抽象方法</h5>
-
+</div><h5 id="虚方法重载方法和抽象方法">虚方法、重载方法和抽象方法</h5>
 <ul>
 <li>虚方法 virtual修饰</li>
 <li>抽象方法 abstract</li>
 <li>重新方法 override</li>
 </ul>
-
 <h5 id="方法重载">方法重载</h5>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -919,7 +913,7 @@ dotnet run</code></pre></td></tr></table>
 </span><span class="lnt">39
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
 <span class="k">class</span> <span class="nc">OverloadingExample</span>
 <span class="p">{</span>
     <span class="k">static</span> <span class="k">void</span> <span class="n">F</span><span class="p">()</span> 
@@ -960,11 +954,10 @@ dotnet run</code></pre></td></tr></table>
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="其他">其他</h4>
+</div><h4 id="其他">其他</h4>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1050,21 +1043,22 @@ dotnet run</code></pre></td></tr></table>
 </span><span class="lnt">84
 </span><span class="lnt">85
 </span><span class="lnt">86
+</span><span class="lnt">87
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="k">public</span> <span class="k">class</span> <span class="nc">MyList</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="k">public</span> <span class="k">class</span> <span class="nc">MyList</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span>
 <span class="p">{</span>
     <span class="c1">// Constant
 </span><span class="c1"></span>    <span class="k">const</span> <span class="kt">int</span> <span class="n">defaultCapacity</span> <span class="p">=</span> <span class="m">4</span><span class="p">;</span>
 
     <span class="c1">// Fields
-</span><span class="c1"></span>    <span class="n">T</span><span class="na">[]</span> <span class="n">items</span><span class="p">;</span>
+</span><span class="c1"></span>    <span class="n">T</span><span class="p">[]</span> <span class="n">items</span><span class="p">;</span>
     <span class="kt">int</span> <span class="n">count</span><span class="p">;</span>
 
     <span class="c1">// Constructor
 </span><span class="c1"></span>    <span class="k">public</span> <span class="n">MyList</span><span class="p">(</span><span class="kt">int</span> <span class="n">capacity</span> <span class="p">=</span> <span class="n">defaultCapacity</span><span class="p">)</span> 
     <span class="p">{</span>
-        <span class="n">items</span> <span class="p">=</span> <span class="k">new</span> <span class="n">T</span><span class="na">[capacity]</span><span class="p">;</span>
+        <span class="n">items</span> <span class="p">=</span> <span class="k">new</span> <span class="n">T</span><span class="p">[</span><span class="n">capacity</span><span class="p">];</span>
     <span class="p">}</span>
 
     <span class="c1">// Properties
@@ -1078,7 +1072,7 @@ dotnet run</code></pre></td></tr></table>
             <span class="k">if</span> <span class="p">(</span><span class="k">value</span> <span class="p">&lt;</span> <span class="n">count</span><span class="p">)</span> <span class="k">value</span> <span class="p">=</span> <span class="n">count</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="k">value</span> <span class="p">!=</span> <span class="n">items</span><span class="p">.</span><span class="n">Length</span><span class="p">)</span> 
             <span class="p">{</span>
-                <span class="n">T</span><span class="na">[]</span> <span class="n">newItems</span> <span class="p">=</span> <span class="k">new</span> <span class="n">T</span><span class="na">[value]</span><span class="p">;</span>
+                <span class="n">T</span><span class="p">[]</span> <span class="n">newItems</span> <span class="p">=</span> <span class="k">new</span> <span class="n">T</span><span class="p">[</span><span class="k">value</span><span class="p">];</span>
                 <span class="n">Array</span><span class="p">.</span><span class="n">Copy</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="n">newItems</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="n">count</span><span class="p">);</span>
                 <span class="n">items</span> <span class="p">=</span> <span class="n">newItems</span><span class="p">;</span>
             <span class="p">}</span>
@@ -1086,15 +1080,15 @@ dotnet run</code></pre></td></tr></table>
     <span class="p">}</span>
 
     <span class="c1">// Indexer
-</span><span class="c1"></span>    <span class="k">public</span> <span class="n">T</span> <span class="k">this</span><span class="na">[int index]</span> 
+</span><span class="c1"></span>    <span class="k">public</span> <span class="n">T</span> <span class="k">this</span><span class="p">[</span><span class="kt">int</span> <span class="n">index</span><span class="p">]</span> 
     <span class="p">{</span>
         <span class="k">get</span> 
         <span class="p">{</span>
-            <span class="k">return</span> <span class="n">items</span><span class="na">[index]</span><span class="p">;</span>
+            <span class="k">return</span> <span class="n">items</span><span class="p">[</span><span class="n">index</span><span class="p">];</span>
         <span class="p">}</span>
         <span class="k">set</span> 
         <span class="p">{</span>
-            <span class="n">items</span><span class="na">[index]</span> <span class="p">=</span> <span class="k">value</span><span class="p">;</span>
+            <span class="n">items</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="p">=</span> <span class="k">value</span><span class="p">;</span>
             <span class="n">OnChanged</span><span class="p">();</span>
         <span class="p">}</span>
     <span class="p">}</span>
@@ -1103,7 +1097,7 @@ dotnet run</code></pre></td></tr></table>
 </span><span class="c1"></span>    <span class="k">public</span> <span class="k">void</span> <span class="n">Add</span><span class="p">(</span><span class="n">T</span> <span class="n">item</span><span class="p">)</span> 
     <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">count</span> <span class="p">==</span> <span class="n">Capacity</span><span class="p">)</span> <span class="n">Capacity</span> <span class="p">=</span> <span class="n">count</span> <span class="p">*</span> <span class="m">2</span><span class="p">;</span>
-        <span class="n">items</span><span class="na">[count]</span> <span class="p">=</span> <span class="n">item</span><span class="p">;</span>
+        <span class="n">items</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="p">=</span> <span class="n">item</span><span class="p">;</span>
         <span class="n">count</span><span class="p">++;</span>
         <span class="n">OnChanged</span><span class="p">();</span>
     <span class="p">}</span>
@@ -1120,7 +1114,7 @@ dotnet run</code></pre></td></tr></table>
             <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
         <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="p">&lt;</span> <span class="n">a</span><span class="p">.</span><span class="n">count</span><span class="p">;</span> <span class="n">i</span><span class="p">++)</span> 
         <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(!</span><span class="kt">object</span><span class="p">.</span><span class="n">Equals</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">items</span><span class="na">[i]</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">items</span><span class="na">[i]</span><span class="p">))</span> 
+            <span class="k">if</span> <span class="p">(!</span><span class="kt">object</span><span class="p">.</span><span class="n">Equals</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">items</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">b</span><span class="p">.</span><span class="n">items</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span> 
             <span class="p">{</span>
                 <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
             <span class="p">}</span>
@@ -1138,33 +1132,30 @@ dotnet run</code></pre></td></tr></table>
     <span class="k">public</span> <span class="k">static</span> <span class="kt">bool</span> <span class="k">operator</span> <span class="p">!=(</span><span class="n">MyList</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="n">a</span><span class="p">,</span> <span class="n">MyList</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="p">=&gt;</span> 
         <span class="p">!</span><span class="n">Equals</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span>
 <span class="p">}</span>
+
 </code></pre></td></tr></table>
 </div>
-</div>
-<h5 id="构造函数-和类名相同-无返回值">构造函数 ： 和类名相同，无返回值</h5>
-
-<h5 id="属性-不指明存储位置-set和get设置读写属性">属性： 不指明存储位置，set和get设置读写属性</h5>
+</div><h5 id="构造函数--和类名相同无返回值">构造函数 ： 和类名相同，无返回值</h5>
+<h5 id="属性-不指明存储位置set和get设置读写属性">属性： 不指明存储位置，set和get设置读写属性</h5>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="n">MyList</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;</span> <span class="n">names</span> <span class="p">=</span> <span class="k">new</span> <span class="n">MyList</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;();</span>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="n">MyList</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;</span> <span class="n">names</span> <span class="p">=</span> <span class="k">new</span> <span class="n">MyList</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;();</span>
 <span class="n">names</span><span class="p">.</span><span class="n">Capacity</span> <span class="p">=</span> <span class="m">100</span><span class="p">;</span>   <span class="c1">// Invokes set accessor
 </span><span class="c1"></span><span class="kt">int</span> <span class="n">i</span> <span class="p">=</span> <span class="n">names</span><span class="p">.</span><span class="n">Count</span><span class="p">;</span>    <span class="c1">// Invokes get accessor
 </span><span class="c1"></span><span class="kt">int</span> <span class="n">j</span> <span class="p">=</span> <span class="n">names</span><span class="p">.</span><span class="n">Capacity</span><span class="p">;</span> <span class="c1">// Invokes get accessor
 </span></code></pre></td></tr></table>
 </div>
-</div>
-<h5 id="索引器">索引器</h5>
-
+</div><h5 id="索引器">索引器</h5>
 <h5 id="事件">事件</h5>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1183,7 +1174,7 @@ dotnet run</code></pre></td></tr></table>
 </span><span class="lnt">17
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="k">class</span> <span class="nc">EventExample</span>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="k">class</span> <span class="nc">EventExample</span>
 <span class="p">{</span>
     <span class="k">static</span> <span class="kt">int</span> <span class="n">changeCount</span><span class="p">;</span>
     <span class="k">static</span> <span class="k">void</span> <span class="n">ListChanged</span><span class="p">(</span><span class="kt">object</span> <span class="n">sender</span><span class="p">,</span> <span class="n">EventArgs</span> <span class="n">e</span><span class="p">)</span> 
@@ -1202,30 +1193,26 @@ dotnet run</code></pre></td></tr></table>
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="数组">数组</h4>
+</div><h4 id="数组">数组</h4>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="kt">int</span> <span class="n">a</span> <span class="p">=</span> <span class="k">new</span> <span class="kt">int</span><span class="na">[]</span><span class="p">{</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">}</span>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="kt">int</span> <span class="n">a</span> <span class="p">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">[]{</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li>数组中的元素均为同一种类型</li>
 <li>new运算指定了实例的长度，此长度不可变</li>
 <li>默认值为0或null</li>
 <li>L.length访问长度</li>
 </ul>
-
 <h4 id="接口">接口</h4>
-
 <p>定义了可有类或结构实现的成员，可以多重继承，类也可以实现多个接口</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1239,9 +1226,10 @@ dotnet run</code></pre></td></tr></table>
 </span><span class="lnt">12
 </span><span class="lnt">13
 </span><span class="lnt">14
+</span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="k">interface</span> <span class="n">IControl</span>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="k">interface</span> <span class="n">IControl</span>
 <span class="p">{</span>
     <span class="k">void</span> <span class="n">Paint</span><span class="p">();</span>
 <span class="p">}</span>
@@ -1255,27 +1243,25 @@ dotnet run</code></pre></td></tr></table>
     <span class="k">public</span> <span class="k">void</span> <span class="n">Paint</span><span class="p">()</span> <span class="p">{}</span>
     <span class="k">public</span> <span class="k">void</span> <span class="n">Bind</span><span class="p">(</span><span class="n">Bind</span> <span class="n">b</span><span class="p">)</span> <span class="p">{}</span>
 <span class="p">}</span>
+
 </code></pre></td></tr></table>
 </div>
-</div>
-<p>类可以隐式转换成相应的接口类型</p>
+</div><p>类可以隐式转换成相应的接口类型</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="n">EditBox</span> <span class="n">editBox</span> <span class="p">=</span> <span class="k">new</span> <span class="n">EdixBox</span><span class="p">();</span>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="n">EditBox</span> <span class="n">editBox</span> <span class="p">=</span> <span class="k">new</span> <span class="n">EdixBox</span><span class="p">();</span>
 <span class="n">IControl</span> <span class="n">control</span> <span class="p">=</span> <span class="n">eidBox</span><span class="p">;</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="委托">委托</h4>
-
+</div><h4 id="委托">委托</h4>
 <p>实现将方法作为参数传递</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1312,7 +1298,7 @@ dotnet run</code></pre></td></tr></table>
 </span><span class="lnt">35
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
 <span class="k">delegate</span> <span class="kt">double</span> <span class="n">Function</span><span class="p">(</span><span class="kt">double</span> <span class="n">x</span><span class="p">);</span>
 <span class="k">class</span> <span class="nc">Multiplier</span>
 <span class="p">{</span>
@@ -1332,36 +1318,33 @@ dotnet run</code></pre></td></tr></table>
     <span class="p">{</span>
         <span class="k">return</span> <span class="n">x</span> <span class="p">*</span> <span class="n">x</span><span class="p">;</span>
     <span class="p">}</span>
-    <span class="k">static</span> <span class="kt">double</span><span class="na">[]</span> <span class="n">Apply</span><span class="p">(</span><span class="kt">double</span><span class="na">[]</span> <span class="n">a</span><span class="p">,</span> <span class="n">Function</span> <span class="n">f</span><span class="p">)</span> 
+    <span class="k">static</span> <span class="kt">double</span><span class="p">[]</span> <span class="n">Apply</span><span class="p">(</span><span class="kt">double</span><span class="p">[]</span> <span class="n">a</span><span class="p">,</span> <span class="n">Function</span> <span class="n">f</span><span class="p">)</span> 
     <span class="p">{</span>
-        <span class="kt">double</span><span class="na">[]</span> <span class="n">result</span> <span class="p">=</span> <span class="k">new</span> <span class="kt">double</span><span class="na">[a.Length]</span><span class="p">;</span>
-        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="p">&lt;</span> <span class="n">a</span><span class="p">.</span><span class="n">Length</span><span class="p">;</span> <span class="n">i</span><span class="p">++)</span> <span class="n">result</span><span class="na">[i]</span> <span class="p">=</span> <span class="n">f</span><span class="p">(</span><span class="n">a</span><span class="na">[i]</span><span class="p">);</span>
+        <span class="kt">double</span><span class="p">[]</span> <span class="n">result</span> <span class="p">=</span> <span class="k">new</span> <span class="kt">double</span><span class="p">[</span><span class="n">a</span><span class="p">.</span><span class="n">Length</span><span class="p">];</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="p">&lt;</span> <span class="n">a</span><span class="p">.</span><span class="n">Length</span><span class="p">;</span> <span class="n">i</span><span class="p">++)</span> <span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="p">=</span> <span class="n">f</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
         <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
     <span class="p">}</span>
     <span class="k">static</span> <span class="k">void</span> <span class="n">Main</span><span class="p">()</span> 
     <span class="p">{</span>
-        <span class="kt">double</span><span class="na">[]</span> <span class="n">a</span> <span class="p">=</span> <span class="p">{</span><span class="m">0.0</span><span class="p">,</span> <span class="m">0.5</span><span class="p">,</span> <span class="m">1.0</span><span class="p">};</span>
-        <span class="kt">double</span><span class="na">[]</span> <span class="n">squares</span> <span class="p">=</span> <span class="n">Apply</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">Square</span><span class="p">);</span>
-        <span class="kt">double</span><span class="na">[]</span> <span class="n">sines</span> <span class="p">=</span> <span class="n">Apply</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">Math</span><span class="p">.</span><span class="n">Sin</span><span class="p">);</span>
+        <span class="kt">double</span><span class="p">[]</span> <span class="n">a</span> <span class="p">=</span> <span class="p">{</span><span class="m">0.0</span><span class="p">,</span> <span class="m">0.5</span><span class="p">,</span> <span class="m">1.0</span><span class="p">};</span>
+        <span class="kt">double</span><span class="p">[]</span> <span class="n">squares</span> <span class="p">=</span> <span class="n">Apply</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">Square</span><span class="p">);</span>
+        <span class="kt">double</span><span class="p">[]</span> <span class="n">sines</span> <span class="p">=</span> <span class="n">Apply</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">Math</span><span class="p">.</span><span class="n">Sin</span><span class="p">);</span>
         <span class="n">Multiplier</span> <span class="n">m</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Multiplier</span><span class="p">(</span><span class="m">2.0</span><span class="p">);</span>
-        <span class="kt">double</span><span class="na">[]</span> <span class="n">doubles</span> <span class="p">=</span>  <span class="n">Apply</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">m</span><span class="p">.</span><span class="n">Multiply</span><span class="p">);</span>
+        <span class="kt">double</span><span class="p">[]</span> <span class="n">doubles</span> <span class="p">=</span>  <span class="n">Apply</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">m</span><span class="p">.</span><span class="n">Multiply</span><span class="p">);</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<p>可以使用匿名函数创建委托</p>
+</div><p>可以使用匿名函数创建委托</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="kt">double</span><span class="na">[]</span> <span class="n">doubles</span> <span class="p">=</span> <span class="n">Apply</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">(</span><span class="kt">double</span> <span class="n">x</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="n">x</span> <span class="p">*</span> <span class="m">2.0</span><span class="p">);</span>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="kt">double</span><span class="p">[]</span> <span class="n">doubles</span> <span class="p">=</span> <span class="n">Apply</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">(</span><span class="kt">double</span> <span class="n">x</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="n">x</span> <span class="p">*</span> <span class="m">2.0</span><span class="p">);</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="参考">参考</h3>
-
+</div><h3 id="参考">参考</h3>
 <ul>
 <li><a href="https://docs.microsoft.com/zh-cn/dotnet/csharp/">C#官方官方入门文档</a></li>
 <li><a href="https://github.com/Excel-DNA">Excel-DNA</a></li>
@@ -1429,7 +1412,7 @@ dotnet run</code></pre></td></tr></table>
     <div class="post bg-white">
       <script src="https://utteranc.es/client.js"
             repo= "ppd0705/ppd0705.github.io"
-            issue-term="utteranc"
+            issue-term="pathname"
             theme="github-light"
             crossorigin="anonymous"
             async>

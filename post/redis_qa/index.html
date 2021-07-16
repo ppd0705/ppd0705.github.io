@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.6" />
+<meta name="generator" content="Hugo 0.86.0-DEV" />
 
 
 <link rel="canonical" href="https://ppd0705.github.io/post/redis_qa/" />
@@ -62,22 +62,15 @@
 <meta property="og:title" content="Redis自问自答" />
 <meta property="og:description" content="1. 有哪些数据类型？底层分别使用什么数据结构？ 1 2 3 4 5 6 7 8 type def struct redisObject { // 类型 unsigned type // 编码方式 unsigned encoding // 指向底层数据结构的指针 void *ptr } robj String: int: 底层使用l" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://ppd0705.github.io/post/redis_qa/" />
-<meta property="article:published_time" content="2020-12-27T18:25:30&#43;08:00"/>
-<meta property="article:modified_time" content="2020-12-27T18:25:30&#43;08:00"/>
+<meta property="og:url" content="https://ppd0705.github.io/post/redis_qa/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2020-12-27T18:25:30+08:00" />
+<meta property="article:modified_time" content="2020-12-27T18:25:30+08:00" />
 
 <meta itemprop="name" content="Redis自问自答">
-<meta itemprop="description" content="1. 有哪些数据类型？底层分别使用什么数据结构？ 1 2 3 4 5 6 7 8 type def struct redisObject { // 类型 unsigned type // 编码方式 unsigned encoding // 指向底层数据结构的指针 void *ptr } robj String: int: 底层使用l">
-
-
-<meta itemprop="datePublished" content="2020-12-27T18:25:30&#43;08:00" />
-<meta itemprop="dateModified" content="2020-12-27T18:25:30&#43;08:00" />
-<meta itemprop="wordCount" content="2647">
-
-
-
-<meta itemprop="keywords" content="Redis," />
-<meta name="twitter:card" content="summary"/>
+<meta itemprop="description" content="1. 有哪些数据类型？底层分别使用什么数据结构？ 1 2 3 4 5 6 7 8 type def struct redisObject { // 类型 unsigned type // 编码方式 unsigned encoding // 指向底层数据结构的指针 void *ptr } robj String: int: 底层使用l"><meta itemprop="datePublished" content="2020-12-27T18:25:30+08:00" />
+<meta itemprop="dateModified" content="2020-12-27T18:25:30+08:00" />
+<meta itemprop="wordCount" content="2637">
+<meta itemprop="keywords" content="Redis," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Redis自问自答"/>
 <meta name="twitter:description" content="1. 有哪些数据类型？底层分别使用什么数据结构？ 1 2 3 4 5 6 7 8 type def struct redisObject { // 类型 unsigned type // 编码方式 unsigned encoding // 指向底层数据结构的指针 void *ptr } robj String: int: 底层使用l"/>
 
@@ -303,13 +296,13 @@
       
       <div class="post-meta">
         <time datetime="2020-12-27" class="post-time">
-          2020-12-27 18:25:30
+          2020-12-27
         </time>
         <div class="post-category">
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 2647 words </span>
+        <span class="more-meta"> 2637 words </span>
           <span class="more-meta"> 6 min read </span>
 
         
@@ -322,15 +315,69 @@
 
     
     
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Table of Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#1-有哪些数据类型底层分别使用什么数据结构">1. 有哪些数据类型？底层分别使用什么数据结构？</a></li>
+            <li><a href="#2-持久化方式有哪些">2. 持久化方式有哪些？</a>
+              <ul>
+                <li><a href="#aofappend-only-file">AOF(Append Only File)</a></li>
+                <li><a href="#rdbredis-database">RDB(Redis DataBase)</a></li>
+              </ul>
+            </li>
+            <li><a href="#3-主从同步是怎么样的">3. 主从同步是怎么样的？</a>
+              <ul>
+                <li><a href="#初始同步">初始同步</a></li>
+                <li><a href="#增量同步">增量同步</a></li>
+              </ul>
+            </li>
+            <li><a href="#4-如何保证高可用">4. 如何保证高可用？</a></li>
+            <li><a href="#5-哨兵集群是如何工作的">5. 哨兵集群是如何工作的？</a></li>
+            <li><a href="#6-cluster分片集群是如何工作的">6. Cluster分片集群是如何工作的？</a></li>
+            <li><a href="#7-事务的实现">7. 事务的实现？</a></li>
+            <li><a href="#8-有哪些耗时操作">8. 有哪些耗时操作？</a></li>
+            <li><a href="#9-有哪些淘汰缓存策略">9. 有哪些淘汰缓存策略？</a>
+              <ul>
+                <li><a href="#不进行淘汰noeviction">不进行淘汰：noeviction</a></li>
+                <li><a href="#对所有数据进行淘汰">对所有数据进行淘汰</a></li>
+                <li><a href="#对设置了过期时间无论有没有到期的数据进行淘汰">对设置了过期时间（无论有没有到期）的数据进行淘汰</a></li>
+              </ul>
+            </li>
+            <li><a href="#10-有哪些缓存使用模式">10. 有哪些缓存使用模式？</a></li>
+            <li><a href="#11-有哪些缓存异常">11. 有哪些缓存异常</a>
+              <ul>
+                <li><a href="#缓存雪崩-大量请求无法在redis中进行处理导致数据库层压力激增">缓存雪崩： 大量请求无法在Redis中进行处理，导致数据库层压力激增</a></li>
+                <li><a href="#缓存击穿热点请求没有在缓存中处理">缓存击穿：热点请求没有在缓存中处理</a></li>
+                <li><a href="#缓存穿透访问的数据既不在redis中也不在数据库中">缓存穿透：访问的数据既不在redis中也不在数据库中</a></li>
+              </ul>
+            </li>
+            <li><a href="#12-分布式锁实现">12. 分布式锁实现？</a>
+              <ul>
+                <li><a href="#单个redis">单个redis</a></li>
+                <li><a href="#多个redis节点-redlock">多个redis节点 Redlock</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
 
     
     <div class="post-content">
-      
-
-<h3 id="1-有哪些数据类型-底层分别使用什么数据结构">1. 有哪些数据类型？底层分别使用什么数据结构？</h3>
+      <h3 id="1-有哪些数据类型底层分别使用什么数据结构">1. 有哪些数据类型？底层分别使用什么数据结构？</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -340,273 +387,225 @@
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="n">type</span> <span class="n">def</span> <span class="k">struct</span> <span class="n">redisObject</span> <span class="p">{</span>
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="n">type</span> <span class="n">def</span> <span class="k">struct</span> <span class="n">redisObject</span> <span class="p">{</span>
     <span class="c1">// 类型
 </span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="n">type</span>
     <span class="c1">// 编码方式
 </span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="n">encoding</span>
     <span class="c1">// 指向底层数据结构的指针
 </span><span class="c1"></span>    <span class="kt">void</span> <span class="o">*</span><span class="n">ptr</span>
-<span class="p">}</span> <span class="n">robj</span></code></pre></td></tr></table>
+<span class="p">}</span> <span class="n">robj</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li>String:
-
 <ul>
 <li>int: 底层使用long类型存储</li>
 <li>raw: 简单动态字符串SDS（含总长和剩余长度信息），字符长度大于39 byte</li>
 <li>embstr: 字符串长度&lt;= 39 byte，redisObject和sdshdr结构在一块连续的内存中，浮点数也使用这种结构存储</li>
-</ul></li>
+</ul>
+</li>
 <li>List
-
 <ul>
 <li>ziplist: 当元素个数小于512且元素长度小于64字节时使用</li>
 <li>linkedlist</li>
-</ul></li>
+</ul>
+</li>
 <li>Hash
-
 <ul>
 <li>ziplist: 当元素个数小于512且元素长度小于64字节时使用</li>
 <li>hashtable</li>
-</ul></li>
+</ul>
+</li>
 <li>Set
-
 <ul>
 <li>intset: 当元素个数小于512且元素全是整数时使用</li>
 <li>hashtable</li>
-</ul></li>
+</ul>
+</li>
 <li>SortedSet
-
 <ul>
 <li>ziplist: 当元素个数小于128且元素长度小于64字节时使用</li>
 <li>skiplist: 底层实际使用了skiplist和dict两种结构，且他们会通过指针来共享成员和分数</li>
-</ul></li>
 </ul>
-
+</li>
+</ul>
 <h3 id="2-持久化方式有哪些">2. 持久化方式有哪些？</h3>
-
-<h4 id="aof-append-only-file">AOF(Append Only File)</h4>
-
+<h4 id="aofappend-only-file">AOF(Append Only File)</h4>
 <p>AOF是写后日志，已追加的方式记录的是每一条写命令</p>
-
-<p>三种写回策略
-- Always: 每个写命令执行完后立即将日志写回磁盘
-- Everysec: 将日志写入文件缓存，每秒执行fsyncl落盘
-- No: 操作系统决定格式将缓冲区的内存写会磁盘</p>
-
+<p>三种写回策略</p>
+<ul>
+<li>Always: 每个写命令执行完后立即将日志写回磁盘</li>
+<li>Everysec: 将日志写入文件缓存，每秒执行fsyncl落盘</li>
+<li>No: 操作系统决定格式将缓冲区的内存写会磁盘</li>
+</ul>
 <p>AOF重写机制
 fork一个子进程bgrewriteaof,逐一将每个键值对用一条命令记录并写入临时文件，完成后会通过信号通知主进程，主进程会将AOF重新缓冲区的内容写入临时文件中，这时临时文件保存的内容和数据库一致，对临时文件改名，原子的覆盖 现有的AOF文件</p>
-
-<h4 id="rdb-redis-database">RDB(Redis DataBase)</h4>
-
+<h4 id="rdbredis-database">RDB(Redis DataBase)</h4>
 <p>fork一个子进程将全量的数据以二进制的方式写入RDB文件</p>
-
 <p>Redis4.0推出了混合使用AOF和RDB的方式，在两个RBD快照之间使用AOF日志记录期间的所有命令，等下一次做全量快照时，可以清空AOF日志</p>
-
 <h3 id="3-主从同步是怎么样的">3. 主从同步是怎么样的？</h3>
-
 <h4 id="初始同步">初始同步</h4>
-
 <ul>
 <li>从库发送`psync ? -1命令申请全量复制</li>
 <li>主库执行<code>bgsave</code>生成RBD文件，发送给从库加载数据</li>
 <li>主库将期间新的写入操作replication buffer中的数据发送给从库</li>
 </ul>
-
 <h4 id="增量同步">增量同步</h4>
-
 <p>主库有一个repl_backlog_buffer环形缓冲区，主库依据自己的master_repl_offset和从库的slave_repl_offset之间的操作发给从库</p>
-
 <h3 id="4-如何保证高可用">4. 如何保证高可用？</h3>
-
 <p>通过哨兵机制保证高可用，哨兵负责监控节点、选主和通知</p>
-
 <ul>
 <li>监控：哨兵会周期性的给主/从节点发ping命令，如果规定时间内没有响应，对于从库将其标记为下线状态，对于主库则进行切换主库流程</li>
 <li>选主：
-
 <ul>
 <li>客观下线：当有<code>quronum</code>个哨兵判断主库下线，才判断为客观下线</li>
 <li>筛选打分：
-
 <ul>
 <li>去除已下线和总是断连的从节点</li>
 <li>选择复制进度最高的节点</li>
 <li>如果多个选ID最小的</li>
-</ul></li>
-</ul></li>
+</ul>
+</li>
+</ul>
+</li>
 <li>通知：
-
 <ul>
 <li>新主库选好后，会给所有从库发信主库连接信息，随之从库会设置主库，重新从新主库同步数据</li>
 <li>另外也会在<code>switch-master</code>频道里面发送主库信息，客户端可以通过订阅收到消息</li>
-</ul></li>
 </ul>
-
+</li>
+</ul>
 <h3 id="5-哨兵集群是如何工作的">5. 哨兵集群是如何工作的？</h3>
-
 <ul>
 <li>相互发现：通过pub/sub主库的<code>__sentinel:hello__</code>频道来相互发现，随之建立网络连接</li>
 <li>发现从库：通过<code>INFO</code>命令获取从库信息</li>
 <li>Leader选举：当哨兵拿到<code>quronum</code>个主观下线后，就将主库标记为客观下线，随后发起选举命令，如果获得&gt;=N/2+1且&gt;=<code>quronum</code>张票，则选为Leader（注：如果此轮没有产生Leader,会过段时间重试；每个哨兵的定时器执行周期都会加上一个小小的随机时间偏移，目的是让每个哨兵执行上述操作的时间能稍微错开些，也是为了避免它们都同时判定主库下线，同时选举Leader）</li>
 </ul>
-
 <h3 id="6-cluster分片集群是如何工作的">6. Cluster分片集群是如何工作的？</h3>
-
 <ul>
-<li>集群分为16384（2^14 == 2KB）个hash slot哈希槽，key通过CRC算法得到一个16bit的值，再对16384取模，确定落在哪个槽中</li>
-<li>创建cluster时会自动给每个实例分配16384/N个槽，也可以手动指定</li>
-<li>实例之间通过相互传递消息获取最新哈希槽分布信息，</li>
-
-<li><p>客户端和集群连接时，会获得哈希槽对应节点的分布信息，并缓存在本地，之后如果分布信息变更后，客户端把命名发送给了旧的节点，旧的节点会将新节点的地址信息告知客户端，其中有 两种状态:</p>
-
+<li>
+<p>集群分为16384（2^14 == 2KB）个hash slot哈希槽，key通过CRC算法得到一个16bit的值，再对16384取模，确定落在哪个槽中</p>
+</li>
+<li>
+<p>创建cluster时会自动给每个实例分配16384/N个槽，也可以手动指定</p>
+</li>
+<li>
+<p>实例之间通过相互传递消息获取最新哈希槽分布信息，</p>
+</li>
+<li>
+<p>客户端和集群连接时，会获得哈希槽对应节点的分布信息，并缓存在本地，之后如果分布信息变更后，客户端把命名发送给了旧的节点，旧的节点会将新节点的地址信息告知客户端，其中有 两种状态:</p>
 <ul>
-<li>哈希槽已经迁移完毕，旧节点会返回<code>MOVED</code>信息，客户端的缓存也会更新
-<br /></li>
+<li>哈希槽已经迁移完毕，旧节点会返回<code>MOVED</code>信息，客户端的缓存也会更新</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-redis" data-lang="redis"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-redis" data-lang="redis">GET hello:key
-(error) MOVED 13320 172.16.19.5:6379</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">GET hello:key
+(error) MOVED 13320 172.16.19.5:6379
+</code></pre></td></tr></table>
 </div>
-</div>
-<ul>
-<li>哈希槽正在迁移，旧节点会返回<code>ASK</code>信息
-<br /></li>
+</div><ul>
+<li>哈希槽正在迁移，旧节点会返回<code>ASK</code>信息</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-redis" data-lang="redis"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-redis" data-lang="redis">GET hello:key
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">GET hello:key
 (error) ASK 13320 172.16.19.5:6379
-    </code></pre></td></tr></table>
+
+</code></pre></td></tr></table>
 </div>
 </div></li>
 </ul>
-
 <h3 id="7-事务的实现">7. 事务的实现？</h3>
-
 <p>通过结合<code>WATCH</code>、<code>MULTI</code>和<code>EXEC</code>命令实现事务，执行<code>EXEC</code>时会检查<code>WATCH</code>的键是否有变更，如有则取消事务</p>
-
 <p>原子性：如果执行事务命令队列中的某个命令出错，仍会继续执行下去，无法回滚</p>
-
 <h3 id="8-有哪些耗时操作">8. 有哪些耗时操作？</h3>
-
 <ul>
 <li>全量查询和聚合等复杂操作</li>
 <li>bigkey删除：释放大量内存很耗时  (用专门负责删除的子线程来处理)</li>
 <li>AOF写回磁盘  （频率设置为everysec后用专门负责AOF日志落盘的子线程来处理）</li>
 </ul>
-
 <h3 id="9-有哪些淘汰缓存策略">9. 有哪些淘汰缓存策略？</h3>
-
-<h4 id="不进行淘汰-noeviction">不进行淘汰：noeviction</h4>
-
+<h4 id="不进行淘汰noeviction">不进行淘汰：noeviction</h4>
 <h4 id="对所有数据进行淘汰">对所有数据进行淘汰</h4>
-
 <ul>
 <li>allkeys-lru</li>
 <li>allkeys-random</li>
 <li>allkeys-lfu</li>
 </ul>
-
-<h4 id="对设置了过期时间-无论有没有到期-的数据进行淘汰">对设置了过期时间（无论有没有到期）的数据进行淘汰</h4>
-
+<h4 id="对设置了过期时间无论有没有到期的数据进行淘汰">对设置了过期时间（无论有没有到期）的数据进行淘汰</h4>
 <ul>
 <li>volatile-random: 随机删除</li>
 <li>volatile-ttl: 越早过期的数据越先被删除</li>
 <li>volatile-lru: 每个RedisObject有一个lru字段，记录最新访问时间，淘汰数据时会随机选取N个数据作为一个候选集合，将lru字段最小的数据淘汰</li>
 <li>volatile-lfu: 在lru的基础上为每个数据统计访问次数，优先淘汰次数低的；范围次数相同的情况下淘汰lru更小的</li>
 </ul>
-
 <h3 id="10-有哪些缓存使用模式">10. 有哪些缓存使用模式？</h3>
-
 <ul>
 <li>Cache Aside只读缓存:
-
 <ul>
 <li>读操作命中缓存则直接返回，否则从后端数据库加载到缓存中再返回</li>
 <li>写操作直接更新数据库然后删除缓存</li>
-</ul></li>
+</ul>
+</li>
 <li>Read/Write Throught  同步直写
-
 <ul>
 <li>写操作会更新缓存和数据库，然后给客户端返回</li>
-</ul></li>
+</ul>
+</li>
 <li>Read/Write Write Back 异步写回
-
 <ul>
 <li>写操作先更新缓存，等到缓存要淘汰时将它们写回数据库</li>
-</ul></li>
 </ul>
-
+</li>
+</ul>
 <p>如果需要给写请求加速，选择读写缓存；如果写请求很少选择只读缓存</p>
-
 <h3 id="11-有哪些缓存异常">11. 有哪些缓存异常</h3>
-
-<h4 id="缓存雪崩-大量请求无法在redis中进行处理-导致数据库层压力激增">缓存雪崩： 大量请求无法在Redis中进行处理，导致数据库层压力激增</h4>
-
+<h4 id="缓存雪崩-大量请求无法在redis中进行处理导致数据库层压力激增">缓存雪崩： 大量请求无法在Redis中进行处理，导致数据库层压力激增</h4>
 <p>通常因为大量数据同时过期，可以给数据过期时间加一个小的随机数</p>
-
 <p>可通过服务降级来应对</p>
-
-<h4 id="缓存击穿-热点请求没有在缓存中处理">缓存击穿：热点请求没有在缓存中处理</h4>
-
+<h4 id="缓存击穿热点请求没有在缓存中处理">缓存击穿：热点请求没有在缓存中处理</h4>
 <p>通常发生在热点数据过期时，可以对热点数据不设置过期时间</p>
-
-<h4 id="缓存穿透-访问的数据既不在redis中也不在数据库中">缓存穿透：访问的数据既不在redis中也不在数据库中</h4>
-
+<h4 id="缓存穿透访问的数据既不在redis中也不在数据库中">缓存穿透：访问的数据既不在redis中也不在数据库中</h4>
 <p>解决方案：a. redis缓存一个缺省值 b. 查询数据库时先通过查询布隆过滤器快速判断数据是否存在</p>
-
 <h3 id="12-分布式锁实现">12. 分布式锁实现？</h3>
-
 <h4 id="单个redis">单个redis</h4>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-redis" data-lang="redis"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-redis" data-lang="redis">SET lock_key unique_value NX PX 10000
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">SET lock_key unique_value NX PX 10000
 DO SOMETHING
-DEL lock_key</code></pre></td></tr></table>
+DEL lock_key
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>使用SETNX和DEL, 为了DEL可能异常，需要给key设置过期时间</p>
-
+</div><p>使用SETNX和DEL, 为了DEL可能异常，需要给key设置过期时间</p>
 <h4 id="多个redis节点-redlock">多个redis节点 Redlock</h4>
-
-<p>分为三步：
-- 客户端获取当前时间
-- 按顺序依次想N个redis示例执行加锁操作，加锁操作设置超时时间，超时则认为该示例加锁失败
-- 计算加锁总耗时</p>
-
+<p>分为三步：</p>
+<ul>
+<li>客户端获取当前时间</li>
+<li>按顺序依次想N个redis示例执行加锁操作，加锁操作设置超时时间，超时则认为该示例加锁失败</li>
+<li>计算加锁总耗时</li>
+</ul>
 <p>如果获取了N/2+1把锁且总耗时没有超过锁的有效时间则认为加锁成功
-    - 哈希槽正在迁移，旧节点会返回<code>ASK</code>信息</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span></pre></td>
-<td class="lntd">
-<pre class="chroma">```redis
+- 哈希槽正在迁移，旧节点会返回<code>ASK</code>信息</p>
+<pre><code>```redis
 GET hello:key
 (error) ASK 13320 172.16.19.5:6379
-```</pre></td></tr></table>
-</div>
-</div>
+```</code></pre>
+
     </div>
 
     
@@ -669,7 +668,7 @@ GET hello:key
     <div class="post bg-white">
       <script src="https://utteranc.es/client.js"
             repo= "ppd0705/ppd0705.github.io"
-            issue-term="utteranc"
+            issue-term="pathname"
             theme="github-light"
             crossorigin="anonymous"
             async>

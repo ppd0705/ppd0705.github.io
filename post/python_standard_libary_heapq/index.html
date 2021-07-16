@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.6" />
+<meta name="generator" content="Hugo 0.86.0-DEV" />
 
 
 <link rel="canonical" href="https://ppd0705.github.io/post/python_standard_libary_heapq/" />
@@ -62,22 +62,15 @@
 <meta property="og:title" content="Python标准库heapq" />
 <meta property="og:description" content="底层设计: 完全二叉树（除了最后一层，其他层都是满的，最后一层的节点都靠左排列） 每个节点的值都小于等于左右子节点的值 使用list存储 入堆hea" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://ppd0705.github.io/post/python_standard_libary_heapq/" />
-<meta property="article:published_time" content="2019-10-28T01:24:40&#43;08:00"/>
-<meta property="article:modified_time" content="2019-10-28T01:24:40&#43;08:00"/>
+<meta property="og:url" content="https://ppd0705.github.io/post/python_standard_libary_heapq/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2019-10-28T01:24:40+08:00" />
+<meta property="article:modified_time" content="2019-10-28T01:24:40+08:00" />
 
 <meta itemprop="name" content="Python标准库heapq">
-<meta itemprop="description" content="底层设计: 完全二叉树（除了最后一层，其他层都是满的，最后一层的节点都靠左排列） 每个节点的值都小于等于左右子节点的值 使用list存储 入堆hea">
-
-
-<meta itemprop="datePublished" content="2019-10-28T01:24:40&#43;08:00" />
-<meta itemprop="dateModified" content="2019-10-28T01:24:40&#43;08:00" />
+<meta itemprop="description" content="底层设计: 完全二叉树（除了最后一层，其他层都是满的，最后一层的节点都靠左排列） 每个节点的值都小于等于左右子节点的值 使用list存储 入堆hea"><meta itemprop="datePublished" content="2019-10-28T01:24:40+08:00" />
+<meta itemprop="dateModified" content="2019-10-28T01:24:40+08:00" />
 <meta itemprop="wordCount" content="315">
-
-
-
-<meta itemprop="keywords" content="Python," />
-<meta name="twitter:card" content="summary"/>
+<meta itemprop="keywords" content="Python," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Python标准库heapq"/>
 <meta name="twitter:description" content="底层设计: 完全二叉树（除了最后一层，其他层都是满的，最后一层的节点都靠左排列） 每个节点的值都小于等于左右子节点的值 使用list存储 入堆hea"/>
 
@@ -303,7 +296,7 @@
       
       <div class="post-meta">
         <time datetime="2019-10-28" class="post-time">
-          2019-10-28 01:24:40
+          2019-10-28
         </time>
         <div class="post-category">
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
@@ -322,41 +315,56 @@
 
     
     
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Table of Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li>
+          <ul>
+            <li>
+              <ul>
+                <li><a href="#底层设计">底层设计:</a></li>
+                <li><a href="#入堆heappush">入堆heappush：</a></li>
+                <li><a href="#移除堆顶元素heappop">移除堆顶元素heappop：</a></li>
+                <li><a href="#有序堆heapify">有序堆heapify：</a></li>
+                <li><a href="#返回一个无序列表前n个最小值nsmallest">返回一个无序列表前n个最小值nsmallest：</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
 
     
     <div class="post-content">
-      
-
-<h4 id="底层设计">底层设计:</h4>
-
+      <h4 id="底层设计">底层设计:</h4>
 <ul>
 <li>完全二叉树（除了最后一层，其他层都是满的，最后一层的节点都靠左排列）</li>
 <li>每个节点的值都小于等于左右子节点的值</li>
 <li>使用list存储</li>
 </ul>
-
 <h4 id="入堆heappush">入堆heappush：</h4>
-
 <ul>
 <li>先放入list尾部</li>
 <li>依次和上一层的父节点比较，如果比父节点小则交换(_siftdown上浮)</li>
 </ul>
-
 <h4 id="移除堆顶元素heappop">移除堆顶元素heappop：</h4>
-
 <ul>
 <li>记录最后要返回的结果即heap[0]</li>
 <li>将heap[-1]弹出并赋值给heap[0],从堆顶依次和左右节点中的大节点交换（_siftup下沉)</li>
 </ul>
-
 <h4 id="有序堆heapify">有序堆heapify：</h4>
-
 <ul>
 <li>从非叶子节点到根节点逆序依次下沉</li>
 </ul>
-
 <h4 id="返回一个无序列表前n个最小值nsmallest">返回一个无序列表前n个最小值nsmallest：</h4>
-
 <ul>
 <li>等效于sorted(iterrable, key=key)[:n]</li>
 <li>用前n个元素构建一个大顶堆，后续元素与堆顶堆顶比较，如果小于堆顶则替换之并下沉</li>
@@ -424,7 +432,7 @@
     <div class="post bg-white">
       <script src="https://utteranc.es/client.js"
             repo= "ppd0705/ppd0705.github.io"
-            issue-term="utteranc"
+            issue-term="pathname"
             theme="github-light"
             crossorigin="anonymous"
             async>

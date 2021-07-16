@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.6" />
+<meta name="generator" content="Hugo 0.86.0-DEV" />
 
 
 <link rel="canonical" href="https://ppd0705.github.io/post/asgi_note/" />
@@ -62,22 +62,15 @@
 <meta property="og:title" content="ASGI摘抄" />
 <meta property="og:description" content="Asynchronous Server Gateway Interface Onverview two components protocol server: terminates socket and translates them into connections and per-connection event messages application: lives in inside a server, is instantiated once per connection, and handles event messages as they happen difference between two components applications are instant objects that are fed events rather than simple callable, and must run as asyncio-compativle corountines two separate parts of a connection: a connection scope; events" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://ppd0705.github.io/post/asgi_note/" />
-<meta property="article:published_time" content="2020-03-04T08:25:38&#43;08:00"/>
-<meta property="article:modified_time" content="2020-03-04T08:25:38&#43;08:00"/>
+<meta property="og:url" content="https://ppd0705.github.io/post/asgi_note/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2020-03-04T08:25:38+08:00" />
+<meta property="article:modified_time" content="2020-03-04T08:25:38+08:00" />
 
 <meta itemprop="name" content="ASGI摘抄">
-<meta itemprop="description" content="Asynchronous Server Gateway Interface Onverview two components protocol server: terminates socket and translates them into connections and per-connection event messages application: lives in inside a server, is instantiated once per connection, and handles event messages as they happen difference between two components applications are instant objects that are fed events rather than simple callable, and must run as asyncio-compativle corountines two separate parts of a connection: a connection scope; events">
-
-
-<meta itemprop="datePublished" content="2020-03-04T08:25:38&#43;08:00" />
-<meta itemprop="dateModified" content="2020-03-04T08:25:38&#43;08:00" />
+<meta itemprop="description" content="Asynchronous Server Gateway Interface Onverview two components protocol server: terminates socket and translates them into connections and per-connection event messages application: lives in inside a server, is instantiated once per connection, and handles event messages as they happen difference between two components applications are instant objects that are fed events rather than simple callable, and must run as asyncio-compativle corountines two separate parts of a connection: a connection scope; events"><meta itemprop="datePublished" content="2020-03-04T08:25:38+08:00" />
+<meta itemprop="dateModified" content="2020-03-04T08:25:38+08:00" />
 <meta itemprop="wordCount" content="566">
-
-
-
-<meta itemprop="keywords" content="Python," />
-<meta name="twitter:card" content="summary"/>
+<meta itemprop="keywords" content="Python," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="ASGI摘抄"/>
 <meta name="twitter:description" content="Asynchronous Server Gateway Interface Onverview two components protocol server: terminates socket and translates them into connections and per-connection event messages application: lives in inside a server, is instantiated once per connection, and handles event messages as they happen difference between two components applications are instant objects that are fed events rather than simple callable, and must run as asyncio-compativle corountines two separate parts of a connection: a connection scope; events"/>
 
@@ -303,7 +296,7 @@
       
       <div class="post-meta">
         <time datetime="2020-03-04" class="post-time">
-          2020-03-04 08:25:38
+          2020-03-04
         </time>
         <div class="post-category">
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
@@ -322,69 +315,85 @@
 
     
     
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Table of Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#asynchronous-server-gateway-interface">Asynchronous Server Gateway Interface</a></li>
+            <li><a href="#onverview">Onverview</a>
+              <ul>
+                <li><a href="#two-components">two components</a></li>
+                <li><a href="#difference-between-two-components">difference between two components</a></li>
+              </ul>
+            </li>
+            <li><a href="#details">Details</a>
+              <ul>
+                <li><a href="#connection-scope">Connection Scope</a></li>
+                <li><a href="#events">Events</a></li>
+                <li><a href="#applications">Applications</a></li>
+                <li><a href="#message-format">Message Format</a></li>
+                <li><a href="#参考">参考</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
 
     
     <div class="post-content">
-      
-
-<h3 id="asynchronous-server-gateway-interface">Asynchronous Server Gateway Interface</h3>
-
+      <h3 id="asynchronous-server-gateway-interface">Asynchronous Server Gateway Interface</h3>
 <h3 id="onverview">Onverview</h3>
-
 <h4 id="two-components">two components</h4>
-
 <ul>
 <li>protocol server: terminates socket and translates them into connections and per-connection event messages</li>
 <li>application: lives in inside a server, is instantiated once per connection, and handles event messages as they happen</li>
 </ul>
-
 <h4 id="difference-between-two-components">difference between two components</h4>
-
 <ul>
 <li>applications are instant objects that are fed events rather than simple callable, and must run as asyncio-compativle corountines</li>
 <li>two separate parts of a connection: a connection scope; events</li>
 </ul>
-
 <h3 id="details">Details</h3>
-
 <h4 id="connection-scope">Connection Scope</h4>
-
 <ul>
 <li>Under HTTP, the connection scope lasts just one request. it contains most of the request data(apart from the request body)</li>
 <li>Under WebSocket, the connection scope lasts for as long as the socket is connected. the scope contains information like the WebSocket&rsquo;s path, but details like incoming messages come through as events instead.</li>
 <li>Each protocol definition must contain information about how long its connection scope lasts, and what information you will get inside it</li>
 <li>Applications cannot communicate with the client when they are initialized and given their connection scope, they must wait until their event loop is entered</li>
 </ul>
-
 <h4 id="events">Events</h4>
-
 <ul>
 <li>for HTTP, 2 evens in order - <code>http.requst</code> and <code>http.disconnect</code></li>
 <li>for WebSocket, it could more like <code>websocket.connect</code>, <code>websocket.send</code>, <code>websocket.receive</code>, and finally <code>websocket.disconnect</code></li>
 <li>each event is a <code>dict</code></li>
 </ul>
-
 <h4 id="applications">Applications</h4>
-
 <p>Applications should be a single async callable:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="n">coroutine</span> <span class="n">application</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">receive</span><span class="p">,</span> <span class="n">send</span><span class="p">)</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="n">coroutine</span> <span class="n">application</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">receive</span><span class="p">,</span> <span class="n">send</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li>scope: The connection scope, a dict that contains as least a <code>type</code> key specifying the protocol that is incoming</li>
 <li>receive: an awaitable callable that will yield a new event dict when one is available</li>
 <li>send: an awaitable callable taking a single event dict as positional argument that will return once the send has been completed or the connection has been closed</li>
 </ul>
-
 <h4 id="message-format">Message Format</h4>
-
 <h5 id="http">HTTP</h5>
-
 <ul>
 <li>Connection Scope: type(<code>http</code>), asgi, method, path, scheme, query_string, client, server</li>
 <li>Request： the body message serves as a way to stream incoming HTTP bodies in chunks. keys include type(<code>http.request</code>), body(bytes), more_body(bool)</li>
@@ -392,9 +401,7 @@
 <li>Response Body: continues sending a response to the client. keys include type(<code>http.response,body</code>), body(bytes), more_body(bool)</li>
 <li>Disconnect: sent to the application when a connection is closed . keys include type(<code>http.disconnect</code>)</li>
 </ul>
-
 <h5 id="websocket">Websocket</h5>
-
 <ul>
 <li>Connection Scope: keys include type(<code>websocket</code>), asgi, http_version, headers&hellip;</li>
 <li>Connection: sent when the client initially opens a connection and is about to finish the WebSocket handshake. keys include type(<code>websocket.connect</code>)</li>
@@ -404,9 +411,7 @@
 <li>Disconnection: keys include type(<code>websocket.disconnect</code>), code(int)</li>
 <li>Close: tell the server to close the connection. keys include type(<code>websocket.close</code>), code(int)</li>
 </ul>
-
 <h5 id="lifespan">Lifespan</h5>
-
 <ul>
 <li>Scope: exists for the duration of the event loop. keys include type(<code>lifespan</code>)</li>
 <li>Startup: send when the server is ready to startup and receive connections, but before it has started to do so. keys include type(<code>lifespan,startup</code>)</li>
@@ -416,9 +421,7 @@
 <li>Shutdown Complete: sent by the application when it has completed its cleanup. keys include type(<code>lifespan.shutdown.complete</code>)</li>
 <li>Shutdown Failed: sent by the application when it has failed to complete its cleanup. keys include type(<code>life.shutdown.failed</code>), message</li>
 </ul>
-
 <h4 id="参考">参考</h4>
-
 <ul>
 <li><a href="https://readthedocs.org/projects/asgi/downloads/pdf/latest/">ASGI官方文档</a></li>
 </ul>
@@ -485,7 +488,7 @@
     <div class="post bg-white">
       <script src="https://utteranc.es/client.js"
             repo= "ppd0705/ppd0705.github.io"
-            issue-term="utteranc"
+            issue-term="pathname"
             theme="github-light"
             crossorigin="anonymous"
             async>
