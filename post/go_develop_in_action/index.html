@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]Go项目开发实战">
 <meta itemprop="description" content="规范设计 开源规范 开源协议概述 MIT是相对自由开发的协议 文档规范 最重要的三类文档：README文档、项目文档和API文档 README规范 主要用"><meta itemprop="datePublished" content="2021-06-28T07:28:37+08:00" />
 <meta itemprop="dateModified" content="2021-06-28T07:28:37+08:00" />
-<meta itemprop="wordCount" content="7132">
+<meta itemprop="wordCount" content="7694">
 <meta itemprop="keywords" content="Golang," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]Go项目开发实战"/>
 <meta name="twitter:description" content="规范设计 开源规范 开源协议概述 MIT是相对自由开发的协议 文档规范 最重要的三类文档：README文档、项目文档和API文档 README规范 主要用"/>
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 7132 words </span>
-          <span class="more-meta"> 15 min read </span>
+        <span class="more-meta"> 7694 words </span>
+          <span class="more-meta"> 16 min read </span>
 
         
         
@@ -394,7 +394,16 @@
                 <li><a href="#rpc-api">RPC API</a></li>
               </ul>
             </li>
-            <li><a href="#makefile">Makefile</a></li>
+            <li><a href="#makefile">Makefile</a>
+              <ul>
+                <li><a href="#基本形式">基本形式</a></li>
+                <li><a href="#基本语法">基本语法</a></li>
+                <li><a href="#变量和赋值">变量和赋值</a></li>
+                <li><a href="#条件语句">条件语句</a></li>
+                <li><a href="#循环语句">循环语句</a></li>
+                <li><a href="#内置函数">内置函数</a></li>
+              </ul>
+            </li>
           </ul>
         </li>
         <li><a href="#参考">参考</a></li>
@@ -1700,11 +1709,268 @@ DELETE /gits/:id/star
 <p>可以通过grpc-gateway来同时支持restful-api</p>
 <p><img src="/image/go_develop_in_action/13_1.webp" alt="rpc-vs-rest"></p>
 <h3 id="makefile">Makefile</h3>
-<h2 id="参考">参考</h2>
+<h4 id="基本形式">基本形式</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nf">&lt;target&gt; </span><span class="o">:</span> &lt;<span class="n">prerequisites</span>&gt; 
+<span class="err">[tab]</span>  <span class="err">&lt;commands&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>target: 目标，目标非文件时称之为伪目标PHONBY</li>
+<li>prerequisities： 前置依赖目标</li>
+<li>command: 具体的shell命令，以<code>tab</code>起手，每一行都是单独的session, 可用<code>；</code>共用session，使用<code>\</code>作为换行符</li>
+</ul>
+<h4 id="基本语法">基本语法</h4>
+<h5 id="声明伪目标">声明伪目标</h5>
+<p>避免有和target同名的文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nf">.PHONY</span><span class="o">:</span> <span class="n">clean</span>
+<span class="nf">clean</span><span class="o">:</span>
+    rm -rf *.c
+</code></pre></td></tr></table>
+</div>
+</div><h5 id="关闭回声">关闭回声</h5>
+<p>命令前面加<code>@</code>不会先打印命令</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nf">test</span><span class="o">:</span>
+    @echo <span class="s1">&#39;hello world&#39;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h5 id="忽略错误">忽略错误</h5>
+<p>命令前面加<code>-</code>可忽略错误，继续往下执行</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nf">test</span><span class="o">:</span>
+	-eco <span class="s1">&#39;hello world&#39;</span>
+	@echo <span class="s1">&#39;hello world2&#39;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h5 id="通配符">通配符</h5>
+<p>支持<code>%</code>、<code>*</code>、<code>~</code></p>
+<h4 id="变量和赋值">变量和赋值</h4>
+<ul>
+<li>使用<code>=</code>自动以变量</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nv">msg</span> <span class="o">=</span> <span class="s1">&#39;Hello world&#39;</span> 
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>四种赋值运算符</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nv">VARIABLE</span> <span class="o">=</span> value
+<span class="c"># 在执行时扩展，允许递归扩展。
+</span><span class="c"></span>
+<span class="nv">VARIABLE</span> <span class="o">:=</span> value
+<span class="c"># 在定义时扩展。
+</span><span class="c"></span>
+<span class="nv">VARIABLE</span> <span class="o">?=</span> value
+<span class="c"># 只有在该变量为空时才设置值。
+</span><span class="c"></span>
+<span class="nv">VARIABLE</span> <span class="o">+=</span> value
+<span class="c"># 将值追加到变量的尾端。
+</span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>使用<code>$()</code>引用变量</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nv">msg</span> <span class="o">=</span> <span class="s1">&#39;hello world&#39;</span>
+<span class="nf">test</span><span class="o">:</span>
+    <span class="nb">echo</span> <span class="k">$(</span>msg<span class="k">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>调用系统变量是需在再加一个<code>$</code></li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nf">test</span><span class="o">:</span>
+    echo: <span class="nv">$$</span>HOME
+</code></pre></td></tr></table>
+</div>
+</div><h5 id="自动变量">自动变量</h5>
+<ul>
+<li><code>$@</code>: 指当前目标</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nf">a.txt</span><span class="o">:</span>
+    <span class="nb">echo</span> <span class="s1">&#39;hello&#39;</span> &gt; <span class="nv">$@</span>
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li><code>$&lt;</code>: 指第一个前置条件</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nf">a.txt</span><span class="o">:</span> <span class="n">b</span>.<span class="n">txt</span> <span class="n">c</span>.<span class="n">txt</span>
+    cp $&lt; <span class="nv">$@</span> 
+<span class="c"># 等同于  
+</span><span class="c"></span><span class="nf">a.txt</span><span class="o">:</span> <span class="n">b</span>.<span class="n">txt</span> <span class="n">c</span>.<span class="n">txt</span>
+    cp b.txt a.txt 
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li><code>$^</code>: 指所有前置条件</li>
+<li><code>$*</code>: 指被<code>%</code>匹配的部分</li>
+<li><code>$(@D)</code>：指向<code>$@</code>的目录名</li>
+<li><code>$(@F)</code>：指向<code>$@</code>的文件名</li>
+</ul>
+<h4 id="条件语句">条件语句</h4>
+<ul>
+<li><code>ifeq</code></li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="err">ifeq</span> <span class="err">(arg1,</span> <span class="err">arg)</span>
+    <span class="err">echo</span> <span class="s1">&#39;eq&#39;</span>
+<span class="err">else</span>
+    <span class="err">echo</span> <span class="s1">&#39;neq&#39;</span>
+<span class="err">endif</span>
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li><code>ifdef</code></li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="err">ifdef</span> <span class="err">var1</span>
+    <span class="err">echo</span> <span class="s1">&#39;var1 exist&#39;</span>
+<span class="err">endif</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="循环语句">循环语句</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nv">LIST</span> <span class="o">=</span> one two three
+<span class="err">for</span> <span class="err">i</span> <span class="err">in</span> <span class="k">$(</span><span class="nv">LIST</span><span class="k">)</span><span class="err">;</span> <span class="err">do</span>
+    <span class="err">echo</span> <span class="k">$$</span><span class="err">i;</span>
+<span class="err">done;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="内置函数">内置函数</h4>
+<ul>
+<li>shell: 执行shell命令</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nv">files</span> <span class="o">:=</span> <span class="k">$(</span>shell <span class="nb">echo</span> *.c<span class="k">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>substr: 字符串替换</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="c"># 将ee换成大写
+</span><span class="c"></span><span class="k">$(</span><span class="nv">subst</span> <span class="nv">ee</span>,<span class="nv">EE</span>,<span class="nv">feet</span> <span class="nv">on</span> <span class="nv">the</span> <span class="nv">street</span><span class="k">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>patsubstr: 字符串模式匹配替换</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="k">$(</span><span class="nv">patsubst</span> %.<span class="nv">c</span>,%.<span class="nv">o</span>,<span class="nv">x</span>.<span class="nv">c</span> <span class="nv">bar</span>.<span class="nv">c</span><span class="k">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="参考">参考</h2>
 <ul>
 <li><a href="https://time.geekbang.org/column/intro/418">课程资源-Go 语言项目开发实战</a></li>
 <li><a href="https://www.techgrow.cn/posts/5bd5a253.html">gcc升级</a></li>
 <li><a href="https://github.com/protocolbuffers/protobuf/blob/master/docs/implementing_proto3_presence.md">proto3支持optional</a></li>
+<li><a href="https://seisman.github.io/how-to-write-makefile">跟我一起写Makefile</a></li>
+<li><a href="http://www.ruanyifeng.com/blog/2015/02/make.html">Make命令教程</a></li>
 </ul>
 
     </div>

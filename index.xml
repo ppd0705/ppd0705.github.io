@@ -1311,11 +1311,268 @@ DELETE /gits/:id/star
 &lt;p&gt;可以通过grpc-gateway来同时支持restful-api&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/13_1.webp&#34; alt=&#34;rpc-vs-rest&#34;&gt;&lt;/p&gt;
 &lt;h3 id=&#34;makefile&#34;&gt;Makefile&lt;/h3&gt;
-&lt;h2 id=&#34;参考&#34;&gt;参考&lt;/h2&gt;
+&lt;h4 id=&#34;基本形式&#34;&gt;基本形式&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-makefile&#34; data-lang=&#34;makefile&#34;&gt;&lt;span class=&#34;nf&#34;&gt;&amp;lt;target&amp;gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;:&lt;/span&gt; &amp;lt;&lt;span class=&#34;n&#34;&gt;prerequisites&lt;/span&gt;&amp;gt; 
+&lt;span class=&#34;err&#34;&gt;[tab]&lt;/span&gt;  &lt;span class=&#34;err&#34;&gt;&amp;lt;commands&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;target: 目标，目标非文件时称之为伪目标PHONBY&lt;/li&gt;
+&lt;li&gt;prerequisities： 前置依赖目标&lt;/li&gt;
+&lt;li&gt;command: 具体的shell命令，以&lt;code&gt;tab&lt;/code&gt;起手，每一行都是单独的session, 可用&lt;code&gt;；&lt;/code&gt;共用session，使用&lt;code&gt;\&lt;/code&gt;作为换行符&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;基本语法&#34;&gt;基本语法&lt;/h4&gt;
+&lt;h5 id=&#34;声明伪目标&#34;&gt;声明伪目标&lt;/h5&gt;
+&lt;p&gt;避免有和target同名的文件&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-makefile&#34; data-lang=&#34;makefile&#34;&gt;&lt;span class=&#34;nf&#34;&gt;.PHONY&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;clean&lt;/span&gt;
+&lt;span class=&#34;nf&#34;&gt;clean&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;:&lt;/span&gt;
+    rm -rf *.c
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h5 id=&#34;关闭回声&#34;&gt;关闭回声&lt;/h5&gt;
+&lt;p&gt;命令前面加&lt;code&gt;@&lt;/code&gt;不会先打印命令&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-makefile&#34; data-lang=&#34;makefile&#34;&gt;&lt;span class=&#34;nf&#34;&gt;test&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;:&lt;/span&gt;
+    @echo &lt;span class=&#34;s1&#34;&gt;&amp;#39;hello world&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h5 id=&#34;忽略错误&#34;&gt;忽略错误&lt;/h5&gt;
+&lt;p&gt;命令前面加&lt;code&gt;-&lt;/code&gt;可忽略错误，继续往下执行&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-makefile&#34; data-lang=&#34;makefile&#34;&gt;&lt;span class=&#34;nf&#34;&gt;test&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;:&lt;/span&gt;
+	-eco &lt;span class=&#34;s1&#34;&gt;&amp;#39;hello world&amp;#39;&lt;/span&gt;
+	@echo &lt;span class=&#34;s1&#34;&gt;&amp;#39;hello world2&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h5 id=&#34;通配符&#34;&gt;通配符&lt;/h5&gt;
+&lt;p&gt;支持&lt;code&gt;%&lt;/code&gt;、&lt;code&gt;*&lt;/code&gt;、&lt;code&gt;~&lt;/code&gt;&lt;/p&gt;
+&lt;h4 id=&#34;变量和赋值&#34;&gt;变量和赋值&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;使用&lt;code&gt;=&lt;/code&gt;自动以变量&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-makefile&#34; data-lang=&#34;makefile&#34;&gt;&lt;span class=&#34;nv&#34;&gt;msg&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;Hello world&amp;#39;&lt;/span&gt; 
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;四种赋值运算符&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-makefile&#34; data-lang=&#34;makefile&#34;&gt;&lt;span class=&#34;nv&#34;&gt;VARIABLE&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; value
+&lt;span class=&#34;c&#34;&gt;# 在执行时扩展，允许递归扩展。
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;
+&lt;span class=&#34;nv&#34;&gt;VARIABLE&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:=&lt;/span&gt; value
+&lt;span class=&#34;c&#34;&gt;# 在定义时扩展。
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;
+&lt;span class=&#34;nv&#34;&gt;VARIABLE&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;?=&lt;/span&gt; value
+&lt;span class=&#34;c&#34;&gt;# 只有在该变量为空时才设置值。
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;
+&lt;span class=&#34;nv&#34;&gt;VARIABLE&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+=&lt;/span&gt; value
+&lt;span class=&#34;c&#34;&gt;# 将值追加到变量的尾端。
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;使用&lt;code&gt;$()&lt;/code&gt;引用变量&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-makefile&#34; data-lang=&#34;makefile&#34;&gt;&lt;span class=&#34;nv&#34;&gt;msg&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;hello world&amp;#39;&lt;/span&gt;
+&lt;span class=&#34;nf&#34;&gt;test&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;:&lt;/span&gt;
+    &lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;$(&lt;/span&gt;msg&lt;span class=&#34;k&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;调用系统变量是需在再加一个&lt;code&gt;$&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-makefile&#34; data-lang=&#34;makefile&#34;&gt;&lt;span class=&#34;nf&#34;&gt;test&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;:&lt;/span&gt;
+    echo: &lt;span class=&#34;nv&#34;&gt;$$&lt;/span&gt;HOME
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h5 id=&#34;自动变量&#34;&gt;自动变量&lt;/h5&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;$@&lt;/code&gt;: 指当前目标&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-makefile&#34; data-lang=&#34;makefile&#34;&gt;&lt;span class=&#34;nf&#34;&gt;a.txt&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;:&lt;/span&gt;
+    &lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;hello&amp;#39;&lt;/span&gt; &amp;gt; &lt;span class=&#34;nv&#34;&gt;$@&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;$&amp;lt;&lt;/code&gt;: 指第一个前置条件&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-makefile&#34; data-lang=&#34;makefile&#34;&gt;&lt;span class=&#34;nf&#34;&gt;a.txt&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;b&lt;/span&gt;.&lt;span class=&#34;n&#34;&gt;txt&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;c&lt;/span&gt;.&lt;span class=&#34;n&#34;&gt;txt&lt;/span&gt;
+    cp $&amp;lt; &lt;span class=&#34;nv&#34;&gt;$@&lt;/span&gt; 
+&lt;span class=&#34;c&#34;&gt;# 等同于  
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;a.txt&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;b&lt;/span&gt;.&lt;span class=&#34;n&#34;&gt;txt&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;c&lt;/span&gt;.&lt;span class=&#34;n&#34;&gt;txt&lt;/span&gt;
+    cp b.txt a.txt 
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;$^&lt;/code&gt;: 指所有前置条件&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;$*&lt;/code&gt;: 指被&lt;code&gt;%&lt;/code&gt;匹配的部分&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;$(@D)&lt;/code&gt;：指向&lt;code&gt;$@&lt;/code&gt;的目录名&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;$(@F)&lt;/code&gt;：指向&lt;code&gt;$@&lt;/code&gt;的文件名&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;条件语句&#34;&gt;条件语句&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;ifeq&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-makefile&#34; data-lang=&#34;makefile&#34;&gt;&lt;span class=&#34;err&#34;&gt;ifeq&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;(arg1,&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;arg)&lt;/span&gt;
+    &lt;span class=&#34;err&#34;&gt;echo&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;eq&amp;#39;&lt;/span&gt;
+&lt;span class=&#34;err&#34;&gt;else&lt;/span&gt;
+    &lt;span class=&#34;err&#34;&gt;echo&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;neq&amp;#39;&lt;/span&gt;
+&lt;span class=&#34;err&#34;&gt;endif&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;ifdef&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-makefile&#34; data-lang=&#34;makefile&#34;&gt;&lt;span class=&#34;err&#34;&gt;ifdef&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;var1&lt;/span&gt;
+    &lt;span class=&#34;err&#34;&gt;echo&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;var1 exist&amp;#39;&lt;/span&gt;
+&lt;span class=&#34;err&#34;&gt;endif&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h4 id=&#34;循环语句&#34;&gt;循环语句&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-makefile&#34; data-lang=&#34;makefile&#34;&gt;&lt;span class=&#34;nv&#34;&gt;LIST&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; one two three
+&lt;span class=&#34;err&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;in&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;$(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;LIST&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;do&lt;/span&gt;
+    &lt;span class=&#34;err&#34;&gt;echo&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;$$&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;i;&lt;/span&gt;
+&lt;span class=&#34;err&#34;&gt;done;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h4 id=&#34;内置函数&#34;&gt;内置函数&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;shell: 执行shell命令&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-makefile&#34; data-lang=&#34;makefile&#34;&gt;&lt;span class=&#34;nv&#34;&gt;files&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;$(&lt;/span&gt;shell &lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; *.c&lt;span class=&#34;k&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;substr: 字符串替换&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-makefile&#34; data-lang=&#34;makefile&#34;&gt;&lt;span class=&#34;c&#34;&gt;# 将ee换成大写
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;$(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;subst&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;ee&lt;/span&gt;,&lt;span class=&#34;nv&#34;&gt;EE&lt;/span&gt;,&lt;span class=&#34;nv&#34;&gt;feet&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;on&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;the&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;street&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;patsubstr: 字符串模式匹配替换&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-makefile&#34; data-lang=&#34;makefile&#34;&gt;&lt;span class=&#34;k&#34;&gt;$(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;patsubst&lt;/span&gt; %.&lt;span class=&#34;nv&#34;&gt;c&lt;/span&gt;,%.&lt;span class=&#34;nv&#34;&gt;o&lt;/span&gt;,&lt;span class=&#34;nv&#34;&gt;x&lt;/span&gt;.&lt;span class=&#34;nv&#34;&gt;c&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;bar&lt;/span&gt;.&lt;span class=&#34;nv&#34;&gt;c&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;参考&#34;&gt;参考&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://time.geekbang.org/column/intro/418&#34;&gt;课程资源-Go 语言项目开发实战&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://www.techgrow.cn/posts/5bd5a253.html&#34;&gt;gcc升级&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://github.com/protocolbuffers/protobuf/blob/master/docs/implementing_proto3_presence.md&#34;&gt;proto3支持optional&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://seisman.github.io/how-to-write-makefile&#34;&gt;跟我一起写Makefile&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.ruanyifeng.com/blog/2015/02/make.html&#34;&gt;Make命令教程&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
       
