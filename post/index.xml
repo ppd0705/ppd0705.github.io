@@ -6,7 +6,16 @@
     <description>Recent content in Posts on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 28 Jun 2021 07:28:37 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 18 Jul 2021 12:48:50 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>[笔记]零基础素描入门</title>
+      <link>https://ppd0705.github.io/post/getting_started_with_pencil_sketch/</link>
+      <pubDate>Sun, 18 Jul 2021 12:48:50 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/getting_started_with_pencil_sketch/</guid>
+      <description>工具详解 铅笔种类 通常有2H、HB、2B、4B、6B、8B、10B、12B等型号 H指Hard(硬)，B指Black(黑) 数字越大，线条越大，墨</description>
+    </item>
+    
     <item>
       <title>[笔记]Go项目开发实战</title>
       <link>https://ppd0705.github.io/post/go_develop_in_action/</link>
@@ -176,15 +185,6 @@
       
       <guid>https://ppd0705.github.io/post/go_basic/</guid>
       <description>基本组成结构 1 2 3 4 5 6 7 packge main // 包名 import &amp;#34;fmt&amp;#34; /* 导入依赖包 */ fun main() { /* 主函数 */ fmt.Println(&amp;#34;Hello, World!&amp;#34;) } 数据类型 基本类型 布尔型： ture or false 数字类型： int, float32, float64 字符串类型 string 派生类</description>
-    </item>
-    
-    <item>
-      <title>柬埔寨大象自然公园的一周</title>
-      <link>https://ppd0705.github.io/post/elephant_park/</link>
-      <pubDate>Tue, 28 Jan 2020 10:09:11 +0700</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/elephant_park/</guid>
-      <description>缘起 19年国庆时无意在豆瓣上看到一个人写因为母亲去世想排解一些内心的伤痛而去泰国的大象自然公园度过一周，无意勾起了我对奶奶的思念。这个陪伴我</description>
     </item>
     
   </channel>

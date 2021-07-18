@@ -6,10 +6,85 @@
     <description>Recent content on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 28 Jun 2021 07:28:37 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 18 Jul 2021 12:48:50 +0800</lastBuildDate>
     
         <atom:link href="https://ppd0705.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>[笔记]零基础素描入门</title>
+      <link>https://ppd0705.github.io/post/getting_started_with_pencil_sketch/</link>
+      <pubDate>Sun, 18 Jul 2021 12:48:50 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/getting_started_with_pencil_sketch/</guid>
+      
+        <description>&lt;h1 id=&#34;工具详解&#34;&gt;工具详解&lt;/h1&gt;
+&lt;h2 id=&#34;铅笔种类&#34;&gt;铅笔种类&lt;/h2&gt;
+&lt;p&gt;通常有2H、HB、2B、4B、6B、8B、10B、12B等型号&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;H指Hard(硬)，B指Black(黑)&lt;/li&gt;
+&lt;li&gt;数字越大，线条越大，墨颗粒越粗&lt;/li&gt;
+&lt;li&gt;2B~4B称为中铅，2B以下称为硬铅，4B以上称之为软铅&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;运用&#34;&gt;运用&lt;/h2&gt;
+&lt;p&gt;通常从软铅到中铅再到硬铅逐步上色（颗粒由大到小）&lt;/p&gt;
+&lt;h1 id=&#34;排线讲解&#34;&gt;排线讲解&lt;/h1&gt;
+&lt;h2 id=&#34;握笔姿势&#34;&gt;握笔姿势&lt;/h2&gt;
+&lt;p&gt;用力是食指和拇指，其他手指用来调节角度，手不能太用力，手腕要放松&lt;/p&gt;
+&lt;h2 id=&#34;排线方式&#34;&gt;排线方式&lt;/h2&gt;
+&lt;h3 id=&#34;运腕法&#34;&gt;运腕法&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;手不接触画纸，靠手腕运动，快速铺出均匀的线条&lt;/li&gt;
+&lt;li&gt;每根线都是独立的，没有首尾连起来&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;小拇指支撑运腕法&#34;&gt;小拇指支撑运腕法&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;小拇指顶在画纸上&lt;/li&gt;
+&lt;li&gt;相比运腕法，线条密集和齐整&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;运臂法&#34;&gt;运臂法&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;画长的直线，用来起型&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;写字法&#34;&gt;写字法&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;构造精细的细节&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;练习方式&#34;&gt;练习方式&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;练习的时候调不同的角度（如间隔15度）&lt;/li&gt;
+&lt;li&gt;练一星期会有一些手感&lt;/li&gt;
+&lt;li&gt;标准在于线条均匀和稳定&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;三大面详解&#34;&gt;三大面详解&lt;/h1&gt;
+&lt;p&gt;三大面根据光源的照射而区分&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;暗面：通常暗面起手&lt;/li&gt;
+&lt;li&gt;灰面&lt;/li&gt;
+&lt;li&gt;亮面： 物体的固有色&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;五调子详解&#34;&gt;五调子详解&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;高光&lt;/li&gt;
+&lt;li&gt;亮灰面&lt;/li&gt;
+&lt;li&gt;明暗交界线（关键区域 ）&lt;/li&gt;
+&lt;li&gt;反光&lt;/li&gt;
+&lt;li&gt;投影&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;透视详解&#34;&gt;透视详解&lt;/h1&gt;
+&lt;p&gt;遵循透视使作品更写实&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;视平线：和观察者视野平齐的线&lt;/li&gt;
+&lt;li&gt;消失点：线条的交互点&lt;/li&gt;
+&lt;li&gt;透视：单点透视、两点透视&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;参考&#34;&gt;参考&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.bilibili.com/video/BV1Gx411B7ba?p=1&#34;&gt;学习视频&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+      
+    </item>
     
     <item>
       <title>[笔记]Go项目开发实战</title>
@@ -9976,76 +10051,6 @@ dotnet run
 &lt;/div&gt;&lt;ul&gt;
 &lt;li&gt;可用range遍历&lt;/li&gt;
 &lt;li&gt;可关闭&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-      
-    </item>
-    
-    <item>
-      <title>柬埔寨大象自然公园的一周</title>
-      <link>https://ppd0705.github.io/post/elephant_park/</link>
-      <pubDate>Tue, 28 Jan 2020 10:09:11 +0700</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/elephant_park/</guid>
-      
-        <description>&lt;h3 id=&#34;缘起&#34;&gt;缘起&lt;/h3&gt;
-&lt;p&gt;19年国庆时无意在豆瓣上看到一个人写因为母亲去世想排解一些内心的伤痛而去泰国的大象自然公园度过一周，无意勾起了我对奶奶的思念。这个陪伴我最久的人儿呐，在18年8月的一个周日晚上离开了。往年大年初一上午，我们整个家族都会给奶奶拜年，整个屋子热热闹闹，中午一起吃团圆饭，这个惯例是我长大后最喜欢最期待的部分。没有了奶奶的头一年，大家年初一还是相聚，但我感觉却完全不一样了。&lt;/p&gt;
-&lt;p&gt;不想回家过年的我，决定去大象自然公园待一周。因为想找一个偏远一点的地方，所以最后选择了靠近柬埔寨暹粒的一个基地。就这样开启了头一次办护照办签证出国的旅程。&lt;/p&gt;
-&lt;h3 id=&#34;在公园的一周&#34;&gt;在公园的一周&lt;/h3&gt;
-&lt;p&gt;因为我选的基地比较新和偏远，所以有一些相比清迈的基地不同的体验。&lt;/p&gt;
-&lt;h4 id=&#34;大体环境&#34;&gt;大体环境&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;地理环境：整个公园就是一个原始的大森林，里面有很多参天大树，旁边就是当地的村庄，基地需要的部分大象食物如甘蔗香蕉树都是我们自己去农场采集的。&lt;/li&gt;
-&lt;li&gt;基础设施：只有微弱的3G信号，所以大部分时间我处于网络隔离的状态；通过发电机发电，住的地方到晚上六点钟才会供电几个小时。&lt;/li&gt;
-&lt;li&gt;人员：全部工作人员包含雇的附近村民也不到15人，主要接触的是从清迈外派过来的领队泰国人Joe；志愿者只有我和另一个来自伦敦的大叔Saul,我们每人分到一栋有四个床位的木房子。&lt;/li&gt;
-&lt;li&gt;可爱的动物们：三头雌性大象、数十只猴子、数十只狗、几头难得一见的野猪&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;食&#34;&gt;食&lt;/h4&gt;
-&lt;p&gt;唯一的荤菜就只有荷包蛋，主要就是吃各种蔬菜，大部分就来自基地的蔬菜地，比暹粒市区的可以任加一种肉的蔬菜好吃太多，每天蔬菜水果吃到饱，一点也不为没有猪肉吃感到不习惯，这在国内是无法想象的。&lt;/p&gt;
-&lt;h4 id=&#34;活动&#34;&gt;活动&lt;/h4&gt;
-&lt;p&gt;每天的时间表大概是，从时间表可以看出干活时间相对来说是比较少的。&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;7:00 早餐&lt;/li&gt;
-&lt;li&gt;8:00-10:30 干活&lt;/li&gt;
-&lt;li&gt;11:30 午餐&lt;/li&gt;
-&lt;li&gt;13:00-16:00 干活&lt;/li&gt;
-&lt;li&gt;18:00 晚餐&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;比较固定的几项活动是：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;清理大象粪便，实打实的铲屎官&lt;/li&gt;
-&lt;li&gt;去附近的农场砍甘蔗和香蕉树作为大象的食物&lt;/li&gt;
-&lt;li&gt;为大象和猴子准备食物，把一些水果弄成小份，以方便动物们食用&lt;/li&gt;
-&lt;li&gt;在基地投喂大象&lt;/li&gt;
-&lt;li&gt;去森林中观看大象进食&lt;/li&gt;
-&lt;li&gt;播种树种&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;其他&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;种菜&lt;/li&gt;
-&lt;li&gt;去当地学校教小孩英语&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;个人感受&#34;&gt;个人感受&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;第一次待在一个纯外语（英语、柬埔寨语、泰语）的大自然环境中，心情相当宁静，大部分空余时间我就是一个人在发呆。&lt;/li&gt;
-&lt;li&gt;英语词穷，语序是中文思维转化不过来，两个母语为英语的人正常语速对话我反应不过来&lt;/li&gt;
-&lt;li&gt;Saul让我感到幸运和震撼，感谢他用很慢的速度和我说英语，并耐心解释我不知道的词汇，他至今不用智能机，大部分空余时间都在画画，幽默善良充满好奇心，每年花两个月时间做公益，这个基地他2014年就来过，我住的木屋就挂有他上一次画的画。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;图像瞬间&#34;&gt;图像瞬间&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;木屋
-&lt;img src=&#34;https://ppd0705.github.io/image/wood_house.jpg&#34; alt=&#34;木屋&#34;&gt;&lt;/li&gt;
-&lt;li&gt;午餐
-&lt;img src=&#34;https://ppd0705.github.io/image/lunch_food.jpg&#34; alt=&#34;午餐&#34;&gt;&lt;/li&gt;
-&lt;li&gt;教英文中的Saul
-&lt;img src=&#34;https://ppd0705.github.io/image/saul.jpg&#34; alt=&#34;Saul&#34;&gt;&lt;/li&gt;
-&lt;li&gt;戏完水的大象
-&lt;img src=&#34;https://ppd0705.github.io/image/elephant.jpg&#34; alt=&#34;Saul&#34;&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id=&#34;参考&#34;&gt;参考&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.elephantnaturepark.org/&#34;&gt;大象自然公园官网&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.douban.com/note/712952868/&#34;&gt;豆瓣上看到的文章&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
       
