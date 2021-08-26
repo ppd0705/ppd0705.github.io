@@ -1815,7 +1815,76 @@ DELETE /gits/:id/star
 &lt;li&gt;logrus: 功能强大，适合大型项目&lt;/li&gt;
 &lt;li&gt;zap: 性能高，内存分配次数少，适合对日志性能要求很高的项目&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h3 id=&#34;应用构建&#34;&gt;应用构建&lt;/h3&gt;
+&lt;h3 id=&#34;web服务核心功能实现&#34;&gt;Web服务核心功能实现&lt;/h3&gt;
+&lt;h4 id=&#34;核心功能&#34;&gt;核心功能&lt;/h4&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/23_1.webp&#34; alt=&#34;core-function&#34;&gt;&lt;/p&gt;
+&lt;h3 id=&#34;认证机制&#34;&gt;认证机制&lt;/h3&gt;
+&lt;h4 id=&#34;认证和授权的区别&#34;&gt;认证和授权的区别&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;认证（Authentication）: 用来验证某个用户是否具有访问系统的权限&lt;/li&gt;
+&lt;li&gt;授权（Authorization）: 用来验证某个  用户是否具有访问某个资源的权限&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;四种基本的认证方式&#34;&gt;四种基本的认证方式&lt;/h4&gt;
+&lt;h5 id=&#34;basic&#34;&gt;Basic&lt;/h5&gt;
+&lt;p&gt;将&lt;code&gt;用户名:密码&lt;/code&gt;进行base64编码后放到HTTP Authorization HEADER中&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;nv&#34;&gt;basic&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;sb&#34;&gt;`&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; -n &lt;span class=&#34;s1&#34;&gt;&amp;#39;username:password&amp;#39;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; base64&lt;span class=&#34;sb&#34;&gt;`&lt;/span&gt;
+curl -X POST -H &lt;span class=&#34;s2&#34;&gt;&amp;#34;Authorization: Basic &lt;/span&gt;&lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;basic&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt; http://localhost:8080/login
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这个方式使用了base64编码，入侵者可以反向编码获取用户名和密码；另外即使密码被加密，入侵者可以进行重放攻击&lt;/p&gt;
+&lt;p&gt;所以Basic虽简单，但既不安全，需要和SSL配合使用&lt;/p&gt;
+&lt;h5 id=&#34;digest&#34;&gt;Digest&lt;/h5&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/25_1.webp&#34; alt=&#34;digest&#34;&gt;
+服务端给随机数nonce和加密算法（默认为md5）,客户端请求是需要提供
+密码叉腰response&lt;/p&gt;
+&lt;h5 id=&#34;oauth&#34;&gt;OAuth&lt;/h5&gt;
+&lt;p&gt;OAuth(开放授权)允许用户让第三方应用访问该用户在某一个服务的思路资源（如昵称、头像等），
+而无需将用户名和密码给第三方应用&lt;/p&gt;
+&lt;p&gt;OAuth2.0共分为四种授权方式&lt;/p&gt;
+&lt;h6 id=&#34;密码式&#34;&gt;密码式&lt;/h6&gt;
+&lt;p&gt;认证流程如下：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;网站 A 向用户发出获取用户名和密码的请求；&lt;/li&gt;
+&lt;li&gt;用户同意后，网站 A 凭借用户名和密码向网站 B 换取令牌；&lt;/li&gt;
+&lt;li&gt;网站 B 验证用户身份后，给出网站 A 令牌，网站 A 凭借令牌可以访问网站 B 对应权限的资源。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h6 id=&#34;隐藏式&#34;&gt;隐藏式&lt;/h6&gt;
+&lt;p&gt;这种方式适用于前端应用。认证流程如下：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;A 网站提供一个跳转到 B 网站的链接，用户点击后跳转至 B 网站，并向用户请求授权；&lt;/li&gt;
+&lt;li&gt;用户登录 B 网站，同意授权后，跳转回 A 网站指定的重定向 redirect_url 地址，并携带 B 网站返回的令牌，用户在 B 网站的数据给 A 网站使用。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;这个授权方式存在着“中间人攻击”的风险，因此只能用于一些安全性要求不高的场景，并且令牌的有效时间要非常短。&lt;/p&gt;
+&lt;h6 id=&#34;凭借式&#34;&gt;凭借式&lt;/h6&gt;
+&lt;p&gt;这种方式是在命令行中请求授权，适用于没有前端的命令行应用。认证流程如下：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;应用 A 在命令行向应用 B 请求授权，此时应用 A 需要携带应用 B 提前颁发的 secretID 和 secretKey，其中 secretKey 出于安全性考虑，需在后端发送；&lt;/li&gt;
+&lt;li&gt;应用 B 接收到 secretID 和 secretKey，并进行身份验证，验证通过后返回给应用 A 令牌。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h6 id=&#34;授权码式&#34;&gt;授权码式&lt;/h6&gt;
+&lt;ol&gt;
+&lt;li&gt;A 网站提供一个跳转到 B 网站的链接 +redirect_url，用户点击后跳转至 B 网站；&lt;/li&gt;
+&lt;li&gt;用户携带向 B 网站提前申请的 client_id，向 B 网站发起身份验证请求；&lt;/li&gt;
+&lt;li&gt;用户登录 B 网站，通过验证，授予 A 网站权限，此时网站跳转回 redirect_url，其中会有 B 网站通过验证后的授权码附在该 url 后；&lt;/li&gt;
+&lt;li&gt;网站 A 携带授权码向网站 B 请求令牌，网站 B 验证授权码后，返回令牌即 access_token。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h5 id=&#34;bearer&#34;&gt;Bearer&lt;/h5&gt;
+&lt;p&gt;Bearer认证也称令牌认证，核心是 bearer token。bearer token 是一个加密字符串，通常由服务端根据密钥生成。客户端在请求服务端时，必须在请求头中包含Authorization: Bearer 。服务端收到请求后，解析出 ，并校验 的合法性。
+当前最流行的 token 编码方式是 JSON Web Token&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/25_2.webp&#34; alt=&#34;jwt_auth&#34;&gt;
+具体可以分为四步：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;客户端使用用户名和密码请求登录。&lt;/li&gt;
+&lt;li&gt;服务端收到请求后，会去验证用户名和密码。如果用户名和密码跟数据库记录不一致，则验证失败；如果一致则验证通过，服务端会签发一个 Token 返回给客户端。&lt;/li&gt;
+&lt;li&gt;客户端收到请求后会将 Token 缓存起来，比如放在浏览器 Cookie 中或者 LocalStorage 中，之后每次请求都会携带该 Token。&lt;/li&gt;
+&lt;li&gt;服务端收到请求后，会验证请求中的 Token，验证通过则进行业务逻辑处理，处理完后返回处理后的结果。&lt;/li&gt;
+&lt;/ol&gt;
 &lt;h2 id=&#34;参考&#34;&gt;参考&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://time.geekbang.org/column/intro/418&#34;&gt;课程资源-Go 语言项目开发实战&lt;/a&gt;&lt;/li&gt;
@@ -1825,6 +1894,7 @@ DELETE /gits/:id/star
 &lt;li&gt;&lt;a href=&#34;http://www.ruanyifeng.com/blog/2015/02/make.html&#34;&gt;Make命令教程&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://unix.stackexchange.com/questions/272965/pushd-popd-vs-cd-cd-in-bash-and-zsh&#34;&gt;pushd vs cd&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://blog.51cto.com/liuzhengwei521/2120535&#34;&gt;CSR证书生成&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://segmentfault.com/a/1190000010540911&#34;&gt;Oauth授权码模式&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
       
