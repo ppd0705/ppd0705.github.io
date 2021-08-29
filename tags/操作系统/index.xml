@@ -8,12 +8,12 @@
     <language>en</language>
     <lastBuildDate>Fri, 30 Jul 2021 08:06:33 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>[笔记]操作系统实战</title>
+      <title>[笔记]操作系统实战（更新中）</title>
       <link>https://ppd0705.github.io/post/play_os_in_action/</link>
       <pubDate>Fri, 30 Jul 2021 08:06:33 +0800</pubDate>
       
       <guid>https://ppd0705.github.io/post/play_os_in_action/</guid>
-      <description>01: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 编译：将C程序转成成汇编程序 汇编：将汇编程序转换成可链接的二进制程序 链接：将可链接的</description>
+      <description>01: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇编，将</description>
     </item>
     
   </channel>
