@@ -18,7 +18,7 @@
       
       <guid>https://ppd0705.github.io/post/play_os_in_action/</guid>
       
-        <description>&lt;h1 id=&#34;01-程序的运行过程&#34;&gt;01: 程序的运行过程&lt;/h1&gt;
+        <description>&lt;h1 id=&#34;第一讲-程序的运行过程&#34;&gt;第一讲: 程序的运行过程&lt;/h1&gt;
 &lt;h2 id=&#34;程序的编译过程&#34;&gt;程序的编译过程&lt;/h2&gt;
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/1_1.webp&#34; alt=&#34;compile_process&#34;&gt;&lt;/p&gt;
 &lt;ol&gt;
@@ -52,7 +52,7 @@
 &lt;/ul&gt;
 &lt;p&gt;将上图中代码装入计算机中，状态如下图：&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/1_3.webp&#34; alt=&#34;compile_code_status&#34;&gt;&lt;/p&gt;
-&lt;h1 id=&#34;02-实现一个最小内核&#34;&gt;02 实现一个最小内核&lt;/h1&gt;
+&lt;h1 id=&#34;第二讲实现一个最小内核&#34;&gt;第二讲：实现一个最小内核&lt;/h1&gt;
 &lt;h2 id=&#34;os引导流程&#34;&gt;OS引导流程&lt;/h2&gt;
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/2_1.webp&#34; alt=&#34;os_load&#34;&gt;&lt;/p&gt;
 &lt;p&gt;BIOS固件负责检测和初始化CPU、内存及主办平台，然后加载引导设备（如磁盘）的第一个扇区地址的数据
@@ -344,6 +344,72 @@ GDTBASE dd GDT_START
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;重启系统长按shit键然后选择HelloOS即可&lt;/p&gt;
+&lt;h1 id=&#34;第三讲内核结构设计&#34;&gt;第三讲：内核结构设计&lt;/h1&gt;
+&lt;h2 id=&#34;内核功能&#34;&gt;内核功能&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;管理CPU：CPU是执行程序的，而内核吧运行时的程序抽象成 进程，所以称之为进程管理&lt;/li&gt;
+&lt;li&gt;管理内存&lt;/li&gt;
+&lt;li&gt;管理硬盘&lt;/li&gt;
+&lt;li&gt;管理显卡&lt;/li&gt;
+&lt;li&gt;管理各种I/O设备&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;宏内核结构&#34;&gt;宏内核结构&lt;/h2&gt;
+&lt;p&gt;宏内核就是所有诸如管理进程等功能的代码进过编译链接形成一个大的可执行程序&lt;/p&gt;
+&lt;p&gt;这个大程序里有实现这个功能的所有代码，向应用软件提供一些接口（即系统API）
+&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/3_1.webp&#34; alt=&#34;macro-core&#34;&gt;&lt;/p&gt;
+&lt;p&gt;宏内核的优点是组件都在内核中合一相互调用性能极高；但缺点也很明显，高度耦合，没有模块化&lt;/p&gt;
+&lt;h2 id=&#34;微内核结构&#34;&gt;微内核结构&lt;/h2&gt;
+&lt;p&gt;微内核仅仅只有进程调度、处理中断、内存空间映射和进程间通信等功能&lt;/p&gt;
+&lt;p&gt;实际功能如进程管理、内存管理、文件管理等做成一个个服务进程&lt;/p&gt;
+&lt;p&gt;微内核与应用进程和服务进程通过消息通信&lt;/p&gt;
+&lt;p&gt;应用程序要请求相关服务，就向微内核发送一条与此服务对应的消息，微内核再把这条消息转发给相关的服务进程，接着服务进程会完成相关的服务。&lt;/p&gt;
+&lt;h2 id=&#34;我们的选择&#34;&gt;我们的选择&lt;/h2&gt;
+&lt;p&gt;大致将内核分为三个大层&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;内核接口层&lt;/li&gt;
+&lt;li&gt;内核功能层&lt;/li&gt;
+&lt;li&gt;内核硬件层&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/3_2.webp&#34; alt=&#34;core-structure&#34;&gt;&lt;/p&gt;
+&lt;h3 id=&#34;内核接口层&#34;&gt;内核接口层&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;定义了一套UNIX接口的子集&lt;/li&gt;
+&lt;li&gt;检查参数的合法性&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;内核功能层&#34;&gt;内核功能层&lt;/h3&gt;
+&lt;p&gt;主要完成各种事件功能&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;进程管理：实现进程的创建、销毁、调度&lt;/li&gt;
+&lt;li&gt;内存管理：内存池分为页面内存池和任意大小的内存池&lt;/li&gt;
+&lt;li&gt;中断管理：把中断回调函数安插在相关的数据结构中，发生相关的中断就会调用回调函数&lt;/li&gt;
+&lt;li&gt;设备管理：把驱动程序模块、驱动程序本身和驱动程序创建的设备组织在一起&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;内核硬件层&#34;&gt;内核硬件层&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;初始化：初始化少量的设备、CPU、内存、中断的控制，内核用户管理的数据结构&lt;/li&gt;
+&lt;li&gt;CPU控制：提供CPU模式设定、开关中断、读写CPU特定寄存器等功能&lt;/li&gt;
+&lt;li&gt;中断处理：保存上下文、调用中断回调函数、操作中断控制器&lt;/li&gt;
+&lt;li&gt;物理内存管理：分配和释放大块内存、内存空间映射、操作MMU和Cache&lt;/li&gt;
+&lt;li&gt;平台其他相关功能&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h1 id=&#34;业界成熟内核架构&#34;&gt;业界成熟内核架构&lt;/h1&gt;
+&lt;h2 id=&#34;linux&#34;&gt;Linux&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/4_1.webp&#34; alt=&#34;linux-core&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Linux使用的宏内核架构，模块之间的通信主要是函数调用&lt;/p&gt;
+&lt;h2 id=&#34;darwin&#34;&gt;Darwin&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/4_2.jpg&#34; alt=&#34;macos-core&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Darwin有两个内核层&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Mach层：微内核，然提供十分简单的进程、线程、IPC 通信、虚拟内存设备驱动相关的功能服务&lt;/li&gt;
+&lt;li&gt;BSD层：提供强大的安全特性，完善的网络服务，各种文件系统的支持，同时对 Mach 的进程、线程、IPC、虚拟内核组件进行细化、扩展延伸&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;windows-nt&#34;&gt;Windows NT&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/4_3.jpg&#34; alt=&#34;windows-core&#34;&gt;&lt;/p&gt;
+&lt;p&gt;每个执行体互相独立，只对外提供相应的接口，其它执行体要通过内核模式可调用接口和其它执行体通信或者请求其完成相应的功能服务&lt;/p&gt;
+&lt;h2 id=&#34;评论区拾遗&#34;&gt;评论区拾遗&lt;/h2&gt;
+&lt;p&gt;内核相当于所有的功能都耦合在一起，放在内核内
+微内核是把大多数功能解耦出来，放在用户态，使用IPC在用户态调用服务进程
+混合结构其实与微内核相似，只不过解耦出来的这些功能依然放在内核里，动态加载和卸载&lt;/p&gt;
 </description>
       
     </item>

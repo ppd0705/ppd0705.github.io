@@ -13,7 +13,7 @@
       <pubDate>Fri, 30 Jul 2021 08:06:33 +0800</pubDate>
       
       <guid>https://ppd0705.github.io/post/play_os_in_action/</guid>
-      <description>01: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇编，将</description>
+      <description>第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇</description>
     </item>
     
   </channel>

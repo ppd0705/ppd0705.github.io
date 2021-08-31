@@ -23,7 +23,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 
 <meta name="author" content="PPD" />
-  <meta name="description" content="01: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇编，将" />
+  <meta name="description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇" />
 
   <meta name="keywords" content="PPD, blog" />
 
@@ -60,19 +60,19 @@
 
 
 <meta property="og:title" content="[笔记]操作系统实战（更新中）" />
-<meta property="og:description" content="01: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇编，将" />
+<meta property="og:description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://ppd0705.github.io/post/play_os_in_action/" /><meta property="article:section" content="post" />
 <meta property="article:published_time" content="2021-07-30T08:06:33+08:00" />
 <meta property="article:modified_time" content="2021-07-30T08:06:33+08:00" />
 
 <meta itemprop="name" content="[笔记]操作系统实战（更新中）">
-<meta itemprop="description" content="01: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇编，将"><meta itemprop="datePublished" content="2021-07-30T08:06:33+08:00" />
+<meta itemprop="description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"><meta itemprop="datePublished" content="2021-07-30T08:06:33+08:00" />
 <meta itemprop="dateModified" content="2021-07-30T08:06:33+08:00" />
-<meta itemprop="wordCount" content="1415">
+<meta itemprop="wordCount" content="2427">
 <meta itemprop="keywords" content="C,操作系统," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]操作系统实战（更新中）"/>
-<meta name="twitter:description" content="01: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇编，将"/>
+<meta name="twitter:description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"/>
 
 <!--[if lte IE 9]>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 1415 words </span>
-          <span class="more-meta"> 3 min read </span>
+        <span class="more-meta"> 2427 words </span>
+          <span class="more-meta"> 5 min read </span>
 
         
         
@@ -320,7 +320,7 @@
   <div class="post-toc-content">
     <nav id="TableOfContents">
   <ul>
-    <li><a href="#01-程序的运行过程">01: 程序的运行过程</a>
+    <li><a href="#第一讲-程序的运行过程">第一讲: 程序的运行过程</a>
       <ul>
         <li><a href="#程序的编译过程">程序的编译过程</a></li>
         <li><a href="#程序装载执行">程序装载执行</a>
@@ -331,7 +331,7 @@
         </li>
       </ul>
     </li>
-    <li><a href="#02-实现一个最小内核">02 实现一个最小内核</a>
+    <li><a href="#第二讲实现一个最小内核">第二讲：实现一个最小内核</a>
       <ul>
         <li><a href="#os引导流程">OS引导流程</a></li>
         <li><a href="#引导汇编代码">引导汇编代码</a></li>
@@ -345,6 +345,28 @@
         </li>
       </ul>
     </li>
+    <li><a href="#第三讲内核结构设计">第三讲：内核结构设计</a>
+      <ul>
+        <li><a href="#内核功能">内核功能</a></li>
+        <li><a href="#宏内核结构">宏内核结构</a></li>
+        <li><a href="#微内核结构">微内核结构</a></li>
+        <li><a href="#我们的选择">我们的选择</a>
+          <ul>
+            <li><a href="#内核接口层">内核接口层</a></li>
+            <li><a href="#内核功能层">内核功能层</a></li>
+            <li><a href="#内核硬件层">内核硬件层</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#业界成熟内核架构">业界成熟内核架构</a>
+      <ul>
+        <li><a href="#linux">Linux</a></li>
+        <li><a href="#darwin">Darwin</a></li>
+        <li><a href="#windows-nt">Windows NT</a></li>
+        <li><a href="#评论区拾遗">评论区拾遗</a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
   </div>
@@ -352,7 +374,7 @@
 
     
     <div class="post-content">
-      <h1 id="01-程序的运行过程">01: 程序的运行过程</h1>
+      <h1 id="第一讲-程序的运行过程">第一讲: 程序的运行过程</h1>
 <h2 id="程序的编译过程">程序的编译过程</h2>
 <p><img src="/image/play_os_in_action/1_1.webp" alt="compile_process"></p>
 <ol>
@@ -386,7 +408,7 @@
 </ul>
 <p>将上图中代码装入计算机中，状态如下图：</p>
 <p><img src="/image/play_os_in_action/1_3.webp" alt="compile_code_status"></p>
-<h1 id="02-实现一个最小内核">02 实现一个最小内核</h1>
+<h1 id="第二讲实现一个最小内核">第二讲：实现一个最小内核</h1>
 <h2 id="os引导流程">OS引导流程</h2>
 <p><img src="/image/play_os_in_action/2_1.webp" alt="os_load"></p>
 <p>BIOS固件负责检测和初始化CPU、内存及主办平台，然后加载引导设备（如磁盘）的第一个扇区地址的数据
@@ -678,6 +700,72 @@ GDTBASE dd GDT_START
 </code></pre></td></tr></table>
 </div>
 </div><p>重启系统长按shit键然后选择HelloOS即可</p>
+<h1 id="第三讲内核结构设计">第三讲：内核结构设计</h1>
+<h2 id="内核功能">内核功能</h2>
+<ul>
+<li>管理CPU：CPU是执行程序的，而内核吧运行时的程序抽象成 进程，所以称之为进程管理</li>
+<li>管理内存</li>
+<li>管理硬盘</li>
+<li>管理显卡</li>
+<li>管理各种I/O设备</li>
+</ul>
+<h2 id="宏内核结构">宏内核结构</h2>
+<p>宏内核就是所有诸如管理进程等功能的代码进过编译链接形成一个大的可执行程序</p>
+<p>这个大程序里有实现这个功能的所有代码，向应用软件提供一些接口（即系统API）
+<img src="/image/play_os_in_action/3_1.webp" alt="macro-core"></p>
+<p>宏内核的优点是组件都在内核中合一相互调用性能极高；但缺点也很明显，高度耦合，没有模块化</p>
+<h2 id="微内核结构">微内核结构</h2>
+<p>微内核仅仅只有进程调度、处理中断、内存空间映射和进程间通信等功能</p>
+<p>实际功能如进程管理、内存管理、文件管理等做成一个个服务进程</p>
+<p>微内核与应用进程和服务进程通过消息通信</p>
+<p>应用程序要请求相关服务，就向微内核发送一条与此服务对应的消息，微内核再把这条消息转发给相关的服务进程，接着服务进程会完成相关的服务。</p>
+<h2 id="我们的选择">我们的选择</h2>
+<p>大致将内核分为三个大层</p>
+<ul>
+<li>内核接口层</li>
+<li>内核功能层</li>
+<li>内核硬件层</li>
+</ul>
+<p><img src="/image/play_os_in_action/3_2.webp" alt="core-structure"></p>
+<h3 id="内核接口层">内核接口层</h3>
+<ol>
+<li>定义了一套UNIX接口的子集</li>
+<li>检查参数的合法性</li>
+</ol>
+<h3 id="内核功能层">内核功能层</h3>
+<p>主要完成各种事件功能</p>
+<ol>
+<li>进程管理：实现进程的创建、销毁、调度</li>
+<li>内存管理：内存池分为页面内存池和任意大小的内存池</li>
+<li>中断管理：把中断回调函数安插在相关的数据结构中，发生相关的中断就会调用回调函数</li>
+<li>设备管理：把驱动程序模块、驱动程序本身和驱动程序创建的设备组织在一起</li>
+</ol>
+<h3 id="内核硬件层">内核硬件层</h3>
+<ol>
+<li>初始化：初始化少量的设备、CPU、内存、中断的控制，内核用户管理的数据结构</li>
+<li>CPU控制：提供CPU模式设定、开关中断、读写CPU特定寄存器等功能</li>
+<li>中断处理：保存上下文、调用中断回调函数、操作中断控制器</li>
+<li>物理内存管理：分配和释放大块内存、内存空间映射、操作MMU和Cache</li>
+<li>平台其他相关功能</li>
+</ol>
+<h1 id="业界成熟内核架构">业界成熟内核架构</h1>
+<h2 id="linux">Linux</h2>
+<p><img src="/image/play_os_in_action/4_1.webp" alt="linux-core"></p>
+<p>Linux使用的宏内核架构，模块之间的通信主要是函数调用</p>
+<h2 id="darwin">Darwin</h2>
+<p><img src="/image/play_os_in_action/4_2.jpg" alt="macos-core"></p>
+<p>Darwin有两个内核层</p>
+<ul>
+<li>Mach层：微内核，然提供十分简单的进程、线程、IPC 通信、虚拟内存设备驱动相关的功能服务</li>
+<li>BSD层：提供强大的安全特性，完善的网络服务，各种文件系统的支持，同时对 Mach 的进程、线程、IPC、虚拟内核组件进行细化、扩展延伸</li>
+</ul>
+<h2 id="windows-nt">Windows NT</h2>
+<p><img src="/image/play_os_in_action/4_3.jpg" alt="windows-core"></p>
+<p>每个执行体互相独立，只对外提供相应的接口，其它执行体要通过内核模式可调用接口和其它执行体通信或者请求其完成相应的功能服务</p>
+<h2 id="评论区拾遗">评论区拾遗</h2>
+<p>内核相当于所有的功能都耦合在一起，放在内核内
+微内核是把大多数功能解耦出来，放在用户态，使用IPC在用户态调用服务进程
+混合结构其实与微内核相似，只不过解耦出来的这些功能依然放在内核里，动态加载和卸载</p>
 
     </div>
 
