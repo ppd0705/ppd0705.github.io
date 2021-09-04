@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]操作系统实战（更新中）">
 <meta itemprop="description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"><meta itemprop="datePublished" content="2021-07-30T08:06:33+08:00" />
 <meta itemprop="dateModified" content="2021-07-30T08:06:33+08:00" />
-<meta itemprop="wordCount" content="2427">
+<meta itemprop="wordCount" content="4155">
 <meta itemprop="keywords" content="C,操作系统," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]操作系统实战（更新中）"/>
 <meta name="twitter:description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"/>
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 2427 words </span>
-          <span class="more-meta"> 5 min read </span>
+        <span class="more-meta"> 4155 words </span>
+          <span class="more-meta"> 9 min read </span>
 
         
         
@@ -365,6 +365,34 @@
         <li><a href="#darwin">Darwin</a></li>
         <li><a href="#windows-nt">Windows NT</a></li>
         <li><a href="#评论区拾遗">评论区拾遗</a></li>
+      </ul>
+    </li>
+    <li><a href="#执行程序的三种模式">执行程序的三种模式</a>
+      <ul>
+        <li><a href="#实模式">实模式</a>
+          <ul>
+            <li><a href="#寄存器">寄存器</a></li>
+            <li><a href="#内存">内存</a></li>
+            <li><a href="#中断">中断</a></li>
+          </ul>
+        </li>
+        <li><a href="#保护模式">保护模式</a>
+          <ul>
+            <li><a href="#特权级">特权级</a></li>
+            <li><a href="#段描述符">段描述符</a></li>
+            <li><a href="#平坦模型">平坦模型</a></li>
+            <li><a href="#中断处理">中断处理</a></li>
+            <li><a href="#切换">切换</a></li>
+          </ul>
+        </li>
+        <li><a href="#长模式">长模式</a>
+          <ul>
+            <li><a href="#寄存器-1">寄存器</a></li>
+            <li><a href="#段描述符-1">段描述符</a></li>
+            <li><a href="#中断-1">中断</a></li>
+            <li><a href="#切换-1">切换</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
   </ul>
@@ -766,7 +794,272 @@ GDTBASE dd GDT_START
 <p>内核相当于所有的功能都耦合在一起，放在内核内
 微内核是把大多数功能解耦出来，放在用户态，使用IPC在用户态调用服务进程
 混合结构其实与微内核相似，只不过解耦出来的这些功能依然放在内核里，动态加载和卸载</p>
-
+<h1 id="执行程序的三种模式">执行程序的三种模式</h1>
+<p>CPU的工作模式有三种</p>
+<ul>
+<li>实模式</li>
+<li>保护模式</li>
+<li>长模式</li>
+</ul>
+<h2 id="实模式">实模式</h2>
+<p>实模式又称实地址模式，一方面是运行真实的指令，另一方面内存地址是真实的</p>
+<h3 id="寄存器">寄存器</h3>
+<p>通常情况下指令的操作数就是寄存器，下图为x86 实模式下的寄存器</p>
+<p><img src="/image/play_os_in_action/5_1.webp" alt="physical_register"></p>
+<h3 id="内存">内存</h3>
+<p>指令和数据都放在内存中，内存的地址值计算过程如下图</p>
+<p><img src="/image/play_os_in_action/5_2.webp" alt="physical_memory"></p>
+<p>内存地址是由段寄存器左移4位，再加上一个统统寄存器的值形成地址，然后由这个地址去访问内存
+（这个即是分段内存管理模式）</p>
+<p>代码段是CS和IP确定的，栈段是由SS和SP确定的</p>
+<p>DOS实模式汇编代码程序实例</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-AS" data-lang="AS"><span class="nx">data</span> <span class="nx">SEGMENT</span> <span class="o">;</span><span class="err">定义一个数据段存放</span><span class="nx">Hello</span> <span class="nx">World</span><span class="o">!</span>
+    <span class="nx">hello</span>  <span class="nx">DB</span> <span class="s1">&#39;Hello World!$&#39;</span> <span class="o">;</span><span class="err">注意要以</span><span class="nx">$结束</span>
+<span class="nx">data</span> <span class="nx">ENDS</span>
+<span class="nx">code</span> <span class="nx">SEGMENT</span> <span class="o">;</span><span class="err">定义一个代码段存放程序指令</span>
+    <span class="nx">ASSUME</span> <span class="nx">CS</span><span class="o">:</span><span class="nx">CODE</span><span class="o">,</span><span class="nx">DS</span><span class="o">:</span><span class="nx">DATA</span> <span class="o">;</span><span class="err">告诉汇编程序，</span><span class="nx">DS指向数据段</span><span class="err">，</span><span class="nx">CS指向代码段</span>
+<span class="nx">start</span><span class="o">:</span>
+    <span class="nx">MOV</span> <span class="nx">AX</span><span class="o">,</span><span class="nx">data</span>  <span class="o">;</span><span class="err">将</span><span class="nx">data段首地址赋值给AX</span>                
+    <span class="nx">MOV</span> <span class="nx">DS</span><span class="o">,</span><span class="nx">AX</span>    <span class="o">;</span><span class="err">将</span><span class="nx">AX赋值给DS</span><span class="err">，使</span><span class="nx">DS指向data段</span>
+    <span class="nx">LEA</span> <span class="nx">DX</span><span class="o">,</span><span class="nx">hello</span> <span class="o">;</span><span class="err">使</span><span class="nx">DX指向hello首地址</span>
+    <span class="nx">MOV</span> <span class="nx">AH</span><span class="o">,</span><span class="mi">09</span><span class="nx">h</span>   <span class="o">;</span><span class="err">给</span><span class="nx">AH设置参数09H</span><span class="err">，</span><span class="nx">AH是AX高8位</span><span class="err">，</span><span class="nx">AL是AX低8位</span><span class="err">，其它类似</span>
+    <span class="nx">INT</span> <span class="mi">21</span><span class="nx">h</span>      <span class="o">;</span><span class="err">执行</span><span class="nx">DOS中断输出DS指向的DX指向的字符串hello</span>
+    <span class="nx">MOV</span> <span class="nx">AX</span><span class="o">,</span><span class="mi">4</span><span class="nx">C00h</span> <span class="o">;</span><span class="err">给</span><span class="nx">AH设置参数4C00h</span>
+    <span class="nx">INT</span> <span class="mi">21</span><span class="nx">h</span>      <span class="o">;</span><span class="err">调用</span><span class="mi">4</span><span class="nx">C00h号功能</span><span class="err">，结束程序</span>
+<span class="nx">code</span> <span class="nx">ENDS</span>
+<span class="nx">END</span> <span class="nx">start</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="中断">中断</h3>
+<p>中断即终止当前程序，转而跳转到另一个特定的地址上，去运行特定的代码。</p>
+<p>在实模式中即：先保存CS和IP寄存器，然后装载新的CS和IP寄存器</p>
+<p><img src="/image/play_os_in_action/5_3.webp" alt="interrupt-vector-table">
+为了实现中断，就需要在内存中放一个中断向量表（中断信号和对应响应程序的首地址）</p>
+<p>这个表的地址和长度由IDTR寄存器指向，在实模式中，一个条目由代码段地址和端内偏移组成</p>
+<p>根据中断信合和IDTR寄存器的信息，CPU能够计算出中断向量的条目，进而装载CS（段基地址）、IP寄存器（段内偏移），最终响应中断</p>
+<h2 id="保护模式">保护模式</h2>
+<p><img src="/image/play_os_in_action/5_4.webp" alt="protected-register"></p>
+<p>相比实模式，保护模式增加了一些控制寄存器和段寄存器，扩展通用寄存器的位宽</p>
+<h3 id="特权级">特权级</h3>
+<p><img src="/image/play_os_in_action/5_5.webp" alt="protected-privilege-level"></p>
+<p>从内到外，权力逐步提升</p>
+<h3 id="段描述符">段描述符</h3>
+<p><img src="/image/play_os_in_action/5_6.webp" alt="protected-segment-descriptor"></p>
+<p>内存是分段模型，对内存的保护可以转化成对段的保护</p>
+<p>段描述符是一个64位的数据，包含了段基地址、段长度、段权限、段类型和读写状态等</p>
+<p>由于信息的扩展，16位的寄存器放不下，段描述符放在内存中</p>
+<p>多个段描述符在内存中形成全局段描述符表，该表的基地址和长度由GDTR寄存器指示</p>
+<p><img src="/image/play_os_in_action/5_7.webp" alt="protected-segment-descriptor-table"></p>
+<p>段寄存器不再放段基地址，而是段在段描述符表的索引</p>
+<h3 id="平坦模型">平坦模型</h3>
+<p>x86 CPU不能直接使用分页模型，通过简化设计，来时分段称为一个&quot;虚设&quot;，这个称之为保护模式的平坦模型</p>
+<p>将段的基地址设为0，段长度设为0xFFFFF(2 ** 20 = 1M),段的粒度为4KB
+在此模式下不同的段可以重叠、交叉和包含</p>
+<h3 id="中断处理">中断处理</h3>
+<p>保护模式需要检查权限，所以需要扩展中断向量表的信息
+每个中断用一个中断门描述符来表示，格式如下</p>
+<p><img src="/image/play_os_in_action/5_8.webp" alt="protected-interrupt"></p>
+<p>中断向量表的条目也变成了中断门描述符
+<img src="/image/play_os_in_action/5_9.webp" alt="protected-interrupt-table"></p>
+<p>产生中断后</p>
+<ol>
+<li>检查中断号是否在有效区间（0~255）</li>
+<li>检查描述符类型</li>
+<li>权限检查（如果权限等级不同会进行栈切换）</li>
+<li>加载目标代码偏移段到EIP寄存器</li>
+</ol>
+<h3 id="切换">切换</h3>
+<p>由实模式切换到保护模式步骤如下：</p>
+<ol>
+<li>准备全局段描述符表</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">GDT_START:
+knull_dsc: dq 0
+kcode_dsc: dq 0x00cf9e000000ffff
+kdata_dsc: dq 0x00cf92000000ffff
+GDT_END:
+GDT_PTR:
+GDTLEN  dw GDT_END-GDT_START-1
+GDTBASE  dd GDT_START
+</code></pre></td></tr></table>
+</div>
+</div><ol start="2">
+<li>设置GDTR寄存器，使之指向全局段描述符表</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">lgdt [GDT_PTR]
+</code></pre></td></tr></table>
+</div>
+</div><ol start="3">
+<li>设置CR0寄存器，开启保护模式</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">;开启 PE
+mov eax, cr0
+bts eax, 0                      ; CR0.PE =1
+mov cr0, eax         
+</code></pre></td></tr></table>
+</div>
+</div><ol start="4">
+<li>进行长跳转，加载CS段寄存器</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">jmp dword 0x8 :_32bits_mode ;_32bits_mode为32位代码标号即段偏移
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="长模式">长模式</h2>
+<p>长模式又称AMD64，它是CPU在现有基础上有了64位的处理能力</p>
+<h3 id="寄存器-1">寄存器</h3>
+<p>所有通用寄存器都是64位，可以单独使用低32位，低32位可以查封成一个低16位，低16位可以拆分成两个8位寄存器</p>
+<p><img src="/image/play_os_in_action/5_10.webp" alt="amd64-register"></p>
+<h3 id="段描述符-1">段描述符</h3>
+<p><img src="/image/play_os_in_action/5_11.webp" alt="amd64-segment-descriptor"></p>
+<h3 id="中断-1">中断</h3>
+<p>![amd64-interrupt(/image/play_os_in_action/5_12.webp)</p>
+<h3 id="切换-1">切换</h3>
+<ol>
+<li>准备长模式全局段描述符表</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">ex64_GDT:
+null_dsc:  dq 0
+;第一个段描述符CPU硬件规定必须为0
+c64_dsc:dq 0x0020980000000000  ;64位代码段
+d64_dsc:dq 0x0000920000000000  ;64位数据段
+eGdtLen   equ $ - null_dsc  ;GDT长度
+eGdtPtr:dw eGdtLen - 1  ;GDT界限
+     dq ex64_GDT
+</code></pre></td></tr></table>
+</div>
+</div><ol start="2">
+<li>准备长模式下的MMU页表</li>
+</ol>
+<p>长模式下内存地址空间的保护交给了 MMU，MMU 依赖页表对地址进行转换，页表有特定的格式存放在内存中，其地址由 CPU 的 CR3 寄存器指向</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">mov eax, cr4
+bts eax, 5   ;CR4.PAE = 1
+mov cr4, eax ;开启 PAE
+mov eax, PAGE_TLB_BADR ;页表物理地址
+mov cr3, eax
+</code></pre></td></tr></table>
+</div>
+</div><ol start="3">
+<li>加载GDTR寄存器，是指指向全局段描述符</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">lgdt [eGdtPtr]
+</code></pre></td></tr></table>
+</div>
+</div><ol start="4">
+<li>开启长模式</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">;开启 64位长模式
+mov ecx, IA32_EFER
+rdmsr
+bts eax, 8  ;IA32_EFER.LME =1
+wrmsr
+;开启 保护模式和分页模式
+mov eax, cr0
+bts eax, 0    ;CR0.PE =1
+bts eax, 31
+mov cr0, eax 
+</code></pre></td></tr></table>
+</div>
+</div><ol start="5">
+<li>进行跳转，加载CS段寄存器</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">jmp 08:entry64 ;entry64为程序标号即64位偏移地址
+</code></pre></td></tr></table>
+</div>
+</div>
     </div>
 
     
