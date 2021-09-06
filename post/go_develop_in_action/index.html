@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]Go项目开发实战（更新中）">
 <meta itemprop="description" content="规范设计 开源规范 开源协议概述 MIT是相对自由开发的协议 文档规范 最重要的三类文档：README文档、项目文档和API文档 README规范 主要用"><meta itemprop="datePublished" content="2021-06-28T07:28:37+08:00" />
 <meta itemprop="dateModified" content="2021-06-28T07:28:37+08:00" />
-<meta itemprop="wordCount" content="9931">
+<meta itemprop="wordCount" content="11397">
 <meta itemprop="keywords" content="Golang," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]Go项目开发实战（更新中）"/>
 <meta name="twitter:description" content="规范设计 开源规范 开源协议概述 MIT是相对自由开发的协议 文档规范 最重要的三类文档：README文档、项目文档和API文档 README规范 主要用"/>
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 9931 words </span>
-          <span class="more-meta"> 20 min read </span>
+        <span class="more-meta"> 11397 words </span>
+          <span class="more-meta"> 23 min read </span>
 
         
         
@@ -320,133 +320,238 @@
   <div class="post-toc-content">
     <nav id="TableOfContents">
   <ul>
-    <li>
+    <li><a href="#规范设计">规范设计</a>
       <ul>
-        <li><a href="#规范设计">规范设计</a>
+        <li><a href="#开源规范">开源规范</a>
           <ul>
-            <li><a href="#开源规范">开源规范</a>
+            <li><a href="#开源协议概述">开源协议概述</a></li>
+          </ul>
+        </li>
+        <li><a href="#文档规范">文档规范</a>
+          <ul>
+            <li><a href="#readme规范">README规范</a></li>
+            <li><a href="#项目文档规范">项目文档规范</a></li>
+            <li><a href="#api接口规范">API接口规范</a></li>
+          </ul>
+        </li>
+        <li><a href="#版本规范">版本规范</a></li>
+        <li><a href="#commit规范">Commit规范</a>
+          <ul>
+            <li><a href="#header">Header</a></li>
+            <li><a href="#body">Body</a></li>
+            <li><a href="#footer">Footer</a></li>
+            <li><a href="#revert-commit">Revert Commit</a></li>
+            <li><a href="#其他">其他</a></li>
+          </ul>
+        </li>
+        <li><a href="#目录结构设计">目录结构设计</a>
+          <ul>
+            <li><a href="#目录介绍">目录介绍</a>
               <ul>
-                <li><a href="#开源协议概述">开源协议概述</a></li>
+                <li><a href="#1-web">1. /web</a></li>
+                <li><a href="#2-cmd">2. /cmd</a></li>
+                <li><a href="#3-internal">3. /internal</a></li>
+                <li><a href="#4-pkg">4. /pkg</a></li>
+                <li><a href="#5-vendor">5. /vendor</a></li>
+                <li><a href="#6-third_party">6. /third_party</a></li>
+                <li><a href="#7-test">7. /test</a></li>
+                <li><a href="#8-configs">8. /configs</a></li>
+                <li><a href="#9-deployments">9. /deployments</a></li>
+                <li><a href="#10-init">10. /init</a></li>
+                <li><a href="#11-makefile">11. /Makefile</a></li>
+                <li><a href="#12-scripts">12. /scripts</a></li>
+                <li><a href="#13-build">13. /build</a></li>
+                <li><a href="#14-tools">14. /tools</a></li>
+                <li><a href="#15-githooks">15. /githooks</a></li>
+                <li><a href="#16-assets">16. /assets</a></li>
+                <li><a href="#17-website">17. /website</a></li>
+                <li><a href="#18-readmemd">18. /README.md</a></li>
+                <li><a href="#19-docs">19. /docs</a></li>
+                <li><a href="#20-contributingmd">20. /CONTRIBUTING.md</a></li>
+                <li><a href="#21-api">21. /api</a></li>
+                <li><a href="#22-license">22. /LICENSE</a></li>
+                <li><a href="#23-changelog">23. /CHANGELOG</a></li>
+                <li><a href="#24-examples">24. /examples</a></li>
               </ul>
             </li>
-            <li><a href="#文档规范">文档规范</a>
+            <li><a href="#其他建议">其他建议</a></li>
+          </ul>
+        </li>
+        <li><a href="#工作流设计">工作流设计</a>
+          <ul>
+            <li><a href="#功能分支工作流">功能分支工作流</a></li>
+            <li><a href="#git-flow工作流">Git Flow工作流</a></li>
+            <li><a href="#forking工作流">Forking工作流</a></li>
+          </ul>
+        </li>
+        <li><a href="#研发流程设计">研发流程设计</a>
+          <ul>
+            <li><a href="#研发流程">研发流程</a></li>
+            <li><a href="#研发模式">研发模式</a>
               <ul>
-                <li><a href="#readme规范">README规范</a></li>
-                <li><a href="#项目文档规范">项目文档规范</a></li>
-                <li><a href="#api接口规范">API接口规范</a></li>
+                <li><a href="#瀑布模式">瀑布模式</a></li>
+                <li><a href="#迭代模式">迭代模式</a></li>
+                <li><a href="#敏捷模式">敏捷模式</a></li>
               </ul>
             </li>
-            <li><a href="#版本规范">版本规范</a></li>
-            <li><a href="#commit规范">Commit规范</a>
+            <li><a href="#cicd">CI/CD</a>
               <ul>
-                <li><a href="#header">Header</a></li>
-                <li><a href="#body">Body</a></li>
-                <li><a href="#footer">Footer</a></li>
-                <li><a href="#revert-commit">Revert Commit</a></li>
-                <li><a href="#其他">其他</a></li>
+                <li><a href="#持续集成">持续集成</a></li>
+                <li><a href="#持续交付">持续交付</a></li>
+                <li><a href="#持续部署">持续部署</a></li>
               </ul>
             </li>
-            <li><a href="#目录结构设计">目录结构设计</a>
+            <li><a href="#devops">DevOps</a>
               <ul>
-                <li><a href="#目录介绍">目录介绍</a></li>
-                <li><a href="#其他建议">其他建议</a></li>
-              </ul>
-            </li>
-            <li><a href="#工作流设计">工作流设计</a>
-              <ul>
-                <li><a href="#功能分支工作流">功能分支工作流</a></li>
-                <li><a href="#git-flow工作流">Git Flow工作流</a></li>
-                <li><a href="#forking工作流">Forking工作流</a></li>
-              </ul>
-            </li>
-            <li><a href="#研发流程设计">研发流程设计</a>
-              <ul>
-                <li><a href="#研发流程">研发流程</a></li>
-                <li><a href="#研发模式">研发模式</a></li>
-                <li><a href="#cicd">CI/CD</a></li>
-                <li><a href="#devops">DevOps</a></li>
-              </ul>
-            </li>
-            <li><a href="#设计方法">设计方法</a>
-              <ul>
-                <li><a href="#代码结构">代码结构</a></li>
-                <li><a href="#代码规范">代码规范</a></li>
-                <li><a href="#代码质量">代码质量</a></li>
-                <li><a href="#编程哲学">编程哲学</a></li>
-                <li><a href="#软件设计方法">软件设计方法</a></li>
-                <li><a href="#高效项目管理">高效项目管理</a></li>
-              </ul>
-            </li>
-            <li><a href="#设计模式">设计模式</a>
-              <ul>
-                <li><a href="#创建型模式">创建型模式</a></li>
-                <li><a href="#结构型模式">结构型模式</a></li>
-                <li><a href="#行为型模式">行为型模式</a></li>
+                <li><a href="#chatops">ChatOps</a></li>
+                <li><a href="#gitops">GitOps</a></li>
+                <li><a href="#aiops">AIOps</a></li>
               </ul>
             </li>
           </ul>
         </li>
-        <li><a href="#基础功能设计和开发">基础功能设计和开发</a>
+        <li><a href="#设计方法">设计方法</a>
           <ul>
-            <li><a href="#api风格">API风格</a>
+            <li><a href="#代码结构">代码结构</a></li>
+            <li><a href="#代码规范">代码规范</a></li>
+            <li><a href="#代码质量">代码质量</a></li>
+            <li><a href="#编程哲学">编程哲学</a></li>
+            <li><a href="#软件设计方法">软件设计方法</a></li>
+            <li><a href="#高效项目管理">高效项目管理</a></li>
+          </ul>
+        </li>
+        <li><a href="#设计模式">设计模式</a>
+          <ul>
+            <li><a href="#创建型模式">创建型模式</a>
               <ul>
-                <li><a href="#restful-api设计原则">Restful API设计原则</a></li>
-                <li><a href="#rpc-api">RPC API</a></li>
+                <li><a href="#单例模式">单例模式</a></li>
+                <li><a href="#工厂模式">工厂模式</a></li>
               </ul>
             </li>
-            <li><a href="#makefile">Makefile</a>
+            <li><a href="#结构型模式">结构型模式</a>
               <ul>
-                <li><a href="#基本形式">基本形式</a></li>
-                <li><a href="#基本语法">基本语法</a></li>
-                <li><a href="#变量和赋值">变量和赋值</a></li>
-                <li><a href="#条件语句">条件语句</a></li>
-                <li><a href="#循环语句">循环语句</a></li>
-                <li><a href="#内置函数">内置函数</a></li>
+                <li><a href="#策略模式">策略模式</a></li>
+                <li><a href="#模板模式">模板模式</a></li>
               </ul>
             </li>
-            <li><a href="#流程管理">流程管理</a></li>
-            <li><a href="#静态代码检查">静态代码检查</a></li>
-            <li><a href="#swagger文档生成">swagger文档生成</a></li>
-            <li><a href="#错误处理">错误处理</a>
+            <li><a href="#行为型模式">行为型模式</a>
               <ul>
-                <li><a href="#https-code">HTTPS CODE</a></li>
-                <li><a href="#错误码设计">错误码设计</a></li>
-                <li><a href="#错误包设计">错误包设计</a></li>
-                <li><a href="#需求">需求</a></li>
-                <li><a href="#实现">实现</a></li>
-                <li><a href="#错误码实现">错误码实现</a></li>
-              </ul>
-            </li>
-            <li><a href="#日志包设计">日志包设计</a>
-              <ul>
-                <li><a href="#基础功能">基础功能</a></li>
-                <li><a href="#高级功能">高级功能</a></li>
-                <li><a href="#可选功能">可选功能</a></li>
-                <li><a href="#关注点">关注点</a></li>
-                <li><a href="#分布式日志解决方法efk">分布式日志解决方法（EFK）</a></li>
-              </ul>
-            </li>
-            <li><a href="#日志包实现">日志包实现</a>
-              <ul>
-                <li><a href="#优先开源日志包">优先开源日志包</a></li>
-              </ul>
-            </li>
-            <li><a href="#web服务核心功能实现">Web服务核心功能实现</a>
-              <ul>
-                <li><a href="#核心功能">核心功能</a></li>
-              </ul>
-            </li>
-            <li><a href="#认证机制">认证机制</a>
-              <ul>
-                <li><a href="#认证和授权的区别">认证和授权的区别</a></li>
-                <li><a href="#四种基本的认证方式">四种基本的认证方式</a></li>
+                <li><a href="#代理模式">代理模式</a></li>
+                <li><a href="#选项模式">选项模式</a></li>
               </ul>
             </li>
           </ul>
         </li>
-        <li><a href="#参考">参考</a></li>
       </ul>
     </li>
+    <li><a href="#基础功能设计和开发">基础功能设计和开发</a>
+      <ul>
+        <li><a href="#api风格">API风格</a>
+          <ul>
+            <li><a href="#restful-api设计原则">Restful API设计原则</a>
+              <ul>
+                <li><a href="#uri设计">URI设计</a></li>
+                <li><a href="#操作和方法之间的映射">操作和方法之间的映射</a></li>
+                <li><a href="#统一分页过滤排序搜索功能">统一分页/过滤/排序/搜索功能</a></li>
+                <li><a href="#域名">域名</a></li>
+              </ul>
+            </li>
+            <li><a href="#rpc-api">RPC API</a></li>
+          </ul>
+        </li>
+        <li><a href="#makefile">Makefile</a>
+          <ul>
+            <li><a href="#基本形式">基本形式</a></li>
+            <li><a href="#基本语法">基本语法</a>
+              <ul>
+                <li><a href="#声明伪目标">声明伪目标</a></li>
+                <li><a href="#关闭回声">关闭回声</a></li>
+                <li><a href="#忽略错误">忽略错误</a></li>
+                <li><a href="#通配符">通配符</a></li>
+              </ul>
+            </li>
+            <li><a href="#变量和赋值">变量和赋值</a>
+              <ul>
+                <li><a href="#自动变量">自动变量</a></li>
+              </ul>
+            </li>
+            <li><a href="#条件语句">条件语句</a></li>
+            <li><a href="#循环语句">循环语句</a></li>
+            <li><a href="#内置函数">内置函数</a></li>
+          </ul>
+        </li>
+        <li><a href="#流程管理">流程管理</a></li>
+        <li><a href="#静态代码检查">静态代码检查</a></li>
+        <li><a href="#swagger文档生成">swagger文档生成</a></li>
+        <li><a href="#错误处理">错误处理</a>
+          <ul>
+            <li><a href="#https-code">HTTPS CODE</a></li>
+            <li><a href="#错误码设计">错误码设计</a></li>
+            <li><a href="#错误包设计">错误包设计</a></li>
+            <li><a href="#需求">需求</a></li>
+            <li><a href="#实现">实现</a>
+              <ul>
+                <li><a href="#增加withcode结构体">增加WithCode结构体</a></li>
+              </ul>
+            </li>
+            <li><a href="#错误码实现">错误码实现</a></li>
+          </ul>
+        </li>
+        <li><a href="#日志包设计">日志包设计</a>
+          <ul>
+            <li><a href="#基础功能">基础功能</a></li>
+            <li><a href="#高级功能">高级功能</a></li>
+            <li><a href="#可选功能">可选功能</a></li>
+            <li><a href="#关注点">关注点</a></li>
+            <li><a href="#分布式日志解决方法efk">分布式日志解决方法（EFK）</a></li>
+          </ul>
+        </li>
+        <li><a href="#日志包实现">日志包实现</a>
+          <ul>
+            <li><a href="#优先开源日志包">优先开源日志包</a></li>
+          </ul>
+        </li>
+        <li><a href="#web服务核心功能实现">Web服务核心功能实现</a>
+          <ul>
+            <li><a href="#核心功能">核心功能</a></li>
+          </ul>
+        </li>
+        <li><a href="#认证机制">认证机制</a>
+          <ul>
+            <li><a href="#认证和授权的区别">认证和授权的区别</a></li>
+            <li><a href="#四种基本的认证方式">四种基本的认证方式</a>
+              <ul>
+                <li><a href="#basic">Basic</a></li>
+                <li><a href="#digest">Digest</a></li>
+                <li><a href="#oauth">OAuth</a></li>
+                <li><a href="#bearer">Bearer</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#iam的认证功能设计">IAM的认证功能设计</a>
+          <ul>
+            <li><a href="#整体思路">整体思路</a></li>
+            <li><a href="#具体设计">具体设计</a></li>
+            <li><a href="#具体实现">具体实现</a></li>
+          </ul>
+        </li>
+        <li><a href="#权限模型">权限模型</a>
+          <ul>
+            <li><a href="#常见权限模型">常见权限模型</a>
+              <ul>
+                <li><a href="#权限控制列表">权限控制列表</a></li>
+                <li><a href="#自主访问控制">自主访问控制</a></li>
+                <li><a href="#强制访问控制">强制访问控制</a></li>
+                <li><a href="#基于角色的访问控制">基于角色的访问控制</a></li>
+                <li><a href="#基于属性的权限验证">基于属性的权限验证</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#参考">参考</a></li>
   </ul>
 </nav>
   </div>
@@ -454,14 +559,14 @@
 
     
     <div class="post-content">
-      <h2 id="规范设计">规范设计</h2>
-<h3 id="开源规范">开源规范</h3>
-<h4 id="开源协议概述">开源协议概述</h4>
+      <h1 id="规范设计">规范设计</h1>
+<h2 id="开源规范">开源规范</h2>
+<h3 id="开源协议概述">开源协议概述</h3>
 <p>MIT是相对自由开发的协议</p>
 <p><img src="/image/go_develop_in_action/4_1.png" alt="opensource_proctol"></p>
-<h3 id="文档规范">文档规范</h3>
+<h2 id="文档规范">文档规范</h2>
 <p>最重要的三类文档：README文档、项目文档和API文档</p>
-<h4 id="readme规范">README规范</h4>
+<h3 id="readme规范">README规范</h3>
 <p>主要用来介绍项目的功能、安装、部署和使用</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -520,54 +625,54 @@
 
 &lt;!-- 写一段简短的话描述项目 --&gt;
 
-## 功能特性
+# 功能特性
 
 &lt;!-- 描述该项目的核心功能点 --&gt;
 
-## 软件架构(可选)
+# 软件架构(可选)
 
 &lt;!-- 可以描述下项目的架构 --&gt;
 
-## 快速开始
+# 快速开始
 
-### 依赖检查
+## 依赖检查
 
 &lt;!-- 描述该项目的依赖，比如依赖的包、工具或者其他任何依赖项 --&gt;
 
-### 构建
+## 构建
 
 &lt;!-- 描述如何构建该项目 --&gt;
 
-### 运行
+## 运行
 
 &lt;!-- 描述如何运行该项目 --&gt;
 
-## 使用指南
+# 使用指南
 
 &lt;!-- 描述如何使用该项目 --&gt;
 
-## 如何贡献
+# 如何贡献
 
 &lt;!-- 告诉其他开发者如果给该项目贡献源码 --&gt;
 
-## 社区(可选)
+# 社区(可选)
 
 &lt;!-- 如果有需要可以介绍一些社区相关的内容 --&gt;
 
-## 关于作者
+# 关于作者
 
 &lt;!-- 这里写上项目作者 --&gt;
 
-## 谁在用(可选)
+# 谁在用(可选)
 
 &lt;!-- 可以列出使用本项目的其他有影响力的项目，算是给项目打个广告吧 --&gt;
 
-## 许可证
+# 许可证
 
 &lt;!-- 这里链接上该项目的开源许可证 --&gt;
 </code></pre></td></tr></table>
 </div>
-</div><h4 id="项目文档规范">项目文档规范</h4>
+</div><h3 id="项目文档规范">项目文档规范</h3>
 <p>通常放在<code>/docs</code>目录下，包含开发文档和用户文档</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -631,7 +736,7 @@
     <span class="err">└──</span> <span class="err">部署架构v1.png</span>
 </code></pre></td></tr></table>
 </div>
-</div><h4 id="api接口规范">API接口规范</h4>
+</div><h3 id="api接口规范">API接口规范</h3>
 <p>API文档生成方式包括通过注释生成、编写Markdown格式文档, 通常拆分为多个文件</p>
 <ul>
 <li>README: API介绍整体文档</li>
@@ -641,7 +746,7 @@
 <li>error_code: 业务错误码说明</li>
 <li>按资源划分API文档： API详细说明</li>
 </ul>
-<h3 id="版本规范">版本规范</h3>
+<h2 id="版本规范">版本规范</h2>
 <p>版本格式为：主版本号.次版本号.修订号（X.Y.Z）</p>
 <p>版本号递增规则</p>
 <ul>
@@ -662,7 +767,7 @@
 </li>
 </ul>
 <p><img src="/image/go_develop_in_action/5_1.webp" alt="commit_types"></p>
-<h3 id="commit规范">Commit规范</h3>
+<h2 id="commit规范">Commit规范</h2>
 <p>采用Angular风格的Commit Message, 其包含三个部分：Header、Body和Footer，具体格式如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -680,7 +785,7 @@
 [optional footer]
 </code></pre></td></tr></table>
 </div>
-</div><h4 id="header">Header</h4>
+</div><h3 id="header">Header</h3>
 <p><code>type</code>说明commit类型，主要分为Development和Production两大类</p>
 <ul>
 <li>Development类别修改的是项目管理类的变更，如CI流程、构建方式等，不会影响到最终用户，具体类型
@@ -703,9 +808,9 @@
 </ul>
 <p><code>scope</code>用来说明影响范围，应根据项目情况设计大类如api、pkg、docs等</p>
 <p><code>descrption</code>是对commit的简单描述，必须以动词开头，使用现在时态，结尾不加句号</p>
-<h4 id="body">Body</h4>
+<h3 id="body">Body</h3>
 <p>body是对commit的详细描述，同样以动词开头，使用现在时态，内容包含改动的原因和改动点</p>
-<h4 id="footer">Footer</h4>
+<h3 id="footer">Footer</h3>
 <p>通产用来说明不兼容的改动和关闭的issue，如下示例</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -717,7 +822,7 @@
 Cloes: #123, #234
 </code></pre></td></tr></table>
 </div>
-</div><h4 id="revert-commit">Revert Commit</h4>
+</div><h3 id="revert-commit">Revert Commit</h3>
 <p>当还原commit的时，在还原的Header前面加<code>revert: </code>, Body里面说明还原的commit hash，如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -731,7 +836,7 @@ Cloes: #123, #234
 This reverts commit fjsdf34353534vdf
 </code></pre></td></tr></table>
 </div>
-</div><h4 id="其他">其他</h4>
+</div><h3 id="其他">其他</h3>
 <p>合并提交： 对于过多的commit使用<code>git rebase</code>进行合并</p>
 <p>修改message: 使用<code>git rebase</code>(注：修改message会将导致当前及置换的hash变更)</p>
 <p>自动化工具:</p>
@@ -741,14 +846,14 @@ This reverts commit fjsdf34353534vdf
 <li><a href="https://github.com/git-chglog/git-chglog">git-changelog</a>: 自动生成change log</li>
 <li><a href="https://github.com/arnaud-deprez/gsemver">gmemver</a>: 语义化版本自动生成</li>
 </ul>
-<h3 id="目录结构设计">目录结构设计</h3>
+<h2 id="目录结构设计">目录结构设计</h2>
 <p><img src="/image/go_develop_in_action/6_1.webp" alt="project-layer"></p>
-<h4 id="目录介绍">目录介绍</h4>
-<h5 id="1-web">1. /web</h5>
+<h3 id="目录介绍">目录介绍</h3>
+<h4 id="1-web">1. /web</h4>
 <p>web目录主要存放web静态资源</p>
-<h5 id="2-cmd">2. /cmd</h5>
+<h4 id="2-cmd">2. /cmd</h4>
 <p>一个项目可能有多个组件，每个组件的main函数所在文件夹放在该目录</p>
-<h5 id="3-internal">3. /internal</h5>
+<h4 id="3-internal">3. /internal</h4>
 <p>存放私有应用的代码，不能被其他项目导入</p>
 <p>项目内应用之间共享代码存放于/internal/pkg</p>
 <p>开发建议：最开始将共享代码都放/internal/pkg，做好对外发布的准备时再转到/pkg目录</p>
@@ -834,55 +939,55 @@ This reverts commit fjsdf34353534vdf
 <li>/internal/pkg/validation: 通用验证函数</li>
 <li>/internal/pkg/code: HTTP处理链</li>
 </ul>
-<h5 id="4-pkg">4. /pkg</h5>
+<h4 id="4-pkg">4. /pkg</h4>
 <p>pkg目录存放外部应用可以使用的代码库，应谨慎考虑</p>
-<h5 id="5-vendor">5. /vendor</h5>
+<h4 id="5-vendor">5. /vendor</h4>
 <p>项目依赖，通过<code>go mod vendor</code>创建</p>
-<h5 id="6-third_party">6. /third_party</h5>
+<h4 id="6-third_party">6. /third_party</h4>
 <p>外部帮助工具，比如fork了一个第三方go包，并做了小改动，可以放置该目录</p>
-<h5 id="7-test">7. /test</h5>
+<h4 id="7-test">7. /test</h4>
 <p>存放其他外部测试应用和测试数据</p>
-<h5 id="8-configs">8. /configs</h5>
+<h4 id="8-configs">8. /configs</h4>
 <p>存放配置文件模板或默认配置</p>
-<h5 id="9-deployments">9. /deployments</h5>
+<h4 id="9-deployments">9. /deployments</h4>
 <p>存放系统和容器编排部署模板和配置</p>
-<h5 id="10-init">10. /init</h5>
+<h4 id="10-init">10. /init</h4>
 <p>存放初始化系统和进程管理配置文件，如systemd、supervisord等</p>
-<h5 id="11-makefile">11. /Makefile</h5>
+<h4 id="11-makefile">11. /Makefile</h4>
 <p>项目管理文件</p>
-<h5 id="12-scripts">12. /scripts</h5>
+<h4 id="12-scripts">12. /scripts</h4>
 <p>存放脚本文件，通常可能分为三个目录</p>
 <ul>
 <li>/scripts/make-rules: 存放maker文件，实现Makerfile文件中的各个功能</li>
 <li>/scripts/lib: 存放shell脚本</li>
 <li>/scripts/intall: 如果项目支持自动化部署，可以将部署脚本放在该目录</li>
 </ul>
-<h5 id="13-build">13. /build</h5>
+<h4 id="13-build">13. /build</h4>
 <p>存放安装包和持续集成相关的文件，通常可能包含三个目录</p>
 <ul>
 <li>/build/package: 存放容器（Docker）、系统(deb,rpm)的包配置和脚本</li>
 <li>/build/ci: 存放CI（travis，circle）的配置文件</li>
 <li>/build/docker: 存放子项目各个组件的Dockerfile文件</li>
 </ul>
-<h5 id="14-tools">14. /tools</h5>
+<h4 id="14-tools">14. /tools</h4>
 <p>存放这个项目的支持工具，这些工具可导入来自/pkg和/internal目录的代码</p>
-<h5 id="15-githooks">15. /githooks</h5>
+<h4 id="15-githooks">15. /githooks</h4>
 <p>git钩子</p>
-<h5 id="16-assets">16. /assets</h5>
+<h4 id="16-assets">16. /assets</h4>
 <p>项目使用的其他资源（图片、CSS、Javascript等）</p>
-<h5 id="17-website">17. /website</h5>
+<h4 id="17-website">17. /website</h4>
 <p>放置项目网站相关的数据</p>
-<h5 id="18-readmemd">18. /README.md</h5>
+<h4 id="18-readmemd">18. /README.md</h4>
 <p>一般包含项目介绍、功能介绍、快速按照、使用指引、详细文档连接和开发指引等
 文件较长时可以用<a href="https://github.com/nochso/tocenize">tocenize</a>加目录</p>
-<h5 id="19-docs">19. /docs</h5>
+<h4 id="19-docs">19. /docs</h4>
 <p>存放设计文档、开放文档和用户文档等，可能包含下面几个目录</p>
 <p>/docs/devel/{en-US, zh-CN}: 存放开发文档
 /docs/guide/{en-US, zh-CN}: 存放用户手册
 /docs/images: 存放图片文件</p>
-<h5 id="20-contributingmd">20. /CONTRIBUTING.md</h5>
+<h4 id="20-contributingmd">20. /CONTRIBUTING.md</h4>
 <p>用来说明如何贡献代码，规范协同流程</p>
-<h5 id="21-api">21. /api</h5>
+<h4 id="21-api">21. /api</h4>
 <p>存放项目提供的各种不同类型的API接口定义文件，可能有openapi、swagger等目录</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -902,25 +1007,25 @@ This reverts commit fjsdf34353534vdf
     └── swagger.yaml
 </code></pre></td></tr></table>
 </div>
-</div><h5 id="22-license">22. /LICENSE</h5>
+</div><h4 id="22-license">22. /LICENSE</h4>
 <p>版权文件</p>
 <p>如果需要给源码文件加license头时，可以使用<a href="https://github.com/marmotedu/addlicense">addlicense</a></p>
 <p>项目依赖第三方包使用的license检查使用<a href="https://github.com/ribice/glice">glice</a></p>
-<h5 id="23-changelog">23. /CHANGELOG</h5>
+<h4 id="23-changelog">23. /CHANGELOG</h4>
 <p>项目更新日志，可结合Angular规范和git-chglog自动生成内容</p>
-<h5 id="24-examples">24. /examples</h5>
+<h4 id="24-examples">24. /examples</h4>
 <p>存放代码示例</p>
-<h4 id="其他建议">其他建议</h4>
+<h3 id="其他建议">其他建议</h3>
 <ul>
 <li>不使用/model目录，按功能拆分到使用的模块中</li>
 <li>目录和包尽量使用单数</li>
 <li>小项目可以先包含cmd、pkg、internal三个目录</li>
 </ul>
-<h3 id="工作流设计">工作流设计</h3>
-<h4 id="功能分支工作流">功能分支工作流</h4>
+<h2 id="工作流设计">工作流设计</h2>
+<h3 id="功能分支工作流">功能分支工作流</h3>
 <p>开发新功能时，基于master分支新建一个功能分支，在功能分支上进行开发，开发完之后合并到master</p>
 <p>该模式适合小规模、人员固定的项目</p>
-<h4 id="git-flow工作流">Git Flow工作流</h4>
+<h3 id="git-flow工作流">Git Flow工作流</h3>
 <p>Git Flow定义了5种分支： master、develop、release、 feature、hotfix，详细介绍如下</p>
 <p><img src="/image/go_develop_in_action/7_1.webp" alt="git-flow"></p>
 <p>假设当前在一个future分支开发，突然发现了线上bug，需要hotfix，则流程如下：</p>
@@ -959,11 +1064,11 @@ $ git stash pop <span class="c1"># 14. 恢复到修复前的工作状态</span>
 </code></pre></td></tr></table>
 </div>
 </div><p>该模式适合人员固定、规模较大的项目</p>
-<h4 id="forking工作流">Forking工作流</h4>
+<h3 id="forking工作流">Forking工作流</h3>
 <p>开源项目常用模式</p>
 <p><img src="/image/go_develop_in_action/7_2.webp" alt="git-forking"></p>
-<h3 id="研发流程设计">研发流程设计</h3>
-<h4 id="研发流程">研发流程</h4>
+<h2 id="研发流程设计">研发流程设计</h2>
+<h3 id="研发流程">研发流程</h3>
 <p>通常研发流程包括6个阶段</p>
 <ol>
 <li>需求阶段</li>
@@ -975,17 +1080,17 @@ $ git stash pop <span class="c1"># 14. 恢复到修复前的工作状态</span>
 </ol>
 <p><img src="/image/go_develop_in_action/8_1.png" alt="git-forking"></p>
 <p>每个阶段结束时，需要一个最终产物，可以是文档、代码或者部署组件，这个产物是下一个阶段的输入</p>
-<h4 id="研发模式">研发模式</h4>
+<h3 id="研发模式">研发模式</h3>
 <p>研发模式有三种： 瀑布模式、迭代模式和敏捷模式</p>
-<h5 id="瀑布模式">瀑布模式</h5>
+<h4 id="瀑布模式">瀑布模式</h4>
 <p>瀑布墨迹按照预先规划好的阶段来推进研发进度，流程清晰,但研发周期长，交付后变更困难
 <img src="/image/go_develop_in_action/8_2.webp" alt="git-forking"></p>
-<h5 id="迭代模式">迭代模式</h5>
+<h4 id="迭代模式">迭代模式</h4>
 <p>研发任务被切分为一系列轮次，先把主要功能搭建起来，在通过客户反馈不断完善</p>
-<h5 id="敏捷模式">敏捷模式</h5>
+<h4 id="敏捷模式">敏捷模式</h4>
 <p>敏捷模式把大需求分成多个、可分阶段完成的小迭代，每个迭代交付都是一个可用的软件，开发过程中，软件一直处于可用状态</p>
 <p>迭代模式关注研发流程。而敏捷模式不仅会关注研发流程，还会关注之外的一些东西，例如：团队协作，需求拆分</p>
-<h4 id="cicd">CI/CD</h4>
+<h3 id="cicd">CI/CD</h3>
 <p>CI/CD通过自动化的手段来快速执行代码检查、测试、构建和部署任务，从而提高研发效率</p>
 <ul>
 <li>CI：Continuous Integration，持续集成</li>
@@ -994,33 +1099,33 @@ $ git stash pop <span class="c1"># 14. 恢复到修复前的工作状态</span>
 </ul>
 <p><img src="/image/go_develop_in_action/8_3.webp" alt="git-forking"></p>
 <p>持续集成的核心在代码，持续交付的核心在可交付的产物，持续部署的核心在自动部署</p>
-<h5 id="持续集成">持续集成</h5>
+<h4 id="持续集成">持续集成</h4>
 <p>在代码push到git仓库后，CI工具会进行扫描、测试和构建，并将结果反馈给开发者</p>
 <p>CI流程可以将问题在开发阶段就暴露出来，这会让开发人员交付代码时更有信心</p>
-<h5 id="持续交付">持续交付</h5>
+<h4 id="持续交付">持续交付</h4>
 <p>在持续集成的基础上，就构建产物自动部署到目标环境（测试、预发布）</p>
-<h5 id="持续部署">持续部署</h5>
+<h4 id="持续部署">持续部署</h4>
 <p>在持续交付的基础上，将经过充分测试的代码自动部署到生产环境，整个流程不在需要审核，完全自动化</p>
-<h4 id="devops">DevOps</h4>
+<h3 id="devops">DevOps</h3>
 <p>DevOps是一组过程、方法和系统的统称，用于促进开发、运维、质量部门之间的协作整合
 <img src="/image/go_develop_in_action/8_4.webp" alt="git-forking"></p>
 <p>目前常用的Ops手段： AIOps、ChatOps、GitOps</p>
-<h5 id="chatops">ChatOps</h5>
+<h4 id="chatops">ChatOps</h4>
 <p>通过发送指令给聊天机器人，执行某个任务
 ChatOps对操作者友好，信息透明可追溯</p>
-<h5 id="gitops">GitOps</h5>
+<h4 id="gitops">GitOps</h4>
 <p>基于Git和K8S实现云原生的持续交付</p>
-<h5 id="aiops">AIOps</h5>
+<h4 id="aiops">AIOps</h4>
 <p>利用AI技术来智能化运维IT系统</p>
-<h3 id="设计方法">设计方法</h3>
+<h2 id="设计方法">设计方法</h2>
 <p><img src="/image/go_develop_in_action/10_1.webp" alt="go-application"></p>
-<h4 id="代码结构">代码结构</h4>
+<h3 id="代码结构">代码结构</h3>
 <p>按功能拆分目录而非按MVC等模块拆封</p>
-<h4 id="代码规范">代码规范</h4>
+<h3 id="代码规范">代码规范</h3>
 <p>可参考Uber的规范：<a href="https://github.com/uber-go/guide/blob/master/style.md">Go Style Guide</a></p>
 <p>可使用惊呆检查工具：<a href="https://github.com/golangci/golangci-lint">golangcli-lint</a></p>
 <p>官方CodeReview实践：<a href="https://github.com/golang/go/wiki/CodeReviewComments">Go Code Review Comments</a></p>
-<h4 id="代码质量">代码质量</h4>
+<h3 id="代码质量">代码质量</h3>
 <p>测试相关工具：</p>
 <ul>
 <li>官方Mock框架： <a href="https://github.com/golang/mock">golang/mock</a></li>
@@ -1039,17 +1144,17 @@ ChatOps对操作者友好，信息透明可追溯</p>
 $ go tool cover -func ./coverage.out
 </code></pre></td></tr></table>
 </div>
-</div><h4 id="编程哲学">编程哲学</h4>
+</div><h3 id="编程哲学">编程哲学</h3>
 <ul>
 <li>面向接口编程</li>
 <li>面向对象编程</li>
 </ul>
-<h4 id="软件设计方法">软件设计方法</h4>
+<h3 id="软件设计方法">软件设计方法</h3>
 <ul>
 <li>设计模式</li>
 <li>SOLD原则</li>
 </ul>
-<h4 id="高效项目管理">高效项目管理</h4>
+<h3 id="高效项目管理">高效项目管理</h3>
 <ul>
 <li>
 <p>使用Makefile管理项目</p>
@@ -1065,12 +1170,12 @@ $ go tool cover -func ./coverage.out
 <p>编写高质量的文档</p>
 </li>
 </ul>
-<h3 id="设计模式">设计模式</h3>
+<h2 id="设计模式">设计模式</h2>
 <p><img src="/image/go_develop_in_action/11_1.webp" alt="design-pattern"></p>
-<h4 id="创建型模式">创建型模式</h4>
+<h3 id="创建型模式">创建型模式</h3>
 <p>创建型模式（Creational Patterns）提供了在创建对象的同事隐藏创建逻辑的方式，而不是使用new运算符直接实例化对象。</p>
 <p>比较常见的是单例模式和工厂模式</p>
-<h5 id="单例模式">单例模式</h5>
+<h4 id="单例模式">单例模式</h4>
 <p>单例模式（Singleton Pattern）指全局只有一个实例，有利于减少内存开销，防止冲突等优点，常用于数据库实例、全局配置等</p>
 <ul>
 <li>饿汉模式：初始化时创建</li>
@@ -1146,7 +1251,7 @@ $ go tool cover -func ./coverage.out
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><h5 id="工厂模式">工厂模式</h5>
+</div><h4 id="工厂模式">工厂模式</h4>
 <ul>
 <li>简单工厂模式：接受参数，返回一个对象实例</li>
 </ul>
@@ -1284,9 +1389,9 @@ $ go tool cover -func ./coverage.out
 <span class="nx">teen</span> <span class="o">:=</span> <span class="nf">newTeenager</span><span class="p">(</span><span class="s">&#34;jill&#34;</span><span class="p">)</span>
 </code></pre></td></tr></table>
 </div>
-</div><h4 id="结构型模式">结构型模式</h4>
+</div><h3 id="结构型模式">结构型模式</h3>
 <p>结构型模式的特点是关注类和对象的组合</p>
-<h5 id="策略模式">策略模式</h5>
+<h4 id="策略模式">策略模式</h4>
 <p>定义策略接口，并实现不同的策略，策略执行者可以设置不同的策略</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -1352,7 +1457,7 @@ $ go tool cover -func ./coverage.out
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><h5 id="模板模式">模板模式</h5>
+</div><h4 id="模板模式">模板模式</h4>
 <p>将一个类中能公共使用的方法放置在抽象类中实现，将不能公共使用的方法作为抽象方法强制子类去实现</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -1458,9 +1563,9 @@ $ go tool cover -func ./coverage.out
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><h4 id="行为型模式">行为型模式</h4>
+</div><h3 id="行为型模式">行为型模式</h3>
 <p>行为模式的特点是关注对象之间的通信</p>
-<h5 id="代理模式">代理模式</h5>
+<h4 id="代理模式">代理模式</h4>
 <p>代理模式Proxy pattern 可以为另外一个对象提供一个替身或者占位符，以控制对这个对象的访问</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -1542,7 +1647,7 @@ $ go tool cover -func ./coverage.out
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><h5 id="选项模式">选项模式</h5>
+</div><h4 id="选项模式">选项模式</h4>
 <p>通过选项模式可以创建一个带有默认值得struct变量，并选择性的修改其中一些参数的值</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -1674,10 +1779,10 @@ $ go tool cover -func ./coverage.out
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><h2 id="基础功能设计和开发">基础功能设计和开发</h2>
-<h3 id="api风格">API风格</h3>
-<h4 id="restful-api设计原则">Restful API设计原则</h4>
-<h5 id="uri设计">URI设计</h5>
+</div><h1 id="基础功能设计和开发">基础功能设计和开发</h1>
+<h2 id="api风格">API风格</h2>
+<h3 id="restful-api设计原则">Restful API设计原则</h3>
+<h4 id="uri设计">URI设计</h4>
 <p>通常情况下：</p>
 <ul>
 <li>资源使用名词复数表示</li>
@@ -1714,7 +1819,7 @@ DELETE /gits/:id/star
 </div><ul>
 <li>有时也可以打破规范，如登录操作URI设计为：/login</li>
 </ul>
-<h5 id="rest资源操作和http方法之间的映射">REST资源操作和HTTP方法之间的映射</h5>
+<h4 id="操作和方法之间的映射">操作和方法之间的映射</h4>
 <p><img src="/image/go_develop_in_action/12_1.webp" alt="resource-operation"></p>
 <p>对资源的操作应蛮子安全性和幂等性：</p>
 <ul>
@@ -1723,20 +1828,20 @@ DELETE /gits/:id/star
 </ul>
 <p><img src="/image/go_develop_in_action/12_2.webp" alt="idempotence"></p>
 <p>POST一般用在新建和批量删除这两种场景，批量删除更建议使用：DELETE /users?id=1,2,3</p>
-<h5 id="统一分页过滤排序搜索功能">统一分页/过滤/排序/搜索功能</h5>
+<h4 id="统一分页过滤排序搜索功能">统一分页/过滤/排序/搜索功能</h4>
 <ul>
 <li>分页：在列出一个Collection所有Member时应该提供分页功能，如：/users?offset=0&amp;limit=20</li>
 <li>过滤：当不用返回一个资源的全部属性时可以指定，如：/users?fields=email,username,address</li>
 <li>排序：根据指定字段排序，如：/users?sort=age,desc</li>
 <li>搜索：当一个资源的Member太多时，可能需要提供搜索功能，搜索建议按模糊搜索来匹配</li>
 </ul>
-<h5 id="域名">域名</h5>
+<h4 id="域名">域名</h4>
 <p>主要有两种方式：</p>
 <ul>
 <li><a href="https://abc.com/api">https://abc.com/api</a> 适用该域名只有一套API系统的情况</li>
 <li><a href="https://project.api.abc.com">https://project.api.abc.com</a> 适用域名下有多个系统API</li>
 </ul>
-<h4 id="rpc-api">RPC API</h4>
+<h3 id="rpc-api">RPC API</h3>
 <p>RPC（Remote Procedure Call）即远程过程调用，通俗地来讲就是服务端实现了一个函数，
 客户端使用RPC框架提供的接口，想调用本地函数一样调用这个函数，并获取返回值。</p>
 <p>protobuf3可以使用<code>optional</code>关键字来支持显示判断是否传入该字段</p>
@@ -1746,8 +1851,8 @@ DELETE /gits/:id/star
 </ul>
 <p>可以通过grpc-gateway来同时支持restful-api</p>
 <p><img src="/image/go_develop_in_action/13_1.webp" alt="rpc-vs-rest"></p>
-<h3 id="makefile">Makefile</h3>
-<h4 id="基本形式">基本形式</h4>
+<h2 id="makefile">Makefile</h2>
+<h3 id="基本形式">基本形式</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -1763,8 +1868,8 @@ DELETE /gits/:id/star
 <li>prerequisities： 前置依赖目标</li>
 <li>command: 具体的shell命令，以<code>tab</code>起手，每一行都是单独的session, 可用<code>；</code>共用session，使用<code>\</code>作为换行符</li>
 </ul>
-<h4 id="基本语法">基本语法</h4>
-<h5 id="声明伪目标">声明伪目标</h5>
+<h3 id="基本语法">基本语法</h3>
+<h4 id="声明伪目标">声明伪目标</h4>
 <p>避免有和target同名的文件</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -1778,7 +1883,7 @@ DELETE /gits/:id/star
     rm -rf *.c
 </code></pre></td></tr></table>
 </div>
-</div><h5 id="关闭回声">关闭回声</h5>
+</div><h4 id="关闭回声">关闭回声</h4>
 <p>命令前面加<code>@</code>不会先打印命令</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -1790,7 +1895,7 @@ DELETE /gits/:id/star
     @echo <span class="s1">&#39;hello world&#39;</span>
 </code></pre></td></tr></table>
 </div>
-</div><h5 id="忽略错误">忽略错误</h5>
+</div><h4 id="忽略错误">忽略错误</h4>
 <p>命令前面加<code>-</code>可忽略错误，继续往下执行</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -1804,9 +1909,9 @@ DELETE /gits/:id/star
 	@echo <span class="s1">&#39;hello world2&#39;</span>
 </code></pre></td></tr></table>
 </div>
-</div><h5 id="通配符">通配符</h5>
+</div><h4 id="通配符">通配符</h4>
 <p>支持<code>%</code>、<code>*</code>、<code>~</code></p>
-<h4 id="变量和赋值">变量和赋值</h4>
+<h3 id="变量和赋值">变量和赋值</h3>
 <ul>
 <li>使用<code>=</code>自动以变量</li>
 </ul>
@@ -1877,7 +1982,7 @@ DELETE /gits/:id/star
     echo: <span class="nv">$$</span>HOME
 </code></pre></td></tr></table>
 </div>
-</div><h5 id="自动变量">自动变量</h5>
+</div><h4 id="自动变量">自动变量</h4>
 <ul>
 <li><code>$@</code>: 指当前目标</li>
 </ul>
@@ -1916,7 +2021,7 @@ DELETE /gits/:id/star
 <li><code>$(@D)</code>：指向<code>$@</code>的目录名</li>
 <li><code>$(@F)</code>：指向<code>$@</code>的文件名</li>
 </ul>
-<h4 id="条件语句">条件语句</h4>
+<h3 id="条件语句">条件语句</h3>
 <ul>
 <li><code>ifeq</code></li>
 </ul>
@@ -1951,7 +2056,7 @@ DELETE /gits/:id/star
 <span class="err">endif</span>
 </code></pre></td></tr></table>
 </div>
-</div><h4 id="循环语句">循环语句</h4>
+</div><h3 id="循环语句">循环语句</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -1966,7 +2071,7 @@ DELETE /gits/:id/star
 <span class="err">done;</span>
 </code></pre></td></tr></table>
 </div>
-</div><h4 id="内置函数">内置函数</h4>
+</div><h3 id="内置函数">内置函数</h3>
 <ul>
 <li>shell: 执行shell命令</li>
 </ul>
@@ -2002,17 +2107,17 @@ DELETE /gits/:id/star
 <pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="k">$(</span><span class="nv">patsubst</span> %.<span class="nv">c</span>,%.<span class="nv">o</span>,<span class="nv">x</span>.<span class="nv">c</span> <span class="nv">bar</span>.<span class="nv">c</span><span class="k">)</span>
 </code></pre></td></tr></table>
 </div>
-</div><h3 id="流程管理">流程管理</h3>
+</div><h2 id="流程管理">流程管理</h2>
 <ul>
 <li>使用git-flow工作流</li>
 <li>使用Makefile同一规范</li>
 </ul>
-<h3 id="静态代码检查">静态代码检查</h3>
+<h2 id="静态代码检查">静态代码检查</h2>
 <p>使用强大的<code>golangci-lint</code></p>
-<h3 id="swagger文档生成">swagger文档生成</h3>
+<h2 id="swagger文档生成">swagger文档生成</h2>
 <p>使用<code>go-swagger</code>自动生成openapi规范的文档</p>
-<h3 id="错误处理">错误处理</h3>
-<h4 id="https-code">HTTPS CODE</h4>
+<h2 id="错误处理">错误处理</h2>
+<h3 id="https-code">HTTPS CODE</h3>
 <p>建议使用主要的几个错误码:</p>
 <ul>
 <li>200： 请求成功</li>
@@ -2026,10 +2131,10 @@ DELETE /gits/:id/star
 <li>404： 资源不存在</li>
 <li>429： 请求超频</li>
 </ul>
-<h4 id="错误码设计">错误码设计</h4>
+<h3 id="错误码设计">错误码设计</h3>
 <p>使用六位整数，分为三部分， 前两位表示服务，中间两位表示具体模块，末两位表示错误码序号</p>
-<h4 id="错误包设计">错误包设计</h4>
-<h4 id="需求">需求</h4>
+<h3 id="错误包设计">错误包设计</h3>
+<h3 id="需求">需求</h3>
 <ul>
 <li>支持记录错误堆栈</li>
 <li>支持打印不同格式的信息
@@ -2051,9 +2156,9 @@ DELETE /gits/:id/star
 </ul>
 </li>
 </ul>
-<h4 id="实现">实现</h4>
+<h3 id="实现">实现</h3>
 <p>基于<code>githu.com/pkg/errors</code>二次开发</p>
-<h5 id="增加withcode结构体">增加WithCode结构体</h5>
+<h4 id="增加withcode结构体">增加WithCode结构体</h4>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -2076,7 +2181,7 @@ DELETE /gits/:id/star
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><h4 id="错误码实现">错误码实现</h4>
+</div><h3 id="错误码实现">错误码实现</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
@@ -2111,35 +2216,35 @@ DELETE /gits/:id/star
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><h3 id="日志包设计">日志包设计</h3>
-<h4 id="基础功能">基础功能</h4>
+</div><h2 id="日志包设计">日志包设计</h2>
+<h3 id="基础功能">基础功能</h3>
 <ol>
 <li>支持基本的日志信息：时间戳、文件名、行号、日志级别和日志信息</li>
 <li>支持不同的日志级别</li>
 <li>支持自定义配置，如调整日志级别，调整输出格式等</li>
 <li>支持输出到标准输出和文件</li>
 </ol>
-<h4 id="高级功能">高级功能</h4>
+<h3 id="高级功能">高级功能</h3>
 <ol>
 <li>支持多种日志格式，如支持JSON格式方便filebeat日志采集工具采集并上报</li>
 <li>能够按级别分类输出</li>
 <li>支持日志轮转</li>
 <li>具备HOOK能力，如发邮件高级等</li>
 </ol>
-<h4 id="可选功能">可选功能</h4>
+<h3 id="可选功能">可选功能</h3>
 <ol>
 <li>支持颜色输出</li>
 <li>兼容标准log包</li>
 <li>支持输出到不同的位置如Kafka等组件</li>
 </ol>
-<h4 id="关注点">关注点</h4>
+<h3 id="关注点">关注点</h3>
 <ul>
 <li>高性能</li>
 <li>并发安全</li>
 <li>插件化能力</li>
 <li>参数控制</li>
 </ul>
-<h4 id="分布式日志解决方法efk">分布式日志解决方法（EFK）</h4>
+<h3 id="分布式日志解决方法efk">分布式日志解决方法（EFK）</h3>
 <p><img src="/image/go_develop_in_action/20_1.webp" alt="EFK"></p>
 <ol>
 <li>Logstash Shipper监控采集日志，并发送到Kafka</li>
@@ -2147,25 +2252,25 @@ DELETE /gits/:id/star
 <li>Elasticsearch提供搜集、分析和存储数据三大功能</li>
 <li>Kibaba提供Web界面</li>
 </ol>
-<h3 id="日志包实现">日志包实现</h3>
-<h4 id="优先开源日志包">优先开源日志包</h4>
+<h2 id="日志包实现">日志包实现</h2>
+<h3 id="优先开源日志包">优先开源日志包</h3>
 <ul>
 <li>标准log包</li>
 <li>glog: 实现了基本功能适合小项目</li>
 <li>logrus: 功能强大，适合大型项目</li>
 <li>zap: 性能高，内存分配次数少，适合对日志性能要求很高的项目</li>
 </ul>
-<h3 id="web服务核心功能实现">Web服务核心功能实现</h3>
-<h4 id="核心功能">核心功能</h4>
+<h2 id="web服务核心功能实现">Web服务核心功能实现</h2>
+<h3 id="核心功能">核心功能</h3>
 <p><img src="/image/go_develop_in_action/23_1.webp" alt="core-function"></p>
-<h3 id="认证机制">认证机制</h3>
-<h4 id="认证和授权的区别">认证和授权的区别</h4>
+<h2 id="认证机制">认证机制</h2>
+<h3 id="认证和授权的区别">认证和授权的区别</h3>
 <ul>
 <li>认证（Authentication）: 用来验证某个用户是否具有访问系统的权限</li>
 <li>授权（Authorization）: 用来验证某个  用户是否具有访问某个资源的权限</li>
 </ul>
-<h4 id="四种基本的认证方式">四种基本的认证方式</h4>
-<h5 id="basic">Basic</h5>
+<h3 id="四种基本的认证方式">四种基本的认证方式</h3>
+<h4 id="basic">Basic</h4>
 <p>将<code>用户名:密码</code>进行base64编码后放到HTTP Authorization HEADER中</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -2179,42 +2284,42 @@ curl -X POST -H <span class="s2">&#34;Authorization: Basic </span><span class="s
 </div>
 </div><p>这个方式使用了base64编码，入侵者可以反向编码获取用户名和密码；另外即使密码被加密，入侵者可以进行重放攻击</p>
 <p>所以Basic虽简单，但既不安全，需要和SSL配合使用</p>
-<h5 id="digest">Digest</h5>
+<h4 id="digest">Digest</h4>
 <p><img src="/image/go_develop_in_action/25_1.webp" alt="digest">
 服务端给随机数nonce和加密算法（默认为md5）,客户端请求是需要提供
 密码叉腰response</p>
-<h5 id="oauth">OAuth</h5>
+<h4 id="oauth">OAuth</h4>
 <p>OAuth(开放授权)允许用户让第三方应用访问该用户在某一个服务的思路资源（如昵称、头像等），
 而无需将用户名和密码给第三方应用</p>
 <p>OAuth2.0共分为四种授权方式</p>
-<h6 id="密码式">密码式</h6>
+<h5 id="密码式">密码式</h5>
 <p>认证流程如下：</p>
 <ol>
 <li>网站 A 向用户发出获取用户名和密码的请求；</li>
 <li>用户同意后，网站 A 凭借用户名和密码向网站 B 换取令牌；</li>
 <li>网站 B 验证用户身份后，给出网站 A 令牌，网站 A 凭借令牌可以访问网站 B 对应权限的资源。</li>
 </ol>
-<h6 id="隐藏式">隐藏式</h6>
+<h5 id="隐藏式">隐藏式</h5>
 <p>这种方式适用于前端应用。认证流程如下：</p>
 <ol>
 <li>A 网站提供一个跳转到 B 网站的链接，用户点击后跳转至 B 网站，并向用户请求授权；</li>
 <li>用户登录 B 网站，同意授权后，跳转回 A 网站指定的重定向 redirect_url 地址，并携带 B 网站返回的令牌，用户在 B 网站的数据给 A 网站使用。</li>
 </ol>
 <p>这个授权方式存在着“中间人攻击”的风险，因此只能用于一些安全性要求不高的场景，并且令牌的有效时间要非常短。</p>
-<h6 id="凭借式">凭借式</h6>
+<h5 id="凭借式">凭借式</h5>
 <p>这种方式是在命令行中请求授权，适用于没有前端的命令行应用。认证流程如下：</p>
 <ol>
 <li>应用 A 在命令行向应用 B 请求授权，此时应用 A 需要携带应用 B 提前颁发的 secretID 和 secretKey，其中 secretKey 出于安全性考虑，需在后端发送；</li>
 <li>应用 B 接收到 secretID 和 secretKey，并进行身份验证，验证通过后返回给应用 A 令牌。</li>
 </ol>
-<h6 id="授权码式">授权码式</h6>
+<h5 id="授权码式">授权码式</h5>
 <ol>
 <li>A 网站提供一个跳转到 B 网站的链接 +redirect_url，用户点击后跳转至 B 网站；</li>
 <li>用户携带向 B 网站提前申请的 client_id，向 B 网站发起身份验证请求；</li>
 <li>用户登录 B 网站，通过验证，授予 A 网站权限，此时网站跳转回 redirect_url，其中会有 B 网站通过验证后的授权码附在该 url 后；</li>
 <li>网站 A 携带授权码向网站 B 请求令牌，网站 B 验证授权码后，返回令牌即 access_token。</li>
 </ol>
-<h5 id="bearer">Bearer</h5>
+<h4 id="bearer">Bearer</h4>
 <p>Bearer认证也称令牌认证，核心是 bearer token。bearer token 是一个加密字符串，通常由服务端根据密钥生成。客户端在请求服务端时，必须在请求头中包含Authorization: Bearer 。服务端收到请求后，解析出 ，并校验 的合法性。
 当前最流行的 token 编码方式是 JSON Web Token</p>
 <p><img src="/image/go_develop_in_action/25_2.webp" alt="jwt_auth">
@@ -2225,7 +2330,149 @@ curl -X POST -H <span class="s2">&#34;Authorization: Basic </span><span class="s
 <li>客户端收到请求后会将 Token 缓存起来，比如放在浏览器 Cookie 中或者 LocalStorage 中，之后每次请求都会携带该 Token。</li>
 <li>服务端收到请求后，会验证请求中的 Token，验证通过则进行业务逻辑处理，处理完后返回处理后的结果。</li>
 </ol>
-<h2 id="参考">参考</h2>
+<h2 id="iam的认证功能设计">IAM的认证功能设计</h2>
+<h3 id="整体思路">整体思路</h3>
+<ul>
+<li>Basic认证摔死在前端登录的场景</li>
+<li>Bearer认证用在调用后端API服务的场景</li>
+</ul>
+<h3 id="具体设计">具体设计</h3>
+<p><img src="/image/go_develop_in_action/26_1.webp" alt="iam_auth"></p>
+<ul>
+<li>密钥CURD存储在iam-apiserver中</li>
+<li>iam-authz-server将密钥信息缓存在内存中，通过grpc api获取</li>
+<li>iam-apiserver有更新时，会发布到iam-authz-server订阅的频道</li>
+</ul>
+<h3 id="具体实现">具体实现</h3>
+<p>因为项目要根据需要选择不同的认证方式，所以使用设计模式中的策略模式来实现</p>
+<ul>
+<li>basic策略： 实现了Basic认证</li>
+<li>jwt策略：实现了Bearer认证</li>
+<li>auto策略：根据HTTP HEAD自动选择Basic或Bearer认证</li>
+<li>cache策略：从缓存中加载认证信息</li>
+</ul>
+<p><img src="/image/go_develop_in_action/26_2.webp" alt="iam_auth2"></p>
+<h2 id="权限模型">权限模型</h2>
+<p><img src="/image/go_develop_in_action/27_1.webp" alt="special_term"></p>
+<h3 id="常见权限模型">常见权限模型</h3>
+<h4 id="权限控制列表">权限控制列表</h4>
+<p>ACL（Access Control List）用来判断用户是否可以对资源做特定的操作。例如允许Colin创建文章：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">Subject</span><span class="p">:</span><span class="w"> </span><span class="l">Colin</span><span class="w">
+</span><span class="w"></span><span class="nt">Action</span><span class="p">:</span><span class="w"> </span><span class="l">Create</span><span class="w">
+</span><span class="w"></span><span class="nt">Object</span><span class="p">:</span><span class="w"> </span><span class="l">Article</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>在ACL模型下，权限管理围绕资源Object来设定</p>
+<h4 id="自主访问控制">自主访问控制</h4>
+<p>DAC（Discretionary Access Control）是ACL的扩展模型，不仅可以判断Subject是否可以对Object执行Action，同时也能让Subject将
+Object、Action的相同权限授予其他的Subject</p>
+<h4 id="强制访问控制">强制访问控制</h4>
+<p>MAC（Mandatory Access Control）是ACL的扩展模型，安全性更高，Subject和Object同时具有安全属性，只有
+满足以下两点才能授权通过：</p>
+<ol>
+<li>Subject可以对Object做Action</li>
+<li>Object可以被Subject做ACtion</li>
+</ol>
+<h4 id="基于角色的访问控制">基于角色的访问控制</h4>
+<p>RBAC（Role-Based Access Control）引入了Role的概念，并将权限和角色进行关联，用户通过扮演某种角色，具有了该角色的所有权限</p>
+<p><img src="/image/go_develop_in_action/27_2.webp" alt="RBAC"></p>
+<p>RBAC又分为四种：</p>
+<h5 id="rbac0">RBAC0</h5>
+<p>基础模型，只包含核心的四要素（用户User、角色Role、权限Permission和会话Session）
+用户和角色可以是多对多的关系，权限和角色也可以是多对多的关系</p>
+<h5 id="rbac1">RBAC1</h5>
+<p>包括RBAC0，并添加了角色继承</p>
+<h5 id="rbac2">RBAC2</h5>
+<p>包括RBAC0，并添加了约束，具有以下核心特性</p>
+<ul>
+<li>互斥约束：同一个用户不能有 互斥的角色，互斥的权限不能分配非同一个角色</li>
+<li>基数约束：一个角色被分配的用户数量是受限的</li>
+<li>先决条件角色：要想获得较高权限，首先要拥有低一级的权限</li>
+<li>静态职责分离（Static Separation of Duty）：用户无法同时被赋予有冲突的角色</li>
+<li>静态职责分离（Dynamic Separation of Duty）：会话中无法同时激活有冲突的角色</li>
+</ul>
+<h5 id="rbac3">RBAC3</h5>
+<p>全功能的RBAC，合并了上面三种</p>
+<h4 id="基于属性的权限验证">基于属性的权限验证</h4>
+<p>ABAC（Attribute-Based Access Control）规定了哪些属性的用户对哪些属性的资源在哪些条件限制下进行哪些操作</p>
+<p>相比RBAC, ABAC对权限的控制粒度更新，主要规定了下面的这四类属性：</p>
+<ul>
+<li>用户属性，如性别，年龄等</li>
+<li>资源属性，如资源属性、类别等</li>
+<li>操作属性，如创建、修改等</li>
+<li>环境属性，如来源IP、当前时间等</li>
+</ul>
+<p>下面是腾讯云的的一个样例</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json">
+<span class="p">{</span>
+  <span class="nt">&#34;version&#34;</span><span class="p">:</span> <span class="s2">&#34;2.0&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;statement&#34;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="nt">&#34;effect&#34;</span><span class="p">:</span> <span class="s2">&#34;allow&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;action&#34;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&#34;cos:List*&#34;</span><span class="p">,</span>
+        <span class="s2">&#34;cos:Get*&#34;</span><span class="p">,</span>
+        <span class="s2">&#34;cos:Head*&#34;</span><span class="p">,</span>
+        <span class="s2">&#34;cos:OptionsObject&#34;</span>
+      <span class="p">],</span>
+      <span class="nt">&#34;resource&#34;</span><span class="p">:</span> <span class="s2">&#34;qcs::cos:ap-shanghai:uid/1250000000:Bucket1-1250000000/dir1/*&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;condition&#34;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&#34;ip_equal&#34;</span><span class="p">:</span> <span class="p">{</span>
+          <span class="nt">&#34;qcs:ip&#34;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&#34;10.217.182.3/24&#34;</span><span class="p">,</span>
+            <span class="s2">&#34;111.21.33.72/24&#34;</span>
+          <span class="p">]</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面的授权策略表示：用户必须在 10.217.182.3/24 或者 111.21.33.72/24 网段才能调用云 API（cos:List*、cos:Get*、cos:Head*、cos:OptionsObject），对 1250000000 用户下的 dir1 目录下的文件进行读取操作。
+ABAC 规定的四类属性分别是：</p>
+<ul>
+<li>用户属性：用户为 1250000000。</li>
+<li>资源属性：dir1 目录下的文件。</li>
+<li>操作属性：读取（cos:List*、cos:Get*、cos:Head*、cos:OptionsObject 都是读取 API）。</li>
+<li>环境属性：10.217.182.3/24 或者 111.21.33.72/24 网段。</li>
+</ul>
+<h1 id="参考">参考</h1>
 <ul>
 <li><a href="https://time.geekbang.org/column/intro/418">课程资源-Go 语言项目开发实战</a></li>
 <li><a href="https://www.techgrow.cn/posts/5bd5a253.html">gcc升级</a></li>

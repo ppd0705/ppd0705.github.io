@@ -392,7 +392,7 @@ GDTBASE dd GDT_START
 &lt;li&gt;物理内存管理：分配和释放大块内存、内存空间映射、操作MMU和Cache&lt;/li&gt;
 &lt;li&gt;平台其他相关功能&lt;/li&gt;
 &lt;/ol&gt;
-&lt;h1 id=&#34;业界成熟内核架构&#34;&gt;业界成熟内核架构&lt;/h1&gt;
+&lt;h1 id=&#34;第四讲业界成熟内核架构&#34;&gt;第四讲：业界成熟内核架构&lt;/h1&gt;
 &lt;h2 id=&#34;linux&#34;&gt;Linux&lt;/h2&gt;
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/4_1.webp&#34; alt=&#34;linux-core&#34;&gt;&lt;/p&gt;
 &lt;p&gt;Linux使用的宏内核架构，模块之间的通信主要是函数调用&lt;/p&gt;
@@ -410,7 +410,7 @@ GDTBASE dd GDT_START
 &lt;p&gt;内核相当于所有的功能都耦合在一起，放在内核内
 微内核是把大多数功能解耦出来，放在用户态，使用IPC在用户态调用服务进程
 混合结构其实与微内核相似，只不过解耦出来的这些功能依然放在内核里，动态加载和卸载&lt;/p&gt;
-&lt;h1 id=&#34;执行程序的三种模式&#34;&gt;执行程序的三种模式&lt;/h1&gt;
+&lt;h1 id=&#34;第五讲执行程序的三种模式&#34;&gt;第五讲：执行程序的三种模式&lt;/h1&gt;
 &lt;p&gt;CPU的工作模式有三种&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;实模式&lt;/li&gt;
@@ -490,7 +490,7 @@ GDTBASE dd GDT_START
 &lt;p&gt;x86 CPU不能直接使用分页模型，通过简化设计，来时分段称为一个&amp;quot;虚设&amp;quot;，这个称之为保护模式的平坦模型&lt;/p&gt;
 &lt;p&gt;将段的基地址设为0，段长度设为0xFFFFF(2 ** 20 = 1M),段的粒度为4KB
 在此模式下不同的段可以重叠、交叉和包含&lt;/p&gt;
-&lt;h3 id=&#34;中断处理&#34;&gt;中断处理&lt;/h3&gt;
+&lt;h3 id=&#34;中断-1&#34;&gt;中断&lt;/h3&gt;
 &lt;p&gt;保护模式需要检查权限，所以需要扩展中断向量表的信息
 每个中断用一个中断门描述符来表示，格式如下&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/5_8.webp&#34; alt=&#34;protected-interrupt&#34;&gt;&lt;/p&gt;
@@ -576,8 +576,8 @@ mov cr0, eax
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/5_10.webp&#34; alt=&#34;amd64-register&#34;&gt;&lt;/p&gt;
 &lt;h3 id=&#34;段描述符-1&#34;&gt;段描述符&lt;/h3&gt;
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/5_11.webp&#34; alt=&#34;amd64-segment-descriptor&#34;&gt;&lt;/p&gt;
-&lt;h3 id=&#34;中断-1&#34;&gt;中断&lt;/h3&gt;
-&lt;p&gt;![amd64-interrupt(/image/play_os_in_action/5_12.webp)&lt;/p&gt;
+&lt;h3 id=&#34;中断-2&#34;&gt;中断&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/5_12.webp&#34; alt=&#34;amd64-interrupt&#34;&gt;&lt;/p&gt;
 &lt;h3 id=&#34;切换-1&#34;&gt;切换&lt;/h3&gt;
 &lt;ol&gt;
 &lt;li&gt;准备长模式全局段描述符表&lt;/li&gt;
@@ -761,14 +761,14 @@ mov cr0, eax
       
       <guid>https://ppd0705.github.io/post/go_develop_in_action/</guid>
       
-        <description>&lt;h2 id=&#34;规范设计&#34;&gt;规范设计&lt;/h2&gt;
-&lt;h3 id=&#34;开源规范&#34;&gt;开源规范&lt;/h3&gt;
-&lt;h4 id=&#34;开源协议概述&#34;&gt;开源协议概述&lt;/h4&gt;
+        <description>&lt;h1 id=&#34;规范设计&#34;&gt;规范设计&lt;/h1&gt;
+&lt;h2 id=&#34;开源规范&#34;&gt;开源规范&lt;/h2&gt;
+&lt;h3 id=&#34;开源协议概述&#34;&gt;开源协议概述&lt;/h3&gt;
 &lt;p&gt;MIT是相对自由开发的协议&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/4_1.png&#34; alt=&#34;opensource_proctol&#34;&gt;&lt;/p&gt;
-&lt;h3 id=&#34;文档规范&#34;&gt;文档规范&lt;/h3&gt;
+&lt;h2 id=&#34;文档规范&#34;&gt;文档规范&lt;/h2&gt;
 &lt;p&gt;最重要的三类文档：README文档、项目文档和API文档&lt;/p&gt;
-&lt;h4 id=&#34;readme规范&#34;&gt;README规范&lt;/h4&gt;
+&lt;h3 id=&#34;readme规范&#34;&gt;README规范&lt;/h3&gt;
 &lt;p&gt;主要用来介绍项目的功能、安装、部署和使用&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
@@ -827,54 +827,54 @@ mov cr0, eax
 
 &amp;lt;!-- 写一段简短的话描述项目 --&amp;gt;
 
-## 功能特性
+# 功能特性
 
 &amp;lt;!-- 描述该项目的核心功能点 --&amp;gt;
 
-## 软件架构(可选)
+# 软件架构(可选)
 
 &amp;lt;!-- 可以描述下项目的架构 --&amp;gt;
 
-## 快速开始
+# 快速开始
 
-### 依赖检查
+## 依赖检查
 
 &amp;lt;!-- 描述该项目的依赖，比如依赖的包、工具或者其他任何依赖项 --&amp;gt;
 
-### 构建
+## 构建
 
 &amp;lt;!-- 描述如何构建该项目 --&amp;gt;
 
-### 运行
+## 运行
 
 &amp;lt;!-- 描述如何运行该项目 --&amp;gt;
 
-## 使用指南
+# 使用指南
 
 &amp;lt;!-- 描述如何使用该项目 --&amp;gt;
 
-## 如何贡献
+# 如何贡献
 
 &amp;lt;!-- 告诉其他开发者如果给该项目贡献源码 --&amp;gt;
 
-## 社区(可选)
+# 社区(可选)
 
 &amp;lt;!-- 如果有需要可以介绍一些社区相关的内容 --&amp;gt;
 
-## 关于作者
+# 关于作者
 
 &amp;lt;!-- 这里写上项目作者 --&amp;gt;
 
-## 谁在用(可选)
+# 谁在用(可选)
 
 &amp;lt;!-- 可以列出使用本项目的其他有影响力的项目，算是给项目打个广告吧 --&amp;gt;
 
-## 许可证
+# 许可证
 
 &amp;lt;!-- 这里链接上该项目的开源许可证 --&amp;gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h4 id=&#34;项目文档规范&#34;&gt;项目文档规范&lt;/h4&gt;
+&lt;/div&gt;&lt;h3 id=&#34;项目文档规范&#34;&gt;项目文档规范&lt;/h3&gt;
 &lt;p&gt;通常放在&lt;code&gt;/docs&lt;/code&gt;目录下，包含开发文档和用户文档&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
@@ -938,7 +938,7 @@ mov cr0, eax
     &lt;span class=&#34;err&#34;&gt;└──&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;部署架构v1.png&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h4 id=&#34;api接口规范&#34;&gt;API接口规范&lt;/h4&gt;
+&lt;/div&gt;&lt;h3 id=&#34;api接口规范&#34;&gt;API接口规范&lt;/h3&gt;
 &lt;p&gt;API文档生成方式包括通过注释生成、编写Markdown格式文档, 通常拆分为多个文件&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;README: API介绍整体文档&lt;/li&gt;
@@ -948,7 +948,7 @@ mov cr0, eax
 &lt;li&gt;error_code: 业务错误码说明&lt;/li&gt;
 &lt;li&gt;按资源划分API文档： API详细说明&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h3 id=&#34;版本规范&#34;&gt;版本规范&lt;/h3&gt;
+&lt;h2 id=&#34;版本规范&#34;&gt;版本规范&lt;/h2&gt;
 &lt;p&gt;版本格式为：主版本号.次版本号.修订号（X.Y.Z）&lt;/p&gt;
 &lt;p&gt;版本号递增规则&lt;/p&gt;
 &lt;ul&gt;
@@ -969,7 +969,7 @@ mov cr0, eax
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/5_1.webp&#34; alt=&#34;commit_types&#34;&gt;&lt;/p&gt;
-&lt;h3 id=&#34;commit规范&#34;&gt;Commit规范&lt;/h3&gt;
+&lt;h2 id=&#34;commit规范&#34;&gt;Commit规范&lt;/h2&gt;
 &lt;p&gt;采用Angular风格的Commit Message, 其包含三个部分：Header、Body和Footer，具体格式如下：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
@@ -987,7 +987,7 @@ mov cr0, eax
 [optional footer]
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h4 id=&#34;header&#34;&gt;Header&lt;/h4&gt;
+&lt;/div&gt;&lt;h3 id=&#34;header&#34;&gt;Header&lt;/h3&gt;
 &lt;p&gt;&lt;code&gt;type&lt;/code&gt;说明commit类型，主要分为Development和Production两大类&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Development类别修改的是项目管理类的变更，如CI流程、构建方式等，不会影响到最终用户，具体类型
@@ -1010,9 +1010,9 @@ mov cr0, eax
 &lt;/ul&gt;
 &lt;p&gt;&lt;code&gt;scope&lt;/code&gt;用来说明影响范围，应根据项目情况设计大类如api、pkg、docs等&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;descrption&lt;/code&gt;是对commit的简单描述，必须以动词开头，使用现在时态，结尾不加句号&lt;/p&gt;
-&lt;h4 id=&#34;body&#34;&gt;Body&lt;/h4&gt;
+&lt;h3 id=&#34;body&#34;&gt;Body&lt;/h3&gt;
 &lt;p&gt;body是对commit的详细描述，同样以动词开头，使用现在时态，内容包含改动的原因和改动点&lt;/p&gt;
-&lt;h4 id=&#34;footer&#34;&gt;Footer&lt;/h4&gt;
+&lt;h3 id=&#34;footer&#34;&gt;Footer&lt;/h3&gt;
 &lt;p&gt;通产用来说明不兼容的改动和关闭的issue，如下示例&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
@@ -1024,7 +1024,7 @@ mov cr0, eax
 Cloes: #123, #234
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h4 id=&#34;revert-commit&#34;&gt;Revert Commit&lt;/h4&gt;
+&lt;/div&gt;&lt;h3 id=&#34;revert-commit&#34;&gt;Revert Commit&lt;/h3&gt;
 &lt;p&gt;当还原commit的时，在还原的Header前面加&lt;code&gt;revert: &lt;/code&gt;, Body里面说明还原的commit hash，如：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
@@ -1038,7 +1038,7 @@ Cloes: #123, #234
 This reverts commit fjsdf34353534vdf
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h4 id=&#34;其他&#34;&gt;其他&lt;/h4&gt;
+&lt;/div&gt;&lt;h3 id=&#34;其他&#34;&gt;其他&lt;/h3&gt;
 &lt;p&gt;合并提交： 对于过多的commit使用&lt;code&gt;git rebase&lt;/code&gt;进行合并&lt;/p&gt;
 &lt;p&gt;修改message: 使用&lt;code&gt;git rebase&lt;/code&gt;(注：修改message会将导致当前及置换的hash变更)&lt;/p&gt;
 &lt;p&gt;自动化工具:&lt;/p&gt;
@@ -1048,14 +1048,14 @@ This reverts commit fjsdf34353534vdf
 &lt;li&gt;&lt;a href=&#34;https://github.com/git-chglog/git-chglog&#34;&gt;git-changelog&lt;/a&gt;: 自动生成change log&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://github.com/arnaud-deprez/gsemver&#34;&gt;gmemver&lt;/a&gt;: 语义化版本自动生成&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h3 id=&#34;目录结构设计&#34;&gt;目录结构设计&lt;/h3&gt;
+&lt;h2 id=&#34;目录结构设计&#34;&gt;目录结构设计&lt;/h2&gt;
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/6_1.webp&#34; alt=&#34;project-layer&#34;&gt;&lt;/p&gt;
-&lt;h4 id=&#34;目录介绍&#34;&gt;目录介绍&lt;/h4&gt;
-&lt;h5 id=&#34;1-web&#34;&gt;1. /web&lt;/h5&gt;
+&lt;h3 id=&#34;目录介绍&#34;&gt;目录介绍&lt;/h3&gt;
+&lt;h4 id=&#34;1-web&#34;&gt;1. /web&lt;/h4&gt;
 &lt;p&gt;web目录主要存放web静态资源&lt;/p&gt;
-&lt;h5 id=&#34;2-cmd&#34;&gt;2. /cmd&lt;/h5&gt;
+&lt;h4 id=&#34;2-cmd&#34;&gt;2. /cmd&lt;/h4&gt;
 &lt;p&gt;一个项目可能有多个组件，每个组件的main函数所在文件夹放在该目录&lt;/p&gt;
-&lt;h5 id=&#34;3-internal&#34;&gt;3. /internal&lt;/h5&gt;
+&lt;h4 id=&#34;3-internal&#34;&gt;3. /internal&lt;/h4&gt;
 &lt;p&gt;存放私有应用的代码，不能被其他项目导入&lt;/p&gt;
 &lt;p&gt;项目内应用之间共享代码存放于/internal/pkg&lt;/p&gt;
 &lt;p&gt;开发建议：最开始将共享代码都放/internal/pkg，做好对外发布的准备时再转到/pkg目录&lt;/p&gt;
@@ -1141,55 +1141,55 @@ This reverts commit fjsdf34353534vdf
 &lt;li&gt;/internal/pkg/validation: 通用验证函数&lt;/li&gt;
 &lt;li&gt;/internal/pkg/code: HTTP处理链&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h5 id=&#34;4-pkg&#34;&gt;4. /pkg&lt;/h5&gt;
+&lt;h4 id=&#34;4-pkg&#34;&gt;4. /pkg&lt;/h4&gt;
 &lt;p&gt;pkg目录存放外部应用可以使用的代码库，应谨慎考虑&lt;/p&gt;
-&lt;h5 id=&#34;5-vendor&#34;&gt;5. /vendor&lt;/h5&gt;
+&lt;h4 id=&#34;5-vendor&#34;&gt;5. /vendor&lt;/h4&gt;
 &lt;p&gt;项目依赖，通过&lt;code&gt;go mod vendor&lt;/code&gt;创建&lt;/p&gt;
-&lt;h5 id=&#34;6-third_party&#34;&gt;6. /third_party&lt;/h5&gt;
+&lt;h4 id=&#34;6-third_party&#34;&gt;6. /third_party&lt;/h4&gt;
 &lt;p&gt;外部帮助工具，比如fork了一个第三方go包，并做了小改动，可以放置该目录&lt;/p&gt;
-&lt;h5 id=&#34;7-test&#34;&gt;7. /test&lt;/h5&gt;
+&lt;h4 id=&#34;7-test&#34;&gt;7. /test&lt;/h4&gt;
 &lt;p&gt;存放其他外部测试应用和测试数据&lt;/p&gt;
-&lt;h5 id=&#34;8-configs&#34;&gt;8. /configs&lt;/h5&gt;
+&lt;h4 id=&#34;8-configs&#34;&gt;8. /configs&lt;/h4&gt;
 &lt;p&gt;存放配置文件模板或默认配置&lt;/p&gt;
-&lt;h5 id=&#34;9-deployments&#34;&gt;9. /deployments&lt;/h5&gt;
+&lt;h4 id=&#34;9-deployments&#34;&gt;9. /deployments&lt;/h4&gt;
 &lt;p&gt;存放系统和容器编排部署模板和配置&lt;/p&gt;
-&lt;h5 id=&#34;10-init&#34;&gt;10. /init&lt;/h5&gt;
+&lt;h4 id=&#34;10-init&#34;&gt;10. /init&lt;/h4&gt;
 &lt;p&gt;存放初始化系统和进程管理配置文件，如systemd、supervisord等&lt;/p&gt;
-&lt;h5 id=&#34;11-makefile&#34;&gt;11. /Makefile&lt;/h5&gt;
+&lt;h4 id=&#34;11-makefile&#34;&gt;11. /Makefile&lt;/h4&gt;
 &lt;p&gt;项目管理文件&lt;/p&gt;
-&lt;h5 id=&#34;12-scripts&#34;&gt;12. /scripts&lt;/h5&gt;
+&lt;h4 id=&#34;12-scripts&#34;&gt;12. /scripts&lt;/h4&gt;
 &lt;p&gt;存放脚本文件，通常可能分为三个目录&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;/scripts/make-rules: 存放maker文件，实现Makerfile文件中的各个功能&lt;/li&gt;
 &lt;li&gt;/scripts/lib: 存放shell脚本&lt;/li&gt;
 &lt;li&gt;/scripts/intall: 如果项目支持自动化部署，可以将部署脚本放在该目录&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h5 id=&#34;13-build&#34;&gt;13. /build&lt;/h5&gt;
+&lt;h4 id=&#34;13-build&#34;&gt;13. /build&lt;/h4&gt;
 &lt;p&gt;存放安装包和持续集成相关的文件，通常可能包含三个目录&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;/build/package: 存放容器（Docker）、系统(deb,rpm)的包配置和脚本&lt;/li&gt;
 &lt;li&gt;/build/ci: 存放CI（travis，circle）的配置文件&lt;/li&gt;
 &lt;li&gt;/build/docker: 存放子项目各个组件的Dockerfile文件&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h5 id=&#34;14-tools&#34;&gt;14. /tools&lt;/h5&gt;
+&lt;h4 id=&#34;14-tools&#34;&gt;14. /tools&lt;/h4&gt;
 &lt;p&gt;存放这个项目的支持工具，这些工具可导入来自/pkg和/internal目录的代码&lt;/p&gt;
-&lt;h5 id=&#34;15-githooks&#34;&gt;15. /githooks&lt;/h5&gt;
+&lt;h4 id=&#34;15-githooks&#34;&gt;15. /githooks&lt;/h4&gt;
 &lt;p&gt;git钩子&lt;/p&gt;
-&lt;h5 id=&#34;16-assets&#34;&gt;16. /assets&lt;/h5&gt;
+&lt;h4 id=&#34;16-assets&#34;&gt;16. /assets&lt;/h4&gt;
 &lt;p&gt;项目使用的其他资源（图片、CSS、Javascript等）&lt;/p&gt;
-&lt;h5 id=&#34;17-website&#34;&gt;17. /website&lt;/h5&gt;
+&lt;h4 id=&#34;17-website&#34;&gt;17. /website&lt;/h4&gt;
 &lt;p&gt;放置项目网站相关的数据&lt;/p&gt;
-&lt;h5 id=&#34;18-readmemd&#34;&gt;18. /README.md&lt;/h5&gt;
+&lt;h4 id=&#34;18-readmemd&#34;&gt;18. /README.md&lt;/h4&gt;
 &lt;p&gt;一般包含项目介绍、功能介绍、快速按照、使用指引、详细文档连接和开发指引等
 文件较长时可以用&lt;a href=&#34;https://github.com/nochso/tocenize&#34;&gt;tocenize&lt;/a&gt;加目录&lt;/p&gt;
-&lt;h5 id=&#34;19-docs&#34;&gt;19. /docs&lt;/h5&gt;
+&lt;h4 id=&#34;19-docs&#34;&gt;19. /docs&lt;/h4&gt;
 &lt;p&gt;存放设计文档、开放文档和用户文档等，可能包含下面几个目录&lt;/p&gt;
 &lt;p&gt;/docs/devel/{en-US, zh-CN}: 存放开发文档
 /docs/guide/{en-US, zh-CN}: 存放用户手册
 /docs/images: 存放图片文件&lt;/p&gt;
-&lt;h5 id=&#34;20-contributingmd&#34;&gt;20. /CONTRIBUTING.md&lt;/h5&gt;
+&lt;h4 id=&#34;20-contributingmd&#34;&gt;20. /CONTRIBUTING.md&lt;/h4&gt;
 &lt;p&gt;用来说明如何贡献代码，规范协同流程&lt;/p&gt;
-&lt;h5 id=&#34;21-api&#34;&gt;21. /api&lt;/h5&gt;
+&lt;h4 id=&#34;21-api&#34;&gt;21. /api&lt;/h4&gt;
 &lt;p&gt;存放项目提供的各种不同类型的API接口定义文件，可能有openapi、swagger等目录&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
@@ -1209,25 +1209,25 @@ This reverts commit fjsdf34353534vdf
     └── swagger.yaml
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h5 id=&#34;22-license&#34;&gt;22. /LICENSE&lt;/h5&gt;
+&lt;/div&gt;&lt;h4 id=&#34;22-license&#34;&gt;22. /LICENSE&lt;/h4&gt;
 &lt;p&gt;版权文件&lt;/p&gt;
 &lt;p&gt;如果需要给源码文件加license头时，可以使用&lt;a href=&#34;https://github.com/marmotedu/addlicense&#34;&gt;addlicense&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;项目依赖第三方包使用的license检查使用&lt;a href=&#34;https://github.com/ribice/glice&#34;&gt;glice&lt;/a&gt;&lt;/p&gt;
-&lt;h5 id=&#34;23-changelog&#34;&gt;23. /CHANGELOG&lt;/h5&gt;
+&lt;h4 id=&#34;23-changelog&#34;&gt;23. /CHANGELOG&lt;/h4&gt;
 &lt;p&gt;项目更新日志，可结合Angular规范和git-chglog自动生成内容&lt;/p&gt;
-&lt;h5 id=&#34;24-examples&#34;&gt;24. /examples&lt;/h5&gt;
+&lt;h4 id=&#34;24-examples&#34;&gt;24. /examples&lt;/h4&gt;
 &lt;p&gt;存放代码示例&lt;/p&gt;
-&lt;h4 id=&#34;其他建议&#34;&gt;其他建议&lt;/h4&gt;
+&lt;h3 id=&#34;其他建议&#34;&gt;其他建议&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;不使用/model目录，按功能拆分到使用的模块中&lt;/li&gt;
 &lt;li&gt;目录和包尽量使用单数&lt;/li&gt;
 &lt;li&gt;小项目可以先包含cmd、pkg、internal三个目录&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h3 id=&#34;工作流设计&#34;&gt;工作流设计&lt;/h3&gt;
-&lt;h4 id=&#34;功能分支工作流&#34;&gt;功能分支工作流&lt;/h4&gt;
+&lt;h2 id=&#34;工作流设计&#34;&gt;工作流设计&lt;/h2&gt;
+&lt;h3 id=&#34;功能分支工作流&#34;&gt;功能分支工作流&lt;/h3&gt;
 &lt;p&gt;开发新功能时，基于master分支新建一个功能分支，在功能分支上进行开发，开发完之后合并到master&lt;/p&gt;
 &lt;p&gt;该模式适合小规模、人员固定的项目&lt;/p&gt;
-&lt;h4 id=&#34;git-flow工作流&#34;&gt;Git Flow工作流&lt;/h4&gt;
+&lt;h3 id=&#34;git-flow工作流&#34;&gt;Git Flow工作流&lt;/h3&gt;
 &lt;p&gt;Git Flow定义了5种分支： master、develop、release、 feature、hotfix，详细介绍如下&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/7_1.webp&#34; alt=&#34;git-flow&#34;&gt;&lt;/p&gt;
 &lt;p&gt;假设当前在一个future分支开发，突然发现了线上bug，需要hotfix，则流程如下：&lt;/p&gt;
@@ -1266,11 +1266,11 @@ $ git stash pop &lt;span class=&#34;c1&#34;&gt;# 14. 恢复到修复前的工作
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;该模式适合人员固定、规模较大的项目&lt;/p&gt;
-&lt;h4 id=&#34;forking工作流&#34;&gt;Forking工作流&lt;/h4&gt;
+&lt;h3 id=&#34;forking工作流&#34;&gt;Forking工作流&lt;/h3&gt;
 &lt;p&gt;开源项目常用模式&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/7_2.webp&#34; alt=&#34;git-forking&#34;&gt;&lt;/p&gt;
-&lt;h3 id=&#34;研发流程设计&#34;&gt;研发流程设计&lt;/h3&gt;
-&lt;h4 id=&#34;研发流程&#34;&gt;研发流程&lt;/h4&gt;
+&lt;h2 id=&#34;研发流程设计&#34;&gt;研发流程设计&lt;/h2&gt;
+&lt;h3 id=&#34;研发流程&#34;&gt;研发流程&lt;/h3&gt;
 &lt;p&gt;通常研发流程包括6个阶段&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;需求阶段&lt;/li&gt;
@@ -1282,17 +1282,17 @@ $ git stash pop &lt;span class=&#34;c1&#34;&gt;# 14. 恢复到修复前的工作
 &lt;/ol&gt;
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/8_1.png&#34; alt=&#34;git-forking&#34;&gt;&lt;/p&gt;
 &lt;p&gt;每个阶段结束时，需要一个最终产物，可以是文档、代码或者部署组件，这个产物是下一个阶段的输入&lt;/p&gt;
-&lt;h4 id=&#34;研发模式&#34;&gt;研发模式&lt;/h4&gt;
+&lt;h3 id=&#34;研发模式&#34;&gt;研发模式&lt;/h3&gt;
 &lt;p&gt;研发模式有三种： 瀑布模式、迭代模式和敏捷模式&lt;/p&gt;
-&lt;h5 id=&#34;瀑布模式&#34;&gt;瀑布模式&lt;/h5&gt;
+&lt;h4 id=&#34;瀑布模式&#34;&gt;瀑布模式&lt;/h4&gt;
 &lt;p&gt;瀑布墨迹按照预先规划好的阶段来推进研发进度，流程清晰,但研发周期长，交付后变更困难
 &lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/8_2.webp&#34; alt=&#34;git-forking&#34;&gt;&lt;/p&gt;
-&lt;h5 id=&#34;迭代模式&#34;&gt;迭代模式&lt;/h5&gt;
+&lt;h4 id=&#34;迭代模式&#34;&gt;迭代模式&lt;/h4&gt;
 &lt;p&gt;研发任务被切分为一系列轮次，先把主要功能搭建起来，在通过客户反馈不断完善&lt;/p&gt;
-&lt;h5 id=&#34;敏捷模式&#34;&gt;敏捷模式&lt;/h5&gt;
+&lt;h4 id=&#34;敏捷模式&#34;&gt;敏捷模式&lt;/h4&gt;
 &lt;p&gt;敏捷模式把大需求分成多个、可分阶段完成的小迭代，每个迭代交付都是一个可用的软件，开发过程中，软件一直处于可用状态&lt;/p&gt;
 &lt;p&gt;迭代模式关注研发流程。而敏捷模式不仅会关注研发流程，还会关注之外的一些东西，例如：团队协作，需求拆分&lt;/p&gt;
-&lt;h4 id=&#34;cicd&#34;&gt;CI/CD&lt;/h4&gt;
+&lt;h3 id=&#34;cicd&#34;&gt;CI/CD&lt;/h3&gt;
 &lt;p&gt;CI/CD通过自动化的手段来快速执行代码检查、测试、构建和部署任务，从而提高研发效率&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;CI：Continuous Integration，持续集成&lt;/li&gt;
@@ -1301,33 +1301,33 @@ $ git stash pop &lt;span class=&#34;c1&#34;&gt;# 14. 恢复到修复前的工作
 &lt;/ul&gt;
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/8_3.webp&#34; alt=&#34;git-forking&#34;&gt;&lt;/p&gt;
 &lt;p&gt;持续集成的核心在代码，持续交付的核心在可交付的产物，持续部署的核心在自动部署&lt;/p&gt;
-&lt;h5 id=&#34;持续集成&#34;&gt;持续集成&lt;/h5&gt;
+&lt;h4 id=&#34;持续集成&#34;&gt;持续集成&lt;/h4&gt;
 &lt;p&gt;在代码push到git仓库后，CI工具会进行扫描、测试和构建，并将结果反馈给开发者&lt;/p&gt;
 &lt;p&gt;CI流程可以将问题在开发阶段就暴露出来，这会让开发人员交付代码时更有信心&lt;/p&gt;
-&lt;h5 id=&#34;持续交付&#34;&gt;持续交付&lt;/h5&gt;
+&lt;h4 id=&#34;持续交付&#34;&gt;持续交付&lt;/h4&gt;
 &lt;p&gt;在持续集成的基础上，就构建产物自动部署到目标环境（测试、预发布）&lt;/p&gt;
-&lt;h5 id=&#34;持续部署&#34;&gt;持续部署&lt;/h5&gt;
+&lt;h4 id=&#34;持续部署&#34;&gt;持续部署&lt;/h4&gt;
 &lt;p&gt;在持续交付的基础上，将经过充分测试的代码自动部署到生产环境，整个流程不在需要审核，完全自动化&lt;/p&gt;
-&lt;h4 id=&#34;devops&#34;&gt;DevOps&lt;/h4&gt;
+&lt;h3 id=&#34;devops&#34;&gt;DevOps&lt;/h3&gt;
 &lt;p&gt;DevOps是一组过程、方法和系统的统称，用于促进开发、运维、质量部门之间的协作整合
 &lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/8_4.webp&#34; alt=&#34;git-forking&#34;&gt;&lt;/p&gt;
 &lt;p&gt;目前常用的Ops手段： AIOps、ChatOps、GitOps&lt;/p&gt;
-&lt;h5 id=&#34;chatops&#34;&gt;ChatOps&lt;/h5&gt;
+&lt;h4 id=&#34;chatops&#34;&gt;ChatOps&lt;/h4&gt;
 &lt;p&gt;通过发送指令给聊天机器人，执行某个任务
 ChatOps对操作者友好，信息透明可追溯&lt;/p&gt;
-&lt;h5 id=&#34;gitops&#34;&gt;GitOps&lt;/h5&gt;
+&lt;h4 id=&#34;gitops&#34;&gt;GitOps&lt;/h4&gt;
 &lt;p&gt;基于Git和K8S实现云原生的持续交付&lt;/p&gt;
-&lt;h5 id=&#34;aiops&#34;&gt;AIOps&lt;/h5&gt;
+&lt;h4 id=&#34;aiops&#34;&gt;AIOps&lt;/h4&gt;
 &lt;p&gt;利用AI技术来智能化运维IT系统&lt;/p&gt;
-&lt;h3 id=&#34;设计方法&#34;&gt;设计方法&lt;/h3&gt;
+&lt;h2 id=&#34;设计方法&#34;&gt;设计方法&lt;/h2&gt;
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/10_1.webp&#34; alt=&#34;go-application&#34;&gt;&lt;/p&gt;
-&lt;h4 id=&#34;代码结构&#34;&gt;代码结构&lt;/h4&gt;
+&lt;h3 id=&#34;代码结构&#34;&gt;代码结构&lt;/h3&gt;
 &lt;p&gt;按功能拆分目录而非按MVC等模块拆封&lt;/p&gt;
-&lt;h4 id=&#34;代码规范&#34;&gt;代码规范&lt;/h4&gt;
+&lt;h3 id=&#34;代码规范&#34;&gt;代码规范&lt;/h3&gt;
 &lt;p&gt;可参考Uber的规范：&lt;a href=&#34;https://github.com/uber-go/guide/blob/master/style.md&#34;&gt;Go Style Guide&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;可使用惊呆检查工具：&lt;a href=&#34;https://github.com/golangci/golangci-lint&#34;&gt;golangcli-lint&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;官方CodeReview实践：&lt;a href=&#34;https://github.com/golang/go/wiki/CodeReviewComments&#34;&gt;Go Code Review Comments&lt;/a&gt;&lt;/p&gt;
-&lt;h4 id=&#34;代码质量&#34;&gt;代码质量&lt;/h4&gt;
+&lt;h3 id=&#34;代码质量&#34;&gt;代码质量&lt;/h3&gt;
 &lt;p&gt;测试相关工具：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;官方Mock框架： &lt;a href=&#34;https://github.com/golang/mock&#34;&gt;golang/mock&lt;/a&gt;&lt;/li&gt;
@@ -1346,17 +1346,17 @@ ChatOps对操作者友好，信息透明可追溯&lt;/p&gt;
 $ go tool cover -func ./coverage.out
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h4 id=&#34;编程哲学&#34;&gt;编程哲学&lt;/h4&gt;
+&lt;/div&gt;&lt;h3 id=&#34;编程哲学&#34;&gt;编程哲学&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;面向接口编程&lt;/li&gt;
 &lt;li&gt;面向对象编程&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h4 id=&#34;软件设计方法&#34;&gt;软件设计方法&lt;/h4&gt;
+&lt;h3 id=&#34;软件设计方法&#34;&gt;软件设计方法&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;设计模式&lt;/li&gt;
 &lt;li&gt;SOLD原则&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h4 id=&#34;高效项目管理&#34;&gt;高效项目管理&lt;/h4&gt;
+&lt;h3 id=&#34;高效项目管理&#34;&gt;高效项目管理&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;
 &lt;p&gt;使用Makefile管理项目&lt;/p&gt;
@@ -1372,12 +1372,12 @@ $ go tool cover -func ./coverage.out
 &lt;p&gt;编写高质量的文档&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;h3 id=&#34;设计模式&#34;&gt;设计模式&lt;/h3&gt;
+&lt;h2 id=&#34;设计模式&#34;&gt;设计模式&lt;/h2&gt;
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/11_1.webp&#34; alt=&#34;design-pattern&#34;&gt;&lt;/p&gt;
-&lt;h4 id=&#34;创建型模式&#34;&gt;创建型模式&lt;/h4&gt;
+&lt;h3 id=&#34;创建型模式&#34;&gt;创建型模式&lt;/h3&gt;
 &lt;p&gt;创建型模式（Creational Patterns）提供了在创建对象的同事隐藏创建逻辑的方式，而不是使用new运算符直接实例化对象。&lt;/p&gt;
 &lt;p&gt;比较常见的是单例模式和工厂模式&lt;/p&gt;
-&lt;h5 id=&#34;单例模式&#34;&gt;单例模式&lt;/h5&gt;
+&lt;h4 id=&#34;单例模式&#34;&gt;单例模式&lt;/h4&gt;
 &lt;p&gt;单例模式（Singleton Pattern）指全局只有一个实例，有利于减少内存开销，防止冲突等优点，常用于数据库实例、全局配置等&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;饿汉模式：初始化时创建&lt;/li&gt;
@@ -1453,7 +1453,7 @@ $ go tool cover -func ./coverage.out
 &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h5 id=&#34;工厂模式&#34;&gt;工厂模式&lt;/h5&gt;
+&lt;/div&gt;&lt;h4 id=&#34;工厂模式&#34;&gt;工厂模式&lt;/h4&gt;
 &lt;ul&gt;
 &lt;li&gt;简单工厂模式：接受参数，返回一个对象实例&lt;/li&gt;
 &lt;/ul&gt;
@@ -1591,9 +1591,9 @@ $ go tool cover -func ./coverage.out
 &lt;span class=&#34;nx&#34;&gt;teen&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:=&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;newTeenager&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;jill&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h4 id=&#34;结构型模式&#34;&gt;结构型模式&lt;/h4&gt;
+&lt;/div&gt;&lt;h3 id=&#34;结构型模式&#34;&gt;结构型模式&lt;/h3&gt;
 &lt;p&gt;结构型模式的特点是关注类和对象的组合&lt;/p&gt;
-&lt;h5 id=&#34;策略模式&#34;&gt;策略模式&lt;/h5&gt;
+&lt;h4 id=&#34;策略模式&#34;&gt;策略模式&lt;/h4&gt;
 &lt;p&gt;定义策略接口，并实现不同的策略，策略执行者可以设置不同的策略&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
@@ -1659,7 +1659,7 @@ $ go tool cover -func ./coverage.out
 &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h5 id=&#34;模板模式&#34;&gt;模板模式&lt;/h5&gt;
+&lt;/div&gt;&lt;h4 id=&#34;模板模式&#34;&gt;模板模式&lt;/h4&gt;
 &lt;p&gt;将一个类中能公共使用的方法放置在抽象类中实现，将不能公共使用的方法作为抽象方法强制子类去实现&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
@@ -1765,9 +1765,9 @@ $ go tool cover -func ./coverage.out
 &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h4 id=&#34;行为型模式&#34;&gt;行为型模式&lt;/h4&gt;
+&lt;/div&gt;&lt;h3 id=&#34;行为型模式&#34;&gt;行为型模式&lt;/h3&gt;
 &lt;p&gt;行为模式的特点是关注对象之间的通信&lt;/p&gt;
-&lt;h5 id=&#34;代理模式&#34;&gt;代理模式&lt;/h5&gt;
+&lt;h4 id=&#34;代理模式&#34;&gt;代理模式&lt;/h4&gt;
 &lt;p&gt;代理模式Proxy pattern 可以为另外一个对象提供一个替身或者占位符，以控制对这个对象的访问&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
@@ -1849,7 +1849,7 @@ $ go tool cover -func ./coverage.out
 &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h5 id=&#34;选项模式&#34;&gt;选项模式&lt;/h5&gt;
+&lt;/div&gt;&lt;h4 id=&#34;选项模式&#34;&gt;选项模式&lt;/h4&gt;
 &lt;p&gt;通过选项模式可以创建一个带有默认值得struct变量，并选择性的修改其中一些参数的值&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
@@ -1981,10 +1981,10 @@ $ go tool cover -func ./coverage.out
 &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h2 id=&#34;基础功能设计和开发&#34;&gt;基础功能设计和开发&lt;/h2&gt;
-&lt;h3 id=&#34;api风格&#34;&gt;API风格&lt;/h3&gt;
-&lt;h4 id=&#34;restful-api设计原则&#34;&gt;Restful API设计原则&lt;/h4&gt;
-&lt;h5 id=&#34;uri设计&#34;&gt;URI设计&lt;/h5&gt;
+&lt;/div&gt;&lt;h1 id=&#34;基础功能设计和开发&#34;&gt;基础功能设计和开发&lt;/h1&gt;
+&lt;h2 id=&#34;api风格&#34;&gt;API风格&lt;/h2&gt;
+&lt;h3 id=&#34;restful-api设计原则&#34;&gt;Restful API设计原则&lt;/h3&gt;
+&lt;h4 id=&#34;uri设计&#34;&gt;URI设计&lt;/h4&gt;
 &lt;p&gt;通常情况下：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;资源使用名词复数表示&lt;/li&gt;
@@ -2021,7 +2021,7 @@ DELETE /gits/:id/star
 &lt;/div&gt;&lt;ul&gt;
 &lt;li&gt;有时也可以打破规范，如登录操作URI设计为：/login&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h5 id=&#34;rest资源操作和http方法之间的映射&#34;&gt;REST资源操作和HTTP方法之间的映射&lt;/h5&gt;
+&lt;h4 id=&#34;操作和方法之间的映射&#34;&gt;操作和方法之间的映射&lt;/h4&gt;
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/12_1.webp&#34; alt=&#34;resource-operation&#34;&gt;&lt;/p&gt;
 &lt;p&gt;对资源的操作应蛮子安全性和幂等性：&lt;/p&gt;
 &lt;ul&gt;
@@ -2030,20 +2030,20 @@ DELETE /gits/:id/star
 &lt;/ul&gt;
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/12_2.webp&#34; alt=&#34;idempotence&#34;&gt;&lt;/p&gt;
 &lt;p&gt;POST一般用在新建和批量删除这两种场景，批量删除更建议使用：DELETE /users?id=1,2,3&lt;/p&gt;
-&lt;h5 id=&#34;统一分页过滤排序搜索功能&#34;&gt;统一分页/过滤/排序/搜索功能&lt;/h5&gt;
+&lt;h4 id=&#34;统一分页过滤排序搜索功能&#34;&gt;统一分页/过滤/排序/搜索功能&lt;/h4&gt;
 &lt;ul&gt;
 &lt;li&gt;分页：在列出一个Collection所有Member时应该提供分页功能，如：/users?offset=0&amp;amp;limit=20&lt;/li&gt;
 &lt;li&gt;过滤：当不用返回一个资源的全部属性时可以指定，如：/users?fields=email,username,address&lt;/li&gt;
 &lt;li&gt;排序：根据指定字段排序，如：/users?sort=age,desc&lt;/li&gt;
 &lt;li&gt;搜索：当一个资源的Member太多时，可能需要提供搜索功能，搜索建议按模糊搜索来匹配&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h5 id=&#34;域名&#34;&gt;域名&lt;/h5&gt;
+&lt;h4 id=&#34;域名&#34;&gt;域名&lt;/h4&gt;
 &lt;p&gt;主要有两种方式：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://abc.com/api&#34;&gt;https://abc.com/api&lt;/a&gt; 适用该域名只有一套API系统的情况&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://project.api.abc.com&#34;&gt;https://project.api.abc.com&lt;/a&gt; 适用域名下有多个系统API&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h4 id=&#34;rpc-api&#34;&gt;RPC API&lt;/h4&gt;
+&lt;h3 id=&#34;rpc-api&#34;&gt;RPC API&lt;/h3&gt;
 &lt;p&gt;RPC（Remote Procedure Call）即远程过程调用，通俗地来讲就是服务端实现了一个函数，
 客户端使用RPC框架提供的接口，想调用本地函数一样调用这个函数，并获取返回值。&lt;/p&gt;
 &lt;p&gt;protobuf3可以使用&lt;code&gt;optional&lt;/code&gt;关键字来支持显示判断是否传入该字段&lt;/p&gt;
@@ -2053,8 +2053,8 @@ DELETE /gits/:id/star
 &lt;/ul&gt;
 &lt;p&gt;可以通过grpc-gateway来同时支持restful-api&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/13_1.webp&#34; alt=&#34;rpc-vs-rest&#34;&gt;&lt;/p&gt;
-&lt;h3 id=&#34;makefile&#34;&gt;Makefile&lt;/h3&gt;
-&lt;h4 id=&#34;基本形式&#34;&gt;基本形式&lt;/h4&gt;
+&lt;h2 id=&#34;makefile&#34;&gt;Makefile&lt;/h2&gt;
+&lt;h3 id=&#34;基本形式&#34;&gt;基本形式&lt;/h3&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
 &lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
@@ -2070,8 +2070,8 @@ DELETE /gits/:id/star
 &lt;li&gt;prerequisities： 前置依赖目标&lt;/li&gt;
 &lt;li&gt;command: 具体的shell命令，以&lt;code&gt;tab&lt;/code&gt;起手，每一行都是单独的session, 可用&lt;code&gt;；&lt;/code&gt;共用session，使用&lt;code&gt;\&lt;/code&gt;作为换行符&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h4 id=&#34;基本语法&#34;&gt;基本语法&lt;/h4&gt;
-&lt;h5 id=&#34;声明伪目标&#34;&gt;声明伪目标&lt;/h5&gt;
+&lt;h3 id=&#34;基本语法&#34;&gt;基本语法&lt;/h3&gt;
+&lt;h4 id=&#34;声明伪目标&#34;&gt;声明伪目标&lt;/h4&gt;
 &lt;p&gt;避免有和target同名的文件&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
@@ -2085,7 +2085,7 @@ DELETE /gits/:id/star
     rm -rf *.c
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h5 id=&#34;关闭回声&#34;&gt;关闭回声&lt;/h5&gt;
+&lt;/div&gt;&lt;h4 id=&#34;关闭回声&#34;&gt;关闭回声&lt;/h4&gt;
 &lt;p&gt;命令前面加&lt;code&gt;@&lt;/code&gt;不会先打印命令&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
@@ -2097,7 +2097,7 @@ DELETE /gits/:id/star
     @echo &lt;span class=&#34;s1&#34;&gt;&amp;#39;hello world&amp;#39;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h5 id=&#34;忽略错误&#34;&gt;忽略错误&lt;/h5&gt;
+&lt;/div&gt;&lt;h4 id=&#34;忽略错误&#34;&gt;忽略错误&lt;/h4&gt;
 &lt;p&gt;命令前面加&lt;code&gt;-&lt;/code&gt;可忽略错误，继续往下执行&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
@@ -2111,9 +2111,9 @@ DELETE /gits/:id/star
 	@echo &lt;span class=&#34;s1&#34;&gt;&amp;#39;hello world2&amp;#39;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h5 id=&#34;通配符&#34;&gt;通配符&lt;/h5&gt;
+&lt;/div&gt;&lt;h4 id=&#34;通配符&#34;&gt;通配符&lt;/h4&gt;
 &lt;p&gt;支持&lt;code&gt;%&lt;/code&gt;、&lt;code&gt;*&lt;/code&gt;、&lt;code&gt;~&lt;/code&gt;&lt;/p&gt;
-&lt;h4 id=&#34;变量和赋值&#34;&gt;变量和赋值&lt;/h4&gt;
+&lt;h3 id=&#34;变量和赋值&#34;&gt;变量和赋值&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;使用&lt;code&gt;=&lt;/code&gt;自动以变量&lt;/li&gt;
 &lt;/ul&gt;
@@ -2184,7 +2184,7 @@ DELETE /gits/:id/star
     echo: &lt;span class=&#34;nv&#34;&gt;$$&lt;/span&gt;HOME
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h5 id=&#34;自动变量&#34;&gt;自动变量&lt;/h5&gt;
+&lt;/div&gt;&lt;h4 id=&#34;自动变量&#34;&gt;自动变量&lt;/h4&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;$@&lt;/code&gt;: 指当前目标&lt;/li&gt;
 &lt;/ul&gt;
@@ -2223,7 +2223,7 @@ DELETE /gits/:id/star
 &lt;li&gt;&lt;code&gt;$(@D)&lt;/code&gt;：指向&lt;code&gt;$@&lt;/code&gt;的目录名&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;$(@F)&lt;/code&gt;：指向&lt;code&gt;$@&lt;/code&gt;的文件名&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h4 id=&#34;条件语句&#34;&gt;条件语句&lt;/h4&gt;
+&lt;h3 id=&#34;条件语句&#34;&gt;条件语句&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;ifeq&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -2258,7 +2258,7 @@ DELETE /gits/:id/star
 &lt;span class=&#34;err&#34;&gt;endif&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h4 id=&#34;循环语句&#34;&gt;循环语句&lt;/h4&gt;
+&lt;/div&gt;&lt;h3 id=&#34;循环语句&#34;&gt;循环语句&lt;/h3&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
 &lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
@@ -2273,7 +2273,7 @@ DELETE /gits/:id/star
 &lt;span class=&#34;err&#34;&gt;done;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h4 id=&#34;内置函数&#34;&gt;内置函数&lt;/h4&gt;
+&lt;/div&gt;&lt;h3 id=&#34;内置函数&#34;&gt;内置函数&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;shell: 执行shell命令&lt;/li&gt;
 &lt;/ul&gt;
@@ -2309,17 +2309,17 @@ DELETE /gits/:id/star
 &lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-makefile&#34; data-lang=&#34;makefile&#34;&gt;&lt;span class=&#34;k&#34;&gt;$(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;patsubst&lt;/span&gt; %.&lt;span class=&#34;nv&#34;&gt;c&lt;/span&gt;,%.&lt;span class=&#34;nv&#34;&gt;o&lt;/span&gt;,&lt;span class=&#34;nv&#34;&gt;x&lt;/span&gt;.&lt;span class=&#34;nv&#34;&gt;c&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;bar&lt;/span&gt;.&lt;span class=&#34;nv&#34;&gt;c&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h3 id=&#34;流程管理&#34;&gt;流程管理&lt;/h3&gt;
+&lt;/div&gt;&lt;h2 id=&#34;流程管理&#34;&gt;流程管理&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;使用git-flow工作流&lt;/li&gt;
 &lt;li&gt;使用Makefile同一规范&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h3 id=&#34;静态代码检查&#34;&gt;静态代码检查&lt;/h3&gt;
+&lt;h2 id=&#34;静态代码检查&#34;&gt;静态代码检查&lt;/h2&gt;
 &lt;p&gt;使用强大的&lt;code&gt;golangci-lint&lt;/code&gt;&lt;/p&gt;
-&lt;h3 id=&#34;swagger文档生成&#34;&gt;swagger文档生成&lt;/h3&gt;
+&lt;h2 id=&#34;swagger文档生成&#34;&gt;swagger文档生成&lt;/h2&gt;
 &lt;p&gt;使用&lt;code&gt;go-swagger&lt;/code&gt;自动生成openapi规范的文档&lt;/p&gt;
-&lt;h3 id=&#34;错误处理&#34;&gt;错误处理&lt;/h3&gt;
-&lt;h4 id=&#34;https-code&#34;&gt;HTTPS CODE&lt;/h4&gt;
+&lt;h2 id=&#34;错误处理&#34;&gt;错误处理&lt;/h2&gt;
+&lt;h3 id=&#34;https-code&#34;&gt;HTTPS CODE&lt;/h3&gt;
 &lt;p&gt;建议使用主要的几个错误码:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;200： 请求成功&lt;/li&gt;
@@ -2333,10 +2333,10 @@ DELETE /gits/:id/star
 &lt;li&gt;404： 资源不存在&lt;/li&gt;
 &lt;li&gt;429： 请求超频&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h4 id=&#34;错误码设计&#34;&gt;错误码设计&lt;/h4&gt;
+&lt;h3 id=&#34;错误码设计&#34;&gt;错误码设计&lt;/h3&gt;
 &lt;p&gt;使用六位整数，分为三部分， 前两位表示服务，中间两位表示具体模块，末两位表示错误码序号&lt;/p&gt;
-&lt;h4 id=&#34;错误包设计&#34;&gt;错误包设计&lt;/h4&gt;
-&lt;h4 id=&#34;需求&#34;&gt;需求&lt;/h4&gt;
+&lt;h3 id=&#34;错误包设计&#34;&gt;错误包设计&lt;/h3&gt;
+&lt;h3 id=&#34;需求&#34;&gt;需求&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;支持记录错误堆栈&lt;/li&gt;
 &lt;li&gt;支持打印不同格式的信息
@@ -2358,9 +2358,9 @@ DELETE /gits/:id/star
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;h4 id=&#34;实现&#34;&gt;实现&lt;/h4&gt;
+&lt;h3 id=&#34;实现&#34;&gt;实现&lt;/h3&gt;
 &lt;p&gt;基于&lt;code&gt;githu.com/pkg/errors&lt;/code&gt;二次开发&lt;/p&gt;
-&lt;h5 id=&#34;增加withcode结构体&#34;&gt;增加WithCode结构体&lt;/h5&gt;
+&lt;h4 id=&#34;增加withcode结构体&#34;&gt;增加WithCode结构体&lt;/h4&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
 &lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
@@ -2383,7 +2383,7 @@ DELETE /gits/:id/star
 &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h4 id=&#34;错误码实现&#34;&gt;错误码实现&lt;/h4&gt;
+&lt;/div&gt;&lt;h3 id=&#34;错误码实现&#34;&gt;错误码实现&lt;/h3&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
 &lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
@@ -2418,35 +2418,35 @@ DELETE /gits/:id/star
 &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h3 id=&#34;日志包设计&#34;&gt;日志包设计&lt;/h3&gt;
-&lt;h4 id=&#34;基础功能&#34;&gt;基础功能&lt;/h4&gt;
+&lt;/div&gt;&lt;h2 id=&#34;日志包设计&#34;&gt;日志包设计&lt;/h2&gt;
+&lt;h3 id=&#34;基础功能&#34;&gt;基础功能&lt;/h3&gt;
 &lt;ol&gt;
 &lt;li&gt;支持基本的日志信息：时间戳、文件名、行号、日志级别和日志信息&lt;/li&gt;
 &lt;li&gt;支持不同的日志级别&lt;/li&gt;
 &lt;li&gt;支持自定义配置，如调整日志级别，调整输出格式等&lt;/li&gt;
 &lt;li&gt;支持输出到标准输出和文件&lt;/li&gt;
 &lt;/ol&gt;
-&lt;h4 id=&#34;高级功能&#34;&gt;高级功能&lt;/h4&gt;
+&lt;h3 id=&#34;高级功能&#34;&gt;高级功能&lt;/h3&gt;
 &lt;ol&gt;
 &lt;li&gt;支持多种日志格式，如支持JSON格式方便filebeat日志采集工具采集并上报&lt;/li&gt;
 &lt;li&gt;能够按级别分类输出&lt;/li&gt;
 &lt;li&gt;支持日志轮转&lt;/li&gt;
 &lt;li&gt;具备HOOK能力，如发邮件高级等&lt;/li&gt;
 &lt;/ol&gt;
-&lt;h4 id=&#34;可选功能&#34;&gt;可选功能&lt;/h4&gt;
+&lt;h3 id=&#34;可选功能&#34;&gt;可选功能&lt;/h3&gt;
 &lt;ol&gt;
 &lt;li&gt;支持颜色输出&lt;/li&gt;
 &lt;li&gt;兼容标准log包&lt;/li&gt;
 &lt;li&gt;支持输出到不同的位置如Kafka等组件&lt;/li&gt;
 &lt;/ol&gt;
-&lt;h4 id=&#34;关注点&#34;&gt;关注点&lt;/h4&gt;
+&lt;h3 id=&#34;关注点&#34;&gt;关注点&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;高性能&lt;/li&gt;
 &lt;li&gt;并发安全&lt;/li&gt;
 &lt;li&gt;插件化能力&lt;/li&gt;
 &lt;li&gt;参数控制&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h4 id=&#34;分布式日志解决方法efk&#34;&gt;分布式日志解决方法（EFK）&lt;/h4&gt;
+&lt;h3 id=&#34;分布式日志解决方法efk&#34;&gt;分布式日志解决方法（EFK）&lt;/h3&gt;
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/20_1.webp&#34; alt=&#34;EFK&#34;&gt;&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Logstash Shipper监控采集日志，并发送到Kafka&lt;/li&gt;
@@ -2454,25 +2454,25 @@ DELETE /gits/:id/star
 &lt;li&gt;Elasticsearch提供搜集、分析和存储数据三大功能&lt;/li&gt;
 &lt;li&gt;Kibaba提供Web界面&lt;/li&gt;
 &lt;/ol&gt;
-&lt;h3 id=&#34;日志包实现&#34;&gt;日志包实现&lt;/h3&gt;
-&lt;h4 id=&#34;优先开源日志包&#34;&gt;优先开源日志包&lt;/h4&gt;
+&lt;h2 id=&#34;日志包实现&#34;&gt;日志包实现&lt;/h2&gt;
+&lt;h3 id=&#34;优先开源日志包&#34;&gt;优先开源日志包&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;标准log包&lt;/li&gt;
 &lt;li&gt;glog: 实现了基本功能适合小项目&lt;/li&gt;
 &lt;li&gt;logrus: 功能强大，适合大型项目&lt;/li&gt;
 &lt;li&gt;zap: 性能高，内存分配次数少，适合对日志性能要求很高的项目&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h3 id=&#34;web服务核心功能实现&#34;&gt;Web服务核心功能实现&lt;/h3&gt;
-&lt;h4 id=&#34;核心功能&#34;&gt;核心功能&lt;/h4&gt;
+&lt;h2 id=&#34;web服务核心功能实现&#34;&gt;Web服务核心功能实现&lt;/h2&gt;
+&lt;h3 id=&#34;核心功能&#34;&gt;核心功能&lt;/h3&gt;
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/23_1.webp&#34; alt=&#34;core-function&#34;&gt;&lt;/p&gt;
-&lt;h3 id=&#34;认证机制&#34;&gt;认证机制&lt;/h3&gt;
-&lt;h4 id=&#34;认证和授权的区别&#34;&gt;认证和授权的区别&lt;/h4&gt;
+&lt;h2 id=&#34;认证机制&#34;&gt;认证机制&lt;/h2&gt;
+&lt;h3 id=&#34;认证和授权的区别&#34;&gt;认证和授权的区别&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;认证（Authentication）: 用来验证某个用户是否具有访问系统的权限&lt;/li&gt;
 &lt;li&gt;授权（Authorization）: 用来验证某个  用户是否具有访问某个资源的权限&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h4 id=&#34;四种基本的认证方式&#34;&gt;四种基本的认证方式&lt;/h4&gt;
-&lt;h5 id=&#34;basic&#34;&gt;Basic&lt;/h5&gt;
+&lt;h3 id=&#34;四种基本的认证方式&#34;&gt;四种基本的认证方式&lt;/h3&gt;
+&lt;h4 id=&#34;basic&#34;&gt;Basic&lt;/h4&gt;
 &lt;p&gt;将&lt;code&gt;用户名:密码&lt;/code&gt;进行base64编码后放到HTTP Authorization HEADER中&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
@@ -2486,42 +2486,42 @@ curl -X POST -H &lt;span class=&#34;s2&#34;&gt;&amp;#34;Authorization: Basic &lt
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;这个方式使用了base64编码，入侵者可以反向编码获取用户名和密码；另外即使密码被加密，入侵者可以进行重放攻击&lt;/p&gt;
 &lt;p&gt;所以Basic虽简单，但既不安全，需要和SSL配合使用&lt;/p&gt;
-&lt;h5 id=&#34;digest&#34;&gt;Digest&lt;/h5&gt;
+&lt;h4 id=&#34;digest&#34;&gt;Digest&lt;/h4&gt;
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/25_1.webp&#34; alt=&#34;digest&#34;&gt;
 服务端给随机数nonce和加密算法（默认为md5）,客户端请求是需要提供
 密码叉腰response&lt;/p&gt;
-&lt;h5 id=&#34;oauth&#34;&gt;OAuth&lt;/h5&gt;
+&lt;h4 id=&#34;oauth&#34;&gt;OAuth&lt;/h4&gt;
 &lt;p&gt;OAuth(开放授权)允许用户让第三方应用访问该用户在某一个服务的思路资源（如昵称、头像等），
 而无需将用户名和密码给第三方应用&lt;/p&gt;
 &lt;p&gt;OAuth2.0共分为四种授权方式&lt;/p&gt;
-&lt;h6 id=&#34;密码式&#34;&gt;密码式&lt;/h6&gt;
+&lt;h5 id=&#34;密码式&#34;&gt;密码式&lt;/h5&gt;
 &lt;p&gt;认证流程如下：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;网站 A 向用户发出获取用户名和密码的请求；&lt;/li&gt;
 &lt;li&gt;用户同意后，网站 A 凭借用户名和密码向网站 B 换取令牌；&lt;/li&gt;
 &lt;li&gt;网站 B 验证用户身份后，给出网站 A 令牌，网站 A 凭借令牌可以访问网站 B 对应权限的资源。&lt;/li&gt;
 &lt;/ol&gt;
-&lt;h6 id=&#34;隐藏式&#34;&gt;隐藏式&lt;/h6&gt;
+&lt;h5 id=&#34;隐藏式&#34;&gt;隐藏式&lt;/h5&gt;
 &lt;p&gt;这种方式适用于前端应用。认证流程如下：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;A 网站提供一个跳转到 B 网站的链接，用户点击后跳转至 B 网站，并向用户请求授权；&lt;/li&gt;
 &lt;li&gt;用户登录 B 网站，同意授权后，跳转回 A 网站指定的重定向 redirect_url 地址，并携带 B 网站返回的令牌，用户在 B 网站的数据给 A 网站使用。&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;这个授权方式存在着“中间人攻击”的风险，因此只能用于一些安全性要求不高的场景，并且令牌的有效时间要非常短。&lt;/p&gt;
-&lt;h6 id=&#34;凭借式&#34;&gt;凭借式&lt;/h6&gt;
+&lt;h5 id=&#34;凭借式&#34;&gt;凭借式&lt;/h5&gt;
 &lt;p&gt;这种方式是在命令行中请求授权，适用于没有前端的命令行应用。认证流程如下：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;应用 A 在命令行向应用 B 请求授权，此时应用 A 需要携带应用 B 提前颁发的 secretID 和 secretKey，其中 secretKey 出于安全性考虑，需在后端发送；&lt;/li&gt;
 &lt;li&gt;应用 B 接收到 secretID 和 secretKey，并进行身份验证，验证通过后返回给应用 A 令牌。&lt;/li&gt;
 &lt;/ol&gt;
-&lt;h6 id=&#34;授权码式&#34;&gt;授权码式&lt;/h6&gt;
+&lt;h5 id=&#34;授权码式&#34;&gt;授权码式&lt;/h5&gt;
 &lt;ol&gt;
 &lt;li&gt;A 网站提供一个跳转到 B 网站的链接 +redirect_url，用户点击后跳转至 B 网站；&lt;/li&gt;
 &lt;li&gt;用户携带向 B 网站提前申请的 client_id，向 B 网站发起身份验证请求；&lt;/li&gt;
 &lt;li&gt;用户登录 B 网站，通过验证，授予 A 网站权限，此时网站跳转回 redirect_url，其中会有 B 网站通过验证后的授权码附在该 url 后；&lt;/li&gt;
 &lt;li&gt;网站 A 携带授权码向网站 B 请求令牌，网站 B 验证授权码后，返回令牌即 access_token。&lt;/li&gt;
 &lt;/ol&gt;
-&lt;h5 id=&#34;bearer&#34;&gt;Bearer&lt;/h5&gt;
+&lt;h4 id=&#34;bearer&#34;&gt;Bearer&lt;/h4&gt;
 &lt;p&gt;Bearer认证也称令牌认证，核心是 bearer token。bearer token 是一个加密字符串，通常由服务端根据密钥生成。客户端在请求服务端时，必须在请求头中包含Authorization: Bearer 。服务端收到请求后，解析出 ，并校验 的合法性。
 当前最流行的 token 编码方式是 JSON Web Token&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/25_2.webp&#34; alt=&#34;jwt_auth&#34;&gt;
@@ -2532,7 +2532,149 @@ curl -X POST -H &lt;span class=&#34;s2&#34;&gt;&amp;#34;Authorization: Basic &lt
 &lt;li&gt;客户端收到请求后会将 Token 缓存起来，比如放在浏览器 Cookie 中或者 LocalStorage 中，之后每次请求都会携带该 Token。&lt;/li&gt;
 &lt;li&gt;服务端收到请求后，会验证请求中的 Token，验证通过则进行业务逻辑处理，处理完后返回处理后的结果。&lt;/li&gt;
 &lt;/ol&gt;
-&lt;h2 id=&#34;参考&#34;&gt;参考&lt;/h2&gt;
+&lt;h2 id=&#34;iam的认证功能设计&#34;&gt;IAM的认证功能设计&lt;/h2&gt;
+&lt;h3 id=&#34;整体思路&#34;&gt;整体思路&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Basic认证摔死在前端登录的场景&lt;/li&gt;
+&lt;li&gt;Bearer认证用在调用后端API服务的场景&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;具体设计&#34;&gt;具体设计&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/26_1.webp&#34; alt=&#34;iam_auth&#34;&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;密钥CURD存储在iam-apiserver中&lt;/li&gt;
+&lt;li&gt;iam-authz-server将密钥信息缓存在内存中，通过grpc api获取&lt;/li&gt;
+&lt;li&gt;iam-apiserver有更新时，会发布到iam-authz-server订阅的频道&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;具体实现&#34;&gt;具体实现&lt;/h3&gt;
+&lt;p&gt;因为项目要根据需要选择不同的认证方式，所以使用设计模式中的策略模式来实现&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;basic策略： 实现了Basic认证&lt;/li&gt;
+&lt;li&gt;jwt策略：实现了Bearer认证&lt;/li&gt;
+&lt;li&gt;auto策略：根据HTTP HEAD自动选择Basic或Bearer认证&lt;/li&gt;
+&lt;li&gt;cache策略：从缓存中加载认证信息&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/26_2.webp&#34; alt=&#34;iam_auth2&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;权限模型&#34;&gt;权限模型&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/27_1.webp&#34; alt=&#34;special_term&#34;&gt;&lt;/p&gt;
+&lt;h3 id=&#34;常见权限模型&#34;&gt;常见权限模型&lt;/h3&gt;
+&lt;h4 id=&#34;权限控制列表&#34;&gt;权限控制列表&lt;/h4&gt;
+&lt;p&gt;ACL（Access Control List）用来判断用户是否可以对资源做特定的操作。例如允许Colin创建文章：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;nt&#34;&gt;Subject&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;Colin&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;Action&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;Create&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;Object&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;Article&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;在ACL模型下，权限管理围绕资源Object来设定&lt;/p&gt;
+&lt;h4 id=&#34;自主访问控制&#34;&gt;自主访问控制&lt;/h4&gt;
+&lt;p&gt;DAC（Discretionary Access Control）是ACL的扩展模型，不仅可以判断Subject是否可以对Object执行Action，同时也能让Subject将
+Object、Action的相同权限授予其他的Subject&lt;/p&gt;
+&lt;h4 id=&#34;强制访问控制&#34;&gt;强制访问控制&lt;/h4&gt;
+&lt;p&gt;MAC（Mandatory Access Control）是ACL的扩展模型，安全性更高，Subject和Object同时具有安全属性，只有
+满足以下两点才能授权通过：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Subject可以对Object做Action&lt;/li&gt;
+&lt;li&gt;Object可以被Subject做ACtion&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;基于角色的访问控制&#34;&gt;基于角色的访问控制&lt;/h4&gt;
+&lt;p&gt;RBAC（Role-Based Access Control）引入了Role的概念，并将权限和角色进行关联，用户通过扮演某种角色，具有了该角色的所有权限&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/27_2.webp&#34; alt=&#34;RBAC&#34;&gt;&lt;/p&gt;
+&lt;p&gt;RBAC又分为四种：&lt;/p&gt;
+&lt;h5 id=&#34;rbac0&#34;&gt;RBAC0&lt;/h5&gt;
+&lt;p&gt;基础模型，只包含核心的四要素（用户User、角色Role、权限Permission和会话Session）
+用户和角色可以是多对多的关系，权限和角色也可以是多对多的关系&lt;/p&gt;
+&lt;h5 id=&#34;rbac1&#34;&gt;RBAC1&lt;/h5&gt;
+&lt;p&gt;包括RBAC0，并添加了角色继承&lt;/p&gt;
+&lt;h5 id=&#34;rbac2&#34;&gt;RBAC2&lt;/h5&gt;
+&lt;p&gt;包括RBAC0，并添加了约束，具有以下核心特性&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;互斥约束：同一个用户不能有 互斥的角色，互斥的权限不能分配非同一个角色&lt;/li&gt;
+&lt;li&gt;基数约束：一个角色被分配的用户数量是受限的&lt;/li&gt;
+&lt;li&gt;先决条件角色：要想获得较高权限，首先要拥有低一级的权限&lt;/li&gt;
+&lt;li&gt;静态职责分离（Static Separation of Duty）：用户无法同时被赋予有冲突的角色&lt;/li&gt;
+&lt;li&gt;静态职责分离（Dynamic Separation of Duty）：会话中无法同时激活有冲突的角色&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h5 id=&#34;rbac3&#34;&gt;RBAC3&lt;/h5&gt;
+&lt;p&gt;全功能的RBAC，合并了上面三种&lt;/p&gt;
+&lt;h4 id=&#34;基于属性的权限验证&#34;&gt;基于属性的权限验证&lt;/h4&gt;
+&lt;p&gt;ABAC（Attribute-Based Access Control）规定了哪些属性的用户对哪些属性的资源在哪些条件限制下进行哪些操作&lt;/p&gt;
+&lt;p&gt;相比RBAC, ABAC对权限的控制粒度更新，主要规定了下面的这四类属性：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;用户属性，如性别，年龄等&lt;/li&gt;
+&lt;li&gt;资源属性，如资源属性、类别等&lt;/li&gt;
+&lt;li&gt;操作属性，如创建、修改等&lt;/li&gt;
+&lt;li&gt;环境属性，如来源IP、当前时间等&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;下面是腾讯云的的一个样例&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;
+&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;nt&#34;&gt;&amp;#34;version&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;2.0&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+  &lt;span class=&#34;nt&#34;&gt;&amp;#34;statement&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+      &lt;span class=&#34;nt&#34;&gt;&amp;#34;effect&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;allow&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+      &lt;span class=&#34;nt&#34;&gt;&amp;#34;action&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;
+        &lt;span class=&#34;s2&#34;&gt;&amp;#34;cos:List*&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+        &lt;span class=&#34;s2&#34;&gt;&amp;#34;cos:Get*&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+        &lt;span class=&#34;s2&#34;&gt;&amp;#34;cos:Head*&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+        &lt;span class=&#34;s2&#34;&gt;&amp;#34;cos:OptionsObject&amp;#34;&lt;/span&gt;
+      &lt;span class=&#34;p&#34;&gt;],&lt;/span&gt;
+      &lt;span class=&#34;nt&#34;&gt;&amp;#34;resource&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;qcs::cos:ap-shanghai:uid/1250000000:Bucket1-1250000000/dir1/*&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+      &lt;span class=&#34;nt&#34;&gt;&amp;#34;condition&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;nt&#34;&gt;&amp;#34;ip_equal&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+          &lt;span class=&#34;nt&#34;&gt;&amp;#34;qcs:ip&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;
+            &lt;span class=&#34;s2&#34;&gt;&amp;#34;10.217.182.3/24&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+            &lt;span class=&#34;s2&#34;&gt;&amp;#34;111.21.33.72/24&amp;#34;&lt;/span&gt;
+          &lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;
+        &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+      &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+  &lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;上面的授权策略表示：用户必须在 10.217.182.3/24 或者 111.21.33.72/24 网段才能调用云 API（cos:List*、cos:Get*、cos:Head*、cos:OptionsObject），对 1250000000 用户下的 dir1 目录下的文件进行读取操作。
+ABAC 规定的四类属性分别是：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;用户属性：用户为 1250000000。&lt;/li&gt;
+&lt;li&gt;资源属性：dir1 目录下的文件。&lt;/li&gt;
+&lt;li&gt;操作属性：读取（cos:List*、cos:Get*、cos:Head*、cos:OptionsObject 都是读取 API）。&lt;/li&gt;
+&lt;li&gt;环境属性：10.217.182.3/24 或者 111.21.33.72/24 网段。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;参考&#34;&gt;参考&lt;/h1&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://time.geekbang.org/column/intro/418&#34;&gt;课程资源-Go 语言项目开发实战&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://www.techgrow.cn/posts/5bd5a253.html&#34;&gt;gcc升级&lt;/a&gt;&lt;/li&gt;
