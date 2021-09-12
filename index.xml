@@ -675,7 +675,169 @@ mov cr0, eax
 &lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;jmp 08:entry64 ;entry64为程序标号即64位偏移地址
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description>
+&lt;/div&gt;&lt;h1 id=&#34;第六讲地址转换&#34;&gt;第六讲：地址转换&lt;/h1&gt;
+&lt;h2 id=&#34;虚拟地址&#34;&gt;虚拟地址&lt;/h2&gt;
+&lt;p&gt;虚拟地址由链接器产生，链接器的主要工作是吧多个代码模块组装在一起，并解决模块之间的引用
+，即处理程序代码间的地址引用，形成程序运行的静态内存空间视图&lt;/p&gt;
+&lt;h2 id=&#34;物理地址&#34;&gt;物理地址&lt;/h2&gt;
+&lt;p&gt;物理地址会被地址译码器变成电信号，放在地址总线上，地址总线电子信号的各种组合就可以选择到内存的存储单元&lt;/p&gt;
+&lt;h2 id=&#34;虚实转换&#34;&gt;虚实转换&lt;/h2&gt;
+&lt;p&gt;虚实地址转换是通过MMU（内存管理单元）实现的&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/6_1.webp&#34; alt=&#34;convert-virtual-address&#34;&gt;&lt;/p&gt;
+&lt;p&gt;地址转换关系表本身存放在内存中，如果一个虚拟对称对应一个物理地址，转换表就会把内存耗尽&lt;/p&gt;
+&lt;p&gt;于是引出了分页模型，虚拟地址空间和物理地址空间都分成了同等大小的页&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/6_2.webp&#34; alt=&#34;page-mode&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;mmu&#34;&gt;MMU&lt;/h2&gt;
+&lt;p&gt;MMU负责接受虚拟地址值和地址关系转换表，然后输出物理地址&lt;/p&gt;
+&lt;h3 id=&#34;页表&#34;&gt;页表&lt;/h3&gt;
+&lt;p&gt;页表即虚拟页到物理页的映射关系&lt;/p&gt;
+&lt;p&gt;为了洁身空间，页表值存放物理页面的地址，MMU以虚拟地址为索引去查表返回物理页地址&lt;/p&gt;
+&lt;p&gt;页表是分级的，分为三部分&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;一个顶级页目录&lt;/li&gt;
+&lt;li&gt;多个中继页目录&lt;/li&gt;
+&lt;li&gt;页表&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/6_3.webp&#34; alt=&#34;page-mode2&#34;&gt;&lt;/p&gt;
+&lt;p&gt;一个虚拟地址从左到右分为四个位段&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;第一个位段索引顶级页目录，得到中继页目录&lt;/li&gt;
+&lt;li&gt;第二个位段索引中级页目录，得到页目录&lt;/li&gt;
+&lt;li&gt;第三个位段索引也目录，得到物理页地址&lt;/li&gt;
+&lt;li&gt;第四个位段用作该物理页的偏移去访问物理内存&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;保护模式下的分页&#34;&gt;保护模式下的分页&lt;/h3&gt;
+&lt;p&gt;保护模式下只有32位地址空间，32位虚拟地址经过分段机制后得到线性地址，
+通常使用平坦模式，所以线性地址和虚拟地址是相同的&lt;/p&gt;
+&lt;h4 id=&#34;4kb页&#34;&gt;4KB页&lt;/h4&gt;
+&lt;p&gt;该分页方式下32位虚拟地址被分为三个位段： 页目录索引、页表索引、页内偏移&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/6_4.webp&#34; alt=&#34;page-mode3&#34;&gt;&lt;/p&gt;
+&lt;p&gt;CR3寄存器、页目录项和页表项都是32位，所以低12位可以另做它用，形成了页面相关属性，如
+是否存在，是否可读写、是否已访问等待&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/6_5.jpg&#34; alt=&#34;page-mode4&#34;&gt;
+&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/6_6.jpg&#34; alt=&#34;page-mode5&#34;&gt;
+&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/6_7.jpg&#34; alt=&#34;page-mode6&#34;&gt;&lt;/p&gt;
+&lt;h4 id=&#34;4mb页&#34;&gt;4MB页&lt;/h4&gt;
+&lt;p&gt;该分页方式下，32位虚拟地址被分为2段：页表索引、页内偏移&lt;/p&gt;
+&lt;p&gt;共1024个条目，每个条目指向一个物理页4MB,正好为4GB地址空间&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/6_8.webp&#34; alt=&#34;page-mode7&#34;&gt;&lt;/p&gt;
+&lt;p&gt;CR3还是32位寄存器，指向一个4KB大小的页表，仍然要4KB地址对齐，其中包含1024个页表项&lt;/p&gt;
+&lt;h3 id=&#34;长模式下的分页&#34;&gt;长模式下的分页&lt;/h3&gt;
+&lt;p&gt;长模式下扩展为64位&lt;/p&gt;
+&lt;h4 id=&#34;4kb页-1&#34;&gt;4KB页&lt;/h4&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/6_9.webp&#34; alt=&#34;long-mode1&#34;&gt;&lt;/p&gt;
+&lt;p&gt;64位虚拟地址被分为6段&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;保留位段： 24位&lt;/li&gt;
+&lt;li&gt;顶级页目录索引段：9位&lt;/li&gt;
+&lt;li&gt;页目录指针段： 9位&lt;/li&gt;
+&lt;li&gt;页目录段：9位&lt;/li&gt;
+&lt;li&gt;页表段： 9位&lt;/li&gt;
+&lt;li&gt;页内偏移：12位&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;顶级页目录、页目录指针、页目录、页表都各占4KB, 各512个条目，每个条目8B即64位&lt;/p&gt;
+&lt;p&gt;因为x86 CPU并没有实现全64位的地址总线，而是只实现了48位，但寄存器却是64位的，
+当第47位是1的时候48~63为1，反之为0&lt;/p&gt;
+&lt;h4 id=&#34;2mb页&#34;&gt;2MB页&lt;/h4&gt;
+&lt;p&gt;该方式下分为5个分段&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;保留位段： 16位&lt;/li&gt;
+&lt;li&gt;顶级页目录索引：9位&lt;/li&gt;
+&lt;li&gt;页目录指针索引：9位&lt;/li&gt;
+&lt;li&gt;页目录索引：9位&lt;/li&gt;
+&lt;li&gt;页内偏移：21位&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;顶级页目录、页目录指针、页目录都各占4KB, 各512个条目，每个条目8B即64位
+页表项被放弃，页目录项直接指定了2MB大小的物理页面&lt;/p&gt;
+&lt;h3 id=&#34;开启mmu&#34;&gt;开启MMU&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;使CPU进入保护模式或长模式&lt;/li&gt;
+&lt;li&gt;准备页表数据&lt;/li&gt;
+&lt;li&gt;将顶级页目录的物理地址赋值给CR3寄存器&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;mov eax, PGAE_TLB_BADR ;页表物理地址
+mov cr3, eax
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;将CPU的CR0的PE为设置为0，这样就开启了 MMU&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;;开启保护模式和分页模式
+mov eax, cr0
+bts eax, 0    ;CR0.PE = 1
+bts eax, 31   ;CR0.P = 1
+mov cr0, eax
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h1 id=&#34;第七讲cache与内存&#34;&gt;第七讲：Cache与内存&lt;/h1&gt;
+&lt;h2 id=&#34;内存-1&#34;&gt;内存&lt;/h2&gt;
+&lt;p&gt;控制内存读写和刷新的是内存控制器，内存控制器集成在北桥芯片中&lt;/p&gt;
+&lt;p&gt;由于制造工艺升级，现在北桥芯片被集成到了CPU芯片，这样大大提升了CPU访问内存的性能&lt;/p&gt;
+&lt;h2 id=&#34;cache&#34;&gt;Cache&lt;/h2&gt;
+&lt;p&gt;通过程序的局部性原理可以知道CPU大多数时间在访问相同或者相近的地址&lt;/p&gt;
+&lt;p&gt;那么可以用一块小而快的存储器放在CPU和内存之间，来缓解CPU和内存的之间的性能差距&lt;/p&gt;
+&lt;p&gt;这个就称之为Cache&lt;/p&gt;
+&lt;p&gt;Cache中存放了部分内存数据，CPU在访问内存时要先访问Cache&lt;/p&gt;
+&lt;p&gt;现在的x86 CPU是将Cache集成在CPU内&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/7_1.webp&#34; alt=&#34;cache&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Cache主要由高速的静态存储器、地址转换模块和行替换模块组成&lt;/p&gt;
+&lt;p&gt;Cache会把存储器分成若干行，每行32字节或64字节，和内存交换数据最小单位为一行&lt;/p&gt;
+&lt;p&gt;为了方便管理，多个行又会组成一组&lt;/p&gt;
+&lt;p&gt;除了正常数据外，行中还有一些标志位，如脏位、回写位等&lt;/p&gt;
+&lt;p&gt;Cache的大致工作流程如下:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;CPU发出的地址由Cache的地址转换模块分成3段：组号、行号和行内偏移&lt;/li&gt;
+&lt;li&gt;Cache会根据组号、行号查找高速静态存储器中对应的行。如果找到即命中，用行内偏移读取并返回数据给CPU;
+否则就分配一个新行并访问内存，把内存中对应的数据加载到Cache行并返回给CPU.
+写入操作分为回写和直写，回写就是写入对应的Cache行即可，直写写入Cache行的同时会写入内存&lt;/li&gt;
+&lt;li&gt;如果容量不足，就要进入行替换逻辑，即找出一个Cache行写回内存，腾出空间。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;cache引入的问题&#34;&gt;Cache引入的问题&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/7_2.webp&#34; alt=&#34;x86_cache&#34;&gt;&lt;/p&gt;
+&lt;p&gt;上图是简单的双核心CPU，有三级Cache，第一级Cache是指令和数据分开的，
+第二级是独立于CPU核心的，第三集是所有CPU核心共享的。&lt;/p&gt;
+&lt;p&gt;Cache一致性问题主要包括以下三个：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;一个CPU中指令Cache和数据Cache一致性的问题&lt;/li&gt;
+&lt;li&gt;多个CPU各自的2级Cache一致性问题&lt;/li&gt;
+&lt;li&gt;3级Cache与网卡、显存等设备存储之间的一致性问题&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;cache的mesi协议&#34;&gt;Cache的MESI协议&lt;/h2&gt;
+&lt;p&gt;MESI协议定义了四种基本状态&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Modified
+当前Cache内容有效，但已和内存不一致，且不存在其他核心的Cache中&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Exclusive
+当前Cache内容有效，和内存一致，但不存在其他核心的Cache中&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Shared&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;当前Cache内容有效，和内存一致，且在其他核心的Cache中也一直&lt;/p&gt;
+&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;Invalid
+其他情况，当前Cache无效&lt;/li&gt;
+&lt;/ol&gt;
+</description>
       
     </item>
     
