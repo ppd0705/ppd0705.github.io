@@ -69,7 +69,7 @@
 <meta itemprop="name" content="期现套利策略介绍和实现">
 <meta itemprop="description" content="期货和现货 现货 现货通常指实物 如农作物大豆、玉米; 如数字货币BTC、ETH 现货交易 现货交易一般以一手交钱一手交货或者以物换物的方式 比如10RM"><meta itemprop="datePublished" content="2021-09-19T22:49:39+08:00" />
 <meta itemprop="dateModified" content="2021-09-19T22:49:39+08:00" />
-<meta itemprop="wordCount" content="1050">
+<meta itemprop="wordCount" content="1072">
 <meta itemprop="keywords" content="期现套利,量化策略,数字货币," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="期现套利策略介绍和实现"/>
 <meta name="twitter:description" content="期货和现货 现货 现货通常指实物 如农作物大豆、玉米; 如数字货币BTC、ETH 现货交易 现货交易一般以一手交钱一手交货或者以物换物的方式 比如10RM"/>
@@ -302,7 +302,7 @@
             <a href="https://ppd0705.github.io/categories/%E4%BA%A4%E6%98%93/"> 交易 </a>
             
           </div>
-        <span class="more-meta"> 1050 words </span>
+        <span class="more-meta"> 1072 words </span>
           <span class="more-meta"> 3 min read </span>
 
         
@@ -391,7 +391,7 @@
 <li>比如2斤大豆换3斤玉米、100ETH个换7BTC</li>
 </ul>
 <h2 id="期货">期货</h2>
-<p>期货是期货合约的简称，通常指基于某种现货标的签订的跨时间的买卖合约</p>
+<p>期货是期货合约的简称，通常指基于某种现货标的签订的跨时间的标准化的买卖合约</p>
 <p>如大连商品交易所的<strong>b2111</strong>合约详情如下：</p>
 <ul>
 <li>标的为黄大豆2号</li>
@@ -422,14 +422,15 @@
 <hr>
 <h2 id="期现关系">期现关系</h2>
 <h3 id="交割合约">交割合约</h3>
-<p>临近交割日时，市场上的合约价格会自然向现货价格靠拢，最终保持一致</p>
+<p>临近交割日时，市场上的合约价格会自然向现货价格靠拢，最终会趋于一致。</p>
+<p>如果不一致的话则存在套利空间</p>
 <h3 id="永续合约">永续合约</h3>
 <p>永续合约需要通过“资金费用机制”来让合约价格锚定现货价格</p>
-<p>当资金费率为正数时，多方向空方支付资金费用；如果资金费率为负，则空方用户向多方用户支付。</p>
+<p>当资金费率为正数时，多头向空头支付资金费用；如果资金费率为负，则空头向多头支付费用。</p>
 <h1 id="策略介绍">策略介绍</h1>
 <h2 id="策略逻辑">策略逻辑</h2>
 <ul>
-<li>当期货和现货价差较大时（价差记为为 S1）买入现货同时做空等量期货</li>
+<li>当期货价格高于现货且价差较大时（价差记为为 S1）买入现货同时做空等量期货</li>
 <li>后续当价差缩小时（价差记为 S2），卖出现货同时平空期货</li>
 <li>假设交易手续费为F，则盈亏比为：S1 - S2 - F</li>
 </ul>
