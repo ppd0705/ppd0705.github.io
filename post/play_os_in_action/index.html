@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]操作系统实战（更新中）">
 <meta itemprop="description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"><meta itemprop="datePublished" content="2021-07-30T08:06:33+08:00" />
 <meta itemprop="dateModified" content="2021-07-30T08:06:33+08:00" />
-<meta itemprop="wordCount" content="8918">
+<meta itemprop="wordCount" content="13115">
 <meta itemprop="keywords" content="C,操作系统," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]操作系统实战（更新中）"/>
 <meta name="twitter:description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"/>
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 8918 words </span>
-          <span class="more-meta"> 18 min read </span>
+        <span class="more-meta"> 13115 words </span>
+          <span class="more-meta"> 27 min read </span>
 
         
         
@@ -439,6 +439,20 @@
             <li><a href="#释放信号量">释放信号量</a></li>
           </ul>
         </li>
+      </ul>
+    </li>
+    <li><a href="#第九讲-linux的并发实现">第九讲 Linux的并发实现</a>
+      <ul>
+        <li><a href="#原子变量">原子变量</a></li>
+        <li><a href="#中断控制">中断控制</a></li>
+        <li><a href="#自旋锁">自旋锁</a>
+          <ul>
+            <li><a href="#原始自旋锁">原始自旋锁</a></li>
+            <li><a href="#排队自旋锁">排队自旋锁</a></li>
+          </ul>
+        </li>
+        <li><a href="#信号量">信号量</a></li>
+        <li><a href="#读写锁">读写锁</a></li>
       </ul>
     </li>
     <li><a href="#参考">参考</a></li>
@@ -1793,6 +1807,873 @@ mov cr0, eax
 <li>对用于保护信号量本身的自旋锁sem_lock加锁</li>
 <li>对sem_count+1</li>
 <li>唤醒sem_waitlst的进程，释放自旋锁</li>
+</ol>
+<h1 id="第九讲-linux的并发实现">第九讲 Linux的并发实现</h1>
+<h2 id="原子变量">原子变量</h2>
+<p>Linux提供了一个原子类型变量atomic_t</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="n">tyepedef</span> <span class="k">struct</span> 
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">counter</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">atomic_t</span><span class="p">;</span>
+
+<span class="k">typedef</span> <span class="k">struct</span>
+<span class="p">{</span>
+    <span class="n">s64</span> <span class="n">counter</span><span class="p">;</span>    
+<span class="p">}</span> <span class="n">atomic64_t</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>操作函数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C">
+<span class="c1">//原子读取变量中的值
+</span><span class="c1"></span><span class="k">static</span> <span class="n">__always_inline</span> <span class="kt">int</span> <span class="nf">arch_atomic_read</span><span class="p">(</span><span class="k">const</span> <span class="n">atomic_t</span> <span class="o">*</span><span class="n">v</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="n">__READ_ONCE</span><span class="p">((</span><span class="n">v</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">counter</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">//原子写入一个具体的值
+</span><span class="c1"></span><span class="k">static</span> <span class="n">__always_inline</span> <span class="kt">void</span> <span class="nf">arch_atomic_set</span><span class="p">(</span><span class="n">atomic_t</span> <span class="o">*</span><span class="n">v</span><span class="p">,</span> <span class="kt">int</span> <span class="n">i</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">__WRITE_ONCE</span><span class="p">(</span><span class="n">v</span><span class="o">-&gt;</span><span class="n">counter</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">//原子加上一个具体的值
+</span><span class="c1"></span><span class="k">static</span> <span class="n">__always_inline</span> <span class="kt">void</span> <span class="nf">arch_atomic_add</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="p">,</span> <span class="n">atomic_t</span> <span class="o">*</span><span class="n">v</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">asm</span> <span class="k">volatile</span><span class="p">(</span><span class="n">LOCK_PREFIX</span> <span class="s">&#34;addl %1,%0&#34;</span>
+             <span class="o">:</span> <span class="s">&#34;+m&#34;</span> <span class="p">(</span><span class="n">v</span><span class="o">-&gt;</span><span class="n">counter</span><span class="p">)</span>
+             <span class="o">:</span> <span class="s">&#34;ir&#34;</span> <span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">:</span> <span class="s">&#34;memory&#34;</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">//原子减去一个具体的值
+</span><span class="c1"></span><span class="k">static</span> <span class="n">__always_inline</span> <span class="kt">void</span> <span class="nf">arch_atomic_sub</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="p">,</span> <span class="n">atomic_t</span> <span class="o">*</span><span class="n">v</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">asm</span> <span class="k">volatile</span><span class="p">(</span><span class="n">LOCK_PREFIX</span> <span class="s">&#34;subl %1,%0&#34;</span>
+             <span class="o">:</span> <span class="s">&#34;+m&#34;</span> <span class="p">(</span><span class="n">v</span><span class="o">-&gt;</span><span class="n">counter</span><span class="p">)</span>
+             <span class="o">:</span> <span class="s">&#34;ir&#34;</span> <span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">:</span> <span class="s">&#34;memory&#34;</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">//原子加1
+</span><span class="c1"></span><span class="k">static</span> <span class="n">__always_inline</span> <span class="kt">void</span> <span class="nf">arch_atomic_inc</span><span class="p">(</span><span class="n">atomic_t</span> <span class="o">*</span><span class="n">v</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">asm</span> <span class="k">volatile</span><span class="p">(</span><span class="n">LOCK_PREFIX</span> <span class="s">&#34;incl %0&#34;</span>
+             <span class="o">:</span> <span class="s">&#34;+m&#34;</span> <span class="p">(</span><span class="n">v</span><span class="o">-&gt;</span><span class="n">counter</span><span class="p">)</span> <span class="o">::</span> <span class="s">&#34;memory&#34;</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">//原子减1
+</span><span class="c1"></span><span class="k">static</span> <span class="n">__always_inline</span> <span class="kt">void</span> <span class="nf">arch_atomic_dec</span><span class="p">(</span><span class="n">atomic_t</span> <span class="o">*</span><span class="n">v</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">asm</span> <span class="k">volatile</span><span class="p">(</span><span class="n">LOCK_PREFIX</span> <span class="s">&#34;decl %0&#34;</span>
+             <span class="o">:</span> <span class="s">&#34;+m&#34;</span> <span class="p">(</span><span class="n">v</span><span class="o">-&gt;</span><span class="n">counter</span><span class="p">)</span> <span class="o">::</span> <span class="s">&#34;memory&#34;</span><span class="p">);</span>
+<span class="p">}</span>
+
+
+
+<span class="cp">#define __READ_ONCE(x)  \
+</span><span class="cp">(*(const volatile __unqual_scalar_typeof(x) *)&amp;(x))
+</span><span class="cp">#define __WRITE_ONCE(x, val) \
+</span><span class="cp">do {*(volatile typeof(x) *)&amp;(x) = (val);} while (0)
+</span><span class="cp"></span><span class="c1">//__unqual_scalar_typeof表示声明一个非限定的标量类型，非标量类型保持不变。说人话就是返回x变量的类型，这是GCC的功能，typeof只是纯粹返回x的类型。
+</span><span class="c1"></span>
+<span class="c1">//如果 x 是int类型则返回“int” 
+</span><span class="c1"></span><span class="cp">#define __READ_ONCE(x)  \
+</span><span class="cp">(*(const volatile int *)&amp;(x))
+</span><span class="cp">#define __WRITE_ONCE(x, val) \
+</span><span class="cp">do {*(volatile int *)&amp;(x) = (val);} while (0) 
+</span></code></pre></td></tr></table>
+</div>
+</div><h2 id="中断控制">中断控制</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span><span class="lnt">83
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C">
+<span class="c1">//实际保存eflags寄存器
+</span><span class="c1"></span><span class="k">extern</span> <span class="n">__always_inline</span> <span class="kt">unsigned</span> <span class="kt">long</span> <span class="nf">native_save_fl</span><span class="p">(</span><span class="kt">void</span><span class="p">){</span>
+    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">flags</span><span class="p">;</span>
+    <span class="k">asm</span> <span class="k">volatile</span><span class="p">(</span><span class="s">&#34;# __raw_save_flags</span><span class="se">\n\t</span><span class="s">&#34;</span>
+                 <span class="s">&#34;pushf ; pop %0&#34;</span><span class="o">:</span><span class="s">&#34;=rm&#34;</span><span class="p">(</span><span class="n">flags</span><span class="p">)</span><span class="o">::</span><span class="s">&#34;memory&#34;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">flags</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">//实际恢复eflags寄存器
+</span><span class="c1"></span><span class="k">extern</span> <span class="kr">inline</span> <span class="kt">void</span> <span class="nf">native_restore_fl</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">flags</span><span class="p">){</span>
+    <span class="k">asm</span> <span class="k">volatile</span><span class="p">(</span><span class="s">&#34;push %0 ; popf&#34;</span><span class="o">::</span><span class="s">&#34;g&#34;</span><span class="p">(</span><span class="n">flags</span><span class="p">)</span><span class="o">:</span><span class="s">&#34;memory&#34;</span><span class="p">,</span><span class="s">&#34;cc&#34;</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">//实际关中断
+</span><span class="c1"></span><span class="k">static</span> <span class="n">__always_inline</span> <span class="kt">void</span> <span class="nf">native_irq_disable</span><span class="p">(</span><span class="kt">void</span><span class="p">){</span>
+    <span class="k">asm</span> <span class="k">volatile</span><span class="p">(</span><span class="s">&#34;cli&#34;</span><span class="o">:::</span><span class="s">&#34;memory&#34;</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">//实际开启中断
+</span><span class="c1"></span><span class="k">static</span> <span class="n">__always_inline</span> <span class="kt">void</span> <span class="nf">native_irq_enable</span><span class="p">(</span><span class="kt">void</span><span class="p">){</span>
+    <span class="k">asm</span> <span class="k">volatile</span><span class="p">(</span><span class="s">&#34;sti&#34;</span><span class="o">:::</span><span class="s">&#34;memory&#34;</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">//arch层关中断
+</span><span class="c1"></span><span class="k">static</span> <span class="n">__always_inline</span> <span class="kt">void</span> <span class="nf">arch_local_irq_disable</span><span class="p">(</span><span class="kt">void</span><span class="p">){</span>
+    <span class="n">native_irq_disable</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="c1">//arch层开启中断
+</span><span class="c1"></span><span class="k">static</span> <span class="n">__always_inline</span> <span class="kt">void</span> <span class="nf">arch_local_irq_enable</span><span class="p">(</span><span class="kt">void</span><span class="p">){</span> 
+    <span class="n">native_irq_enable</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="c1">//arch层保存eflags寄存器
+</span><span class="c1"></span><span class="k">static</span> <span class="n">__always_inline</span> <span class="kt">unsigned</span> <span class="kt">long</span>           <span class="nf">arch_local_save_flags</span><span class="p">(</span><span class="kt">void</span><span class="p">){</span>
+    <span class="k">return</span> <span class="n">native_save_fl</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="c1">//arch层恢复eflags寄存器
+</span><span class="c1"></span><span class="k">static</span>  <span class="n">__always_inline</span> <span class="kt">void</span> <span class="nf">arch_local_irq_restore</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">flags</span><span class="p">){</span>
+    <span class="n">native_restore_fl</span><span class="p">(</span><span class="n">flags</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">//实际保存eflags寄存器并关中断
+</span><span class="c1"></span><span class="k">static</span> <span class="n">__always_inline</span> <span class="kt">unsigned</span> <span class="kt">long</span> <span class="nf">arch_local_irq_save</span><span class="p">(</span><span class="kt">void</span><span class="p">){</span>
+    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">flags</span> <span class="o">=</span> <span class="n">arch_local_save_flags</span><span class="p">();</span>
+    <span class="n">arch_local_irq_disable</span><span class="p">();</span>
+    <span class="k">return</span> <span class="n">flags</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">//raw层关闭开启中断宏
+</span><span class="c1"></span><span class="cp">#define raw_local_irq_disable()     arch_local_irq_disable()
+</span><span class="cp">#define raw_local_irq_enable()      arch_local_irq_enable()
+</span><span class="cp"></span><span class="c1">//raw层保存恢复eflags寄存器宏
+</span><span class="c1"></span><span class="cp">#define raw_local_irq_save(flags)           \
+</span><span class="cp">    do {                        \
+</span><span class="cp">        typecheck(unsigned long, flags);    \
+</span><span class="cp">        flags = arch_local_irq_save();      \
+</span><span class="cp">    } while (0)
+</span><span class="cp"></span>    
+<span class="cp">#define raw_local_irq_restore(flags)            \
+</span><span class="cp">    do {                        \
+</span><span class="cp">        typecheck(unsigned long, flags);    \
+</span><span class="cp">        arch_local_irq_restore(flags);      \
+</span><span class="cp">    } while (0)
+</span><span class="cp"></span>    
+<span class="cp">#define raw_local_save_flags(flags)         \
+</span><span class="cp">    do {                        \
+</span><span class="cp">        typecheck(unsigned long, flags);    \
+</span><span class="cp">        flags = arch_local_save_flags();    \
+</span><span class="cp">    } while (0)
+</span><span class="cp"></span><span class="c1">//通用层接口宏 
+</span><span class="c1"></span><span class="cp">#define local_irq_enable()              \
+</span><span class="cp">    do { \
+</span><span class="cp">        raw_local_irq_enable();         \
+</span><span class="cp">    } while (0)
+</span><span class="cp"></span>
+<span class="cp">#define local_irq_disable()             \
+</span><span class="cp">    do {                        \
+</span><span class="cp">        raw_local_irq_disable();        \
+</span><span class="cp">    } while (0)
+</span><span class="cp"></span>
+<span class="cp">#define local_irq_save(flags)               \
+</span><span class="cp">    do {                        \
+</span><span class="cp">        raw_local_irq_save(flags);      \
+</span><span class="cp">    } while (0)
+</span><span class="cp"></span>
+<span class="cp">#define local_irq_restore(flags)            \
+</span><span class="cp">    do {                        \
+</span><span class="cp">        raw_local_irq_restore(flags);       \
+</span><span class="cp">    } while (0)
+</span></code></pre></td></tr></table>
+</div>
+</div><p><code>do{}while(0)</code>表达式会保证<code>{}</code>中的代码片段执行一次，保证宏展开时这个代码片段是一个整体</p>
+<h2 id="自旋锁">自旋锁</h2>
+<p>Linux自旋锁有多种实现，下面介绍两种</p>
+<h3 id="原始自旋锁">原始自旋锁</h3>
+<p>数据结构</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+    <span class="k">volatile</span> <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">lock</span><span class="p">;</span> 
+<span class="p">}</span> <span class="n">spinlock_t</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>函数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C">
+<span class="cp">#define spin_unlock_string \  
+</span><span class="cp"></span>    <span class="s">&#34;movb $1,%0&#34;</span> <span class="err">\</span> <span class="c1">//写入1表示解锁
+</span><span class="c1"></span>    <span class="o">:</span><span class="s">&#34;=m&#34;</span> <span class="p">(</span><span class="n">lock</span><span class="o">-&gt;</span><span class="n">lock</span><span class="p">)</span> <span class="o">:</span> <span class="o">:</span> <span class="s">&#34;memory&#34;</span>
+
+<span class="cp">#define spin_lock_string \
+</span><span class="cp">  &#34;\n1:\t&#34; \  
+</span><span class="cp"></span>    <span class="s">&#34;lock ; decb %0</span><span class="se">\n\t</span><span class="s">&#34;</span> <span class="err">\</span> <span class="c1">//原子减1
+</span><span class="c1"></span>  <span class="s">&#34;js 2f</span><span class="se">\n</span><span class="s">&#34;</span> <span class="err">\</span>    <span class="c1">//当结果小于0则跳转到标号2处，表示加锁失败
+</span><span class="c1"></span>    <span class="s">&#34;.section .text.lock,</span><span class="se">\&#34;</span><span class="s">ax</span><span class="se">\&#34;\n</span><span class="s">&#34;</span> <span class="err">\</span> <span class="c1">//重新定义一个代码段，这是优化技术，避免后面的代码填充cache，因为大部分情况会加锁成功，链接器会处理好这个代码段的
+</span><span class="c1"></span>  <span class="s">&#34;2:</span><span class="se">\t</span><span class="s">&#34;</span> <span class="err">\</span>  
+    <span class="s">&#34;cmpb $0,%0</span><span class="se">\n\t</span><span class="s">&#34;</span> <span class="err">\</span>  <span class="c1">//和0比较
+</span><span class="c1"></span>    <span class="s">&#34;rep;nop</span><span class="se">\n\t</span><span class="s">&#34;</span> <span class="err">\</span>  <span class="c1">//空指令
+</span><span class="c1"></span>    <span class="s">&#34;jle 2b</span><span class="se">\n\t</span><span class="s">&#34;</span> <span class="err">\</span>   <span class="c1">//小于或等于0跳转到标号2
+</span><span class="c1"></span>    <span class="s">&#34;jmp 1b</span><span class="se">\n</span><span class="s">&#34;</span> <span class="err">\</span>   <span class="c1">//跳转到标号1  
+</span><span class="c1"></span>    <span class="s">&#34;.previous&#34;</span>
+<span class="c1">//获取自旋锁
+</span><span class="c1"></span><span class="k">static</span> <span class="kr">inline</span> <span class="kt">void</span> <span class="n">spin_lock</span><span class="p">(</span><span class="n">spinlock_t</span><span class="o">*</span><span class="n">lock</span><span class="p">){</span>
+    <span class="n">__asm__</span> <span class="n">__volatile__</span><span class="p">(</span>
+    <span class="nl">spin_lock_string</span>
+    <span class="p">:</span><span class="s">&#34;=m&#34;</span><span class="p">(</span><span class="n">lock</span><span class="o">-&gt;</span><span class="n">lock</span><span class="p">)</span><span class="o">::</span><span class="s">&#34;memory&#34;</span>
+    <span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">//释放自旋锁
+</span><span class="c1"></span><span class="k">static</span> <span class="kr">inline</span> <span class="kt">void</span> <span class="n">spin_unlock</span><span class="p">(</span><span class="n">spinlock_t</span><span class="o">*</span><span class="n">lock</span><span class="p">){</span>
+<span class="n">__asm__</span> <span class="n">__volatile__</span><span class="p">(</span>
+    <span class="n">spin_unlock_string</span>
+    <span class="p">);</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><code>spin_unlock_string</code>只是简单将锁值设置为1，表示释放自旋锁</p>
+<p><code>spin_lock_string</code>使用了<code>decb</code>原子减一指令，如果结果为0表示加锁成功；否则
+进入循环比较</p>
+<p>当有多个进程同时等在自旋锁时，后续获取锁的进程是不确定的，
+取决于内存总线协议决定哪个CPU核心可以访问内存</p>
+<h3 id="排队自旋锁">排队自旋锁</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C">
+<span class="c1">//RAW层的自旋锁数据结构
+</span><span class="c1"></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">raw_spinlock</span><span class="p">{</span>
+    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">slock</span><span class="p">;</span><span class="c1">//真正的锁值变量
+</span><span class="c1"></span><span class="p">}</span><span class="n">raw_spinlock_t</span><span class="p">;</span>
+<span class="c1">//最上层的自旋锁数据结构
+</span><span class="c1"></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">spinlock</span><span class="p">{</span>
+    <span class="k">struct</span> <span class="n">raw_spinlock</span> <span class="n">rlock</span><span class="p">;</span>
+<span class="p">}</span><span class="n">spinlock_t</span><span class="p">;</span>
+<span class="c1">//Linux没有这样的结构，这只是为了描述方便
+</span><span class="c1"></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">raw_spinlock</span><span class="p">{</span>
+    <span class="k">union</span> <span class="p">{</span>
+        <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">slock</span><span class="p">;</span><span class="c1">//真正的锁值变量
+</span><span class="c1"></span>    <span class="p">}</span>
+<span class="p">}</span><span class="n">raw_spinlock_t</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>slock域被分为两部分，分别保存锁持有者owner（低16位）和未来锁申请者next（高16位）的序号</p>
+<p>只有next域和owner域相等时，才表示处于未使用的状态</p>
+<p>slock初始值为0，即next和owner被置为0</p>
+<p>进程申请自旋锁时，将next域加1，并将原值作为自己的序号</p>
+<p>如果序号等于申请时的owner的值，说明自旋锁处于未使用的状态，则进程直接获得锁；</p>
+<p>否则，该进程循环检查owner域是否等于自己持有的序号，一旦相等则表名锁轮到自己获取</p>
+<p>进程释放锁时，原子的将owner域加 1 即可，下一个进程会发现这个变化</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="k">static</span> <span class="kr">inline</span> <span class="kt">void</span> <span class="nf">__raw_spin_lock</span><span class="p">(</span><span class="n">raw_spinlock_t</span><span class="o">*</span><span class="n">lock</span><span class="p">){</span>
+<span class="kt">int</span> <span class="n">inc</span> <span class="o">=</span> <span class="mh">0x00010000</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">tmp</span><span class="p">;</span>
+<span class="n">__asm__</span> <span class="n">__volatile__</span><span class="p">(</span>
+<span class="s">&#34;lock ; xaddl %0, %1</span><span class="se">\n</span><span class="s">&#34;</span> <span class="c1">//将inc和slock交换，然后 inc=inc+slock
+</span><span class="c1"></span>                        <span class="c1">//相当于原子读取next和owner并对next+1
+</span><span class="c1"></span><span class="s">&#34;movzwl %w0, %2</span><span class="se">\n\t</span><span class="s">&#34;</span><span class="c1">//将inc的低16位做0扩展后送tmp tmp=(u16)inc
+</span><span class="c1"></span><span class="s">&#34;shrl $16, %0</span><span class="se">\n\t</span><span class="s">&#34;</span> <span class="c1">//将inc右移16位 inc=inc&gt;&gt;16
+</span><span class="c1"></span><span class="s">&#34;1:</span><span class="se">\t</span><span class="s">&#34;</span>
+<span class="s">&#34;cmpl %0, %2</span><span class="se">\n\t</span><span class="s">&#34;</span> <span class="c1">//比较inc和tmp，即比较next和owner 
+</span><span class="c1"></span><span class="s">&#34;je 2f</span><span class="se">\n\t</span><span class="s">&#34;</span> <span class="c1">//相等则跳转到标号2处返回
+</span><span class="c1"></span><span class="s">&#34;rep ; nop</span><span class="se">\n\t</span><span class="s">&#34;</span> <span class="c1">//空指令
+</span><span class="c1"></span><span class="s">&#34;movzwl %1, %2</span><span class="se">\n\t</span><span class="s">&#34;</span> <span class="c1">//将slock的低16位做0扩展后送tmp 即tmp=owner
+</span><span class="c1"></span><span class="s">&#34;jmp 1b</span><span class="se">\n</span><span class="s">&#34;</span> <span class="c1">//跳转到标号1处继续比较
+</span><span class="c1"></span><span class="s">&#34;2:&#34;</span>
+<span class="o">:</span><span class="s">&#34;+Q&#34;</span><span class="p">(</span><span class="n">inc</span><span class="p">),</span><span class="s">&#34;+m&#34;</span><span class="p">(</span><span class="n">lock</span><span class="o">-&gt;</span><span class="n">slock</span><span class="p">),</span><span class="s">&#34;=r&#34;</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+<span class="o">::</span><span class="s">&#34;memory&#34;</span><span class="p">,</span><span class="s">&#34;cc&#34;</span>
+<span class="p">);</span>
+<span class="p">}</span>
+<span class="cp">#define UNLOCK_LOCK_PREFIX LOCK_PREFIX
+</span><span class="cp"></span><span class="k">static</span> <span class="kr">inline</span> <span class="kt">void</span> <span class="nf">__raw_spin_unlock</span><span class="p">(</span><span class="n">raw_spinlock_t</span><span class="o">*</span><span class="n">lock</span><span class="p">){</span>
+<span class="n">__asm__</span> <span class="n">__volatile__</span><span class="p">(</span>
+<span class="n">UNLOCK_LOCK_PREFIX</span><span class="s">&#34;incw %0&#34;</span><span class="c1">//将slock的低16位加1 即owner+1
+</span><span class="c1"></span><span class="o">:</span><span class="s">&#34;+m&#34;</span><span class="p">(</span><span class="n">lock</span><span class="o">-&gt;</span><span class="n">slock</span><span class="p">)</span>
+<span class="o">::</span><span class="s">&#34;memory&#34;</span><span class="p">,</span><span class="s">&#34;cc&#34;</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>try_lock实现当无法立即获取自旋锁时，资源放弃</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C">
+<span class="k">static</span> <span class="kr">inline</span> <span class="kt">int</span> <span class="nf">__raw_spin_trylock</span><span class="p">(</span><span class="n">raw_spinlock_t</span><span class="o">*</span><span class="n">lock</span><span class="p">){</span>
+    <span class="kt">int</span> <span class="n">tmp</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">new</span><span class="p">;</span>
+    <span class="k">asm</span> <span class="k">volatile</span><span class="p">(</span>
+    <span class="s">&#34;movl %2,%0</span><span class="se">\n\t</span><span class="s">&#34;</span><span class="c1">//tmp=slock
+</span><span class="c1"></span>    <span class="s">&#34;movl %0,%1</span><span class="se">\n\t</span><span class="s">&#34;</span><span class="c1">//new=tmp
+</span><span class="c1"></span>    <span class="s">&#34;roll $16, %0</span><span class="se">\n\t</span><span class="s">&#34;</span><span class="c1">//tmp循环左移16位，即next和owner交换了
+</span><span class="c1"></span>    <span class="s">&#34;cmpl %0,%1</span><span class="se">\n\t</span><span class="s">&#34;</span><span class="c1">//比较tmp和new即（owner、next）？=（next、owner）
+</span><span class="c1"></span>    <span class="s">&#34;jne 1f</span><span class="se">\n\t</span><span class="s">&#34;</span> <span class="c1">//不等则跳转到标号1处 
+</span><span class="c1"></span>    <span class="s">&#34;addl $0x00010000, %1</span><span class="se">\n\t</span><span class="s">&#34;</span><span class="c1">//相当于next+1
+</span><span class="c1"></span>    <span class="s">&#34;lock ; cmpxchgl %1,%2</span><span class="se">\n\t</span><span class="s">&#34;</span><span class="c1">//new和slock交换比较    
+</span><span class="c1"></span>    <span class="s">&#34;1:&#34;</span>
+    <span class="s">&#34;sete %b1</span><span class="se">\n\t</span><span class="s">&#34;</span> <span class="c1">//new = eflags.ZF位，ZF取决于前面的判断是否相等
+</span><span class="c1"></span>    <span class="s">&#34;movzbl %b1,%0</span><span class="se">\n\t</span><span class="s">&#34;</span> <span class="c1">//tmp = new
+</span><span class="c1"></span>    <span class="o">:</span><span class="s">&#34;=&amp;a&#34;</span><span class="p">(</span><span class="n">tmp</span><span class="p">),</span><span class="s">&#34;=Q&#34;</span><span class="p">(</span><span class="n">new</span><span class="p">),</span><span class="s">&#34;+m&#34;</span><span class="p">(</span><span class="n">lock</span><span class="o">-&gt;</span><span class="n">slock</span><span class="p">)</span>
+    <span class="o">::</span><span class="s">&#34;memory&#34;</span><span class="p">,</span><span class="s">&#34;cc&#34;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">tmp</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="n">__lockfunc</span> <span class="nf">_spin_trylock</span><span class="p">(</span><span class="n">spinlock_t</span><span class="o">*</span><span class="n">lock</span><span class="p">){</span> 
+    <span class="n">preempt_disable</span><span class="p">();</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">_raw_spin_trylock</span><span class="p">(</span><span class="n">lock</span><span class="p">)){</span>
+        <span class="n">spin_acquire</span><span class="p">(</span><span class="o">&amp;</span><span class="n">lock</span><span class="o">-&gt;</span><span class="n">dep_map</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">_RET_IP_</span><span class="p">);</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">preempt_enable</span><span class="p">();</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="cp">#define spin_trylock(lock) __cond_lock(lock, _spin_trylock(lock))
+</span></code></pre></td></tr></table>
+</div>
+</div><p><code>_spin_trylock</code>返回1表示尝试加锁成功</p>
+<h2 id="信号量">信号量</h2>
+<p>信号量可以分为单值信号量和多值信号量</p>
+<p>信号量最大的优势是即可以是申请失败的进程睡眠，又可以作为资源计数器使用</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="k">struct</span> <span class="n">semaphore</span>
+<span class="p">{</span>
+    <span class="n">raw_spinlock_t</span> <span class="n">lock</span><span class="p">;</span> <span class="c1">// 保护信号量自身的自旋锁
+</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">count</span><span class="p">;</span> <span class="c1">// 信号量值
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">list_head</span> <span class="n">wait_list</span><span class="p">;</span> <span class="c1">//挂载睡眠等待进程的链表
+</span><span class="c1"></span><span class="p">}</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>接口函数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="k">static</span> <span class="kr">inline</span> <span class="kt">int</span> <span class="n">__sched</span> <span class="nf">__down_common</span><span class="p">(</span><span class="k">struct</span> <span class="n">semaphore</span> <span class="o">*</span><span class="n">sem</span><span class="p">,</span> <span class="kt">long</span> <span class="n">state</span><span class="p">,</span><span class="kt">long</span> <span class="n">timeout</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">struct</span> <span class="n">semaphore_waiter</span> <span class="n">waiter</span><span class="p">;</span>
+    <span class="c1">//把waiter加入sem-&gt;wait_list的头部
+</span><span class="c1"></span>    <span class="n">list_add_tail</span><span class="p">(</span><span class="o">&amp;</span><span class="n">waiter</span><span class="p">.</span><span class="n">list</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">sem</span><span class="o">-&gt;</span><span class="n">wait_list</span><span class="p">);</span>
+    <span class="n">waiter</span><span class="p">.</span><span class="n">task</span> <span class="o">=</span> <span class="n">current</span><span class="p">;</span><span class="c1">//current表示当前进程，即调用该函数的进程
+</span><span class="c1"></span>    <span class="n">waiter</span><span class="p">.</span><span class="n">up</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(;;)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">signal_pending_state</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">current</span><span class="p">))</span>
+            <span class="k">goto</span> <span class="n">interrupted</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">unlikely</span><span class="p">(</span><span class="n">timeout</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">))</span>
+            <span class="k">goto</span> <span class="n">timed_out</span><span class="p">;</span>
+        <span class="n">__set_current_state</span><span class="p">(</span><span class="n">state</span><span class="p">);</span><span class="c1">//设置当前进程的状态，进程睡眠，即先前__down函数中传入的TASK_UNINTERRUPTIBLE：该状态是等待资源有效时唤醒（比如等待键盘输入、socket连接、信号（signal）等等），但不可以被中断唤醒
+</span><span class="c1"></span>        <span class="n">raw_spin_unlock_irq</span><span class="p">(</span><span class="o">&amp;</span><span class="n">sem</span><span class="o">-&gt;</span><span class="n">lock</span><span class="p">);</span><span class="c1">//释放在down函数中加的锁
+</span><span class="c1"></span>        <span class="n">timeout</span> <span class="o">=</span> <span class="n">schedule_timeout</span><span class="p">(</span><span class="n">timeout</span><span class="p">);</span><span class="c1">//真正进入睡眠
+</span><span class="c1"></span>        <span class="n">raw_spin_lock_irq</span><span class="p">(</span><span class="o">&amp;</span><span class="n">sem</span><span class="o">-&gt;</span><span class="n">lock</span><span class="p">);</span><span class="c1">//进程下次运行会回到这里，所以要加锁
+</span><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span><span class="n">waiter</span><span class="p">.</span><span class="n">up</span><span class="p">)</span>
+            <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+ <span class="nl">timed_out</span><span class="p">:</span>
+    <span class="n">list_del</span><span class="p">(</span><span class="o">&amp;</span><span class="n">waiter</span><span class="p">.</span><span class="n">list</span><span class="p">);</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">ETIME</span><span class="p">;</span>
+ <span class="nl">interrupted</span><span class="p">:</span>
+    <span class="n">list_del</span><span class="p">(</span><span class="o">&amp;</span><span class="n">waiter</span><span class="p">.</span><span class="n">list</span><span class="p">);</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">EINTR</span><span class="p">;</span>
+
+    <span class="c1">//为了简单起见处理进程信号（signal）和超时的逻辑代码我已经删除
+</span><span class="c1"></span><span class="p">}</span>
+<span class="c1">//进入睡眠等待
+</span><span class="c1"></span><span class="k">static</span> <span class="n">noinline</span> <span class="kt">void</span> <span class="n">__sched</span> <span class="nf">__down</span><span class="p">(</span><span class="k">struct</span> <span class="n">semaphore</span> <span class="o">*</span><span class="n">sem</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">__down_common</span><span class="p">(</span><span class="n">sem</span><span class="p">,</span> <span class="n">TASK_UNINTERRUPTIBLE</span><span class="p">,</span> <span class="n">MAX_SCHEDULE_TIMEOUT</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">//获取信号量
+</span><span class="c1"></span><span class="kt">void</span> <span class="nf">down</span><span class="p">(</span><span class="k">struct</span> <span class="n">semaphore</span> <span class="o">*</span><span class="n">sem</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">flags</span><span class="p">;</span>
+    <span class="c1">//对信号量本身加锁并关中断，也许另一段代码也在操作该信号量
+</span><span class="c1"></span>    <span class="n">raw_spin_lock_irqsave</span><span class="p">(</span><span class="o">&amp;</span><span class="n">sem</span><span class="o">-&gt;</span><span class="n">lock</span><span class="p">,</span> <span class="n">flags</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">likely</span><span class="p">(</span><span class="n">sem</span><span class="o">-&gt;</span><span class="n">count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="n">sem</span><span class="o">-&gt;</span><span class="n">count</span><span class="o">--</span><span class="p">;</span><span class="c1">//如果信号量值大于0,则对其减1
+</span><span class="c1"></span>    <span class="k">else</span>
+        <span class="n">__down</span><span class="p">(</span><span class="n">sem</span><span class="p">);</span><span class="c1">//否则让当前进程进入睡眠
+</span><span class="c1"></span>    <span class="n">raw_spin_unlock_irqrestore</span><span class="p">(</span><span class="o">&amp;</span><span class="n">sem</span><span class="o">-&gt;</span><span class="n">lock</span><span class="p">,</span> <span class="n">flags</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">//实际唤醒进程 
+</span><span class="c1"></span><span class="k">static</span> <span class="n">noinline</span> <span class="kt">void</span> <span class="n">__sched</span> <span class="nf">__up</span><span class="p">(</span><span class="k">struct</span> <span class="n">semaphore</span> <span class="o">*</span><span class="n">sem</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">struct</span> <span class="n">semaphore_waiter</span> <span class="o">*</span><span class="n">waiter</span> <span class="o">=</span> <span class="n">list_first_entry</span><span class="p">(</span><span class="o">&amp;</span><span class="n">sem</span><span class="o">-&gt;</span><span class="n">wait_list</span><span class="p">,</span> <span class="k">struct</span> <span class="n">semaphore_waiter</span><span class="p">,</span> <span class="n">list</span><span class="p">);</span>
+    <span class="c1">//获取信号量等待链表中的第一个数据结构semaphore_waiter，它里面保存着睡眠进程的指针
+</span><span class="c1"></span>    <span class="n">list_del</span><span class="p">(</span><span class="o">&amp;</span><span class="n">waiter</span><span class="o">-&gt;</span><span class="n">list</span><span class="p">);</span>
+    <span class="n">waiter</span><span class="o">-&gt;</span><span class="n">up</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+    <span class="n">wake_up_process</span><span class="p">(</span><span class="n">waiter</span><span class="o">-&gt;</span><span class="n">task</span><span class="p">);</span><span class="c1">//唤醒进程重新加入调度队列
+</span><span class="c1"></span><span class="p">}</span>
+<span class="c1">//释放信号量
+</span><span class="c1"></span><span class="kt">void</span> <span class="nf">up</span><span class="p">(</span><span class="k">struct</span> <span class="n">semaphore</span> <span class="o">*</span><span class="n">sem</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">flags</span><span class="p">;</span>
+    <span class="c1">//对信号量本身加锁并关中断，必须另一段代码也在操作该信号量
+</span><span class="c1"></span>    <span class="n">raw_spin_lock_irqsave</span><span class="p">(</span><span class="o">&amp;</span><span class="n">sem</span><span class="o">-&gt;</span><span class="n">lock</span><span class="p">,</span> <span class="n">flags</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">likely</span><span class="p">(</span><span class="n">list_empty</span><span class="p">(</span><span class="o">&amp;</span><span class="n">sem</span><span class="o">-&gt;</span><span class="n">wait_list</span><span class="p">)))</span>
+        <span class="n">sem</span><span class="o">-&gt;</span><span class="n">count</span><span class="o">++</span><span class="p">;</span><span class="c1">//如果信号量等待链表中为空，则对信号量值加1
+</span><span class="c1"></span>    <span class="k">else</span>
+        <span class="n">__up</span><span class="p">(</span><span class="n">sem</span><span class="p">);</span><span class="c1">//否则执行唤醒进程相关的操作
+</span><span class="c1"></span>    <span class="n">raw_spin_unlock_irqrestore</span><span class="p">(</span><span class="o">&amp;</span><span class="n">sem</span><span class="o">-&gt;</span><span class="n">lock</span><span class="p">,</span> <span class="n">flags</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="读写锁">读写锁</h2>
+<p>读写之间是互斥的，读写竞争锁时，写会优先得到锁</p>
+<p>读写锁本质上是自旋锁的变种，是带计数的自旋锁</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C">
+<span class="c1">//读写锁初始化锁值
+</span><span class="c1"></span><span class="cp">#define RW_LOCK_BIAS     0x01000000
+</span><span class="cp"></span><span class="c1">//读写锁的底层数据结构
+</span><span class="c1"></span><span class="k">typedef</span> <span class="k">struct</span><span class="p">{</span>
+    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">lock</span><span class="p">;</span>
+<span class="p">}</span><span class="n">arch_rwlock_t</span><span class="p">;</span>
+<span class="c1">//释放读锁 
+</span><span class="c1"></span><span class="k">static</span> <span class="kr">inline</span> <span class="kt">void</span> <span class="nf">arch_read_unlock</span><span class="p">(</span><span class="n">arch_rwlock_t</span><span class="o">*</span><span class="n">rw</span><span class="p">){</span> 
+    <span class="k">asm</span> <span class="k">volatile</span><span class="p">(</span>
+        <span class="n">LOCK_PREFIX</span><span class="s">&#34;incl %0&#34;</span> <span class="c1">//原子对lock加1
+</span><span class="c1"></span>        <span class="o">:</span><span class="s">&#34;+m&#34;</span><span class="p">(</span><span class="n">rw</span><span class="o">-&gt;</span><span class="n">lock</span><span class="p">)</span><span class="o">::</span><span class="s">&#34;memory&#34;</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">//释放写锁
+</span><span class="c1"></span><span class="k">static</span> <span class="kr">inline</span> <span class="kt">void</span> <span class="nf">arch_write_unlock</span><span class="p">(</span><span class="n">arch_rwlock_t</span><span class="o">*</span><span class="n">rw</span><span class="p">){</span>
+    <span class="k">asm</span> <span class="k">volatile</span><span class="p">(</span>
+        <span class="n">LOCK_PREFIX</span><span class="s">&#34;addl %1, %0&#34;</span><span class="c1">//原子对lock加上RW_LOCK_BIAS
+</span><span class="c1"></span>        <span class="o">:</span><span class="s">&#34;+m&#34;</span><span class="p">(</span><span class="n">rw</span><span class="o">-&gt;</span><span class="n">lock</span><span class="p">)</span><span class="o">:</span><span class="s">&#34;i&#34;</span><span class="p">(</span><span class="n">RW_LOCK_BIAS</span><span class="p">)</span><span class="o">:</span><span class="s">&#34;memory&#34;</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">//获取写锁失败时调用
+</span><span class="c1"></span><span class="n">ENTRY</span><span class="p">(</span><span class="n">__write_lock_failed</span><span class="p">)</span>
+    <span class="c1">//(%eax)表示由eax指向的内存空间是调用者传进来的 
+</span><span class="c1"></span>    <span class="mi">2</span><span class="o">:</span><span class="n">LOCK_PREFIX</span> <span class="n">addl</span>  <span class="err">$</span> <span class="n">RW_LOCK_BIAS</span><span class="p">,(</span><span class="o">%</span><span class="n">eax</span><span class="p">)</span>
+    <span class="mi">1</span><span class="o">:</span><span class="n">rep</span><span class="p">;</span><span class="n">nop</span><span class="c1">//空指令
+</span><span class="c1"></span>    <span class="n">cmpl</span> <span class="err">$</span><span class="n">RW_LOCK_BIAS</span><span class="p">,(</span><span class="o">%</span><span class="n">eax</span><span class="p">)</span>
+    <span class="c1">//不等于初始值则循环比较，相等则表示有进程释放了写锁
+</span><span class="c1"></span>    <span class="n">jne</span>   <span class="mi">1</span><span class="n">b</span>
+    <span class="c1">//执行加写锁
+</span><span class="c1"></span>    <span class="n">LOCK_PREFIX</span> <span class="n">subl</span>  <span class="err">$</span> <span class="n">RW_LOCK_BIAS</span><span class="p">,(</span><span class="o">%</span><span class="n">eax</span><span class="p">)</span>
+    <span class="n">jnz</span> <span class="mi">2</span><span class="n">b</span> <span class="c1">//不为0则继续测试，为0则表示加写锁成功
+</span><span class="c1"></span>    <span class="n">ret</span> <span class="c1">//返回
+</span><span class="c1"></span><span class="n">ENDPROC</span><span class="p">(</span><span class="n">__write_lock_failed</span><span class="p">)</span>
+<span class="c1">//获取读锁失败时调用
+</span><span class="c1"></span><span class="n">ENTRY</span><span class="p">(</span><span class="n">__read_lock_failed</span><span class="p">)</span>
+    <span class="c1">//(%eax)表示由eax指向的内存空间是调用者传进来的 
+</span><span class="c1"></span>    <span class="mi">2</span><span class="o">:</span><span class="n">LOCK_PREFIX</span> <span class="n">incl</span><span class="p">(</span><span class="o">%</span><span class="n">eax</span><span class="p">)</span><span class="c1">//原子加1
+</span><span class="c1"></span>    <span class="mi">1</span><span class="o">:</span>  <span class="n">rep</span><span class="p">;</span> <span class="n">nop</span><span class="c1">//空指令
+</span><span class="c1"></span>    <span class="n">cmpl</span>  <span class="err">$</span><span class="mi">1</span><span class="p">,(</span><span class="o">%</span><span class="n">eax</span><span class="p">)</span> <span class="c1">//和1比较 小于0则
+</span><span class="c1"></span>    <span class="n">js</span> <span class="mi">1</span><span class="n">b</span> <span class="c1">//为负则继续循环比较
+</span><span class="c1"></span>    <span class="n">LOCK_PREFIX</span> <span class="n">decl</span><span class="p">(</span><span class="o">%</span><span class="n">eax</span><span class="p">)</span> <span class="c1">//加读锁
+</span><span class="c1"></span>    <span class="n">js</span>  <span class="mi">2</span><span class="n">b</span>  <span class="c1">//为负则继续加1并比较，否则返回
+</span><span class="c1"></span>    <span class="n">ret</span> <span class="c1">//返回
+</span><span class="c1"></span><span class="n">ENDPROC</span><span class="p">(</span><span class="n">__read_lock_failed</span><span class="p">)</span>
+<span class="c1">//获取读锁
+</span><span class="c1"></span><span class="k">static</span> <span class="kr">inline</span> <span class="kt">void</span> <span class="n">arch_read_lock</span><span class="p">(</span><span class="n">arch_rwlock_t</span><span class="o">*</span><span class="n">rw</span><span class="p">){</span>
+    <span class="k">asm</span> <span class="k">volatile</span><span class="p">(</span>
+        <span class="n">LOCK_PREFIX</span><span class="s">&#34; subl $1,(%0)</span><span class="se">\n\t</span><span class="s">&#34;</span><span class="c1">//原子对lock减1
+</span><span class="c1"></span>        <span class="s">&#34;jns 1f</span><span class="se">\n</span><span class="s">&#34;</span><span class="c1">//不为小于0则跳转标号1处，表示获取读锁成功
+</span><span class="c1"></span>        <span class="s">&#34;call __read_lock_failed</span><span class="se">\n\t</span><span class="s">&#34;</span><span class="c1">//调用__read_lock_failed
+</span><span class="c1"></span>        <span class="s">&#34;1:</span><span class="se">\n</span><span class="s">&#34;</span>
+        <span class="o">::</span><span class="n">LOCK_PTR_REG</span><span class="p">(</span><span class="n">rw</span><span class="p">)</span><span class="o">:</span><span class="s">&#34;memory&#34;</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">//获取写锁
+</span><span class="c1"></span><span class="k">static</span> <span class="kr">inline</span> <span class="kt">void</span> <span class="n">arch_write_lock</span><span class="p">(</span><span class="n">arch_rwlock_t</span><span class="o">*</span><span class="n">rw</span><span class="p">){</span>
+    <span class="k">asm</span> <span class="k">volatile</span><span class="p">(</span>
+        <span class="n">LOCK_PREFIX</span><span class="s">&#34;subl %1,(%0)</span><span class="se">\n\t</span><span class="s">&#34;</span><span class="c1">//原子对lock减去RW_LOCK_BIAS
+</span><span class="c1"></span>        <span class="s">&#34;jz 1f</span><span class="se">\n</span><span class="s">&#34;</span><span class="c1">//为0则跳转标号1处
+</span><span class="c1"></span>        <span class="s">&#34;call __write_lock_failed</span><span class="se">\n\t</span><span class="s">&#34;</span><span class="c1">//调用__write_lock_failed
+</span><span class="c1"></span>        <span class="s">&#34;1:</span><span class="se">\n</span><span class="s">&#34;</span>
+        <span class="o">::</span><span class="n">LOCK_PTR_REG</span><span class="p">(</span><span class="n">rw</span><span class="p">),</span><span class="s">&#34;i&#34;</span><span class="p">(</span><span class="n">RW_LOCK_BIAS</span><span class="p">)</span><span class="o">:</span><span class="s">&#34;memory&#34;</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>计数器lock的初始值为<code>0x01000000</code></p>
+<ol>
+<li>
+<p>获取读锁时，lock加1，判断lock的符号位是否为0（即lock是否大于0）为0则表示加锁成功；
+否则表示获取读锁失败，此时调用<code>__read_lock_failed</code>，循环测试lock+1&gt;=1</p>
+</li>
+<li>
+<p>获取写时，lock减去初始值，判断lock是否为0，如果不为0则调用<code>__write_lock_failed</code>循环测试lock+0x01000000 == 0x01000000</p>
+</li>
 </ol>
 <h1 id="参考">参考</h1>
 <ul>
