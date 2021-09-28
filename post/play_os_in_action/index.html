@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]操作系统实战（更新中）">
 <meta itemprop="description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"><meta itemprop="datePublished" content="2021-07-30T08:06:33+08:00" />
 <meta itemprop="dateModified" content="2021-07-30T08:06:33+08:00" />
-<meta itemprop="wordCount" content="13115">
+<meta itemprop="wordCount" content="13128">
 <meta itemprop="keywords" content="C,操作系统," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]操作系统实战（更新中）"/>
 <meta name="twitter:description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"/>
@@ -302,7 +302,7 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 13115 words </span>
+        <span class="more-meta"> 13128 words </span>
           <span class="more-meta"> 27 min read </span>
 
         
@@ -455,6 +455,7 @@
         <li><a href="#读写锁">读写锁</a></li>
       </ul>
     </li>
+    <li><a href="#第十讲设置工作模式和环境">第十讲：设置工作模式和环境</a></li>
     <li><a href="#参考">参考</a></li>
   </ul>
 </nav>
@@ -2675,6 +2676,7 @@ mov cr0, eax
 <p>获取写时，lock减去初始值，判断lock是否为0，如果不为0则调用<code>__write_lock_failed</code>循环测试lock+0x01000000 == 0x01000000</p>
 </li>
 </ol>
+<h1 id="第十讲设置工作模式和环境">第十讲：设置工作模式和环境</h1>
 <h1 id="参考">参考</h1>
 <ul>
 <li><a href="https://stackoverflow.com/questions/37146637/why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux">why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux</a></li>
