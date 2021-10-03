@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]Go项目开发实战（更新中）">
 <meta itemprop="description" content="第一讲 开源规范 开源协议概述 MIT是相对自由开发的协议 第二讲 文档规范 最重要的三类文档：README文档、项目文档和API文档 README规范 主"><meta itemprop="datePublished" content="2021-06-28T07:28:37+08:00" />
 <meta itemprop="dateModified" content="2021-06-28T07:28:37+08:00" />
-<meta itemprop="wordCount" content="12566">
+<meta itemprop="wordCount" content="14344">
 <meta itemprop="keywords" content="Golang," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]Go项目开发实战（更新中）"/>
 <meta name="twitter:description" content="第一讲 开源规范 开源协议概述 MIT是相对自由开发的协议 第二讲 文档规范 最重要的三类文档：README文档、项目文档和API文档 README规范 主"/>
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 12566 words </span>
-          <span class="more-meta"> 26 min read </span>
+        <span class="more-meta"> 14344 words </span>
+          <span class="more-meta"> 29 min read </span>
 
         
         
@@ -572,6 +572,41 @@
             <li><a href="#启动流程">启动流程</a></li>
             <li><a href="#请求处理">请求处理</a></li>
             <li><a href="#代码架构">代码架构</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#第二十一讲-iam-apiserver核心功能实现">第二十一讲 iam-apiserver核心功能实现</a>
+      <ul>
+        <li><a href="#应用框架相关">应用框架相关</a>
+          <ul>
+            <li><a href="#优雅关停">优雅关停</a>
+              <ul>
+                <li><a href="#方式1">方式1</a></li>
+                <li><a href="#方式2">方式2</a></li>
+              </ul>
+            </li>
+            <li><a href="#健康检查">健康检查</a></li>
+            <li><a href="#插件化加载中间件">插件化加载中间件</a></li>
+          </ul>
+        </li>
+        <li><a href="#编程规范相关">编程规范相关</a>
+          <ul>
+            <li><a href="#api版本">API版本</a></li>
+            <li><a href="#统一资源元数据">统一资源元数据</a>
+              <ul>
+                <li><a href="#公共属性介绍">公共属性介绍</a></li>
+              </ul>
+            </li>
+            <li><a href="#统一返回">统一返回</a></li>
+            <li><a href="#并发处理">并发处理</a></li>
+          </ul>
+        </li>
+        <li><a href="#其他-1">其他</a>
+          <ul>
+            <li><a href="#插件化选择json库">插件化选择JSON库</a></li>
+            <li><a href="#调用链实现">调用链实现</a></li>
+            <li><a href="#数据一致性">数据一致性</a></li>
           </ul>
         </li>
       </ul>
@@ -2692,6 +2727,7 @@ $ ./scripts/install/test.sh iam::test::apiserver
 <li>业务层可以导入仓库层的包</li>
 <li>控制层可以业务层，特殊情况可以导入仓库层</li>
 </ul>
+<p>具体看一下每一层</p>
 <ol>
 <li>模型层（Models）
 模型层，也称实体层（Entities），IAM项目将模型层单独放在了一个仓库，方便其他项目共用</li>
@@ -2755,7 +2791,589 @@ $ ./scripts/install/test.sh iam::test::apiserver
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><h1 id="参考">参考</h1>
+</div><h1 id="第二十一讲-iam-apiserver核心功能实现">第二十一讲 iam-apiserver核心功能实现</h1>
+<h2 id="应用框架相关">应用框架相关</h2>
+<h3 id="优雅关停">优雅关停</h3>
+<h4 id="方式1">方式1</h4>
+<p>SetupSignalHandler</p>
+<ul>
+<li>通过onlyOneSignalHandler确保只被调用一次</li>
+<li>第一次接受信号，优雅关停，第二次强制退出</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go">
+<span class="kd">var</span> <span class="nx">onlyOneSignalHandler</span> <span class="p">=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{})</span>
+
+<span class="kd">var</span> <span class="nx">shutdownHandler</span> <span class="kd">chan</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Signal</span>
+
+<span class="kd">func</span> <span class="nf">SetupSignalHandler</span><span class="p">()</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{}</span> <span class="p">{</span>
+    <span class="nb">close</span><span class="p">(</span><span class="nx">onlyOneSignalHandler</span><span class="p">)</span> <span class="c1">// panics when called twice
+</span><span class="c1"></span>
+    <span class="nx">shutdownHandler</span> <span class="p">=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Signal</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="nx">stop</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{})</span>
+
+    <span class="nx">signal</span><span class="p">.</span><span class="nf">Notify</span><span class="p">(</span><span class="nx">shutdownHandler</span><span class="p">,</span> <span class="nx">shutdownSignals</span><span class="o">...</span><span class="p">)</span>
+
+    <span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+        <span class="o">&lt;-</span><span class="nx">shutdownHandler</span>
+        <span class="nb">close</span><span class="p">(</span><span class="nx">stop</span><span class="p">)</span>
+        <span class="o">&lt;-</span><span class="nx">shutdownHandler</span>
+        <span class="nx">os</span><span class="p">.</span><span class="nf">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1">// second signal. Exit directly.
+</span><span class="c1"></span>    <span class="p">}()</span>
+
+    <span class="k">return</span> <span class="nx">stop</span>
+<span class="p">}</span>
+
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">grpcAPIServer</span><span class="p">)</span> <span class="nf">Run</span><span class="p">(</span><span class="nx">stopCh</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{})</span> <span class="p">{</span>
+<span class="nx">listen</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nf">Listen</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="nx">s</span><span class="p">.</span><span class="nx">address</span><span class="p">)</span>
+<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+<span class="nx">log</span><span class="p">.</span><span class="nf">Fatalf</span><span class="p">(</span><span class="s">&#34;failed to listen: %s&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">.</span><span class="nf">Error</span><span class="p">())</span>
+<span class="p">}</span>
+
+<span class="nx">log</span><span class="p">.</span><span class="nf">Infof</span><span class="p">(</span><span class="s">&#34;Start grpc server at %s&#34;</span><span class="p">,</span> <span class="nx">s</span><span class="p">.</span><span class="nx">address</span><span class="p">)</span>
+
+<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">s</span><span class="p">.</span><span class="nf">Serve</span><span class="p">(</span><span class="nx">listen</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+<span class="nx">log</span><span class="p">.</span><span class="nf">Fatalf</span><span class="p">(</span><span class="s">&#34;failed to start grpc server: %s&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">.</span><span class="nf">Error</span><span class="p">())</span>
+<span class="p">}</span>
+<span class="p">}()</span>
+
+<span class="o">&lt;-</span><span class="nx">stopCh</span>
+
+<span class="nx">log</span><span class="p">.</span><span class="nf">Infof</span><span class="p">(</span><span class="s">&#34;Grpc server on %s stopped&#34;</span><span class="p">,</span> <span class="nx">s</span><span class="p">.</span><span class="nx">address</span><span class="p">)</span>
+<span class="nx">s</span><span class="p">.</span><span class="nf">GracefulStop</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="方式2">方式2</h4>
+<p>封装GracefulShutdown，
+通过<code>ShutdownManager</code>监听指定信号
+通过<code>ShutdownCallback</code>处理后续逻辑</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">GracefulShutdown</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">callbacks</span>    <span class="p">[]</span><span class="nx">ShutdownCallback</span>
+	<span class="nx">managers</span>     <span class="p">[]</span><span class="nx">ShutdownManager</span>
+	<span class="nx">errorHandler</span> <span class="nx">ErrorHandler</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">gs</span> <span class="o">*</span><span class="nx">GracefulShutdown</span><span class="p">)</span> <span class="nf">AddShutdownManager</span><span class="p">(</span><span class="nx">manager</span> <span class="nx">ShutdownManager</span><span class="p">)</span> <span class="p">{</span>
+<span class="nx">gs</span><span class="p">.</span><span class="nx">managers</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">gs</span><span class="p">.</span><span class="nx">managers</span><span class="p">,</span> <span class="nx">manager</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">gs</span> <span class="o">*</span><span class="nx">GracefulShutdown</span><span class="p">)</span> <span class="nf">AddShutdownCallback</span><span class="p">(</span><span class="nx">shutdownCallback</span> <span class="nx">ShutdownCallback</span><span class="p">)</span> <span class="p">{</span>
+<span class="nx">gs</span><span class="p">.</span><span class="nx">callbacks</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">gs</span><span class="p">.</span><span class="nx">callbacks</span><span class="p">,</span> <span class="nx">shutdownCallback</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="健康检查">健康检查</h3>
+<p>server启动后会尝试ping <code>/healthz</code> 接口确保服务启动正常</p>
+<h3 id="插件化加载中间件">插件化加载中间件</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go">
+<span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">GenericAPIServer</span><span class="p">)</span> <span class="nf">InstallMiddlewares</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// necessary middlewares
+</span><span class="c1"></span>    <span class="nx">s</span><span class="p">.</span><span class="nf">Use</span><span class="p">(</span><span class="nx">middleware</span><span class="p">.</span><span class="nf">RequestID</span><span class="p">())</span>
+    <span class="nx">s</span><span class="p">.</span><span class="nf">Use</span><span class="p">(</span><span class="nx">middleware</span><span class="p">.</span><span class="nf">Context</span><span class="p">())</span>
+
+    <span class="c1">// install custom middlewares
+</span><span class="c1"></span>    <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">m</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">s</span><span class="p">.</span><span class="nx">middlewares</span> <span class="p">{</span>
+        <span class="nx">mw</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">middleware</span><span class="p">.</span><span class="nx">Middlewares</span><span class="p">[</span><span class="nx">m</span><span class="p">]</span>
+        <span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
+            <span class="nx">log</span><span class="p">.</span><span class="nf">Warnf</span><span class="p">(</span><span class="s">&#34;can not find middleware: %s&#34;</span><span class="p">,</span> <span class="nx">m</span><span class="p">)</span>
+
+            <span class="k">continue</span>
+        <span class="p">}</span>
+
+        <span class="nx">log</span><span class="p">.</span><span class="nf">Infof</span><span class="p">(</span><span class="s">&#34;install middleware: %s&#34;</span><span class="p">,</span> <span class="nx">m</span><span class="p">)</span>
+        <span class="nx">s</span><span class="p">.</span><span class="nf">Use</span><span class="p">(</span><span class="nx">mw</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="编程规范相关">编程规范相关</h2>
+<h3 id="api版本">API版本</h3>
+<ul>
+<li>API版本号放在URI中，如<code>/v1/secrets</code></li>
+<li>API路径和控制层、业务层、模型层的代码想映射</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">internal/apiserver/controller/v1/secret/  <span class="c1"># 控制几层代码存放位置</span>
+internal/apiserver/service/v1/secret.go <span class="c1"># 业务层代码存放位置</span>
+github.com/marmotedu/api/apiserver/v1/secret.go <span class="c1"># 模型层代码存放位置</span>
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>CRUD每个接口可以一个文件</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">$ ls internal/apiserver/controller/v1/secret/
+create.go  delete_collection.go  delete.go  doc.go  get.go  list.go  secret.go  update.go
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="统一资源元数据">统一资源元数据</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">ObjectMeta</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">ID</span> <span class="kt">uint64</span> <span class="s">`json:&#34;id,omitempty&#34; gorm:&#34;primary_key;AUTO_INCREMENT;column:id&#34;`</span>
+  <span class="nx">InstanceID</span> <span class="kt">string</span> <span class="s">`json:&#34;instanceID,omitempty&#34; gorm:&#34;unique;column:instanceID;type:varchar(32);not null&#34;`</span>
+  <span class="nx">Name</span> <span class="kt">string</span> <span class="s">`json:&#34;name,omitempty&#34; gorm:&#34;column:name;type:varchar(64);not null&#34; validate:&#34;name&#34;`</span>
+  <span class="nx">Extend</span> <span class="nx">Extend</span> <span class="s">`json:&#34;extend,omitempty&#34; gorm:&#34;-&#34; validate:&#34;omitempty&#34;`</span>
+  <span class="nx">ExtendShadow</span> <span class="kt">string</span> <span class="s">`json:&#34;-&#34; gorm:&#34;column:extendShadow&#34; validate:&#34;omitempty&#34;`</span>
+  <span class="nx">CreatedAt</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span> <span class="s">`json:&#34;createdAt,omitempty&#34; gorm:&#34;column:createdAt&#34;`</span>
+  <span class="nx">UpdatedAt</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span> <span class="s">`json:&#34;updatedAt,omitempty&#34; gorm:&#34;column:updatedAt&#34;`</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">Secret</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="c1">// May add TypeMeta in the future.
+</span><span class="c1"></span>  <span class="c1">// metav1.TypeMeta `json:&#34;,inline&#34;`
+</span><span class="c1"></span>  
+  <span class="c1">// Standard object&#39;s metadata.
+</span><span class="c1"></span>  <span class="nx">metav1</span><span class="p">.</span><span class="nx">ObjectMeta</span> <span class="s">`       json:&#34;metadata,omitempty&#34;`</span>
+  <span class="nx">Username</span>          <span class="kt">string</span> <span class="s">`json:&#34;username&#34;           gorm:&#34;column:username&#34;  validate:&#34;omitempty&#34;`</span>
+  <span class="nx">SecretID</span>          <span class="kt">string</span> <span class="s">`json:&#34;secretID&#34;           gorm:&#34;column:secretID&#34;  validate:&#34;omitempty&#34;`</span>
+  <span class="nx">SecretKey</span>         <span class="kt">string</span> <span class="s">`json:&#34;secretKey&#34;          gorm:&#34;column:secretKey&#34; validate:&#34;omitempty&#34;`</span>
+  
+  <span class="c1">// Required: true
+</span><span class="c1"></span>  <span class="nx">Expires</span>     <span class="kt">int64</span>  <span class="s">`json:&#34;expires&#34;     gorm:&#34;column:expires&#34;     validate:&#34;omitempty&#34;`</span>
+  <span class="nx">Description</span> <span class="kt">string</span> <span class="s">`json:&#34;description&#34; gorm:&#34;column:description&#34; validate:&#34;description&#34;`</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>apiserver中所有的资源都是REST资源，具体分为两种属性</p>
+<ul>
+<li>公共属性</li>
+<li>资源自由数据</li>
+</ul>
+<h4 id="公共属性介绍">公共属性介绍</h4>
+<ol>
+<li>ID</li>
+</ol>
+<p>映射为数据库的id字段，但业务层并没有用到</p>
+<ol start="2">
+<li>InstanceID</li>
+</ol>
+<p>资源的唯一标识，格式为<code>resource-random_str</code>,如<code>secrest-yj8m30</code></p>
+<p>InstanceID通过gorm提供的HOOK自动更新</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">Secret</span><span class="p">)</span> <span class="nf">AfterCreate</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">)</span> <span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">s</span><span class="p">.</span><span class="nx">InstaceID</span> <span class="p">=</span> <span class="nx">iduti</span><span class="p">.</span><span class="nf">GetInstanceId</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">ID</span><span class="p">,</span> <span class="s">&#34;secret-&#34;</span><span class="p">)</span>
+	
+	<span class="k">return</span> <span class="nx">tx</span><span class="p">.</span><span class="nf">Save</span><span class="p">(</span><span class="nx">s</span><span class="p">).</span><span class="nx">Error</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>使用InstanceID的优点有：</p>
+<ul>
+<li>看标识名就知道什么类型的资源，方便 排障</li>
+<li>长度可控，相比UUID占用空间小</li>
+<li>相比ID字段隐私性强，不会暴露数据规模</li>
+</ul>
+<ol start="3">
+<li>Extend 和 ExtendShadow
+为了满足满足表格动态扩展字段但有不想在数据库中加字段的情况，我们
+在业务逻辑中加Extend字段，序列化好以ExtendShadow存到数据库中</li>
+</ol>
+<p>Extend是 map[string]interface{} 类型
+ExtendShadow 是 Mysql text 类型
+两者之间通过gorm Hook自动序列化和反序列化</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="c1">// BeforeCreate run before create database record.
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">Secret</span><span class="p">)</span> <span class="nf">BeforeCreate</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">)</span> <span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">s</span><span class="p">.</span><span class="nx">ExtendShadow</span> <span class="p">=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">Extend</span><span class="p">.</span><span class="nf">String</span><span class="p">()</span>
+
+	<span class="k">return</span>
+<span class="p">}</span>
+
+<span class="c1">// BeforeUpdate run before update database record.
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">Secret</span><span class="p">)</span> <span class="nf">BeforeUpdate</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">)</span> <span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+<span class="nx">s</span><span class="p">.</span><span class="nx">ExtendShadow</span> <span class="p">=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">Extend</span><span class="p">.</span><span class="nf">String</span><span class="p">()</span>
+
+<span class="k">return</span> <span class="nx">err</span>
+<span class="p">}</span>
+
+<span class="c1">// AfterFind run after find to unmarshal a extend shadown string into metav1.Extend struct.
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">Secret</span><span class="p">)</span> <span class="nf">AfterFind</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">)</span> <span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nf">Unmarshal</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">ExtendShadow</span><span class="p">),</span> <span class="o">&amp;</span><span class="nx">s</span><span class="p">.</span><span class="nx">Extend</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">err</span>
+<span class="p">}</span>
+
+<span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><ol start="4">
+<li>CreateAt 和 UpdateAt</li>
+</ol>
+<p>gorm会自动处理这两个字段</p>
+<h3 id="统一返回">统一返回</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">WriteResponse</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">,</span> <span class="nx">data</span> <span class="kd">interface</span><span class="p">{})</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">log</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;%#+v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+        <span class="nx">coder</span> <span class="o">:=</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">ParseCoder</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+        <span class="nx">c</span><span class="p">.</span><span class="nf">JSON</span><span class="p">(</span><span class="nx">coder</span><span class="p">.</span><span class="nf">HTTPStatus</span><span class="p">(),</span> <span class="nx">ErrResponse</span><span class="p">{</span>
+            <span class="nx">Code</span><span class="p">:</span>      <span class="nx">coder</span><span class="p">.</span><span class="nf">Code</span><span class="p">(),</span>
+            <span class="nx">Message</span><span class="p">:</span>   <span class="nx">coder</span><span class="p">.</span><span class="nf">String</span><span class="p">(),</span>
+            <span class="nx">Reference</span><span class="p">:</span> <span class="nx">coder</span><span class="p">.</span><span class="nf">Reference</span><span class="p">(),</span>
+        <span class="p">})</span>
+
+        <span class="k">return</span>
+    <span class="p">}</span>
+
+    <span class="nx">c</span><span class="p">.</span><span class="nf">JSON</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusOK</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="并发处理">并发处理</h3>
+<p>查询列表接口时可能需要对于查出来的每一条记录做一些其他逻辑处理，需要并发处理</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go">
+<span class="kd">func</span> <span class="p">(</span><span class="nx">u</span> <span class="o">*</span><span class="nx">userService</span><span class="p">)</span> <span class="nf">List</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">opts</span> <span class="nx">metav1</span><span class="p">.</span><span class="nx">ListOptions</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">v1</span><span class="p">.</span><span class="nx">UserList</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">users</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">u</span><span class="p">.</span><span class="nx">store</span><span class="p">.</span><span class="nf">Users</span><span class="p">().</span><span class="nf">List</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">opts</span><span class="p">)</span>
+  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nf">L</span><span class="p">(</span><span class="nx">ctx</span><span class="p">).</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;list users from storage failed: %s&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">.</span><span class="nf">Error</span><span class="p">())</span>
+
+    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">WithCode</span><span class="p">(</span><span class="nx">code</span><span class="p">.</span><span class="nx">ErrDatabase</span><span class="p">,</span> <span class="nx">err</span><span class="p">.</span><span class="nf">Error</span><span class="p">())</span>
+  <span class="p">}</span>
+
+  <span class="nx">wg</span> <span class="o">:=</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span><span class="p">{}</span>
+  <span class="nx">errChan</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">error</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+  <span class="nx">finished</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">bool</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+  <span class="kd">var</span> <span class="nx">m</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Map</span>
+
+  <span class="c1">// Improve query efficiency in parallel
+</span><span class="c1"></span>  <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">user</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">users</span><span class="p">.</span><span class="nx">Items</span> <span class="p">{</span>
+    <span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">go</span> <span class="kd">func</span><span class="p">(</span><span class="nx">user</span> <span class="o">*</span><span class="nx">v1</span><span class="p">.</span><span class="nx">User</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">defer</span> <span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+
+            <span class="c1">// some cost time process
+</span><span class="c1"></span>      <span class="nx">policies</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">u</span><span class="p">.</span><span class="nx">store</span><span class="p">.</span><span class="nf">Policies</span><span class="p">().</span><span class="nf">List</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">user</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">metav1</span><span class="p">.</span><span class="nx">ListOptions</span><span class="p">{})</span>
+      <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">errChan</span> <span class="o">&lt;-</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">WithCode</span><span class="p">(</span><span class="nx">code</span><span class="p">.</span><span class="nx">ErrDatabase</span><span class="p">,</span> <span class="nx">err</span><span class="p">.</span><span class="nf">Error</span><span class="p">())</span>
+
+        <span class="k">return</span>
+      <span class="p">}</span>
+
+      <span class="nx">m</span><span class="p">.</span><span class="nf">Store</span><span class="p">(</span><span class="nx">user</span><span class="p">.</span><span class="nx">ID</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">v1</span><span class="p">.</span><span class="nx">User</span><span class="p">{</span>
+                <span class="o">...</span>
+        <span class="nx">Phone</span><span class="p">:</span>       <span class="nx">user</span><span class="p">.</span><span class="nx">Phone</span><span class="p">,</span>
+        <span class="nx">TotalPolicy</span><span class="p">:</span> <span class="nx">policies</span><span class="p">.</span><span class="nx">TotalCount</span><span class="p">,</span>
+      <span class="p">})</span>
+    <span class="p">}(</span><span class="nx">user</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+    <span class="nb">close</span><span class="p">(</span><span class="nx">finished</span><span class="p">)</span>
+  <span class="p">}()</span>
+
+  <span class="k">select</span> <span class="p">{</span>
+  <span class="k">case</span> <span class="o">&lt;-</span><span class="nx">finished</span><span class="p">:</span>
+  <span class="k">case</span> <span class="nx">err</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">errChan</span><span class="p">:</span>
+    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+  <span class="p">}</span>
+
+  <span class="c1">// infos := make([]*v1.User, 0)
+</span><span class="c1"></span>  <span class="nx">infos</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="o">*</span><span class="nx">v1</span><span class="p">.</span><span class="nx">User</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">users</span><span class="p">.</span><span class="nx">Items</span><span class="p">))</span>
+  <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">user</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">users</span><span class="p">.</span><span class="nx">Items</span> <span class="p">{</span>
+    <span class="nx">info</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">m</span><span class="p">.</span><span class="nf">Load</span><span class="p">(</span><span class="nx">user</span><span class="p">.</span><span class="nx">ID</span><span class="p">)</span>
+    <span class="nx">infos</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">infos</span><span class="p">,</span> <span class="nx">info</span><span class="p">.(</span><span class="o">*</span><span class="nx">v1</span><span class="p">.</span><span class="nx">User</span><span class="p">))</span>
+  <span class="p">}</span>
+
+  <span class="nx">log</span><span class="p">.</span><span class="nf">L</span><span class="p">(</span><span class="nx">ctx</span><span class="p">).</span><span class="nf">Debugf</span><span class="p">(</span><span class="s">&#34;get %d users from backend storage.&#34;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">infos</span><span class="p">))</span>
+
+  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">v1</span><span class="p">.</span><span class="nx">UserList</span><span class="p">{</span><span class="nx">ListMeta</span><span class="p">:</span> <span class="nx">users</span><span class="p">.</span><span class="nx">ListMeta</span><span class="p">,</span> <span class="nx">Items</span><span class="p">:</span> <span class="nx">infos</span><span class="p">},</span> <span class="kc">nil</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>如上示例结合了 chan、sync.Map和WaitGroup</p>
+<h2 id="其他-1">其他</h2>
+<h3 id="插件化选择json库">插件化选择JSON库</h3>
+<p>通过使用<code>+build</code>标签构建的时候自动使用对应的json库</p>
+<h3 id="调用链实现">调用链实现</h3>
+<p>Context中间件会设置好RequestID和Username信息</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">Context</span><span class="p">()</span> <span class="nx">gin</span><span class="p">.</span><span class="nx">HandlerFunc</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">c</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="nx">log</span><span class="p">.</span><span class="nx">KeyRequestID</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nf">GetString</span><span class="p">(</span><span class="nx">XRequestIDKey</span><span class="p">))</span>
+    <span class="nx">c</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="nx">log</span><span class="p">.</span><span class="nx">KeyUsername</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nf">GetString</span><span class="p">(</span><span class="nx">UsernameKey</span><span class="p">))</span>
+    <span class="nx">c</span><span class="p">.</span><span class="nf">Next</span><span class="p">()</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>log.L(ctx context.Context)函数会打印调用链信息：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="mi">2021</span><span class="o">-</span><span class="mi">07</span><span class="o">-</span><span class="mi">19</span><span class="w"> </span><span class="mi">19</span><span class="p">:</span><span class="mi">41</span><span class="p">:</span><span class="mi">33</span><span class="p">.</span><span class="mi">472</span><span class="w"> </span><span class="n">INFO</span><span class="w">    </span><span class="n">apiserver</span><span class="w">       </span><span class="n">apiserver</span><span class="o">/</span><span class="n">auth</span><span class="p">.</span><span class="n">go</span><span class="p">:</span><span class="mi">205</span><span class="w">   </span><span class="k">user</span><span class="w"> </span><span class="o">`</span><span class="n">admin</span><span class="o">`</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">authenticated</span><span class="p">.</span><span class="w">  </span><span class="err">{</span><span class="s2">&#34;requestID&#34;</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;b6c56cd3-d095-4fd5-a928-291a2e33077f&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;username&#34;</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;admin&#34;</span><span class="err">}</span><span class="w">
+</span><span class="w"></span><span class="mi">2021</span><span class="o">-</span><span class="mi">07</span><span class="o">-</span><span class="mi">19</span><span class="w"> </span><span class="mi">19</span><span class="p">:</span><span class="mi">41</span><span class="p">:</span><span class="mi">33</span><span class="p">.</span><span class="mi">472</span><span class="w"> </span><span class="n">INFO</span><span class="w">    </span><span class="n">apiserver</span><span class="w">       </span><span class="n">policy</span><span class="o">/</span><span class="k">create</span><span class="p">.</span><span class="n">go</span><span class="p">:</span><span class="mi">22</span><span class="w">     </span><span class="k">create</span><span class="w"> </span><span class="n">policy</span><span class="w"> </span><span class="n">function</span><span class="w"> </span><span class="n">called</span><span class="p">.</span><span class="w">  </span><span class="err">{</span><span class="s2">&#34;requestID&#34;</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;b6c56cd3-d095-4fd5-a928-291a2e33077f&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;username&#34;</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;admin&#34;</span><span class="err">}</span><span class="w">
+</span><span class="w"></span><span class="p">...</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><h3 id="数据一致性">数据一致性</h3>
+<p><img src="/image/go_develop_in_action/29_1.webp" alt="authz-server-data-sync"></p>
+<ul>
+<li>authz-server启动时会通过grpc接口调用api-server获取数据</li>
+<li>当api-server数据更新时，发通过redis发信心给authz-server</li>
+<li>authz-server订阅收到信息后会重新通过grpc接口加载全量数据</li>
+</ul>
+<h1 id="参考">参考</h1>
 <ul>
 <li><a href="https://time.geekbang.org/column/intro/418">课程资源-Go 语言项目开发实战</a></li>
 <li><a href="https://www.techgrow.cn/posts/5bd5a253.html">gcc升级</a></li>
@@ -2765,6 +3383,7 @@ $ ./scripts/install/test.sh iam::test::apiserver
 <li><a href="https://unix.stackexchange.com/questions/272965/pushd-popd-vs-cd-cd-in-bash-and-zsh">pushd vs cd</a></li>
 <li><a href="https://blog.51cto.com/liuzhengwei521/2120535">CSR证书生成</a></li>
 <li><a href="https://segmentfault.com/a/1190000010540911">Oauth授权码模式</a></li>
+<li><a href="https://gorm.io/docs/conventions.html#Timestamp-Tracking">gorm自动更新时间字段</a></li>
 </ul>
 
     </div>
