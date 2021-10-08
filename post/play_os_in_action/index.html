@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]操作系统实战（更新中）">
 <meta itemprop="description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"><meta itemprop="datePublished" content="2021-07-30T08:06:33+08:00" />
 <meta itemprop="dateModified" content="2021-07-30T08:06:33+08:00" />
-<meta itemprop="wordCount" content="13128">
+<meta itemprop="wordCount" content="18172">
 <meta itemprop="keywords" content="C,操作系统," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]操作系统实战（更新中）"/>
 <meta name="twitter:description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"/>
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 13128 words </span>
-          <span class="more-meta"> 27 min read </span>
+        <span class="more-meta"> 18172 words </span>
+          <span class="more-meta"> 37 min read </span>
 
         
         
@@ -455,7 +455,44 @@
         <li><a href="#读写锁">读写锁</a></li>
       </ul>
     </li>
-    <li><a href="#第十讲设置工作模式和环境">第十讲：设置工作模式和环境</a></li>
+    <li><a href="#第十讲设置工作模式和环境">第十讲：设置工作模式和环境</a>
+      <ul>
+        <li><a href="#内核映像文件">内核映像文件</a></li>
+        <li><a href="#准备环境">准备环境</a>
+          <ul>
+            <li><a href="#安装虚拟机">安装虚拟机</a></li>
+            <li><a href="#准备硬盘">准备硬盘</a>
+              <ul>
+                <li><a href="#生成纯二进制文件">生成纯二进制文件</a></li>
+                <li><a href="#格式化建立文件系统">格式化（建立文件系统）</a></li>
+              </ul>
+            </li>
+            <li><a href="#安装grub">安装GRUB</a>
+              <ul>
+                <li><a href="#转成硬盘格式">转成硬盘格式</a></li>
+              </ul>
+            </li>
+            <li><a href="#安装虚拟硬盘">安装虚拟硬盘</a></li>
+            <li><a href="#启动">启动</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#第十一讲建造二级引导器">第十一讲：建造二级引导器</a>
+      <ul>
+        <li><a href="#二级引导器作用">二级引导器作用</a></li>
+        <li><a href="#存储结构">存储结构</a></li>
+        <li><a href="#模块规划">模块规划</a></li>
+        <li><a href="#实现grub头">实现GRUB头</a>
+          <ul>
+            <li><a href="#imginitheadasm">imginithead.asm</a></li>
+          </ul>
+        </li>
+        <li><a href="#进入二级引导器">进入二级引导器</a></li>
+        <li><a href="#调用bios中断">调用BIOS中断</a></li>
+        <li><a href="#引导器主函数">引导器主函数</a></li>
+      </ul>
+    </li>
     <li><a href="#参考">参考</a></li>
   </ul>
 </nav>
@@ -2677,9 +2714,952 @@ mov cr0, eax
 </li>
 </ol>
 <h1 id="第十讲设置工作模式和环境">第十讲：设置工作模式和环境</h1>
+<h2 id="内核映像文件">内核映像文件</h2>
+<p><img src="/image/play_os_in_action/10_1.webp" alt="iso_file_format"></p>
+<p>内核映像文件是由多个文件封装的一个文件，其中包含二级引导器的模块，内核模块，图片和文字库文件等。</p>
+<p>GRUB通过上图中的4KB的GRUB头来识别映像文件，然后根据映像文件头描述符和文件头描述符的信息解析其他文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="c1">//映像文件头描述符
+</span><span class="c1"></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">s_mlosrddsc</span>
+<span class="p">{</span>
+    <span class="n">u64_t</span> <span class="n">mdc_mgic</span><span class="p">;</span> <span class="c1">//映像文件标识
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">mdc_sfsum</span><span class="p">;</span><span class="c1">//未使用
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">mdc_sfsoff</span><span class="p">;</span><span class="c1">//未使用
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">mdc_sfeoff</span><span class="p">;</span><span class="c1">//未使用
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">mdc_sfrlsz</span><span class="p">;</span><span class="c1">//未使用
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">mdc_ldrbk_s</span><span class="p">;</span><span class="c1">//映像文件中二级引导器的开始偏移
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">mdc_ldrbk_e</span><span class="p">;</span><span class="c1">//映像文件中二级引导器的结束偏移
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">mdc_ldrbk_rsz</span><span class="p">;</span><span class="c1">//映像文件中二级引导器的实际大小
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">mdc_ldrbk_sum</span><span class="p">;</span><span class="c1">//映像文件中二级引导器的校验和
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">mdc_fhdbk_s</span><span class="p">;</span><span class="c1">//映像文件中文件头描述的开始偏移
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">mdc_fhdbk_e</span><span class="p">;</span><span class="c1">//映像文件中文件头描述的结束偏移
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">mdc_fhdbk_rsz</span><span class="p">;</span><span class="c1">//映像文件中文件头描述的实际大小
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">mdc_fhdbk_sum</span><span class="p">;</span><span class="c1">//映像文件中文件头描述的校验和
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">mdc_filbk_s</span><span class="p">;</span><span class="c1">//映像文件中文件数据的开始偏移
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">mdc_filbk_e</span><span class="p">;</span><span class="c1">//映像文件中文件数据的结束偏移
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">mdc_filbk_rsz</span><span class="p">;</span><span class="c1">//映像文件中文件数据的实际大小
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">mdc_filbk_sum</span><span class="p">;</span><span class="c1">//映像文件中文件数据的校验和
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">mdc_ldrcodenr</span><span class="p">;</span><span class="c1">//映像文件中二级引导器的文件头描述符的索引号
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">mdc_fhdnr</span><span class="p">;</span><span class="c1">//映像文件中文件头描述符有多少个
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">mdc_filnr</span><span class="p">;</span><span class="c1">//映像文件中文件头有多少个
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">mdc_endgic</span><span class="p">;</span><span class="c1">//映像文件结束标识
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">mdc_rv</span><span class="p">;</span><span class="c1">//映像文件版本
+</span><span class="c1"></span><span class="p">}</span><span class="n">mlosrddsc_t</span><span class="p">;</span>
+
+<span class="cp">#define FHDSC_NMAX 192 </span><span class="c1">//文件名长度
+</span><span class="c1">//文件头描述符
+</span><span class="c1"></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">s_fhdsc</span>
+<span class="p">{</span>
+    <span class="n">u64_t</span> <span class="n">fhd_type</span><span class="p">;</span><span class="c1">//文件类型
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">fhd_subtype</span><span class="p">;</span><span class="c1">//文件子类型
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">fhd_stuts</span><span class="p">;</span><span class="c1">//文件状态
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">fhd_id</span><span class="p">;</span><span class="c1">//文件id
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">fhd_intsfsoff</span><span class="p">;</span><span class="c1">//文件在映像文件位置开始偏移
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">fhd_intsfend</span><span class="p">;</span><span class="c1">//文件在映像文件的结束偏移
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">fhd_frealsz</span><span class="p">;</span><span class="c1">//文件实际大小
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">fhd_fsum</span><span class="p">;</span><span class="c1">//文件校验和
+</span><span class="c1"></span>    <span class="kt">char</span>   <span class="n">fhd_name</span><span class="p">[</span><span class="n">FHDSC_NMAX</span><span class="p">];</span><span class="c1">//文件名
+</span><span class="c1"></span><span class="p">}</span><span class="n">fhdsc_t</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>内核映像文件使用<code>lmoskrlimg</code>打包</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">lmoskrlimg -m k -lhf GRUB头文件 -o 映像文件 -f 输入的文件列表
+-m 表示模式 只能是k内核模式
+-lhf 表示后面跟上GRUB头文件
+-o 表示输出的映像文件名 
+-f 表示输入文件列表
+<span class="c1">#例如：lmoskrlimg -m k -lhf grubhead.bin -o kernel.img -f file1.bin file2.bin file3.bin file4.bin </span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="准备环境">准备环境</h2>
+<h3 id="安装虚拟机">安装虚拟机</h3>
+<p>使用virtual box虚拟机</p>
+<h3 id="准备硬盘">准备硬盘</h3>
+<h4 id="生成纯二进制文件">生成纯二进制文件</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">
+dd <span class="nv">bs</span><span class="o">=</span><span class="m">512</span> <span class="k">if</span><span class="o">=</span>/dev/zero <span class="nv">of</span><span class="o">=</span>hd.img <span class="nv">count</span><span class="o">=</span><span class="m">204800</span>
+
+<span class="c1">#bs:表示块大小，这里是512字节</span>
+<span class="c1">#if：表示输入文件，/dev/zero就是Linux下专门返回0数据的设备文件，读取它就返回0</span>
+<span class="c1">#of：表示输出文件，即我们的硬盘文件。</span>
+<span class="c1">#count：表示输出多少块</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="格式化建立文件系统">格式化（建立文件系统）</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">
+<span class="c1"># 1. 将文件变成回环设备</span>
+<span class="c1"># loop0可能被占用，换成其他名字即可 </span>
+sudo losetup /dev/loop0 hd.img
+
+<span class="c1"># 2. 建立文件系统</span>
+sudo mkfs.ext4 -q /dev/loop0
+
+<span class="c1"># 3. 挂载</span>
+<span class="c1"># 挂载硬盘文件, 可通过 lsblk 命令验证结果</span>
+sudo mount -o loop ./hd.img  ./hdisk 
+ <span class="c1"># 建立boot目录</span>
+sudo mkdir ./hdist/boot 
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="安装grub">安装GRUB</h3>
+<ol>
+<li>安装GRUB</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">
+<span class="c1"># 安装GRUB</span>
+sudo grub-install --boot-directory<span class="o">=</span>./hdisk/boot/ --force --allow-floppy /dev/loop0
+<span class="c1"># --boot-directory 指向先前我们在虚拟硬盘中建立的boot目录。</span>
+<span class="c1"># --force --allow-floppy ：指向我们的虚拟硬盘设备文件/dev/loop0</span>
+</code></pre></td></tr></table>
+</div>
+</div><ol start="2">
+<li>编写配置文件</li>
+</ol>
+<p>在 /hdisk/boot/grub/ 目录建立 grub.config 文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">menuentry &#39;HelloOS&#39; {
+insmod part_msdos
+insmod ext2
+set root=&#39;hd0,msdos1&#39; #我们的硬盘只有一个分区所以是&#39;hd0,msdos1&#39;
+multiboot2 /boot/HelloOS.eki #加载boot目录下的HelloOS.eki文件
+boot #引导启动
+}
+set timeout_style=menu
+if [ &#34;${timeout}&#34; = 0 ]; then
+  set timeout=10 #等待10秒钟自动启动
+fi
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="转成硬盘格式">转成硬盘格式</h4>
+<p>将Linux识别的硬盘 转换成虚拟机识别的硬盘</p>
+<p>VBoxManage是在宿主机执行，文件可通过共享文件夹传输</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">VBoxManage convertfromraw ./hd.img --format VDI ./hd.vdi
+<span class="c1">#convertfromraw 指向原始格式文件</span>
+<span class="c1">#--format VDI  表示转换成虚拟需要的VDI格式</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="安装虚拟硬盘">安装虚拟硬盘</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">
+<span class="c1"># 第一步：配置硬盘控制器 </span>
+<span class="c1"># SATA的硬盘其控制器是intelAHCI</span>
+VBoxManage storagectl HelloOS --name <span class="s2">&#34;SATA&#34;</span> --add sata --controller IntelAhci --portcount <span class="m">1</span>
+<span class="c1"># 第二步：挂载虚拟硬盘</span>
+VBoxManage closemedium disk ./hd.vdi <span class="c1">#删除虚拟硬盘UUID并重新分配</span>
+<span class="c1">#将虚拟硬盘挂到虚拟机的硬盘控制器</span>
+VBoxManage storageattach HelloOS --storagectl <span class="s2">&#34;SATA&#34;</span> --port <span class="m">1</span> --device <span class="m">0</span> --type hdd --medium ./hd.vdi
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="启动">启动</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">VBoxManage startvm HelloOS <span class="c1">#启动虚拟机</span>
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="第十一讲建造二级引导器">第十一讲：建造二级引导器</h1>
+<h2 id="二级引导器作用">二级引导器作用</h2>
+<p>收集机器信息，对CPU、内存、显卡等进行初级配置</p>
+<h2 id="存储结构">存储结构</h2>
+<p>收集的信息会存在如下的数据结构中</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">s_MACHBSTART</span>
+<span class="p">{</span>
+    <span class="n">u64_t</span>   <span class="n">mb_krlinitstack</span><span class="p">;</span><span class="c1">//内核栈地址
+</span><span class="c1"></span>    <span class="n">u64_t</span>   <span class="n">mb_krlitstacksz</span><span class="p">;</span><span class="c1">//内核栈大小
+</span><span class="c1"></span>    <span class="n">u64_t</span>   <span class="n">mb_imgpadr</span><span class="p">;</span><span class="c1">//操作系统映像
+</span><span class="c1"></span>    <span class="n">u64_t</span>   <span class="n">mb_imgsz</span><span class="p">;</span><span class="c1">//操作系统映像大小
+</span><span class="c1"></span>    <span class="n">u64_t</span>   <span class="n">mb_bfontpadr</span><span class="p">;</span><span class="c1">//操作系统字体地址
+</span><span class="c1"></span>    <span class="n">u64_t</span>   <span class="n">mb_bfontsz</span><span class="p">;</span><span class="c1">//操作系统字体大小
+</span><span class="c1"></span>    <span class="n">u64_t</span>   <span class="n">mb_fvrmphyadr</span><span class="p">;</span><span class="c1">//机器显存地址
+</span><span class="c1"></span>    <span class="n">u64_t</span>   <span class="n">mb_fvrmsz</span><span class="p">;</span><span class="c1">//机器显存大小
+</span><span class="c1"></span>    <span class="n">u64_t</span>   <span class="n">mb_cpumode</span><span class="p">;</span><span class="c1">//机器CPU工作模式
+</span><span class="c1"></span>    <span class="n">u64_t</span>   <span class="n">mb_memsz</span><span class="p">;</span><span class="c1">//机器内存大小
+</span><span class="c1"></span>    <span class="n">u64_t</span>   <span class="n">mb_e820padr</span><span class="p">;</span><span class="c1">//机器e820数组地址
+</span><span class="c1"></span>    <span class="n">u64_t</span>   <span class="n">mb_e820nr</span><span class="p">;</span><span class="c1">//机器e820数组元素个数
+</span><span class="c1"></span>    <span class="n">u64_t</span>   <span class="n">mb_e820sz</span><span class="p">;</span><span class="c1">//机器e820数组大小
+</span><span class="c1"></span>    <span class="c1">//……
+</span><span class="c1"></span>    <span class="n">u64_t</span>   <span class="n">mb_pml4padr</span><span class="p">;</span><span class="c1">//机器页表数据地址
+</span><span class="c1"></span>    <span class="n">u64_t</span>   <span class="n">mb_subpageslen</span><span class="p">;</span><span class="c1">//机器页表个数
+</span><span class="c1"></span>    <span class="n">u64_t</span>   <span class="n">mb_kpmapphymemsz</span><span class="p">;</span><span class="c1">//操作系统映射空间大小
+</span><span class="c1"></span>    <span class="c1">//……
+</span><span class="c1"></span>    <span class="n">graph_t</span> <span class="n">mb_ghparm</span><span class="p">;</span><span class="c1">//图形信息
+</span><span class="c1"></span><span class="p">}</span><span class="n">__attribute__</span><span class="p">((</span><span class="n">packed</span><span class="p">))</span> <span class="n">machbstart_t</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="模块规划">模块规划</h2>
+<p><img src="/image/play_os_in_action/11_1.webp" alt="modules"></p>
+<p>上图的文件经过编译会生成三个文件，具体流程如下</p>
+<p><img src="/image/play_os_in_action/11_2.webp" alt="compile"></p>
+<p>然后用映像打包工具打包成映像文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">
+lmoskrlimg -m k -lhf initldrimh.bin -o Cosmos.eki -f initldrkrl.bin initldrsve.bin
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="实现grub头">实现GRUB头</h2>
+<p>GRUB头有两个文件</p>
+<ul>
+<li>imginithead.asm汇编文件： 让GUR识别、设置C语言环境</li>
+<li>inithead.c文件：查找引导器核心文件initldrkrl,bin文件并将其放到特定的内存地址上</li>
+</ul>
+<h3 id="imginitheadasm">imginithead.asm</h3>
+<p>主要工作是初始化CPU的 寄存器，加载GDT，切换到CPU的保护模式</p>
+<p>首先是 GRUB1 和 GRUB2需要的带个头结构</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="nf">MBT_HDR_FLAGS</span>  <span class="no">EQU</span> <span class="mi">0x00010003</span>
+<span class="nf">MBT_HDR_MAGIC</span>  <span class="no">EQU</span> <span class="mi">0x1BADB002</span>
+<span class="nf">MBT2_MAGIC</span>  <span class="no">EQU</span> <span class="mi">0xe85250d6</span>
+<span class="nf">global</span> <span class="no">_start</span>
+<span class="nf">extern</span> <span class="no">inithead_entry</span>
+<span class="err">[</span><span class="nf">section</span> <span class="no">.text</span><span class="p">]</span>
+<span class="err">[</span><span class="nf">bits</span> <span class="mi">32</span><span class="p">]</span>
+<span class="nl">_start:</span>
+  <span class="nf">jmp</span> <span class="no">_entry</span>
+<span class="nf">align</span> <span class="mi">4</span>
+<span class="nl">mbt_hdr:</span>
+  <span class="nf">dd</span> <span class="no">MBT_HDR_MAGIC</span>
+  <span class="nf">dd</span> <span class="no">MBT_HDR_FLAGS</span>
+  <span class="nf">dd</span> <span class="p">-(</span><span class="no">MBT_HDR_MAGIC</span><span class="err">+</span><span class="no">MBT_HDR_FLAGS</span><span class="p">)</span>
+  <span class="nf">dd</span> <span class="no">mbt_hdr</span>
+  <span class="nf">dd</span> <span class="no">_start</span>
+  <span class="nf">dd</span> <span class="mi">0</span>
+  <span class="nf">dd</span> <span class="mi">0</span>
+  <span class="nf">dd</span> <span class="no">_entry</span>
+<span class="nf">ALIGN</span> <span class="mi">8</span>
+<span class="nl">mbhdr:</span>
+  <span class="nf">DD</span>  <span class="mi">0xE85250D6</span>
+  <span class="nf">DD</span>  <span class="mi">0</span>
+  <span class="nf">DD</span>  <span class="no">mhdrend</span> <span class="p">-</span> <span class="no">mbhdr</span>
+  <span class="nf">DD</span>  <span class="p">-(</span><span class="mi">0xE85250D6</span> <span class="err">+</span> <span class="mi">0</span> <span class="err">+</span> <span class="p">(</span><span class="no">mhdrend</span> <span class="p">-</span> <span class="no">mbhdr</span><span class="p">))</span>
+  <span class="nf">DW</span>  <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span>
+  <span class="nf">DD</span>  <span class="mi">24</span>
+  <span class="nf">DD</span>  <span class="no">mbhdr</span>
+  <span class="nf">DD</span>  <span class="no">_start</span>
+  <span class="nf">DD</span>  <span class="mi">0</span>
+  <span class="nf">DD</span>  <span class="mi">0</span>
+  <span class="nf">DW</span>  <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span>
+  <span class="nf">DD</span>  <span class="mi">12</span>
+  <span class="nf">DD</span>  <span class="no">_entry</span> 
+  <span class="no">DD</span>  <span class="mi">0</span>  
+  <span class="no">DW</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+  <span class="nf">DD</span>  <span class="mi">8</span>
+<span class="nl">mhdrend:</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>关闭中断并加载GDT</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="nl">_entry:</span>
+  <span class="nf">cli</span>           <span class="err">；关中断</span>
+  <span class="nf">in</span> <span class="no">al</span><span class="p">,</span> <span class="mi">0x70</span> 
+  <span class="no">or</span> <span class="no">al</span><span class="p">,</span> <span class="mi">0x80</span>  
+  <span class="no">out</span> <span class="mi">0x70</span><span class="p">,</span><span class="no">al</span>  <span class="err">；关掉不可屏蔽中断</span>   
+  <span class="no">lgdt</span> <span class="p">[</span><span class="no">GDT_PTR</span><span class="p">]</span> <span class="err">；加载</span><span class="no">GDT地址到GDTR寄存器</span>
+  <span class="nf">jmp</span> <span class="no">dword</span> <span class="mi">0x8</span> <span class="p">:</span><span class="no">_32bits_mode</span> <span class="err">；长跳转刷新</span><span class="no">CS影子寄存器</span>
+  <span class="c">;………………
+</span><span class="c">;GDT全局段描述符表
+</span><span class="c"></span><span class="nl">GDT_START:</span>
+<span class="nl">knull_dsc:</span> <span class="nf">dq</span> <span class="mi">0</span>
+<span class="nl">kcode_dsc:</span> <span class="nf">dq</span> <span class="mi">0x00cf9e000000ffff</span>
+<span class="nl">kdata_dsc:</span> <span class="nf">dq</span> <span class="mi">0x00cf92000000ffff</span>
+<span class="nl">k16cd_dsc:</span> <span class="nf">dq</span> <span class="mi">0x00009e000000ffff</span> <span class="err">；</span><span class="mi">16</span><span class="err">位代码段描述符</span>
+<span class="nl">k16da_dsc:</span> <span class="nf">dq</span> <span class="mi">0x000092000000ffff</span> <span class="err">；</span><span class="mi">16</span><span class="err">位数据段描述符</span>
+<span class="nl">GDT_END:</span>
+<span class="nl">GDT_PTR:</span>
+<span class="nf">GDTLEN</span>  <span class="no">dw</span> <span class="no">GDT_END-GDT_START-1</span>  <span class="c">;GDT界限
+</span><span class="c"></span><span class="no">GDTBASE</span>  <span class="no">dd</span> <span class="no">GDT_ST</span>  
+</code></pre></td></tr></table>
+</div>
+</div><p>初始化段寄存器、通用寄存器和栈寄存器</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm">
+<span class="nf">_32bits_mode</span><span class="err">：</span>
+  <span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span> <span class="mi">0x10</span>
+  <span class="nf">mov</span> <span class="no">ds</span><span class="p">,</span> <span class="no">ax</span>
+  <span class="nf">mov</span> <span class="no">ss</span><span class="p">,</span> <span class="no">ax</span>
+  <span class="nf">mov</span> <span class="no">es</span><span class="p">,</span> <span class="no">ax</span>
+  <span class="nf">mov</span> <span class="no">fs</span><span class="p">,</span> <span class="no">ax</span>
+  <span class="nf">mov</span> <span class="no">gs</span><span class="p">,</span> <span class="no">ax</span>
+  <span class="nf">xor</span> <span class="no">eax</span><span class="p">,</span><span class="no">eax</span>
+  <span class="nf">xor</span> <span class="no">ebx</span><span class="p">,</span><span class="no">ebx</span>
+  <span class="nf">xor</span> <span class="no">ecx</span><span class="p">,</span><span class="no">ecx</span>
+  <span class="nf">xor</span> <span class="no">edx</span><span class="p">,</span><span class="no">edx</span>
+  <span class="nf">xor</span> <span class="no">edi</span><span class="p">,</span><span class="no">edi</span>
+  <span class="nf">xor</span> <span class="no">esi</span><span class="p">,</span><span class="no">esi</span>
+  <span class="nf">xor</span> <span class="no">ebp</span><span class="p">,</span><span class="no">ebp</span>
+  <span class="nf">xor</span> <span class="no">esp</span><span class="p">,</span><span class="no">esp</span>
+  <span class="nf">mov</span> <span class="no">esp</span><span class="p">,</span><span class="mi">0x7c00</span> <span class="err">；设置栈顶为</span><span class="mi">0x7c00</span>
+  <span class="nf">call</span> <span class="no">inithead_entry</span> <span class="err">；调用</span><span class="no">inithead_entry函数在inithead.c中实现</span>
+  <span class="nf">jmp</span> <span class="mi">0x200000</span>  <span class="err">；跳转到</span><span class="mi">0x200000</span><span class="err">地址</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上述代码最后调用了 inithead_entry 函数</p>
+<p>inithead_entry分别调用了<code>write_realintsvefile</code>和<code>write_ldrkrlfile</code>，
+将映像文件中的initldrsve.bin文件和initldrkrl.bin文件写入到特定的内存中
+其中有两个依赖函数<code>find_file</code> 和<code>m2mcopy</code>
+find_file函数负责扫描映像文件中的文件头描述符，对比其中的文件名，
+然后返回对应的文件的文件头描述符地址，这样就可以得到其位置和大小</p>
+<p>m2mcopy函数 负责将 映像文件复制到具体的内存空间中</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C">
+<span class="cp">#define MDC_ENDGIC 0xaaffaaffaaffaaff
+</span><span class="cp">#define MDC_RVGIC 0xffaaffaaffaaffaa
+</span><span class="cp">#define REALDRV_PHYADR 0x1000
+</span><span class="cp">#define IMGFILE_PHYADR 0x4000000
+</span><span class="cp">#define IMGKRNL_PHYADR 0x2000000
+</span><span class="cp">#define LDRFILEADR IMGFILE_PHYADR
+</span><span class="cp">#define MLOSDSC_OFF (0x1000)
+</span><span class="cp">#define MRDDSC_ADR (mlosrddsc_t*)(LDRFILEADR+0x1000)
+</span><span class="cp"></span>
+<span class="kt">void</span> <span class="nf">inithead_entry</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">write_realintsvefile</span><span class="p">();</span>
+    <span class="n">write_ldrkrlfile</span><span class="p">();</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">//写initldrsve.bin文件到特定的内存中
+</span><span class="c1"></span><span class="kt">void</span> <span class="nf">write_realintsvefile</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">fhdsc_t</span> <span class="o">*</span><span class="n">fhdscstart</span> <span class="o">=</span> <span class="n">find_file</span><span class="p">(</span><span class="s">&#34;initldrsve.bin&#34;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">fhdscstart</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#34;not file initldrsve.bin&#34;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">m2mcopy</span><span class="p">((</span><span class="kt">void</span> <span class="o">*</span><span class="p">)((</span><span class="n">u32_t</span><span class="p">)(</span><span class="n">fhdscstart</span><span class="o">-&gt;</span><span class="n">fhd_intsfsoff</span><span class="p">)</span> <span class="o">+</span> <span class="n">LDRFILEADR</span><span class="p">),</span>
+            <span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="p">)</span><span class="n">REALDRV_PHYADR</span><span class="p">,</span> <span class="p">(</span><span class="n">sint_t</span><span class="p">)</span><span class="n">fhdscstart</span><span class="o">-&gt;</span><span class="n">fhd_frealsz</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">//写initldrkrl.bin文件到特定的内存中
+</span><span class="c1"></span><span class="kt">void</span> <span class="nf">write_ldrkrlfile</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">fhdsc_t</span> <span class="o">*</span><span class="n">fhdscstart</span> <span class="o">=</span> <span class="n">find_file</span><span class="p">(</span><span class="s">&#34;initldrkrl.bin&#34;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">fhdscstart</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#34;not file initldrkrl.bin&#34;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">m2mcopy</span><span class="p">((</span><span class="kt">void</span> <span class="o">*</span><span class="p">)((</span><span class="n">u32_t</span><span class="p">)(</span><span class="n">fhdscstart</span><span class="o">-&gt;</span><span class="n">fhd_intsfsoff</span><span class="p">)</span> <span class="o">+</span> <span class="n">LDRFILEADR</span><span class="p">),</span>
+            <span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="p">)</span><span class="n">ILDRKRL_PHYADR</span><span class="p">,</span> <span class="p">(</span><span class="n">sint_t</span><span class="p">)</span><span class="n">fhdscstart</span><span class="o">-&gt;</span><span class="n">fhd_frealsz</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">//在映像文件中查找对应的文件
+</span><span class="c1"></span><span class="n">fhdsc_t</span> <span class="o">*</span><span class="nf">find_file</span><span class="p">(</span><span class="n">char_t</span> <span class="o">*</span><span class="n">fname</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">mlosrddsc_t</span> <span class="o">*</span><span class="n">mrddadrs</span> <span class="o">=</span> <span class="n">MRDDSC_ADR</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">mrddadrs</span><span class="o">-&gt;</span><span class="n">mdc_endgic</span> <span class="o">!=</span> <span class="n">MDC_ENDGIC</span> <span class="o">||</span>
+        <span class="n">mrddadrs</span><span class="o">-&gt;</span><span class="n">mdc_rv</span> <span class="o">!=</span> <span class="n">MDC_RVGIC</span> <span class="o">||</span>
+        <span class="n">mrddadrs</span><span class="o">-&gt;</span><span class="n">mdc_fhdnr</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="o">||</span>
+        <span class="n">mrddadrs</span><span class="o">-&gt;</span><span class="n">mdc_filnr</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#34;no mrddsc&#34;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">s64_t</span> <span class="n">rethn</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="n">fhdsc_t</span> <span class="o">*</span><span class="n">fhdscstart</span> <span class="o">=</span> <span class="p">(</span><span class="n">fhdsc_t</span> <span class="o">*</span><span class="p">)((</span><span class="n">u32_t</span><span class="p">)(</span><span class="n">mrddadrs</span><span class="o">-&gt;</span><span class="n">mdc_fhdbk_s</span><span class="p">)</span> <span class="o">+</span> <span class="n">LDRFILEADR</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">u64_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">mrddadrs</span><span class="o">-&gt;</span><span class="n">mdc_fhdnr</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">strcmpl</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">fhdscstart</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">fhd_name</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">rethn</span> <span class="o">=</span> <span class="p">(</span><span class="n">s64_t</span><span class="p">)</span><span class="n">i</span><span class="p">;</span>
+            <span class="k">goto</span> <span class="n">ok_l</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">rethn</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+<span class="nl">ok_l</span><span class="p">:</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">rethn</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#34;not find file&#34;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="o">&amp;</span><span class="n">fhdscstart</span><span class="p">[</span><span class="n">rethn</span><span class="p">];</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="进入二级引导器">进入二级引导器</h2>
+<p><code>imginithead.asm</code>最后的指令<code>jump 0x200000</code>跳转到了物理内存地址0x200000地址处
+这个地址放置的正是<code>initldrkrk.bin</code>文件
+这一跳进入了二级引导器的主模块</p>
+<p>由于模块的 改变，需要写一小段汇编代码，建立下面这个<code>initldr32.asm</code>文件</p>
+<p>重新把GDT（段描述符表）、IDT（中断选择子表）和寄存器重新初始化，然后调用二级引导器的主函数<code>ldrkrl_entry</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm">
+<span class="nl">_entry:</span>
+  <span class="nf">cli</span>
+  <span class="nf">lgdt</span> <span class="p">[</span><span class="no">GDT_PTR</span><span class="p">]</span><span class="err">；加载</span><span class="no">GDT地址到GDTR寄存器</span>
+  <span class="nf">lidt</span> <span class="p">[</span><span class="no">IDT_PTR</span><span class="p">]</span><span class="err">；加载</span><span class="no">IDT地址到IDTR寄存器</span>
+  <span class="nf">jmp</span> <span class="no">dword</span> <span class="mi">0x8</span> <span class="p">:</span><span class="no">_32bits_mode</span><span class="err">；长跳转刷新</span><span class="no">CS影子寄存器</span>
+<span class="nl">_32bits_mode:</span>
+  <span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span> <span class="mi">0x10</span>  <span class="c">; 数据段选择子(目的)
+</span><span class="c"></span>  <span class="no">mov</span> <span class="no">ds</span><span class="p">,</span> <span class="no">ax</span>
+  <span class="nf">mov</span> <span class="no">ss</span><span class="p">,</span> <span class="no">ax</span>
+  <span class="nf">mov</span> <span class="no">es</span><span class="p">,</span> <span class="no">ax</span>
+  <span class="nf">mov</span> <span class="no">fs</span><span class="p">,</span> <span class="no">ax</span>
+  <span class="nf">mov</span> <span class="no">gs</span><span class="p">,</span> <span class="no">ax</span>
+  <span class="nf">xor</span> <span class="no">eax</span><span class="p">,</span><span class="no">eax</span>
+  <span class="nf">xor</span> <span class="no">ebx</span><span class="p">,</span><span class="no">ebx</span>
+  <span class="nf">xor</span> <span class="no">ecx</span><span class="p">,</span><span class="no">ecx</span>
+  <span class="nf">xor</span> <span class="no">edx</span><span class="p">,</span><span class="no">edx</span>
+  <span class="nf">xor</span> <span class="no">edi</span><span class="p">,</span><span class="no">edi</span>
+  <span class="nf">xor</span> <span class="no">esi</span><span class="p">,</span><span class="no">esi</span>
+  <span class="nf">xor</span> <span class="no">ebp</span><span class="p">,</span><span class="no">ebp</span>
+  <span class="nf">xor</span> <span class="no">esp</span><span class="p">,</span><span class="no">esp</span>
+  <span class="nf">mov</span> <span class="no">esp</span><span class="p">,</span><span class="mi">0x90000</span> <span class="err">；使得栈底指向了</span><span class="mi">0x90000</span>
+  <span class="nf">call</span> <span class="no">ldrkrl_entry</span> <span class="err">；调用</span><span class="no">ldrkrl_entry函数</span>
+  <span class="nf">xor</span> <span class="no">ebx</span><span class="p">,</span><span class="no">ebx</span>
+  <span class="nf">jmp</span> <span class="mi">0x2000000</span> <span class="err">；跳转到</span><span class="mi">0x2000000</span><span class="err">的内存地址</span>
+  <span class="nf">jmp</span> <span class="no">$</span>
+<span class="nl">GDT_START:</span>
+<span class="nl">knull_dsc:</span> <span class="nf">dq</span> <span class="mi">0</span>
+<span class="nl">kcode_dsc:</span> <span class="nf">dq</span> <span class="mi">0x00cf9a000000ffff</span> <span class="c">;a-e
+</span><span class="c"></span><span class="no">kdata_dsc</span><span class="p">:</span> <span class="no">dq</span> <span class="mi">0x00cf92000000ffff</span>
+<span class="nl">k16cd_dsc:</span> <span class="nf">dq</span> <span class="mi">0x00009a000000ffff</span> <span class="err">；</span><span class="mi">16</span><span class="err">位代码段描述符</span>
+<span class="nl">k16da_dsc:</span> <span class="nf">dq</span> <span class="mi">0x000092000000ffff</span> <span class="err">；</span><span class="mi">16</span><span class="err">位数据段描述符</span>
+<span class="nl">GDT_END:</span>
+<span class="nl">GDT_PTR:</span>
+<span class="nf">GDTLEN</span>  <span class="no">dw</span> <span class="no">GDT_END-GDT_START-1</span>  <span class="c">;GDT界限
+</span><span class="c"></span><span class="no">GDTBASE</span>  <span class="no">dd</span> <span class="no">GDT_START</span>
+
+<span class="nl">IDT_PTR:</span>
+<span class="nf">IDTLEN</span>  <span class="no">dw</span> <span class="mi">0x3ff</span>
+<span class="nf">IDTBAS</span>  <span class="no">dd</span> <span class="mi">0</span>  <span class="err">；这是</span><span class="no">BIOS中断表的地址和长度</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="调用bios中断">调用BIOS中断</h2>
+<p>因为获取内存布局信息、设置显卡图像 模式等功能需要依赖BIOS的中断服务</p>
+<p>可是BIOS中断工作在16位实模式，所以需要上下文切换，大体流程如下：</p>
+<ol>
+<li>保存C语言环境下的 CPU上线文，即保护模式下的所有通用寄存器、段寄存器、程序指针寄存器和栈寄存器</li>
+<li>切换到实模式，调用BIOS中断，把中断结果保存在内存中</li>
+<li>切换回保护模式，加载之前保存的寄存器</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm">
+<span class="nl">realadr_call_entry:</span>
+  <span class="nf">pushad</span>     <span class="c">;保存通用寄存器
+</span><span class="c"></span>  <span class="no">push</span>    <span class="no">ds</span>
+  <span class="nf">push</span>    <span class="no">es</span>
+  <span class="nf">push</span>    <span class="no">fs</span> <span class="c">;保存4个段寄存器
+</span><span class="c"></span>  <span class="no">push</span>    <span class="no">gs</span>
+  <span class="nf">call</span> <span class="no">save_eip_jmp</span> <span class="err">；调用</span><span class="no">save_eip_jmp</span> 
+  <span class="no">pop</span>  <span class="no">gs</span>
+  <span class="nf">pop</span>  <span class="no">fs</span>
+  <span class="nf">pop</span>  <span class="no">es</span>      <span class="c">;恢复4个段寄存器
+</span><span class="c"></span>  <span class="no">pop</span>  <span class="no">ds</span>
+  <span class="nf">popad</span>       <span class="c">;恢复通用寄存器
+</span><span class="c"></span>  <span class="no">ret</span>
+<span class="nl">save_eip_jmp:</span>
+  <span class="nf">pop</span> <span class="no">esi</span>  <span class="err">；弹出</span><span class="no">call</span> <span class="no">save_eip_jmp时保存的eip到esi寄存器中</span><span class="err">，</span> 
+  <span class="no">mov</span> <span class="p">[</span><span class="no">PM32_EIP_OFF</span><span class="p">],</span><span class="no">esi</span> <span class="err">；把</span><span class="no">eip保存到特定的内存空间中</span>
+  <span class="nf">mov</span> <span class="p">[</span><span class="no">PM32_ESP_OFF</span><span class="p">],</span><span class="no">esp</span> <span class="err">；把</span><span class="no">esp保存到特定的内存空间中</span>
+  <span class="nf">jmp</span> <span class="no">dword</span> <span class="no">far</span> <span class="p">[</span><span class="no">cpmty_mode</span><span class="p">]</span><span class="err">；长跳转这里表示把</span><span class="no">cpmty_mode处的第一个4字节装入eip</span><span class="err">，把其后的</span><span class="mi">2</span><span class="err">字节装入</span><span class="no">cs</span>
+<span class="nl">cpmty_mode:</span>
+  <span class="nf">dd</span> <span class="mi">0x1000</span>
+  <span class="nf">dw</span> <span class="mi">0x18</span>
+  <span class="nf">jmp</span> <span class="no">$</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><code>jmp dword far [cpmty_mode]</code>指令表示把 [cpmty_mode] 处的数据装入 CS: EIP，
+即把 0x18: 0x1000 装入  CS: EIP 中，
+0x18 是段描述索引，指向GDT中的 16 位代码段描述符，
+0x10000 表示段内地址偏移</p>
+<p>这个地址起始的代码如下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm">
+<span class="err">[</span><span class="nf">bits</span> <span class="mi">16</span><span class="p">]</span>
+<span class="nl">_start:</span>
+<span class="nl">_16_mode:</span>
+  <span class="nf">mov</span>  <span class="no">bp</span><span class="p">,</span><span class="mi">0x20</span> <span class="c">;0x20是指向GDT中的16位数据段描述符 
+</span><span class="c"></span>  <span class="no">mov</span>  <span class="no">ds</span><span class="p">,</span> <span class="no">bp</span>
+  <span class="nf">mov</span>  <span class="no">es</span><span class="p">,</span> <span class="no">bp</span>
+  <span class="nf">mov</span>  <span class="no">ss</span><span class="p">,</span> <span class="no">bp</span>
+  <span class="nf">mov</span>  <span class="no">ebp</span><span class="p">,</span> <span class="no">cr0</span>
+  <span class="nf">and</span>  <span class="no">ebp</span><span class="p">,</span> <span class="mi">0xfffffffe</span>
+  <span class="nf">mov</span>  <span class="no">cr0</span><span class="p">,</span> <span class="no">ebp</span> <span class="err">；</span><span class="no">CR0.P</span><span class="err">=</span><span class="mi">0</span> <span class="err">关闭保护模式</span>
+  <span class="nf">jmp</span>  <span class="mi">0</span><span class="p">:</span><span class="no">real_entry</span> <span class="err">；刷新</span><span class="no">CS影子寄存器</span><span class="err">，真正进入实模式</span>
+<span class="nl">real_entry:</span>
+  <span class="nf">mov</span> <span class="no">bp</span><span class="p">,</span> <span class="no">cs</span>
+  <span class="nf">mov</span> <span class="no">ds</span><span class="p">,</span> <span class="no">bp</span>
+  <span class="nf">mov</span> <span class="no">es</span><span class="p">,</span> <span class="no">bp</span>
+  <span class="nf">mov</span> <span class="no">ss</span><span class="p">,</span> <span class="no">bp</span> <span class="err">；重新设置实模式下的段寄存器</span> <span class="err">都是</span><span class="no">CS中值</span><span class="err">，即为</span><span class="mi">0</span> 
+  <span class="no">mov</span> <span class="no">sp</span><span class="p">,</span> <span class="mi">08000</span><span class="no">h</span> <span class="err">；设置栈</span>
+  <span class="nf">mov</span> <span class="no">bp</span><span class="p">,</span><span class="no">func_table</span>
+  <span class="nf">add</span> <span class="no">bp</span><span class="p">,</span><span class="no">ax</span>
+  <span class="nf">call</span> <span class="p">[</span><span class="no">bp</span><span class="p">]</span> <span class="err">；调用函数表中的汇编函数，</span><span class="no">ax是C函数中传递进来的</span>
+  <span class="nf">cli</span>
+  <span class="nf">call</span> <span class="no">disable_nmi</span>
+  <span class="nf">mov</span>  <span class="no">ebp</span><span class="p">,</span> <span class="no">cr0</span>
+  <span class="nf">or</span>  <span class="no">ebp</span><span class="p">,</span> <span class="mi">1</span>
+  <span class="nf">mov</span>  <span class="no">cr0</span><span class="p">,</span> <span class="no">ebp</span> <span class="err">；</span><span class="no">CR0.P</span><span class="err">=</span><span class="mi">1</span> <span class="err">开启保护模式</span>
+  <span class="nf">jmp</span> <span class="no">dword</span> <span class="mi">0x8</span> <span class="p">:</span><span class="no">_32bits_mode</span>
+<span class="err">[</span><span class="nf">BITS</span> <span class="mi">32</span><span class="p">]</span>
+<span class="nl">_32bits_mode:</span>
+  <span class="nf">mov</span> <span class="no">bp</span><span class="p">,</span> <span class="mi">0x10</span>
+  <span class="nf">mov</span> <span class="no">ds</span><span class="p">,</span> <span class="no">bp</span>
+  <span class="nf">mov</span> <span class="no">ss</span><span class="p">,</span> <span class="no">bp</span><span class="err">；重新设置保护模式下的段寄存器</span><span class="mi">0x10</span><span class="err">是</span><span class="mi">32</span><span class="err">位数据段描述符的索引</span>
+  <span class="nf">mov</span> <span class="no">esi</span><span class="p">,[</span><span class="no">PM32_EIP_OFF</span><span class="p">]</span><span class="err">；加载先前保存的</span><span class="no">EIP</span>
+  <span class="nf">mov</span> <span class="no">esp</span><span class="p">,[</span><span class="no">PM32_ESP_OFF</span><span class="p">]</span><span class="err">；加载先前保存的</span><span class="no">ESP</span>
+  <span class="nf">jmp</span> <span class="no">esi</span> <span class="err">；</span><span class="no">eip</span><span class="err">=</span><span class="no">esi</span> <span class="err">回到了</span><span class="no">realadr_call_entry函数中</span>
+
+<span class="nl">func_table:</span>  <span class="c">;函数表
+</span><span class="c"></span>  <span class="nf">dw</span> <span class="no">_getmmap</span> <span class="err">；获取内存布局视图的函数</span>
+  <span class="nf">dw</span> <span class="no">_read</span> <span class="err">；读取硬盘的函数</span>
+    <span class="nf">dw</span> <span class="no">_getvbemode</span> <span class="err">；获取显卡</span><span class="no">VBE模式</span> 
+    <span class="no">dw</span> <span class="no">_getvbeonemodeinfo</span> <span class="err">；获取显卡</span><span class="no">VBE模式的数据</span>
+    <span class="nf">dw</span> <span class="no">_setvbemode</span> <span class="err">；设置显卡</span><span class="no">VBE模式</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面的代码将其编译成16位的二进制文件，然后放在0x10000开始的内存空间
+代码流程如下：</p>
+<ol>
+<li>从<code>_16_mode</code>进入实模式</li>
+<li>在<code>real_entry</code>根据ax寄存器的值找到函数表对应的函数，执行完后再次进入保护模式</li>
+<li>加载EIP和ESP寄存器，从而回到<code>realadr_call_entry</code>函数</li>
+</ol>
+<h2 id="引导器主函数">引导器主函数</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="kt">void</span> <span class="nf">ldrkrl_entry</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">init_bstartparm</span><span class="p">();</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><code>ldrkrl_entry</code>函数在<code>initldr32.asm</code>文件中被调用</p>
 <h1 id="参考">参考</h1>
 <ul>
 <li><a href="https://stackoverflow.com/questions/37146637/why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux">why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux</a></li>
+<li><a href="https://blog.csdn.net/ll15982534415/article/details/118771286">快速建立hdi文件</a></li>
 </ul>
 
     </div>

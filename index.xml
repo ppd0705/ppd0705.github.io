@@ -2343,9 +2343,952 @@ mov cr0, eax
 &lt;/li&gt;
 &lt;/ol&gt;
 &lt;h1 id=&#34;第十讲设置工作模式和环境&#34;&gt;第十讲：设置工作模式和环境&lt;/h1&gt;
+&lt;h2 id=&#34;内核映像文件&#34;&gt;内核映像文件&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/10_1.webp&#34; alt=&#34;iso_file_format&#34;&gt;&lt;/p&gt;
+&lt;p&gt;内核映像文件是由多个文件封装的一个文件，其中包含二级引导器的模块，内核模块，图片和文字库文件等。&lt;/p&gt;
+&lt;p&gt;GRUB通过上图中的4KB的GRUB头来识别映像文件，然后根据映像文件头描述符和文件头描述符的信息解析其他文件&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;31
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;32
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;33
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;34
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;35
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;36
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;37
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;38
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;39
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;40
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;41
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;c1&#34;&gt;//映像文件头描述符
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;typedef&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;s_mlosrddsc&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mdc_mgic&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;//映像文件标识
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mdc_sfsum&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//未使用
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mdc_sfsoff&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//未使用
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mdc_sfeoff&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//未使用
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mdc_sfrlsz&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//未使用
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mdc_ldrbk_s&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//映像文件中二级引导器的开始偏移
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mdc_ldrbk_e&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//映像文件中二级引导器的结束偏移
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mdc_ldrbk_rsz&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//映像文件中二级引导器的实际大小
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mdc_ldrbk_sum&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//映像文件中二级引导器的校验和
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mdc_fhdbk_s&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//映像文件中文件头描述的开始偏移
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mdc_fhdbk_e&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//映像文件中文件头描述的结束偏移
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mdc_fhdbk_rsz&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//映像文件中文件头描述的实际大小
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mdc_fhdbk_sum&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//映像文件中文件头描述的校验和
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mdc_filbk_s&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//映像文件中文件数据的开始偏移
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mdc_filbk_e&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//映像文件中文件数据的结束偏移
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mdc_filbk_rsz&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//映像文件中文件数据的实际大小
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mdc_filbk_sum&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//映像文件中文件数据的校验和
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mdc_ldrcodenr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//映像文件中二级引导器的文件头描述符的索引号
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mdc_fhdnr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//映像文件中文件头描述符有多少个
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mdc_filnr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//映像文件中文件头有多少个
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mdc_endgic&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//映像文件结束标识
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mdc_rv&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//映像文件版本
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mlosrddsc_t&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+
+&lt;span class=&#34;cp&#34;&gt;#define FHDSC_NMAX 192 &lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//文件名长度
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//文件头描述符
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;typedef&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;s_fhdsc&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fhd_type&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//文件类型
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fhd_subtype&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//文件子类型
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fhd_stuts&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//文件状态
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fhd_id&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//文件id
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fhd_intsfsoff&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//文件在映像文件位置开始偏移
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fhd_intsfend&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//文件在映像文件的结束偏移
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fhd_frealsz&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//文件实际大小
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fhd_fsum&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//文件校验和
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;kt&#34;&gt;char&lt;/span&gt;   &lt;span class=&#34;n&#34;&gt;fhd_name&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;FHDSC_NMAX&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;];&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//文件名
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fhdsc_t&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;内核映像文件使用&lt;code&gt;lmoskrlimg&lt;/code&gt;打包&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;lmoskrlimg -m k -lhf GRUB头文件 -o 映像文件 -f 输入的文件列表
+-m 表示模式 只能是k内核模式
+-lhf 表示后面跟上GRUB头文件
+-o 表示输出的映像文件名 
+-f 表示输入文件列表
+&lt;span class=&#34;c1&#34;&gt;#例如：lmoskrlimg -m k -lhf grubhead.bin -o kernel.img -f file1.bin file2.bin file3.bin file4.bin &lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;准备环境&#34;&gt;准备环境&lt;/h2&gt;
+&lt;h3 id=&#34;安装虚拟机&#34;&gt;安装虚拟机&lt;/h3&gt;
+&lt;p&gt;使用virtual box虚拟机&lt;/p&gt;
+&lt;h3 id=&#34;准备硬盘&#34;&gt;准备硬盘&lt;/h3&gt;
+&lt;h4 id=&#34;生成纯二进制文件&#34;&gt;生成纯二进制文件&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;
+dd &lt;span class=&#34;nv&#34;&gt;bs&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;512&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;/dev/zero &lt;span class=&#34;nv&#34;&gt;of&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;hd.img &lt;span class=&#34;nv&#34;&gt;count&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;204800&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;#bs:表示块大小，这里是512字节&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;#if：表示输入文件，/dev/zero就是Linux下专门返回0数据的设备文件，读取它就返回0&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;#of：表示输出文件，即我们的硬盘文件。&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;#count：表示输出多少块&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h4 id=&#34;格式化建立文件系统&#34;&gt;格式化（建立文件系统）&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;
+&lt;span class=&#34;c1&#34;&gt;# 1. 将文件变成回环设备&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;# loop0可能被占用，换成其他名字即可 &lt;/span&gt;
+sudo losetup /dev/loop0 hd.img
+
+&lt;span class=&#34;c1&#34;&gt;# 2. 建立文件系统&lt;/span&gt;
+sudo mkfs.ext4 -q /dev/loop0
+
+&lt;span class=&#34;c1&#34;&gt;# 3. 挂载&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;# 挂载硬盘文件, 可通过 lsblk 命令验证结果&lt;/span&gt;
+sudo mount -o loop ./hd.img  ./hdisk 
+ &lt;span class=&#34;c1&#34;&gt;# 建立boot目录&lt;/span&gt;
+sudo mkdir ./hdist/boot 
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id=&#34;安装grub&#34;&gt;安装GRUB&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;安装GRUB&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;
+&lt;span class=&#34;c1&#34;&gt;# 安装GRUB&lt;/span&gt;
+sudo grub-install --boot-directory&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;./hdisk/boot/ --force --allow-floppy /dev/loop0
+&lt;span class=&#34;c1&#34;&gt;# --boot-directory 指向先前我们在虚拟硬盘中建立的boot目录。&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;# --force --allow-floppy ：指向我们的虚拟硬盘设备文件/dev/loop0&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;编写配置文件&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;在 /hdisk/boot/grub/ 目录建立 grub.config 文件&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;menuentry &amp;#39;HelloOS&amp;#39; {
+insmod part_msdos
+insmod ext2
+set root=&amp;#39;hd0,msdos1&amp;#39; #我们的硬盘只有一个分区所以是&amp;#39;hd0,msdos1&amp;#39;
+multiboot2 /boot/HelloOS.eki #加载boot目录下的HelloOS.eki文件
+boot #引导启动
+}
+set timeout_style=menu
+if [ &amp;#34;${timeout}&amp;#34; = 0 ]; then
+  set timeout=10 #等待10秒钟自动启动
+fi
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h4 id=&#34;转成硬盘格式&#34;&gt;转成硬盘格式&lt;/h4&gt;
+&lt;p&gt;将Linux识别的硬盘 转换成虚拟机识别的硬盘&lt;/p&gt;
+&lt;p&gt;VBoxManage是在宿主机执行，文件可通过共享文件夹传输&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;VBoxManage convertfromraw ./hd.img --format VDI ./hd.vdi
+&lt;span class=&#34;c1&#34;&gt;#convertfromraw 指向原始格式文件&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;#--format VDI  表示转换成虚拟需要的VDI格式&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id=&#34;安装虚拟硬盘&#34;&gt;安装虚拟硬盘&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;
+&lt;span class=&#34;c1&#34;&gt;# 第一步：配置硬盘控制器 &lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;# SATA的硬盘其控制器是intelAHCI&lt;/span&gt;
+VBoxManage storagectl HelloOS --name &lt;span class=&#34;s2&#34;&gt;&amp;#34;SATA&amp;#34;&lt;/span&gt; --add sata --controller IntelAhci --portcount &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;# 第二步：挂载虚拟硬盘&lt;/span&gt;
+VBoxManage closemedium disk ./hd.vdi &lt;span class=&#34;c1&#34;&gt;#删除虚拟硬盘UUID并重新分配&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;#将虚拟硬盘挂到虚拟机的硬盘控制器&lt;/span&gt;
+VBoxManage storageattach HelloOS --storagectl &lt;span class=&#34;s2&#34;&gt;&amp;#34;SATA&amp;#34;&lt;/span&gt; --port &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; --device &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; --type hdd --medium ./hd.vdi
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id=&#34;启动&#34;&gt;启动&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;VBoxManage startvm HelloOS &lt;span class=&#34;c1&#34;&gt;#启动虚拟机&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h1 id=&#34;第十一讲建造二级引导器&#34;&gt;第十一讲：建造二级引导器&lt;/h1&gt;
+&lt;h2 id=&#34;二级引导器作用&#34;&gt;二级引导器作用&lt;/h2&gt;
+&lt;p&gt;收集机器信息，对CPU、内存、显卡等进行初级配置&lt;/p&gt;
+&lt;h2 id=&#34;存储结构&#34;&gt;存储结构&lt;/h2&gt;
+&lt;p&gt;收集的信息会存在如下的数据结构中&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;k&#34;&gt;typedef&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;s_MACHBSTART&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt;   &lt;span class=&#34;n&#34;&gt;mb_krlinitstack&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//内核栈地址
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt;   &lt;span class=&#34;n&#34;&gt;mb_krlitstacksz&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//内核栈大小
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt;   &lt;span class=&#34;n&#34;&gt;mb_imgpadr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//操作系统映像
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt;   &lt;span class=&#34;n&#34;&gt;mb_imgsz&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//操作系统映像大小
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt;   &lt;span class=&#34;n&#34;&gt;mb_bfontpadr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//操作系统字体地址
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt;   &lt;span class=&#34;n&#34;&gt;mb_bfontsz&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//操作系统字体大小
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt;   &lt;span class=&#34;n&#34;&gt;mb_fvrmphyadr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//机器显存地址
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt;   &lt;span class=&#34;n&#34;&gt;mb_fvrmsz&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//机器显存大小
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt;   &lt;span class=&#34;n&#34;&gt;mb_cpumode&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//机器CPU工作模式
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt;   &lt;span class=&#34;n&#34;&gt;mb_memsz&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//机器内存大小
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt;   &lt;span class=&#34;n&#34;&gt;mb_e820padr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//机器e820数组地址
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt;   &lt;span class=&#34;n&#34;&gt;mb_e820nr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//机器e820数组元素个数
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt;   &lt;span class=&#34;n&#34;&gt;mb_e820sz&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//机器e820数组大小
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;c1&#34;&gt;//……
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt;   &lt;span class=&#34;n&#34;&gt;mb_pml4padr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//机器页表数据地址
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt;   &lt;span class=&#34;n&#34;&gt;mb_subpageslen&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//机器页表个数
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt;   &lt;span class=&#34;n&#34;&gt;mb_kpmapphymemsz&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//操作系统映射空间大小
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;c1&#34;&gt;//……
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;graph_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mb_ghparm&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//图形信息
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;__attribute__&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;((&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;packed&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;))&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;machbstart_t&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;模块规划&#34;&gt;模块规划&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/11_1.webp&#34; alt=&#34;modules&#34;&gt;&lt;/p&gt;
+&lt;p&gt;上图的文件经过编译会生成三个文件，具体流程如下&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/11_2.webp&#34; alt=&#34;compile&#34;&gt;&lt;/p&gt;
+&lt;p&gt;然后用映像打包工具打包成映像文件&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;
+lmoskrlimg -m k -lhf initldrimh.bin -o Cosmos.eki -f initldrkrl.bin initldrsve.bin
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;实现grub头&#34;&gt;实现GRUB头&lt;/h2&gt;
+&lt;p&gt;GRUB头有两个文件&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;imginithead.asm汇编文件： 让GUR识别、设置C语言环境&lt;/li&gt;
+&lt;li&gt;inithead.c文件：查找引导器核心文件initldrkrl,bin文件并将其放到特定的内存地址上&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;imginitheadasm&#34;&gt;imginithead.asm&lt;/h3&gt;
+&lt;p&gt;主要工作是初始化CPU的 寄存器，加载GDT，切换到CPU的保护模式&lt;/p&gt;
+&lt;p&gt;首先是 GRUB1 和 GRUB2需要的带个头结构&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;31
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;32
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;33
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;34
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;35
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;36
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;37
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;38
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-asm&#34; data-lang=&#34;asm&#34;&gt;&lt;span class=&#34;nf&#34;&gt;MBT_HDR_FLAGS&lt;/span&gt;  &lt;span class=&#34;no&#34;&gt;EQU&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0x00010003&lt;/span&gt;
+&lt;span class=&#34;nf&#34;&gt;MBT_HDR_MAGIC&lt;/span&gt;  &lt;span class=&#34;no&#34;&gt;EQU&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0x1BADB002&lt;/span&gt;
+&lt;span class=&#34;nf&#34;&gt;MBT2_MAGIC&lt;/span&gt;  &lt;span class=&#34;no&#34;&gt;EQU&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0xe85250d6&lt;/span&gt;
+&lt;span class=&#34;nf&#34;&gt;global&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;_start&lt;/span&gt;
+&lt;span class=&#34;nf&#34;&gt;extern&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;inithead_entry&lt;/span&gt;
+&lt;span class=&#34;err&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;section&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;.text&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;
+&lt;span class=&#34;err&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;bits&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;32&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;
+&lt;span class=&#34;nl&#34;&gt;_start:&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;jmp&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;_entry&lt;/span&gt;
+&lt;span class=&#34;nf&#34;&gt;align&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;4&lt;/span&gt;
+&lt;span class=&#34;nl&#34;&gt;mbt_hdr:&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;dd&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;MBT_HDR_MAGIC&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;dd&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;MBT_HDR_FLAGS&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;dd&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;-(&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;MBT_HDR_MAGIC&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;MBT_HDR_FLAGS&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;dd&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;mbt_hdr&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;dd&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;_start&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;dd&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;dd&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;dd&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;_entry&lt;/span&gt;
+&lt;span class=&#34;nf&#34;&gt;ALIGN&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;8&lt;/span&gt;
+&lt;span class=&#34;nl&#34;&gt;mbhdr:&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;DD&lt;/span&gt;  &lt;span class=&#34;mi&#34;&gt;0xE85250D6&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;DD&lt;/span&gt;  &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;DD&lt;/span&gt;  &lt;span class=&#34;no&#34;&gt;mhdrend&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;mbhdr&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;DD&lt;/span&gt;  &lt;span class=&#34;p&#34;&gt;-(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0xE85250D6&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;mhdrend&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;mbhdr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;))&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;DW&lt;/span&gt;  &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;DD&lt;/span&gt;  &lt;span class=&#34;mi&#34;&gt;24&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;DD&lt;/span&gt;  &lt;span class=&#34;no&#34;&gt;mbhdr&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;DD&lt;/span&gt;  &lt;span class=&#34;no&#34;&gt;_start&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;DD&lt;/span&gt;  &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;DD&lt;/span&gt;  &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;DW&lt;/span&gt;  &lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;DD&lt;/span&gt;  &lt;span class=&#34;mi&#34;&gt;12&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;DD&lt;/span&gt;  &lt;span class=&#34;no&#34;&gt;_entry&lt;/span&gt; 
+  &lt;span class=&#34;no&#34;&gt;DD&lt;/span&gt;  &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;  
+  &lt;span class=&#34;no&#34;&gt;DW&lt;/span&gt;  &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;DD&lt;/span&gt;  &lt;span class=&#34;mi&#34;&gt;8&lt;/span&gt;
+&lt;span class=&#34;nl&#34;&gt;mhdrend:&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;关闭中断并加载GDT&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-asm&#34; data-lang=&#34;asm&#34;&gt;&lt;span class=&#34;nl&#34;&gt;_entry:&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;cli&lt;/span&gt;           &lt;span class=&#34;err&#34;&gt;；关中断&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;in&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;al&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0x70&lt;/span&gt; 
+  &lt;span class=&#34;no&#34;&gt;or&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;al&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0x80&lt;/span&gt;  
+  &lt;span class=&#34;no&#34;&gt;out&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0x70&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;al&lt;/span&gt;  &lt;span class=&#34;err&#34;&gt;；关掉不可屏蔽中断&lt;/span&gt;   
+  &lt;span class=&#34;no&#34;&gt;lgdt&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;GDT_PTR&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;；加载&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;GDT地址到GDTR寄存器&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;jmp&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;dword&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0x8&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;_32bits_mode&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;；长跳转刷新&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;CS影子寄存器&lt;/span&gt;
+  &lt;span class=&#34;c&#34;&gt;;………………
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;;GDT全局段描述符表
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nl&#34;&gt;GDT_START:&lt;/span&gt;
+&lt;span class=&#34;nl&#34;&gt;knull_dsc:&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;dq&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;
+&lt;span class=&#34;nl&#34;&gt;kcode_dsc:&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;dq&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0x00cf9e000000ffff&lt;/span&gt;
+&lt;span class=&#34;nl&#34;&gt;kdata_dsc:&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;dq&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0x00cf92000000ffff&lt;/span&gt;
+&lt;span class=&#34;nl&#34;&gt;k16cd_dsc:&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;dq&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0x00009e000000ffff&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;；&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;16&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;位代码段描述符&lt;/span&gt;
+&lt;span class=&#34;nl&#34;&gt;k16da_dsc:&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;dq&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0x000092000000ffff&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;；&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;16&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;位数据段描述符&lt;/span&gt;
+&lt;span class=&#34;nl&#34;&gt;GDT_END:&lt;/span&gt;
+&lt;span class=&#34;nl&#34;&gt;GDT_PTR:&lt;/span&gt;
+&lt;span class=&#34;nf&#34;&gt;GDTLEN&lt;/span&gt;  &lt;span class=&#34;no&#34;&gt;dw&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;GDT_END-GDT_START-1&lt;/span&gt;  &lt;span class=&#34;c&#34;&gt;;GDT界限
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;GDTBASE&lt;/span&gt;  &lt;span class=&#34;no&#34;&gt;dd&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;GDT_ST&lt;/span&gt;  
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;初始化段寄存器、通用寄存器和栈寄存器&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-asm&#34; data-lang=&#34;asm&#34;&gt;
+&lt;span class=&#34;nf&#34;&gt;_32bits_mode&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;：&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;ax&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0x10&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;ds&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;ax&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;ss&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;ax&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;es&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;ax&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;fs&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;ax&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;gs&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;ax&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;xor&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;eax&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;eax&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;xor&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;ebx&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;ebx&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;xor&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;ecx&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;ecx&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;xor&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;edx&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;edx&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;xor&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;edi&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;edi&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;xor&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;esi&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;esi&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;xor&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;ebp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;ebp&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;xor&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;esp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;esp&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;esp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0x7c00&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;；设置栈顶为&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0x7c00&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;call&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;inithead_entry&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;；调用&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;inithead_entry函数在inithead.c中实现&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;jmp&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0x200000&lt;/span&gt;  &lt;span class=&#34;err&#34;&gt;；跳转到&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0x200000&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;地址&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;上述代码最后调用了 inithead_entry 函数&lt;/p&gt;
+&lt;p&gt;inithead_entry分别调用了&lt;code&gt;write_realintsvefile&lt;/code&gt;和&lt;code&gt;write_ldrkrlfile&lt;/code&gt;，
+将映像文件中的initldrsve.bin文件和initldrkrl.bin文件写入到特定的内存中
+其中有两个依赖函数&lt;code&gt;find_file&lt;/code&gt; 和&lt;code&gt;m2mcopy&lt;/code&gt;
+find_file函数负责扫描映像文件中的文件头描述符，对比其中的文件名，
+然后返回对应的文件的文件头描述符地址，这样就可以得到其位置和大小&lt;/p&gt;
+&lt;p&gt;m2mcopy函数 负责将 映像文件复制到具体的内存空间中&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;31
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;32
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;33
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;34
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;35
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;36
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;37
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;38
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;39
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;40
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;41
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;42
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;43
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;44
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;45
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;46
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;47
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;48
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;49
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;50
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;51
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;52
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;53
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;54
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;55
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;56
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;57
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;58
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;59
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;60
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;61
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;62
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;63
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;64
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;65
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;66
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;67
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;68
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;69
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;
+&lt;span class=&#34;cp&#34;&gt;#define MDC_ENDGIC 0xaaffaaffaaffaaff
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;#define MDC_RVGIC 0xffaaffaaffaaffaa
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;#define REALDRV_PHYADR 0x1000
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;#define IMGFILE_PHYADR 0x4000000
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;#define IMGKRNL_PHYADR 0x2000000
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;#define LDRFILEADR IMGFILE_PHYADR
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;#define MLOSDSC_OFF (0x1000)
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;#define MRDDSC_ADR (mlosrddsc_t*)(LDRFILEADR+0x1000)
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;&lt;/span&gt;
+&lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;inithead_entry&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;write_realintsvefile&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;();&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;write_ldrkrlfile&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;();&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;//写initldrsve.bin文件到特定的内存中
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;write_realintsvefile&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;fhdsc_t&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fhdscstart&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;find_file&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;initldrsve.bin&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fhdscstart&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;==&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;NULL&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;error&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;not file initldrsve.bin&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;m2mcopy&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;((&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)((&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;u32_t&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fhdscstart&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fhd_intsfsoff&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;LDRFILEADR&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;),&lt;/span&gt;
+            &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;REALDRV_PHYADR&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;sint_t&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fhdscstart&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fhd_frealsz&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;//写initldrkrl.bin文件到特定的内存中
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;write_ldrkrlfile&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;fhdsc_t&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fhdscstart&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;find_file&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;initldrkrl.bin&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fhdscstart&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;==&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;NULL&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;error&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;not file initldrkrl.bin&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;m2mcopy&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;((&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)((&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;u32_t&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fhdscstart&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fhd_intsfsoff&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;LDRFILEADR&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;),&lt;/span&gt;
+            &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ILDRKRL_PHYADR&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;sint_t&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fhdscstart&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fhd_frealsz&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;//在映像文件中查找对应的文件
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fhdsc_t&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;find_file&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;char_t&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fname&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;mlosrddsc_t&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mrddadrs&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;MRDDSC_ADR&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mrddadrs&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mdc_endgic&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;!=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;MDC_ENDGIC&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;||&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;mrddadrs&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mdc_rv&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;!=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;MDC_RVGIC&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;||&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;mrddadrs&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mdc_fhdnr&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;||&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;mrddadrs&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mdc_filnr&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;error&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;no mrddsc&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;s64_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;rethn&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;fhdsc_t&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fhdscstart&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fhdsc_t&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)((&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;u32_t&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mrddadrs&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mdc_fhdbk_s&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;LDRFILEADR&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;u64_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mrddadrs&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mdc_fhdnr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;++&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;strcmpl&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fname&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fhdscstart&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;].&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fhd_name&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;==&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+        &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+            &lt;span class=&#34;n&#34;&gt;rethn&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;s64_t&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+            &lt;span class=&#34;k&#34;&gt;goto&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ok_l&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+        &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;rethn&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;nl&#34;&gt;ok_l&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;rethn&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;error&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;not find file&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fhdscstart&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;rethn&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;];&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;进入二级引导器&#34;&gt;进入二级引导器&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;imginithead.asm&lt;/code&gt;最后的指令&lt;code&gt;jump 0x200000&lt;/code&gt;跳转到了物理内存地址0x200000地址处
+这个地址放置的正是&lt;code&gt;initldrkrk.bin&lt;/code&gt;文件
+这一跳进入了二级引导器的主模块&lt;/p&gt;
+&lt;p&gt;由于模块的 改变，需要写一小段汇编代码，建立下面这个&lt;code&gt;initldr32.asm&lt;/code&gt;文件&lt;/p&gt;
+&lt;p&gt;重新把GDT（段描述符表）、IDT（中断选择子表）和寄存器重新初始化，然后调用二级引导器的主函数&lt;code&gt;ldrkrl_entry&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;31
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;32
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;33
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;34
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;35
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;36
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;37
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;38
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;39
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;40
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-asm&#34; data-lang=&#34;asm&#34;&gt;
+&lt;span class=&#34;nl&#34;&gt;_entry:&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;cli&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;lgdt&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;GDT_PTR&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;；加载&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;GDT地址到GDTR寄存器&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;lidt&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;IDT_PTR&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;；加载&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;IDT地址到IDTR寄存器&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;jmp&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;dword&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0x8&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;_32bits_mode&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;；长跳转刷新&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;CS影子寄存器&lt;/span&gt;
+&lt;span class=&#34;nl&#34;&gt;_32bits_mode:&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;ax&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0x10&lt;/span&gt;  &lt;span class=&#34;c&#34;&gt;; 数据段选择子(目的)
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;no&#34;&gt;mov&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;ds&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;ax&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;ss&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;ax&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;es&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;ax&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;fs&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;ax&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;gs&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;ax&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;xor&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;eax&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;eax&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;xor&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;ebx&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;ebx&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;xor&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;ecx&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;ecx&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;xor&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;edx&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;edx&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;xor&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;edi&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;edi&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;xor&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;esi&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;esi&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;xor&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;ebp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;ebp&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;xor&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;esp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;esp&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;esp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0x90000&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;；使得栈底指向了&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0x90000&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;call&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;ldrkrl_entry&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;；调用&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;ldrkrl_entry函数&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;xor&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;ebx&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;ebx&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;jmp&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0x2000000&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;；跳转到&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0x2000000&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;的内存地址&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;jmp&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;$&lt;/span&gt;
+&lt;span class=&#34;nl&#34;&gt;GDT_START:&lt;/span&gt;
+&lt;span class=&#34;nl&#34;&gt;knull_dsc:&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;dq&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;
+&lt;span class=&#34;nl&#34;&gt;kcode_dsc:&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;dq&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0x00cf9a000000ffff&lt;/span&gt; &lt;span class=&#34;c&#34;&gt;;a-e
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;kdata_dsc&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;dq&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0x00cf92000000ffff&lt;/span&gt;
+&lt;span class=&#34;nl&#34;&gt;k16cd_dsc:&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;dq&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0x00009a000000ffff&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;；&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;16&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;位代码段描述符&lt;/span&gt;
+&lt;span class=&#34;nl&#34;&gt;k16da_dsc:&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;dq&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0x000092000000ffff&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;；&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;16&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;位数据段描述符&lt;/span&gt;
+&lt;span class=&#34;nl&#34;&gt;GDT_END:&lt;/span&gt;
+&lt;span class=&#34;nl&#34;&gt;GDT_PTR:&lt;/span&gt;
+&lt;span class=&#34;nf&#34;&gt;GDTLEN&lt;/span&gt;  &lt;span class=&#34;no&#34;&gt;dw&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;GDT_END-GDT_START-1&lt;/span&gt;  &lt;span class=&#34;c&#34;&gt;;GDT界限
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;GDTBASE&lt;/span&gt;  &lt;span class=&#34;no&#34;&gt;dd&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;GDT_START&lt;/span&gt;
+
+&lt;span class=&#34;nl&#34;&gt;IDT_PTR:&lt;/span&gt;
+&lt;span class=&#34;nf&#34;&gt;IDTLEN&lt;/span&gt;  &lt;span class=&#34;no&#34;&gt;dw&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0x3ff&lt;/span&gt;
+&lt;span class=&#34;nf&#34;&gt;IDTBAS&lt;/span&gt;  &lt;span class=&#34;no&#34;&gt;dd&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;  &lt;span class=&#34;err&#34;&gt;；这是&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;BIOS中断表的地址和长度&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;调用bios中断&#34;&gt;调用BIOS中断&lt;/h2&gt;
+&lt;p&gt;因为获取内存布局信息、设置显卡图像 模式等功能需要依赖BIOS的中断服务&lt;/p&gt;
+&lt;p&gt;可是BIOS中断工作在16位实模式，所以需要上下文切换，大体流程如下：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;保存C语言环境下的 CPU上线文，即保护模式下的所有通用寄存器、段寄存器、程序指针寄存器和栈寄存器&lt;/li&gt;
+&lt;li&gt;切换到实模式，调用BIOS中断，把中断结果保存在内存中&lt;/li&gt;
+&lt;li&gt;切换回保护模式，加载之前保存的寄存器&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-asm&#34; data-lang=&#34;asm&#34;&gt;
+&lt;span class=&#34;nl&#34;&gt;realadr_call_entry:&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;pushad&lt;/span&gt;     &lt;span class=&#34;c&#34;&gt;;保存通用寄存器
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;no&#34;&gt;push&lt;/span&gt;    &lt;span class=&#34;no&#34;&gt;ds&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;push&lt;/span&gt;    &lt;span class=&#34;no&#34;&gt;es&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;push&lt;/span&gt;    &lt;span class=&#34;no&#34;&gt;fs&lt;/span&gt; &lt;span class=&#34;c&#34;&gt;;保存4个段寄存器
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;no&#34;&gt;push&lt;/span&gt;    &lt;span class=&#34;no&#34;&gt;gs&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;call&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;save_eip_jmp&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;；调用&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;save_eip_jmp&lt;/span&gt; 
+  &lt;span class=&#34;no&#34;&gt;pop&lt;/span&gt;  &lt;span class=&#34;no&#34;&gt;gs&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;pop&lt;/span&gt;  &lt;span class=&#34;no&#34;&gt;fs&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;pop&lt;/span&gt;  &lt;span class=&#34;no&#34;&gt;es&lt;/span&gt;      &lt;span class=&#34;c&#34;&gt;;恢复4个段寄存器
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;no&#34;&gt;pop&lt;/span&gt;  &lt;span class=&#34;no&#34;&gt;ds&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;popad&lt;/span&gt;       &lt;span class=&#34;c&#34;&gt;;恢复通用寄存器
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;no&#34;&gt;ret&lt;/span&gt;
+&lt;span class=&#34;nl&#34;&gt;save_eip_jmp:&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;pop&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;esi&lt;/span&gt;  &lt;span class=&#34;err&#34;&gt;；弹出&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;call&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;save_eip_jmp时保存的eip到esi寄存器中&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;，&lt;/span&gt; 
+  &lt;span class=&#34;no&#34;&gt;mov&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;PM32_EIP_OFF&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;],&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;esi&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;；把&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;eip保存到特定的内存空间中&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;PM32_ESP_OFF&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;],&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;esp&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;；把&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;esp保存到特定的内存空间中&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;jmp&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;dword&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;far&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;cpmty_mode&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;；长跳转这里表示把&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;cpmty_mode处的第一个4字节装入eip&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;，把其后的&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;字节装入&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;cs&lt;/span&gt;
+&lt;span class=&#34;nl&#34;&gt;cpmty_mode:&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;dd&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0x1000&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;dw&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0x18&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;jmp&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;$&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;code&gt;jmp dword far [cpmty_mode]&lt;/code&gt;指令表示把 [cpmty_mode] 处的数据装入 CS: EIP，
+即把 0x18: 0x1000 装入  CS: EIP 中，
+0x18 是段描述索引，指向GDT中的 16 位代码段描述符，
+0x10000 表示段内地址偏移&lt;/p&gt;
+&lt;p&gt;这个地址起始的代码如下&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;31
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;32
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;33
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;34
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;35
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;36
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;37
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;38
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;39
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;40
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;41
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;42
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-asm&#34; data-lang=&#34;asm&#34;&gt;
+&lt;span class=&#34;err&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;bits&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;16&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;
+&lt;span class=&#34;nl&#34;&gt;_start:&lt;/span&gt;
+&lt;span class=&#34;nl&#34;&gt;_16_mode:&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt;  &lt;span class=&#34;no&#34;&gt;bp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0x20&lt;/span&gt; &lt;span class=&#34;c&#34;&gt;;0x20是指向GDT中的16位数据段描述符 
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;no&#34;&gt;mov&lt;/span&gt;  &lt;span class=&#34;no&#34;&gt;ds&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;bp&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt;  &lt;span class=&#34;no&#34;&gt;es&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;bp&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt;  &lt;span class=&#34;no&#34;&gt;ss&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;bp&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt;  &lt;span class=&#34;no&#34;&gt;ebp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;cr0&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;and&lt;/span&gt;  &lt;span class=&#34;no&#34;&gt;ebp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0xfffffffe&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt;  &lt;span class=&#34;no&#34;&gt;cr0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;ebp&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;；&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;CR0.P&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;关闭保护模式&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;jmp&lt;/span&gt;  &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;real_entry&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;；刷新&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;CS影子寄存器&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;，真正进入实模式&lt;/span&gt;
+&lt;span class=&#34;nl&#34;&gt;real_entry:&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;bp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;cs&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;ds&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;bp&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;es&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;bp&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;ss&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;bp&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;；重新设置实模式下的段寄存器&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;都是&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;CS中值&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;，即为&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt; 
+  &lt;span class=&#34;no&#34;&gt;mov&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;sp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;08000&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;h&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;；设置栈&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;bp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;func_table&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;add&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;bp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;ax&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;call&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;bp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;；调用函数表中的汇编函数，&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;ax是C函数中传递进来的&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;cli&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;call&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;disable_nmi&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt;  &lt;span class=&#34;no&#34;&gt;ebp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;cr0&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;or&lt;/span&gt;  &lt;span class=&#34;no&#34;&gt;ebp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt;  &lt;span class=&#34;no&#34;&gt;cr0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;ebp&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;；&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;CR0.P&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;开启保护模式&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;jmp&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;dword&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0x8&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;_32bits_mode&lt;/span&gt;
+&lt;span class=&#34;err&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;BITS&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;32&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;
+&lt;span class=&#34;nl&#34;&gt;_32bits_mode:&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;bp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0x10&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;ds&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;bp&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;ss&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;bp&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;；重新设置保护模式下的段寄存器&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0x10&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;是&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;32&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;位数据段描述符的索引&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;esi&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,[&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;PM32_EIP_OFF&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;；加载先前保存的&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;EIP&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;esp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,[&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;PM32_ESP_OFF&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;；加载先前保存的&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;ESP&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;jmp&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;esi&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;；&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;eip&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;esi&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;回到了&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;realadr_call_entry函数中&lt;/span&gt;
+
+&lt;span class=&#34;nl&#34;&gt;func_table:&lt;/span&gt;  &lt;span class=&#34;c&#34;&gt;;函数表
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;nf&#34;&gt;dw&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;_getmmap&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;；获取内存布局视图的函数&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;dw&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;_read&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;；读取硬盘的函数&lt;/span&gt;
+    &lt;span class=&#34;nf&#34;&gt;dw&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;_getvbemode&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;；获取显卡&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;VBE模式&lt;/span&gt; 
+    &lt;span class=&#34;no&#34;&gt;dw&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;_getvbeonemodeinfo&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;；获取显卡&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;VBE模式的数据&lt;/span&gt;
+    &lt;span class=&#34;nf&#34;&gt;dw&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;_setvbemode&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;；设置显卡&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;VBE模式&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;上面的代码将其编译成16位的二进制文件，然后放在0x10000开始的内存空间
+代码流程如下：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;从&lt;code&gt;_16_mode&lt;/code&gt;进入实模式&lt;/li&gt;
+&lt;li&gt;在&lt;code&gt;real_entry&lt;/code&gt;根据ax寄存器的值找到函数表对应的函数，执行完后再次进入保护模式&lt;/li&gt;
+&lt;li&gt;加载EIP和ESP寄存器，从而回到&lt;code&gt;realadr_call_entry&lt;/code&gt;函数&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;引导器主函数&#34;&gt;引导器主函数&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;ldrkrl_entry&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;init_bstartparm&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;();&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;code&gt;ldrkrl_entry&lt;/code&gt;函数在&lt;code&gt;initldr32.asm&lt;/code&gt;文件中被调用&lt;/p&gt;
 &lt;h1 id=&#34;参考&#34;&gt;参考&lt;/h1&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://stackoverflow.com/questions/37146637/why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux&#34;&gt;why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://blog.csdn.net/ll15982534415/article/details/118771286&#34;&gt;快速建立hdi文件&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
       
