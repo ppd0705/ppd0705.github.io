@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]操作系统实战（更新中）">
 <meta itemprop="description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"><meta itemprop="datePublished" content="2021-07-30T08:06:33+08:00" />
 <meta itemprop="dateModified" content="2021-07-30T08:06:33+08:00" />
-<meta itemprop="wordCount" content="18172">
+<meta itemprop="wordCount" content="26832">
 <meta itemprop="keywords" content="C,操作系统," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]操作系统实战（更新中）"/>
 <meta name="twitter:description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"/>
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 18172 words </span>
-          <span class="more-meta"> 37 min read </span>
+        <span class="more-meta"> 26832 words </span>
+          <span class="more-meta"> 54 min read </span>
 
         
         
@@ -493,6 +493,41 @@
         <li><a href="#引导器主函数">引导器主函数</a></li>
       </ul>
     </li>
+    <li><a href="#第十二讲探查和收集信息">第十二讲：探查和收集信息</a>
+      <ul>
+        <li><a href="#初始化">初始化</a></li>
+        <li><a href="#检查cpu">检查CPU</a></li>
+        <li><a href="#获取内存布局">获取内存布局</a></li>
+        <li><a href="#初始化内核栈">初始化内核栈</a></li>
+        <li><a href="#放置内核文件和字库文件">放置内核文件和字库文件</a></li>
+        <li><a href="#建立mmu页表数据">建立MMU页表数据</a></li>
+        <li><a href="#设置显卡图形模式">设置显卡图形模式</a></li>
+        <li><a href="#集成">集成</a></li>
+        <li><a href="#显示logo">显示Logo</a></li>
+        <li><a href="#切换cpu到长模式">切换CPU到长模式</a></li>
+      </ul>
+    </li>
+    <li><a href="#第十三讲-实现板级初始化">第十三讲 实现板级初始化</a>
+      <ul>
+        <li><a href="#hal层初始化">hal层初始化</a>
+          <ul>
+            <li><a href="#初始化平台">初始化平台</a></li>
+            <li><a href="#初始化内存">初始化内存</a></li>
+            <li><a href="#初始化中断">初始化中断</a></li>
+            <li><a href="#初始化中断控制器">初始化中断控制器</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#第十四讲-linux初始化上">第十四讲 Linux初始化（上）</a>
+      <ul>
+        <li><a href="#全局流程">全局流程</a></li>
+        <li><a href="#从bios到grub">从BIOS到GRUB</a></li>
+        <li><a href="#grub启动">GRUB启动</a></li>
+        <li><a href="#详解vmlinuz文件结构">详解vmlinuz文件结构</a></li>
+      </ul>
+    </li>
+    <li><a href="#第十五讲-linux初始化下">第十五讲 Linux初始化（下）</a></li>
     <li><a href="#参考">参考</a></li>
   </ul>
 </nav>
@@ -3656,6 +3691,2060 @@ find_file函数负责扫描映像文件中的文件头描述符，对比其中�
 </code></pre></td></tr></table>
 </div>
 </div><p><code>ldrkrl_entry</code>函数在<code>initldr32.asm</code>文件中被调用</p>
+<h1 id="第十二讲探查和收集信息">第十二讲：探查和收集信息</h1>
+<p>入口函数<code>ldrkrl_entry</code>实际调用了<code>init_bstartparm</code></p>
+<h2 id="初始化">初始化</h2>
+<p>首先在1MB的内存地址处初始化了一个机器信息结构<code>machbstart_t</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="c1">//初始化machbstart_t结构体，清0,并设置一个标志
+</span><span class="c1"></span><span class="kt">void</span> <span class="nf">machbstart_t_init</span><span class="p">(</span><span class="n">machbstart_t</span><span class="o">*</span> <span class="n">initp</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">memset</span><span class="p">(</span><span class="n">initp</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="k">sizeof</span><span class="p">(</span><span class="n">machbstart_t</span><span class="p">));</span>
+    <span class="n">initp</span><span class="o">-&gt;</span><span class="n">mb_migc</span><span class="o">=</span><span class="n">MBS_MIGC</span><span class="p">;</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">init_bstartparm</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">machbstart_t</span><span class="o">*</span> <span class="n">mbsp</span> <span class="o">=</span> <span class="n">MBSPADR</span><span class="p">;</span><span class="c1">//1MB的内存地址
+</span><span class="c1"></span>    <span class="n">machbstart_t_init</span><span class="p">(</span><span class="n">mbsp</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="检查cpu">检查CPU</h2>
+<p>我们需要检查CPU，主要通过两个函数实现：</p>
+<ul>
+<li>chk_cpuid: 检查CPU是否支持CPUID指令</li>
+<li>chk_cpuid: 用CPUID指令检查CPU是否支持64位长模式</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="c1">//通过改写Eflags寄存器的第21位，观察其位的变化判断是否支持CPUID
+</span><span class="c1"></span><span class="kt">int</span> <span class="nf">chk_cpuid</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">rets</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">__asm__</span> <span class="n">__volatile__</span><span class="p">(</span>
+        <span class="s">&#34;pushfl </span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;popl %%eax </span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;movl %%eax,%%ebx </span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;xorl $0x0200000,%%eax </span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;pushl %%eax </span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;popfl </span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;pushfl </span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;popl %%eax </span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;xorl %%ebx,%%eax </span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;jz 1f </span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;movl $1,%0 </span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;jmp 2f </span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;1: movl $0,%0 </span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;2: </span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="o">:</span> <span class="s">&#34;=c&#34;</span><span class="p">(</span><span class="n">rets</span><span class="p">)</span>
+        <span class="o">:</span>
+        <span class="o">:</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">rets</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">//检查CPU是否支持长模式
+</span><span class="c1"></span><span class="kt">int</span> <span class="nf">chk_cpu_longmode</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">rets</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">__asm__</span> <span class="n">__volatile__</span><span class="p">(</span>
+        <span class="s">&#34;movl $0x80000000,%%eax </span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;cpuid </span><span class="se">\n\t</span><span class="s">&#34;</span> <span class="c1">//把eax中放入0x80000000调用CPUID指令
+</span><span class="c1"></span>        <span class="s">&#34;cmpl $0x80000001,%%eax </span><span class="se">\n\t</span><span class="s">&#34;</span><span class="c1">//看eax中返回结果
+</span><span class="c1"></span>        <span class="s">&#34;setnb %%al </span><span class="se">\n\t</span><span class="s">&#34;</span> <span class="c1">//不为0x80000001,则不支持0x80000001号功能
+</span><span class="c1"></span>        <span class="s">&#34;jb 1f </span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;movl $0x80000001,%%eax </span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;cpuid </span><span class="se">\n\t</span><span class="s">&#34;</span><span class="c1">//把eax中放入0x800000001调用CPUID指令，检查edx中的返回数据
+</span><span class="c1"></span>        <span class="s">&#34;bt $29,%%edx  </span><span class="se">\n\t</span><span class="s">&#34;</span> <span class="c1">//长模式 支持位  是否为1
+</span><span class="c1"></span>        <span class="s">&#34;setcb %%al </span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;1: </span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;movzx %%al,%%eax </span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="o">:</span> <span class="s">&#34;=a&#34;</span><span class="p">(</span><span class="n">rets</span><span class="p">)</span>
+        <span class="o">:</span>
+        <span class="o">:</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">rets</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">//检查CPU主函数
+</span><span class="c1"></span><span class="kt">void</span> <span class="nf">init_chkcpu</span><span class="p">(</span><span class="n">machbstart_t</span> <span class="o">*</span><span class="n">mbsp</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">chk_cpuid</span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="n">kerror</span><span class="p">(</span><span class="s">&#34;Your CPU is not support CPUID sys is die!&#34;</span><span class="p">);</span>
+        <span class="n">CLI_HALT</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">chk_cpu_longmode</span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="n">kerror</span><span class="p">(</span><span class="s">&#34;Your CPU is not support 64bits mode sys is die!&#34;</span><span class="p">);</span>
+        <span class="n">CLI_HALT</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_cpumode</span> <span class="o">=</span> <span class="mh">0x40</span><span class="p">;</span><span class="c1">//如果成功则设置机器信息结构的cpu模式为64位
+</span><span class="c1"></span>    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="获取内存布局">获取内存布局</h2>
+<p>描述内存的数据结构</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#define RAM_USABLE 1 </span><span class="c1">//可用内存
+</span><span class="c1"></span><span class="cp">#define RAM_RESERV 2 </span><span class="c1">//保留内存不可使用
+</span><span class="c1"></span><span class="cp">#define RAM_ACPIREC 3 </span><span class="c1">//ACPI表相关的
+</span><span class="c1"></span><span class="cp">#define RAM_ACPINVS 4 </span><span class="c1">//ACPI NVS空间
+</span><span class="c1"></span><span class="cp">#define RAM_AREACON 5 </span><span class="c1">//包含坏内存
+</span><span class="c1"></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">s_e820</span><span class="p">{</span>
+    <span class="n">u64_t</span> <span class="n">saddr</span><span class="p">;</span>    <span class="cm">/* 内存开始地址 */</span>
+    <span class="n">u64_t</span> <span class="n">lsize</span><span class="p">;</span>    <span class="cm">/* 内存大小 */</span>
+    <span class="n">u32_t</span> <span class="n">type</span><span class="p">;</span>    <span class="cm">/* 内存类型 */</span>
+<span class="p">}</span><span class="n">e820map_t</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>获取内存布局信息就是获取这个结构体的数组，具体实现代码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C">
+<span class="kt">void</span> <span class="nf">mmap</span><span class="p">(</span><span class="n">e820map_t</span> <span class="o">**</span><span class="n">retemp</span><span class="p">,</span> <span class="n">u32_t</span> <span class="o">*</span><span class="n">retemnr</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">realadr_call_entry</span><span class="p">(</span><span class="n">RLINTNR</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="o">*</span><span class="n">retemnr</span> <span class="o">=</span> <span class="o">*</span><span class="p">((</span><span class="n">u32_t</span> <span class="o">*</span><span class="p">)(</span><span class="n">E80MAP_NR</span><span class="p">));</span>
+    <span class="o">*</span><span class="n">retemp</span> <span class="o">=</span> <span class="p">(</span><span class="n">e820map_t</span> <span class="o">*</span><span class="p">)(</span><span class="o">*</span><span class="p">((</span><span class="n">u32_t</span> <span class="o">*</span><span class="p">)(</span><span class="n">E80MAP_ADRADR</span><span class="p">)));</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+
+
+<span class="cp">#define ETYBAK_ADR 0x2000
+</span><span class="cp">#define PM32_EIP_OFF (ETYBAK_ADR)
+</span><span class="cp">#define PM32_ESP_OFF (ETYBAK_ADR+4)
+</span><span class="cp">#define E80MAP_NR (ETYBAK_ADR+64)</span><span class="c1">//保存e820map_t结构数组元素个数的地址
+</span><span class="c1"></span><span class="cp">#define E80MAP_ADRADR (ETYBAK_ADR+68) </span><span class="c1">//保存e820map_t结构数组的开始地址
+</span><span class="c1"></span><span class="kt">void</span> <span class="nf">init_mem</span><span class="p">(</span><span class="n">machbstart_t</span> <span class="o">*</span><span class="n">mbsp</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">e820map_t</span> <span class="o">*</span><span class="n">retemp</span><span class="p">;</span>
+    <span class="n">u32_t</span> <span class="n">retemnr</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">mmap</span><span class="p">(</span><span class="o">&amp;</span><span class="n">retemp</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">retemnr</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">retemnr</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">kerror</span><span class="p">(</span><span class="s">&#34;no e820map</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="c1">//根据e820map_t结构数据检查内存大小
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">chk_memsize</span><span class="p">(</span><span class="n">retemp</span><span class="p">,</span> <span class="n">retemnr</span><span class="p">,</span> <span class="mh">0x100000</span><span class="p">,</span> <span class="mh">0x8000000</span><span class="p">)</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">kerror</span><span class="p">(</span><span class="s">&#34;Your computer is low on memory, the memory cannot be less than 128MB!&#34;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_e820padr</span> <span class="o">=</span> <span class="p">(</span><span class="n">u64_t</span><span class="p">)((</span><span class="n">u32_t</span><span class="p">)(</span><span class="n">retemp</span><span class="p">));</span><span class="c1">//把e820map_t结构数组的首地址传给mbsp-&gt;mb_e820padr 
+</span><span class="c1"></span>    <span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_e820nr</span> <span class="o">=</span> <span class="p">(</span><span class="n">u64_t</span><span class="p">)</span><span class="n">retemnr</span><span class="p">;</span><span class="c1">//把e820map_t结构数组元素个数传给mbsp-&gt;mb_e820nr 
+</span><span class="c1"></span>    <span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_e820sz</span> <span class="o">=</span> <span class="n">retemnr</span> <span class="o">*</span> <span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">e820map_t</span><span class="p">));</span><span class="c1">//把e820map_t结构数组大小传给mbsp-&gt;mb_e820sz 
+</span><span class="c1"></span>    <span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_memsz</span> <span class="o">=</span> <span class="n">get_memsize</span><span class="p">(</span><span class="n">retemp</span><span class="p">,</span> <span class="n">retemnr</span><span class="p">);</span><span class="c1">//根据e820map_t结构数据计算内存大小。
+</span><span class="c1"></span>    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>其中<code>mmap</code>通过<code>realadr_call_entry</code>调用实模式下的<code>_getmmap</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm">
+<span class="nl">_getmmap:</span>
+  <span class="nf">push</span> <span class="no">ds</span>
+  <span class="nf">push</span> <span class="no">es</span>
+  <span class="nf">push</span> <span class="no">ss</span>
+  <span class="nf">mov</span> <span class="no">esi</span><span class="p">,</span><span class="mi">0</span>
+  <span class="nf">mov</span> <span class="no">dword</span><span class="p">[</span><span class="no">E80MAP_NR</span><span class="p">],</span><span class="no">esi</span>
+  <span class="nf">mov</span> <span class="no">dword</span><span class="p">[</span><span class="no">E80MAP_ADRADR</span><span class="p">],</span><span class="no">E80MAP_ADR</span> <span class="c">;e820map结构体开始地址
+</span><span class="c"></span>  <span class="no">xor</span> <span class="no">ebx</span><span class="p">,</span><span class="no">ebx</span>
+  <span class="nf">mov</span> <span class="no">edi</span><span class="p">,</span><span class="no">E80MAP_ADR</span>
+<span class="nl">loop:</span>
+  <span class="nf">mov</span> <span class="no">eax</span><span class="p">,</span><span class="mi">0</span><span class="no">e820h</span> <span class="c">;获取e820map结构参数
+</span><span class="c"></span>  <span class="no">mov</span> <span class="no">ecx</span><span class="p">,</span><span class="mi">20</span>    <span class="c">;e820map结构大小
+</span><span class="c"></span>  <span class="no">mov</span> <span class="no">edx</span><span class="p">,</span><span class="mi">0534</span><span class="no">d4150h</span> <span class="c">;获取e820map结构参数必须是这个数据
+</span><span class="c"></span>  <span class="no">int</span> <span class="mi">15</span><span class="no">h</span>  <span class="c">;BIOS的15h中断
+</span><span class="c"></span>  <span class="no">jc</span> <span class="no">.1</span>
+  <span class="nf">add</span> <span class="no">edi</span><span class="p">,</span><span class="mi">20</span>
+  <span class="nf">cmp</span> <span class="no">edi</span><span class="p">,</span><span class="no">E80MAP_ADR</span><span class="err">+</span><span class="mi">0x1000</span>
+  <span class="nf">jg</span> <span class="no">.1</span>
+  <span class="nf">inc</span> <span class="no">esi</span>
+  <span class="nf">cmp</span> <span class="no">ebx</span><span class="p">,</span><span class="mi">0</span>
+  <span class="nf">jne</span> <span class="no">loop</span> <span class="c">;循环获取e820map结构
+</span><span class="c"></span>  <span class="no">jmp</span> <span class="no">.2</span>
+<span class="nl">.1:</span>
+  <span class="nf">mov</span> <span class="no">esi</span><span class="p">,</span><span class="mi">0</span>    <span class="c">;出错处理，e820map结构数组元素个数为0
+</span><span class="c"></span><span class="no">.2</span><span class="p">:</span>
+  <span class="nf">mov</span> <span class="no">dword</span><span class="p">[</span><span class="no">E80MAP_NR</span><span class="p">],</span><span class="no">esi</span> <span class="c">;e820map结构数组元素个数
+</span><span class="c"></span>  <span class="no">pop</span> <span class="no">ss</span>
+  <span class="nf">pop</span> <span class="no">es</span>
+  <span class="nf">pop</span> <span class="no">ds</span>
+  <span class="nf">ret</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="初始化内核栈">初始化内核栈</h2>
+<p>因为操作系统使用C语言写的，所以需要有栈</p>
+<p>初始化其实就是在机器信息结构<code>machbstart_t</code>中记录一下栈顶地址和栈大小</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#define IKSTACK_PHYADR (0x90000-0x10)
+</span><span class="cp">#define IKSTACK_SIZE 0x1000
+</span><span class="cp"></span><span class="c1">//初始化内核栈
+</span><span class="c1"></span><span class="kt">void</span> <span class="nf">init_krlinitstack</span><span class="p">(</span><span class="n">machbstart_t</span> <span class="o">*</span><span class="n">mbsp</span><span class="p">)</span>
+<span class="p">{</span>   
+    <span class="c1">// 检查是否 和已经用到的内存空间（0x8f000 ~ 0x8f000_0x1001）冲突
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&gt;</span> <span class="n">move_krlimg</span><span class="p">(</span><span class="n">mbsp</span><span class="p">,</span> <span class="p">(</span><span class="n">u64_t</span><span class="p">)(</span><span class="mh">0x8f000</span><span class="p">),</span> <span class="mh">0x1001</span><span class="p">))</span>
+    <span class="p">{</span>
+        <span class="n">kerror</span><span class="p">(</span><span class="s">&#34;iks_moveimg err&#34;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_krlinitstack</span> <span class="o">=</span> <span class="n">IKSTACK_PHYADR</span><span class="p">;</span><span class="c1">//栈顶地址
+</span><span class="c1"></span>    <span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_krlitstacksz</span> <span class="o">=</span> <span class="n">IKSTACK_SIZE</span><span class="p">;</span> <span class="c1">//栈大小是4KB
+</span><span class="c1"></span>    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="放置内核文件和字库文件">放置内核文件和字库文件</h2>
+<p>从映像文件中解析出来放在特定内存空间中</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="c1">//放置内核文件
+</span><span class="c1"></span><span class="kt">void</span> <span class="nf">init_krlfile</span><span class="p">(</span><span class="n">machbstart_t</span> <span class="o">*</span><span class="n">mbsp</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="c1">//在映像中查找相应的文件，并复制到对应的地址，并返回文件的大小，这里是查找kernel.bin文件
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">sz</span> <span class="o">=</span> <span class="n">r_file_to_padr</span><span class="p">(</span><span class="n">mbsp</span><span class="p">,</span> <span class="n">IMGKRNL_PHYADR</span><span class="p">,</span> <span class="s">&#34;kernel.bin&#34;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="mi">0</span> <span class="o">==</span> <span class="n">sz</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">kerror</span><span class="p">(</span><span class="s">&#34;r_file_to_padr err&#34;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="c1">//放置完成后更新机器信息结构中的数据
+</span><span class="c1"></span>    <span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_krlimgpadr</span> <span class="o">=</span> <span class="n">IMGKRNL_PHYADR</span><span class="p">;</span>
+    <span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_krlsz</span> <span class="o">=</span> <span class="n">sz</span><span class="p">;</span>
+    <span class="c1">//mbsp-&gt;mb_nextwtpadr始终要保持指向下一段空闲内存的首地址 
+</span><span class="c1"></span>    <span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_nextwtpadr</span> <span class="o">=</span> <span class="n">P4K_ALIGN</span><span class="p">(</span><span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_krlimgpadr</span> <span class="o">+</span> <span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_krlsz</span><span class="p">);</span>
+    <span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_kalldendpadr</span> <span class="o">=</span> <span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_krlimgpadr</span> <span class="o">+</span> <span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_krlsz</span><span class="p">;</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">//放置字库文件
+</span><span class="c1"></span><span class="kt">void</span> <span class="nf">init_defutfont</span><span class="p">(</span><span class="n">machbstart_t</span> <span class="o">*</span><span class="n">mbsp</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">u64_t</span> <span class="n">sz</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="c1">//获取下一段空闲内存空间的首地址 
+</span><span class="c1"></span>    <span class="n">u32_t</span> <span class="n">dfadr</span> <span class="o">=</span> <span class="p">(</span><span class="n">u32_t</span><span class="p">)</span><span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_nextwtpadr</span><span class="p">;</span>
+<span class="c1">//在映像中查找相应的文件，并复制到对应的地址，并返回文件的大小，这里是查找font.fnt文件
+</span><span class="c1"></span>    <span class="n">sz</span> <span class="o">=</span> <span class="n">r_file_to_padr</span><span class="p">(</span><span class="n">mbsp</span><span class="p">,</span> <span class="n">dfadr</span><span class="p">,</span> <span class="s">&#34;font.fnt&#34;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="mi">0</span> <span class="o">==</span> <span class="n">sz</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">kerror</span><span class="p">(</span><span class="s">&#34;r_file_to_padr err&#34;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="c1">//放置完成后更新机器信息结构中的数据
+</span><span class="c1"></span>    <span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_bfontpadr</span> <span class="o">=</span> <span class="p">(</span><span class="n">u64_t</span><span class="p">)(</span><span class="n">dfadr</span><span class="p">);</span>
+    <span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_bfontsz</span> <span class="o">=</span> <span class="n">sz</span><span class="p">;</span>
+    <span class="c1">//更新机器信息结构中下一段空闲内存的首地址  
+</span><span class="c1"></span>    <span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_nextwtpadr</span> <span class="o">=</span> <span class="n">P4K_ALIGN</span><span class="p">((</span><span class="n">u32_t</span><span class="p">)(</span><span class="n">dfadr</span><span class="p">)</span> <span class="o">+</span> <span class="n">sz</span><span class="p">);</span>
+    <span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_kalldendpadr</span> <span class="o">=</span> <span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_bfontpadr</span> <span class="o">+</span> <span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_bfontsz</span><span class="p">;</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="建立mmu页表数据">建立MMU页表数据</h2>
+<p>Memory Management Unit</p>
+<p>内核虚拟地址空间从 0xffff800000000000 开始，大小为 16GB，
+所以映射关系为：0xffff800000000000～0xffff800400000000 映射到物理地址空间 0～0x400000000</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#define KINITPAGE_PHYADR 0x1000000
+</span><span class="cp"></span><span class="kt">void</span> <span class="nf">init_bstartpages</span><span class="p">(</span><span class="n">machbstart_t</span> <span class="o">*</span><span class="n">mbsp</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">//顶级页目录
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="o">*</span><span class="n">p</span> <span class="o">=</span> <span class="p">(</span><span class="n">u64_t</span> <span class="o">*</span><span class="p">)(</span><span class="n">KINITPAGE_PHYADR</span><span class="p">);</span><span class="c1">//16MB地址处
+</span><span class="c1"></span>    <span class="c1">//页目录指针
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="o">*</span><span class="n">pdpte</span> <span class="o">=</span> <span class="p">(</span><span class="n">u64_t</span> <span class="o">*</span><span class="p">)(</span><span class="n">KINITPAGE_PHYADR</span> <span class="o">+</span> <span class="mh">0x1000</span><span class="p">);</span>
+    <span class="c1">//页目录
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="o">*</span><span class="n">pde</span> <span class="o">=</span> <span class="p">(</span><span class="n">u64_t</span> <span class="o">*</span><span class="p">)(</span><span class="n">KINITPAGE_PHYADR</span> <span class="o">+</span> <span class="mh">0x2000</span><span class="p">);</span>
+    <span class="c1">//物理地址从0开始
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">adr</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&gt;</span> <span class="n">move_krlimg</span><span class="p">(</span><span class="n">mbsp</span><span class="p">,</span> <span class="p">(</span><span class="n">u64_t</span><span class="p">)(</span><span class="n">KINITPAGE_PHYADR</span><span class="p">),</span> <span class="p">(</span><span class="mh">0x1000</span> <span class="o">*</span> <span class="mi">16</span> <span class="o">+</span> <span class="mh">0x2000</span><span class="p">)))</span>
+    <span class="p">{</span>
+        <span class="n">kerror</span><span class="p">(</span><span class="s">&#34;move_krlimg err&#34;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="c1">//将顶级页目录、页目录指针的空间清0
+</span><span class="c1"></span>    <span class="k">for</span> <span class="p">(</span><span class="n">uint_t</span> <span class="n">mi</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">mi</span> <span class="o">&lt;</span> <span class="n">PGENTY_SIZE</span><span class="p">;</span> <span class="n">mi</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">p</span><span class="p">[</span><span class="n">mi</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="n">pdpte</span><span class="p">[</span><span class="n">mi</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">//映射
+</span><span class="c1"></span>    <span class="k">for</span> <span class="p">(</span><span class="n">uint_t</span> <span class="n">pdei</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">pdei</span> <span class="o">&lt;</span> <span class="mi">16</span><span class="p">;</span> <span class="n">pdei</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">pdpte</span><span class="p">[</span><span class="n">pdei</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">u64_t</span><span class="p">)((</span><span class="n">u32_t</span><span class="p">)</span><span class="n">pde</span> <span class="o">|</span> <span class="n">KPDPTE_RW</span> <span class="o">|</span> <span class="n">KPDPTE_P</span><span class="p">);</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">uint_t</span> <span class="n">pdeii</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">pdeii</span> <span class="o">&lt;</span> <span class="n">PGENTY_SIZE</span><span class="p">;</span> <span class="n">pdeii</span><span class="o">++</span><span class="p">)</span>
+        <span class="p">{</span><span class="c1">//大页KPDE_PS 2MB，可读写KPDE_RW，存在KPDE_P
+</span><span class="c1"></span>            <span class="n">pde</span><span class="p">[</span><span class="n">pdeii</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">|</span> <span class="n">adr</span> <span class="o">|</span> <span class="n">KPDE_PS</span> <span class="o">|</span> <span class="n">KPDE_RW</span> <span class="o">|</span> <span class="n">KPDE_P</span><span class="p">;</span>
+            <span class="n">adr</span> <span class="o">+=</span> <span class="mh">0x200000</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="n">pde</span> <span class="o">=</span> <span class="p">(</span><span class="n">u64_t</span> <span class="o">*</span><span class="p">)((</span><span class="n">u32_t</span><span class="p">)</span><span class="n">pde</span> <span class="o">+</span> <span class="mh">0x1000</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="c1">//让顶级页目录中第0项和第((KRNL_VIRTUAL_ADDRESS_START) &gt;&gt; KPML4_SHIFT) &amp; 0x1ff项，指向同一个页目录指针页  
+</span><span class="c1"></span>    <span class="n">p</span><span class="p">[((</span><span class="n">KRNL_VIRTUAL_ADDRESS_START</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">KPML4_SHIFT</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0x1ff</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">u64_t</span><span class="p">)((</span><span class="n">u32_t</span><span class="p">)</span><span class="n">pdpte</span> <span class="o">|</span> <span class="n">KPML4_RW</span> <span class="o">|</span> <span class="n">KPML4_P</span><span class="p">);</span>
+    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">u64_t</span><span class="p">)((</span><span class="n">u32_t</span><span class="p">)</span><span class="n">pdpte</span> <span class="o">|</span> <span class="n">KPML4_RW</span> <span class="o">|</span> <span class="n">KPML4_P</span><span class="p">);</span>
+    <span class="c1">//把页表首地址保存在机器信息结构中
+</span><span class="c1"></span>    <span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_pml4padr</span> <span class="o">=</span> <span class="p">(</span><span class="n">u64_t</span><span class="p">)(</span><span class="n">KINITPAGE_PHYADR</span><span class="p">);</span>
+    <span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_subpageslen</span> <span class="o">=</span> <span class="p">(</span><span class="n">u64_t</span><span class="p">)(</span><span class="mh">0x1000</span> <span class="o">*</span> <span class="mi">16</span> <span class="o">+</span> <span class="mh">0x2000</span><span class="p">);</span>
+    <span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_kpmapphymemsz</span> <span class="o">=</span> <span class="p">(</span><span class="n">u64_t</span><span class="p">)(</span><span class="mh">0x400000000</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>为了简化编程，使用了长模式下的 2MB 分页方式</p>
+<p>映射的核心逻辑由两重循环控制，外层循环控制页目录指针顶，只有 16 项，其中每一项都指向一个页目录，每个页目录中有 512 个物理页地址</p>
+<p>物理地址每次增加 2MB，这是由 26～30 行的内层循环控制，每执行一次外层循环就要执行 512 次内层循环。</p>
+<p>最后，顶级页目录中第 0 项和第 ((KRNL_VIRTUAL_ADDRESS_START) &raquo; KPML4_SHIFT) &amp; 0x1ff 项，指向同一个页目录指针页，这样的话就能让虚拟地址：0xffff800000000000～0xffff800400000000 和虚拟地址：0～0x400000000，访问到同一个物理地址空间 0～0x400000000，这样做是有目的，内核在启动初期，虚拟地址和物理地址要保持相同。</p>
+<h2 id="设置显卡图形模式">设置显卡图形模式</h2>
+<p>显卡默认是文本模式，只能显示ASCII字符，需要切换到图形模式</p>
+<p>切换显卡模式需要使用BIOS中断</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="kt">void</span> <span class="nf">init_graph</span><span class="p">(</span><span class="n">machbstart_t</span><span class="o">*</span> <span class="n">mbsp</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">//初始化图形数据结构
+</span><span class="c1"></span>    <span class="n">graph_t_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_ghparm</span><span class="p">);</span>
+    <span class="c1">//获取VBE模式，通过BIOS中断
+</span><span class="c1"></span>    <span class="n">get_vbemode</span><span class="p">(</span><span class="n">mbsp</span><span class="p">);</span>
+    <span class="c1">//获取一个具体VBE模式的信息，通过BIOS中断
+</span><span class="c1"></span>    <span class="n">get_vbemodeinfo</span><span class="p">(</span><span class="n">mbsp</span><span class="p">);</span>
+    <span class="c1">//设置VBE模式，通过BIOS中断
+</span><span class="c1"></span>    <span class="n">set_vbemodeinfo</span><span class="p">();</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这里使用了 VBE 的 118h 模式，该模式屏幕f分辨率为 1024*768，显存大小是 16.8MB</p>
+<p>屏幕分辨率为 1024 * 768，即共768行，为行1024个像素点，
+每个像素点占32位空间（红、绿、蓝、透明各8位）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C">
+<span class="k">typedef</span> <span class="k">struct</span> <span class="n">s_PIXCL</span>
+<span class="p">{</span>
+    <span class="n">u8_t</span> <span class="n">cl_b</span><span class="p">;</span> <span class="c1">//蓝
+</span><span class="c1"></span>    <span class="n">u8_t</span> <span class="n">cl_g</span><span class="p">;</span> <span class="c1">//绿
+</span><span class="c1"></span>    <span class="n">u8_t</span> <span class="n">cl_r</span><span class="p">;</span> <span class="c1">//红
+</span><span class="c1"></span>    <span class="n">u8_t</span> <span class="n">cl_a</span><span class="p">;</span> <span class="c1">//透明
+</span><span class="c1"></span><span class="p">}</span><span class="n">__attribute__</span><span class="p">((</span><span class="n">packed</span><span class="p">))</span> <span class="n">pixcl_t</span><span class="p">;</span>
+
+<span class="cp">#define BGRA(r,g,b) ((0|(r&lt;&lt;16)|(g&lt;&lt;8)|b))
+</span><span class="cp"></span><span class="c1">//通常情况下用pixl_t 和 BGRA宏
+</span><span class="c1"></span><span class="k">typedef</span> <span class="n">u32_t</span> <span class="n">pixl_t</span><span class="p">;</span>
+
+
+<span class="n">u32_t</span><span class="o">*</span> <span class="n">dispmem</span> <span class="o">=</span> <span class="p">(</span><span class="n">u32_t</span><span class="o">*</span><span class="p">)</span><span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_ghparm</span><span class="p">.</span><span class="n">gh_framphyadr</span><span class="p">;</span>
+<span class="n">dispmem</span><span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">)]</span> <span class="o">=</span> <span class="n">pix</span><span class="p">;</span>
+<span class="c1">//x，y是像素的位置
+</span></code></pre></td></tr></table>
+</div>
+</div><h2 id="集成">集成</h2>
+<p>在<code>init_bstartparm</code>将上述功能串联起来，设置工作环境</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C">
+<span class="kt">void</span> <span class="nf">init_bstartparm</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">machbstart_t</span> <span class="o">*</span><span class="n">mbsp</span> <span class="o">=</span> <span class="n">MBSPADR</span><span class="p">;</span>
+    <span class="n">machbstart_t_init</span><span class="p">(</span><span class="n">mbsp</span><span class="p">);</span>
+    <span class="c1">//检查CPU
+</span><span class="c1"></span>    <span class="n">init_chkcpu</span><span class="p">(</span><span class="n">mbsp</span><span class="p">);</span>
+    <span class="c1">//获取内存布局
+</span><span class="c1"></span>    <span class="n">init_mem</span><span class="p">(</span><span class="n">mbsp</span><span class="p">);</span>
+    <span class="c1">//初始化内核栈
+</span><span class="c1"></span>    <span class="n">init_krlinitstack</span><span class="p">(</span><span class="n">mbsp</span><span class="p">);</span>
+    <span class="c1">//放置内核文件
+</span><span class="c1"></span>    <span class="n">init_krlfile</span><span class="p">(</span><span class="n">mbsp</span><span class="p">);</span>
+    <span class="c1">//放置字库文件
+</span><span class="c1"></span>    <span class="n">init_defutfont</span><span class="p">(</span><span class="n">mbsp</span><span class="p">);</span>
+    <span class="c1">//将e820map结构数组从低地址（0x2068）搬到高地址（0x2000000）
+</span><span class="c1"></span>    <span class="n">init_meme820</span><span class="p">(</span><span class="n">mbsp</span><span class="p">);</span>
+    <span class="c1">//建立MMU页表
+</span><span class="c1"></span>    <span class="n">init_bstartpages</span><span class="p">(</span><span class="n">mbsp</span><span class="p">);</span>
+    <span class="c1">//设置图形模式
+</span><span class="c1"></span>    <span class="n">init_graph</span><span class="p">(</span><span class="n">mbsp</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="显示logo">显示Logo</h2>
+<p>前面已经设置了图形模式，可以展示图片了</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C">
+<span class="kt">void</span> <span class="nf">logo</span><span class="p">(</span><span class="n">machbstart_t</span><span class="o">*</span> <span class="n">mbsp</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">u32_t</span> <span class="n">retadr</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">sz</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+    <span class="c1">//在映像文件中获取logo.bmp文件
+</span><span class="c1"></span>    <span class="n">get_file_rpadrandsz</span><span class="p">(</span><span class="s">&#34;logo.bmp&#34;</span><span class="p">,</span><span class="n">mbsp</span><span class="p">,</span><span class="o">&amp;</span><span class="n">retadr</span><span class="p">,</span><span class="o">&amp;</span><span class="n">sz</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="mi">0</span><span class="o">==</span><span class="n">retadr</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">kerror</span><span class="p">(</span><span class="s">&#34;logo getfilerpadrsz err&#34;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="c1">//显示logo文件中的图像数据
+</span><span class="c1"></span>    <span class="n">bmp_print</span><span class="p">((</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="n">retadr</span><span class="p">,</span><span class="n">mbsp</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">init_graph</span><span class="p">(</span><span class="n">machbstart_t</span><span class="o">*</span> <span class="n">mbsp</span><span class="p">)</span>
+<span class="p">{</span>    
+    <span class="c1">//……前面代码省略
+</span><span class="c1"></span>    <span class="c1">//显示
+</span><span class="c1"></span>    <span class="n">logo</span><span class="p">(</span><span class="n">mbsp</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="切换cpu到长模式">切换CPU到长模式</h2>
+<p>切换到长模式（64位）后，寄存器位宽变了，需要重新初始化</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="err">[</span><span class="nf">section</span> <span class="no">.start.text</span><span class="p">]</span>
+<span class="err">[</span><span class="nf">BITS</span> <span class="mi">32</span><span class="p">]</span>
+<span class="nl">_start:</span>
+    <span class="nf">cli</span>
+    <span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span><span class="mi">0x10</span>
+    <span class="nf">mov</span> <span class="no">ds</span><span class="p">,</span><span class="no">ax</span>
+    <span class="nf">mov</span> <span class="no">es</span><span class="p">,</span><span class="no">ax</span>
+    <span class="nf">mov</span> <span class="no">ss</span><span class="p">,</span><span class="no">ax</span>
+    <span class="nf">mov</span> <span class="no">fs</span><span class="p">,</span><span class="no">ax</span>
+    <span class="nf">mov</span> <span class="no">gs</span><span class="p">,</span><span class="no">ax</span>
+    <span class="nf">lgdt</span> <span class="p">[</span><span class="no">eGdtPtr</span><span class="p">]</span>        
+    <span class="c">;开启 PAE
+</span><span class="c"></span>    <span class="no">mov</span> <span class="no">eax</span><span class="p">,</span> <span class="no">cr4</span>
+    <span class="nf">bts</span> <span class="no">eax</span><span class="p">,</span> <span class="mi">5</span>                      <span class="c">; CR4.PAE = 1
+</span><span class="c"></span>    <span class="no">mov</span> <span class="no">cr4</span><span class="p">,</span> <span class="no">eax</span>
+    <span class="nf">mov</span> <span class="no">eax</span><span class="p">,</span> <span class="no">PML4T_BADR</span>             <span class="c">;加载MMU顶级页目录
+</span><span class="c"></span>    <span class="no">mov</span> <span class="no">cr3</span><span class="p">,</span> <span class="no">eax</span>  
+    <span class="c">;开启 64bits long-mode
+</span><span class="c"></span>    <span class="no">mov</span> <span class="no">ecx</span><span class="p">,</span> <span class="no">IA32_EFER</span>
+    <span class="nf">rdmsr</span>
+    <span class="nf">bts</span> <span class="no">eax</span><span class="p">,</span> <span class="mi">8</span>                      <span class="c">; IA32_EFER.LME =1
+</span><span class="c"></span>    <span class="no">wrmsr</span>
+    <span class="c">;开启 PE 和 paging
+</span><span class="c"></span>    <span class="nf">mov</span> <span class="no">eax</span><span class="p">,</span> <span class="no">cr0</span>
+    <span class="nf">bts</span> <span class="no">eax</span><span class="p">,</span> <span class="mi">0</span>                      <span class="c">; CR0.PE =1
+</span><span class="c"></span>    <span class="no">bts</span> <span class="no">eax</span><span class="p">,</span> <span class="mi">31</span>
+    <span class="c">;开启 CACHE       
+</span><span class="c"></span>    <span class="nf">btr</span> <span class="no">eax</span><span class="p">,</span><span class="mi">29</span>                    <span class="c">; CR0.NW=0
+</span><span class="c"></span>    <span class="no">btr</span> <span class="no">eax</span><span class="p">,</span><span class="mi">30</span>                    <span class="c">; CR0.CD=0  CACHE
+</span><span class="c"></span>    <span class="no">mov</span> <span class="no">cr0</span><span class="p">,</span> <span class="no">eax</span>                    <span class="c">; IA32_EFER.LMA = 1
+</span><span class="c"></span>    <span class="no">jmp</span> <span class="mi">08</span><span class="p">:</span><span class="no">entry64</span>
+<span class="err">[</span><span class="nf">BITS</span> <span class="mi">64</span><span class="p">]</span>
+<span class="nl">entry64:</span>
+    <span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span><span class="mi">0x10</span>
+    <span class="nf">mov</span> <span class="no">ds</span><span class="p">,</span><span class="no">ax</span>
+    <span class="nf">mov</span> <span class="no">es</span><span class="p">,</span><span class="no">ax</span>
+    <span class="nf">mov</span> <span class="no">ss</span><span class="p">,</span><span class="no">ax</span>
+    <span class="nf">mov</span> <span class="no">fs</span><span class="p">,</span><span class="no">ax</span>
+    <span class="nf">mov</span> <span class="no">gs</span><span class="p">,</span><span class="no">ax</span>
+    <span class="nf">xor</span> <span class="no">rax</span><span class="p">,</span><span class="no">rax</span>
+    <span class="nf">xor</span> <span class="no">rbx</span><span class="p">,</span><span class="no">rbx</span>
+    <span class="nf">xor</span> <span class="no">rbp</span><span class="p">,</span><span class="no">rbp</span>
+    <span class="nf">xor</span> <span class="no">rcx</span><span class="p">,</span><span class="no">rcx</span>
+    <span class="nf">xor</span> <span class="no">rdx</span><span class="p">,</span><span class="no">rdx</span>
+    <span class="nf">xor</span> <span class="no">rdi</span><span class="p">,</span><span class="no">rdi</span>
+    <span class="nf">xor</span> <span class="no">rsi</span><span class="p">,</span><span class="no">rsi</span>
+    <span class="nf">xor</span> <span class="no">r8</span><span class="p">,</span><span class="no">r8</span>
+    <span class="nf">xor</span> <span class="no">r9</span><span class="p">,</span><span class="no">r9</span>
+    <span class="nf">xor</span> <span class="no">r10</span><span class="p">,</span><span class="no">r10</span>
+    <span class="nf">xor</span> <span class="no">r11</span><span class="p">,</span><span class="no">r11</span>
+    <span class="nf">xor</span> <span class="no">r12</span><span class="p">,</span><span class="no">r12</span>
+    <span class="nf">xor</span> <span class="no">r13</span><span class="p">,</span><span class="no">r13</span>
+    <span class="nf">xor</span> <span class="no">r14</span><span class="p">,</span><span class="no">r14</span>
+    <span class="nf">xor</span> <span class="no">r15</span><span class="p">,</span><span class="no">r15</span>
+    <span class="nf">mov</span> <span class="no">rbx</span><span class="p">,</span><span class="no">MBSP_ADR</span>
+    <span class="nf">mov</span> <span class="no">rax</span><span class="p">,</span><span class="no">KRLVIRADR</span>
+    <span class="nf">mov</span> <span class="no">rcx</span><span class="p">,[</span><span class="no">rbx</span><span class="err">+</span><span class="no">KINITSTACK_OFF</span><span class="p">]</span>
+    <span class="nf">add</span> <span class="no">rax</span><span class="p">,</span><span class="no">rcx</span>
+    <span class="nf">xor</span> <span class="no">rcx</span><span class="p">,</span><span class="no">rcx</span>
+    <span class="nf">xor</span> <span class="no">rbx</span><span class="p">,</span><span class="no">rbx</span>
+    <span class="nf">mov</span> <span class="no">rsp</span><span class="p">,</span><span class="no">rax</span>
+    <span class="nf">push</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="mi">0x8</span>
+    <span class="nf">mov</span> <span class="no">rax</span><span class="p">,</span><span class="no">hal_start</span>                 <span class="c">;调用内核主函数
+</span><span class="c"></span>    <span class="no">push</span> <span class="no">rax</span>
+    <span class="nf">dw</span> <span class="mi">0xcb48</span>
+    <span class="nf">jmp</span> <span class="no">$</span>
+<span class="err">[</span><span class="nf">section</span> <span class="no">.start.data</span><span class="p">]</span>
+<span class="err">[</span><span class="nf">BITS</span> <span class="mi">32</span><span class="p">]</span>
+<span class="nl">x64_GDT:</span>
+<span class="nl">enull_x64_dsc:</span>  <span class="nf">dq</span> <span class="mi">0</span>  
+<span class="no">ekrnl_c64_dsc</span><span class="p">:</span>  <span class="no">dq</span> <span class="mi">0x0020980000000000</span>   <span class="c">; 64-bit 内核代码段
+</span><span class="c"></span><span class="no">ekrnl_d64_dsc</span><span class="p">:</span>  <span class="no">dq</span> <span class="mi">0x0000920000000000</span>   <span class="c">; 64-bit 内核数据段
+</span><span class="c"></span><span class="no">euser_c64_dsc</span><span class="p">:</span>  <span class="no">dq</span> <span class="mi">0x0020f80000000000</span>   <span class="c">; 64-bit 用户代码段
+</span><span class="c"></span><span class="no">euser_d64_dsc</span><span class="p">:</span>  <span class="no">dq</span> <span class="mi">0x0000f20000000000</span>   <span class="c">; 64-bit 用户数据段
+</span><span class="c"></span><span class="no">eGdtLen</span>      <span class="no">equ</span>  <span class="no">$</span> <span class="p">-</span> <span class="no">enull_x64_dsc</span>   <span class="c">; GDT长度
+</span><span class="c"></span><span class="no">eGdtPtr</span><span class="p">:</span>    <span class="no">dw</span> <span class="no">eGdtLen</span> <span class="p">-</span> <span class="mi">1</span>      <span class="c">; GDT界限
+</span><span class="c"></span>        <span class="no">dq</span> <span class="no">ex64_GDT</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上述代码具体详情是：</p>
+<ul>
+<li>1~11行加载70~75行的 GDT</li>
+<li>13~17行设置MMU、加载二级引导器中准备好的MMU页表</li>
+<li>19~30行开启长模式、打开Cache</li>
+<li>34~54行初始化寄存器</li>
+<li>55~61行读取二级引导器中准备好的机器信息结构的栈地址存到RSP寄存器</li>
+<li>63~66行把8和hal_start函数地址压入栈，利用<code>dw 0xcb48</code>指令将数据弹出到
+RIP和CS寄存器</li>
+</ul>
+<h1 id="第十三讲-实现板级初始化">第十三讲 实现板级初始化</h1>
+<h2 id="hal层初始化">hal层初始化</h2>
+<p>hal层对硬件相关的操作进行了抽象，对内核提供接口</p>
+<h3 id="初始化平台">初始化平台</h3>
+<p><code>init_halplaltform</code>主要完成两个任务：</p>
+<ul>
+<li>复制二级引导器建立的机器信息结构到hal层中的全局变量中，并释放二级引导器对应数据的内存</li>
+<li>初始化图形显卡的驱动</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="kt">void</span> <span class="nf">machbstart_t_init</span><span class="p">(</span><span class="n">machbstart_t</span> <span class="o">*</span><span class="n">initp</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">//清零
+</span><span class="c1"></span>    <span class="n">memset</span><span class="p">(</span><span class="n">initp</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">machbstart_t</span><span class="p">));</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">init_machbstart</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">machbstart_t</span> <span class="o">*</span><span class="n">kmbsp</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">kmachbsp</span><span class="p">;</span>
+    <span class="n">machbstart_t</span> <span class="o">*</span><span class="n">smbsp</span> <span class="o">=</span> <span class="n">MBSPADR</span><span class="p">;</span><span class="c1">//物理地址1MB处
+</span><span class="c1"></span>    <span class="n">machbstart_t_init</span><span class="p">(</span><span class="n">kmbsp</span><span class="p">);</span>
+    <span class="c1">//复制，要把地址转换成虚拟地址
+</span><span class="c1"></span>    <span class="n">memcopy</span><span class="p">((</span><span class="kt">void</span> <span class="o">*</span><span class="p">)</span><span class="n">phyadr_to_viradr</span><span class="p">((</span><span class="n">adr_t</span><span class="p">)</span><span class="n">smbsp</span><span class="p">),</span> <span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="p">)</span><span class="n">kmbsp</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">machbstart_t</span><span class="p">));</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">//平台初始化函数
+</span><span class="c1"></span><span class="kt">void</span> <span class="nf">init_halplaltform</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="c1">//复制机器信息结构
+</span><span class="c1"></span>    <span class="n">init_machbstart</span><span class="p">();</span>
+    <span class="c1">//初始化图形显示驱动
+</span><span class="c1"></span>    <span class="n">init_bdvideo</span><span class="p">();</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><code>kmachbsp</code>是个hal层的全局变量，通过宏声明</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="c1">//file: Comos/hal/x86
+</span><span class="c1">//全局变量定义变量放在data段
+</span><span class="c1"></span><span class="cp">#define  HAL_DEFGLOB_VARIABLE(vartype, varnam) \
+</span><span class="cp">EXTERN __attribute__((section(&#34;.data&#34;))) vartype varname
+</span><span class="cp"></span>
+<span class="n">HAL_DEFGLOB_VARIABLE</span><span class="p">(</span><span class="n">machbstart_t</span><span class="p">,</span> <span class="n">kmachbsp</span><span class="p">);</span> 
+</code></pre></td></tr></table>
+</div>
+</div><p>图形显卡初始化</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C">
+<span class="kt">void</span> <span class="nf">init_bdvideo</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">dftgraph_t</span> <span class="o">*</span><span class="n">kghp</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">kdftgh</span><span class="p">;</span>
+    <span class="c1">//初始化图形数据结构，里面放有图形模式，分辨率，图形驱动函数指针
+</span><span class="c1"></span>    <span class="n">init_dftgraph</span><span class="p">();</span>
+    <span class="c1">//初始bga图形显卡的函数指针
+</span><span class="c1"></span>    <span class="n">init_bga</span><span class="p">();</span>
+    <span class="c1">//初始vbe图形显卡的函数指针
+</span><span class="c1"></span>    <span class="n">init_vbe</span><span class="p">();</span>
+    <span class="c1">//清空屏幕 为黑色
+</span><span class="c1"></span>    <span class="n">fill_graph</span><span class="p">(</span><span class="n">kghp</span><span class="p">,</span> <span class="n">BGRA</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">));</span>
+    <span class="c1">//显示背景图片 
+</span><span class="c1"></span>    <span class="n">set_charsdxwflush</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="n">hal_background</span><span class="p">();</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+
+
+<span class="k">typedef</span> <span class="k">struct</span> <span class="n">s_DFTGRAPH</span>
+<span class="p">{</span>
+    <span class="n">u64_t</span> <span class="n">gh_mode</span><span class="p">;</span>         <span class="c1">//图形模式
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">gh_x</span><span class="p">;</span>            <span class="c1">//水平像素点
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">gh_y</span><span class="p">;</span>            <span class="c1">//垂直像素点
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">gh_framphyadr</span><span class="p">;</span>   <span class="c1">//显存物理地址 
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">gh_fvrmphyadr</span><span class="p">;</span>   <span class="c1">//显存虚拟地址
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">gh_fvrmsz</span><span class="p">;</span>       <span class="c1">//显存大小
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">gh_onepixbits</span><span class="p">;</span>   <span class="c1">//一个像素字占用的数据位数
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">gh_onepixbyte</span><span class="p">;</span>
+    <span class="n">u64_t</span> <span class="n">gh_vbemodenr</span><span class="p">;</span>    <span class="c1">//vbe模式号
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">gh_bank</span><span class="p">;</span>         <span class="c1">//显存的bank数
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">gh_curdipbnk</span><span class="p">;</span>    <span class="c1">//当前bank
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">gh_nextbnk</span><span class="p">;</span>      <span class="c1">//下一个bank
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">gh_banksz</span><span class="p">;</span>       <span class="c1">//bank大小
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">gh_fontadr</span><span class="p">;</span>      <span class="c1">//字库地址
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">gh_fontsz</span><span class="p">;</span>       <span class="c1">//字库大小
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">gh_fnthight</span><span class="p">;</span>     <span class="c1">//字体高度
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">gh_nxtcharsx</span><span class="p">;</span>    <span class="c1">//下一字符显示的x坐标
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">gh_nxtcharsy</span><span class="p">;</span>    <span class="c1">//下一字符显示的y坐标
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">gh_linesz</span><span class="p">;</span>       <span class="c1">//字符行高
+</span><span class="c1"></span>    <span class="n">pixl_t</span> <span class="n">gh_deffontpx</span><span class="p">;</span>   <span class="c1">//默认字体大小
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">gh_chardxw</span><span class="p">;</span>
+    <span class="n">u64_t</span> <span class="n">gh_flush</span><span class="p">;</span>
+    <span class="n">u64_t</span> <span class="n">gh_framnr</span><span class="p">;</span>
+    <span class="n">u64_t</span> <span class="n">gh_fshdata</span><span class="p">;</span>      <span class="c1">//刷新相关的
+</span><span class="c1"></span>    <span class="n">dftghops_t</span> <span class="n">gh_opfun</span><span class="p">;</span>   <span class="c1">//图形驱动操作函数指针结构体
+</span><span class="c1"></span><span class="p">}</span><span class="n">dftgraph_t</span><span class="p">;</span>
+<span class="k">typedef</span> <span class="k">struct</span> <span class="n">s_DFTGHOPS</span>
+<span class="p">{</span>
+    <span class="c1">//读写显存数据
+</span><span class="c1"></span>    <span class="n">size_t</span> <span class="p">(</span><span class="o">*</span><span class="n">dgo_read</span><span class="p">)(</span><span class="kt">void</span><span class="o">*</span> <span class="n">ghpdev</span><span class="p">,</span><span class="kt">void</span><span class="o">*</span> <span class="n">outp</span><span class="p">,</span><span class="n">size_t</span> <span class="n">rdsz</span><span class="p">);</span>
+    <span class="n">size_t</span> <span class="p">(</span><span class="o">*</span><span class="n">dgo_write</span><span class="p">)(</span><span class="kt">void</span><span class="o">*</span> <span class="n">ghpdev</span><span class="p">,</span><span class="kt">void</span><span class="o">*</span> <span class="n">inp</span><span class="p">,</span><span class="n">size_t</span> <span class="n">wesz</span><span class="p">);</span>
+    <span class="n">sint_t</span> <span class="p">(</span><span class="o">*</span><span class="n">dgo_ioctrl</span><span class="p">)(</span><span class="kt">void</span><span class="o">*</span> <span class="n">ghpdev</span><span class="p">,</span><span class="kt">void</span><span class="o">*</span> <span class="n">outp</span><span class="p">,</span><span class="n">uint_t</span> <span class="n">iocode</span><span class="p">);</span>
+    <span class="c1">//刷新
+</span><span class="c1"></span>    <span class="kt">void</span>   <span class="p">(</span><span class="o">*</span><span class="n">dgo_flush</span><span class="p">)(</span><span class="kt">void</span><span class="o">*</span> <span class="n">ghpdev</span><span class="p">);</span>
+    <span class="n">sint_t</span> <span class="p">(</span><span class="o">*</span><span class="n">dgo_set_bank</span><span class="p">)(</span><span class="kt">void</span><span class="o">*</span> <span class="n">ghpdev</span><span class="p">,</span> <span class="n">sint_t</span> <span class="n">bnr</span><span class="p">);</span>
+    <span class="c1">//读写像素
+</span><span class="c1"></span>    <span class="n">pixl_t</span> <span class="p">(</span><span class="o">*</span><span class="n">dgo_readpix</span><span class="p">)(</span><span class="kt">void</span><span class="o">*</span> <span class="n">ghpdev</span><span class="p">,</span><span class="n">uint_t</span> <span class="n">x</span><span class="p">,</span><span class="n">uint_t</span> <span class="n">y</span><span class="p">);</span>
+    <span class="kt">void</span>   <span class="p">(</span><span class="o">*</span><span class="n">dgo_writepix</span><span class="p">)(</span><span class="kt">void</span><span class="o">*</span> <span class="n">ghpdev</span><span class="p">,</span><span class="n">pixl_t</span> <span class="n">pix</span><span class="p">,</span><span class="n">uint_t</span> <span class="n">x</span><span class="p">,</span><span class="n">uint_t</span> <span class="n">y</span><span class="p">);</span>
+    <span class="c1">//直接读写像素 
+</span><span class="c1"></span>    <span class="n">pixl_t</span> <span class="p">(</span><span class="o">*</span><span class="n">dgo_dxreadpix</span><span class="p">)(</span><span class="kt">void</span><span class="o">*</span> <span class="n">ghpdev</span><span class="p">,</span><span class="n">uint_t</span> <span class="n">x</span><span class="p">,</span><span class="n">uint_t</span> <span class="n">y</span><span class="p">);</span>
+    <span class="kt">void</span>   <span class="p">(</span><span class="o">*</span><span class="n">dgo_dxwritepix</span><span class="p">)(</span><span class="kt">void</span><span class="o">*</span> <span class="n">ghpdev</span><span class="p">,</span><span class="n">pixl_t</span> <span class="n">pix</span><span class="p">,</span><span class="n">uint_t</span> <span class="n">x</span><span class="p">,</span><span class="n">uint_t</span> <span class="n">y</span><span class="p">);</span>
+    <span class="c1">//设置x，y坐标和偏移
+</span><span class="c1"></span>    <span class="n">sint_t</span> <span class="p">(</span><span class="o">*</span><span class="n">dgo_set_xy</span><span class="p">)(</span><span class="kt">void</span><span class="o">*</span> <span class="n">ghpdev</span><span class="p">,</span><span class="n">uint_t</span> <span class="n">x</span><span class="p">,</span><span class="n">uint_t</span> <span class="n">y</span><span class="p">);</span>
+    <span class="n">sint_t</span> <span class="p">(</span><span class="o">*</span><span class="n">dgo_set_vwh</span><span class="p">)(</span><span class="kt">void</span><span class="o">*</span> <span class="n">ghpdev</span><span class="p">,</span><span class="n">uint_t</span> <span class="n">vwt</span><span class="p">,</span><span class="n">uint_t</span> <span class="n">vhi</span><span class="p">);</span>
+    <span class="n">sint_t</span> <span class="p">(</span><span class="o">*</span><span class="n">dgo_set_xyoffset</span><span class="p">)(</span><span class="kt">void</span><span class="o">*</span> <span class="n">ghpdev</span><span class="p">,</span><span class="n">uint_t</span> <span class="n">xoff</span><span class="p">,</span><span class="n">uint_t</span> <span class="n">yoff</span><span class="p">);</span>
+    <span class="c1">//获取x，y坐标和偏移
+</span><span class="c1"></span>    <span class="n">sint_t</span> <span class="p">(</span><span class="o">*</span><span class="n">dgo_get_xy</span><span class="p">)(</span><span class="kt">void</span><span class="o">*</span> <span class="n">ghpdev</span><span class="p">,</span><span class="n">uint_t</span><span class="o">*</span> <span class="n">rx</span><span class="p">,</span><span class="n">uint_t</span><span class="o">*</span> <span class="n">ry</span><span class="p">);</span>
+    <span class="n">sint_t</span> <span class="p">(</span><span class="o">*</span><span class="n">dgo_get_vwh</span><span class="p">)(</span><span class="kt">void</span><span class="o">*</span> <span class="n">ghpdev</span><span class="p">,</span><span class="n">uint_t</span><span class="o">*</span> <span class="n">rvwt</span><span class="p">,</span><span class="n">uint_t</span><span class="o">*</span> <span class="n">rvhi</span><span class="p">);</span>
+    <span class="n">sint_t</span> <span class="p">(</span><span class="o">*</span><span class="n">dgo_get_xyoffset</span><span class="p">)(</span><span class="kt">void</span><span class="o">*</span> <span class="n">ghpdev</span><span class="p">,</span><span class="n">uint_t</span><span class="o">*</span> <span class="n">rxoff</span><span class="p">,</span><span class="n">uint_t</span><span class="o">*</span> <span class="n">ryoff</span><span class="p">);</span>
+<span class="p">}</span><span class="n">dftghops_t</span><span class="p">;</span>
+<span class="c1">//刷新显存
+</span><span class="c1"></span><span class="kt">void</span> <span class="nf">flush_videoram</span><span class="p">(</span><span class="n">dftgraph_t</span> <span class="o">*</span><span class="n">kghp</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">kghp</span><span class="o">-&gt;</span><span class="n">gh_opfun</span><span class="p">.</span><span class="n">dgo_flush</span><span class="p">(</span><span class="n">kghp</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>我们将实际的图形驱动函数填入了<code>dftghops_t</code>结构体，通过结构体就可以调用相应的函数了</p>
+<h3 id="初始化内存">初始化内存</h3>
+<p>对二级引导器的内存布局信息进行扩展：</p>
+<ul>
+<li>增加内存保留空间</li>
+<li>对布局信息进行排序</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C">
+<span class="cp">#define PMR_T_OSAPUSERRAM 1
+</span><span class="cp">#define PMR_T_RESERVRAM 2
+</span><span class="cp">#define PMR_T_HWUSERRAM 8
+</span><span class="cp">#define PMR_T_ARACONRAM 0xf
+</span><span class="cp">#define PMR_T_BUGRAM 0xff
+</span><span class="cp">#define PMR_F_X86_32 (1&lt;&lt;0)
+</span><span class="cp">#define PMR_F_X86_64 (1&lt;&lt;1)
+</span><span class="cp">#define PMR_F_ARM_32 (1&lt;&lt;2)
+</span><span class="cp">#define PMR_F_ARM_64 (1&lt;&lt;3)
+</span><span class="cp">#define PMR_F_HAL_MASK 0xff
+</span><span class="cp"></span>
+<span class="k">typedef</span> <span class="k">struct</span> <span class="n">s_PHYMMARGE</span>
+<span class="p">{</span>
+    <span class="n">spinlock_t</span> <span class="n">pmr_lock</span><span class="p">;</span><span class="c1">//保护这个结构是自旋锁
+</span><span class="c1"></span>    <span class="n">u32_t</span> <span class="n">pmr_type</span><span class="p">;</span>     <span class="c1">//内存地址空间类型
+</span><span class="c1"></span>    <span class="n">u32_t</span> <span class="n">pmr_stype</span><span class="p">;</span>
+    <span class="n">u32_t</span> <span class="n">pmr_dtype</span><span class="p">;</span>    <span class="c1">//内存地址空间的子类型，见上面的宏
+</span><span class="c1"></span>    <span class="n">u32_t</span> <span class="n">pmr_flgs</span><span class="p">;</span>     <span class="c1">//结构的标志与状态
+</span><span class="c1"></span>    <span class="n">u32_t</span> <span class="n">pmr_stus</span><span class="p">;</span>
+    <span class="n">u64_t</span> <span class="n">pmr_saddr</span><span class="p">;</span>    <span class="c1">//内存空间的开始地址
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">pmr_lsize</span><span class="p">;</span>    <span class="c1">//内存空间的大小
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">pmr_end</span><span class="p">;</span>      <span class="c1">//内存空间的结束地址
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">pmr_rrvmsaddr</span><span class="p">;</span><span class="c1">//内存保留空间的开始地址
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">pmr_rrvmend</span><span class="p">;</span>  <span class="c1">//内存保留空间的结束地址
+</span><span class="c1"></span>    <span class="kt">void</span><span class="o">*</span> <span class="n">pmr_prip</span><span class="p">;</span>     <span class="c1">//结构的私有数据指针，以后扩展所用
+</span><span class="c1"></span>    <span class="kt">void</span><span class="o">*</span> <span class="n">pmr_extp</span><span class="p">;</span>     <span class="c1">//结构的扩展数据指针，以后扩展所用
+</span><span class="c1"></span><span class="p">}</span><span class="n">phymmarge_t</span><span class="p">;</span>
+
+
+<span class="n">u64_t</span> <span class="nf">initpmrge_core</span><span class="p">(</span><span class="n">e820map_t</span> <span class="o">*</span><span class="n">e8sp</span><span class="p">,</span> <span class="n">u64_t</span> <span class="n">e8nr</span><span class="p">,</span> <span class="n">phymmarge_t</span> <span class="o">*</span><span class="n">pmargesp</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">u64_t</span> <span class="n">retnr</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">u64_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">e8nr</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">//根据一个e820map_t结构建立一个phymmarge_t结构
+</span><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span><span class="n">init_one_pmrge</span><span class="p">(</span><span class="o">&amp;</span><span class="n">e8sp</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="o">&amp;</span><span class="n">pmargesp</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">==</span> <span class="n">FALSE</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">return</span> <span class="n">retnr</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="n">retnr</span><span class="o">++</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">retnr</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">init_phymmarge</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">machbstart_t</span> <span class="o">*</span><span class="n">mbsp</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">kmachbsp</span><span class="p">;</span>
+    <span class="n">phymmarge_t</span> <span class="o">*</span><span class="n">pmarge_adr</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="n">u64_t</span> <span class="n">pmrgesz</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="c1">//根据machbstart_t机器信息结构计算获得phymmarge_t结构的开始地址和大小
+</span><span class="c1"></span>    <span class="n">ret_phymmarge_adrandsz</span><span class="p">(</span><span class="n">mbsp</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">pmarge_adr</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">pmrgesz</span><span class="p">);</span>
+    <span class="n">u64_t</span> <span class="n">tmppmrphyadr</span> <span class="o">=</span> <span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_nextwtpadr</span><span class="p">;</span>
+    <span class="n">e820map_t</span> <span class="o">*</span><span class="n">e8p</span> <span class="o">=</span> <span class="p">(</span><span class="n">e820map_t</span> <span class="o">*</span><span class="p">)((</span><span class="n">adr_t</span><span class="p">)(</span><span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_e820padr</span><span class="p">));</span>
+    <span class="c1">//建立phymmarge_t结构
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">ipmgnr</span> <span class="o">=</span> <span class="n">initpmrge_core</span><span class="p">(</span><span class="n">e8p</span><span class="p">,</span> <span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_e820nr</span><span class="p">,</span> <span class="n">pmarge_adr</span><span class="p">);</span>
+    <span class="c1">//把phymmarge_t结构的地址大小个数保存machbstart_t机器信息结构中
+</span><span class="c1"></span>    <span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_e820expadr</span> <span class="o">=</span> <span class="n">tmppmrphyadr</span><span class="p">;</span>
+    <span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_e820exnr</span> <span class="o">=</span> <span class="n">ipmgnr</span><span class="p">;</span>
+    <span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_e820exsz</span> <span class="o">=</span> <span class="n">ipmgnr</span> <span class="o">*</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">phymmarge_t</span><span class="p">);</span>
+    <span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_nextwtpadr</span> <span class="o">=</span> <span class="n">PAGE_ALIGN</span><span class="p">(</span><span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_e820expadr</span> <span class="o">+</span> <span class="n">mbsp</span><span class="o">-&gt;</span><span class="n">mb_e820exsz</span><span class="p">);</span>
+    <span class="c1">//phymmarge_t结构中地址空间从低到高进行排序，我已经帮你写好了
+</span><span class="c1"></span>    <span class="n">phymmarge_sort</span><span class="p">(</span><span class="n">pmarge_adr</span><span class="p">,</span> <span class="n">ipmgnr</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="初始化中断">初始化中断</h3>
+<p>数据结构为<code>gate_t</code>，最大为256，由IDTR寄存器指向</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">s_GATE</span>
+<span class="p">{</span>
+        <span class="n">u16_t</span>   <span class="n">offset_low</span><span class="p">;</span>     <span class="cm">/* 偏移 */</span>
+        <span class="n">u16_t</span>   <span class="n">selector</span><span class="p">;</span>       <span class="cm">/* 段选择子 */</span>
+        <span class="n">u8_t</span>    <span class="n">dcount</span><span class="p">;</span>         <span class="cm">/* 该字段只在调用门描述符中有效。如果在利用调用门调用子程序时引起特权级的转换和堆栈的改变，需要将外层堆栈中的参数复制到内层堆栈。该双字计数字段就是用于说明这种情况发生时，要复制的双字参数的数量。*/</span>
+        <span class="n">u8_t</span>    <span class="n">attr</span><span class="p">;</span>           <span class="cm">/* P(1) DPL(2) DT(1) TYPE(4) */</span>
+        <span class="n">u16_t</span>   <span class="n">offset_high</span><span class="p">;</span>    <span class="cm">/* 偏移的高位段 */</span>
+        <span class="n">u32_t</span>   <span class="n">offset_high_h</span><span class="p">;</span>
+        <span class="n">u32_t</span>   <span class="n">offset_resv</span><span class="p">;</span>
+<span class="p">}</span><span class="n">__attribute__</span><span class="p">((</span><span class="n">packed</span><span class="p">))</span> <span class="n">gate_t</span><span class="p">;</span>
+<span class="c1">//定义中断表
+</span><span class="c1"></span><span class="n">HAL_DEFGLOB_VARIABLE</span><span class="p">(</span><span class="n">gate_t</span><span class="p">,</span><span class="n">x64_idt</span><span class="p">)[</span><span class="n">IDTMAX</span><span class="p">];</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>设置函数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="c1">//vector 向量也是中断号
+</span><span class="c1">//desc_type 中断门类型，中断门，陷阱门
+</span><span class="c1">//handler 中断处理程序的入口地址
+</span><span class="c1">//privilege 中断门的权限级别
+</span><span class="c1"></span><span class="kt">void</span> <span class="nf">set_idt_desc</span><span class="p">(</span><span class="n">u8_t</span> <span class="n">vector</span><span class="p">,</span> <span class="n">u8_t</span> <span class="n">desc_type</span><span class="p">,</span> <span class="n">inthandler_t</span> <span class="n">handler</span><span class="p">,</span> <span class="n">u8_t</span> <span class="n">privilege</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">gate_t</span> <span class="o">*</span><span class="n">p_gate</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">x64_idt</span><span class="p">[</span><span class="n">vector</span><span class="p">];</span>
+    <span class="n">u64_t</span> <span class="n">base</span> <span class="o">=</span> <span class="p">(</span><span class="n">u64_t</span><span class="p">)</span><span class="n">handler</span><span class="p">;</span>
+    <span class="n">p_gate</span><span class="o">-&gt;</span><span class="n">offset_low</span> <span class="o">=</span> <span class="n">base</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span><span class="p">;</span>
+    <span class="n">p_gate</span><span class="o">-&gt;</span><span class="n">selector</span> <span class="o">=</span> <span class="n">SELECTOR_KERNEL_CS</span><span class="p">;</span>
+    <span class="n">p_gate</span><span class="o">-&gt;</span><span class="n">dcount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">p_gate</span><span class="o">-&gt;</span><span class="n">attr</span> <span class="o">=</span> <span class="p">(</span><span class="n">u8_t</span><span class="p">)(</span><span class="n">desc_type</span> <span class="o">|</span> <span class="p">(</span><span class="n">privilege</span> <span class="o">&lt;&lt;</span> <span class="mi">5</span><span class="p">));</span>
+    <span class="n">p_gate</span><span class="o">-&gt;</span><span class="n">offset_high</span> <span class="o">=</span> <span class="p">(</span><span class="n">u16_t</span><span class="p">)((</span><span class="n">base</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span><span class="p">);</span>
+    <span class="n">p_gate</span><span class="o">-&gt;</span><span class="n">offset_high_h</span> <span class="o">=</span> <span class="p">(</span><span class="n">u32_t</span><span class="p">)((</span><span class="n">base</span> <span class="o">&gt;&gt;</span> <span class="mi">32</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xffffffff</span><span class="p">);</span>
+    <span class="n">p_gate</span><span class="o">-&gt;</span><span class="n">offset_resv</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>中断处理程序负责保存CPU寄存器、调用中断程序、恢复CPU寄存器</p>
+<p>保存和恢复寄存区汇编代码</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span><span class="lnt">108
+</span><span class="lnt">109
+</span><span class="lnt">110
+</span><span class="lnt">111
+</span><span class="lnt">112
+</span><span class="lnt">113
+</span><span class="lnt">114
+</span><span class="lnt">115
+</span><span class="lnt">116
+</span><span class="lnt">117
+</span><span class="lnt">118
+</span><span class="lnt">119
+</span><span class="lnt">120
+</span><span class="lnt">121
+</span><span class="lnt">122
+</span><span class="lnt">123
+</span><span class="lnt">124
+</span><span class="lnt">125
+</span><span class="lnt">126
+</span><span class="lnt">127
+</span><span class="lnt">128
+</span><span class="lnt">129
+</span><span class="lnt">130
+</span><span class="lnt">131
+</span><span class="lnt">132
+</span><span class="lnt">133
+</span><span class="lnt">134
+</span><span class="lnt">135
+</span><span class="lnt">136
+</span><span class="lnt">137
+</span><span class="lnt">138
+</span><span class="lnt">139
+</span><span class="lnt">140
+</span><span class="lnt">141
+</span><span class="lnt">142
+</span><span class="lnt">143
+</span><span class="lnt">144
+</span><span class="lnt">145
+</span><span class="lnt">146
+</span><span class="lnt">147
+</span><span class="lnt">148
+</span><span class="lnt">149
+</span><span class="lnt">150
+</span><span class="lnt">151
+</span><span class="lnt">152
+</span><span class="lnt">153
+</span><span class="lnt">154
+</span><span class="lnt">155
+</span><span class="lnt">156
+</span><span class="lnt">157
+</span><span class="lnt">158
+</span><span class="lnt">159
+</span><span class="lnt">160
+</span><span class="lnt">161
+</span><span class="lnt">162
+</span><span class="lnt">163
+</span><span class="lnt">164
+</span><span class="lnt">165
+</span><span class="lnt">166
+</span><span class="lnt">167
+</span><span class="lnt">168
+</span><span class="lnt">169
+</span><span class="lnt">170
+</span><span class="lnt">171
+</span><span class="lnt">172
+</span><span class="lnt">173
+</span><span class="lnt">174
+</span><span class="lnt">175
+</span><span class="lnt">176
+</span><span class="lnt">177
+</span><span class="lnt">178
+</span><span class="lnt">179
+</span><span class="lnt">180
+</span><span class="lnt">181
+</span><span class="lnt">182
+</span><span class="lnt">183
+</span><span class="lnt">184
+</span><span class="lnt">185
+</span><span class="lnt">186
+</span><span class="lnt">187
+</span><span class="lnt">188
+</span><span class="lnt">189
+</span><span class="lnt">190
+</span><span class="lnt">191
+</span><span class="lnt">192
+</span><span class="lnt">193
+</span><span class="lnt">194
+</span><span class="lnt">195
+</span><span class="lnt">196
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="err">//保存中断后的寄存器</span>
+<span class="err">%</span><span class="nf">macro</span>  <span class="no">SAVEALL</span>  <span class="mi">0</span>
+  <span class="nf">push</span> <span class="no">rax</span>
+  <span class="nf">push</span> <span class="no">rbx</span>
+  <span class="nf">push</span> <span class="no">rcx</span>
+  <span class="nf">push</span> <span class="no">rdx</span>
+  <span class="nf">push</span> <span class="no">rbp</span>
+  <span class="nf">push</span> <span class="no">rsi</span>
+  <span class="nf">push</span> <span class="no">rdi</span>
+  <span class="nf">push</span> <span class="no">r8</span>
+  <span class="nf">push</span> <span class="no">r9</span>
+  <span class="nf">push</span> <span class="no">r10</span>
+  <span class="nf">push</span> <span class="no">r11</span>
+  <span class="nf">push</span> <span class="no">r12</span>
+  <span class="nf">push</span> <span class="no">r13</span>
+  <span class="nf">push</span> <span class="no">r14</span>
+  <span class="nf">push</span> <span class="no">r15</span>
+  <span class="nf">xor</span> <span class="no">r14</span><span class="p">,</span><span class="no">r14</span>
+  <span class="nf">mov</span> <span class="no">r14w</span><span class="p">,</span><span class="no">ds</span>
+  <span class="nf">push</span> <span class="no">r14</span>
+  <span class="nf">mov</span> <span class="no">r14w</span><span class="p">,</span><span class="no">es</span>
+  <span class="nf">push</span> <span class="no">r14</span>
+  <span class="nf">mov</span> <span class="no">r14w</span><span class="p">,</span><span class="no">fs</span>
+  <span class="nf">push</span> <span class="no">r14</span>
+  <span class="nf">mov</span> <span class="no">r14w</span><span class="p">,</span><span class="no">gs</span>
+  <span class="nf">push</span> <span class="no">r14</span>
+<span class="err">%</span><span class="nf">endmacro</span>
+<span class="err">//恢复中断后寄存器</span>
+<span class="err">%</span><span class="nf">macro</span>  <span class="no">RESTOREALL</span>  <span class="mi">0</span>
+  <span class="nf">pop</span> <span class="no">r14</span>
+  <span class="nf">mov</span> <span class="no">gs</span><span class="p">,</span><span class="no">r14w</span>
+  <span class="nf">pop</span> <span class="no">r14</span> 
+  <span class="no">mov</span> <span class="no">fs</span><span class="p">,</span><span class="no">r14w</span>
+  <span class="nf">pop</span> <span class="no">r14</span>
+  <span class="nf">mov</span> <span class="no">es</span><span class="p">,</span><span class="no">r14w</span>
+  <span class="nf">pop</span> <span class="no">r14</span>
+  <span class="nf">mov</span> <span class="no">ds</span><span class="p">,</span><span class="no">r14w</span>
+  <span class="nf">pop</span> <span class="no">r15</span>
+  <span class="nf">pop</span> <span class="no">r14</span>
+  <span class="nf">pop</span> <span class="no">r13</span>
+  <span class="nf">pop</span> <span class="no">r12</span>
+  <span class="nf">pop</span> <span class="no">r11</span>
+  <span class="nf">pop</span> <span class="no">r10</span>
+  <span class="nf">pop</span> <span class="no">r9</span>
+  <span class="nf">pop</span> <span class="no">r8</span>
+  <span class="nf">pop</span> <span class="no">rdi</span>
+  <span class="nf">pop</span> <span class="no">rsi</span>
+  <span class="nf">pop</span> <span class="no">rbp</span>
+  <span class="nf">pop</span> <span class="no">rdx</span>
+  <span class="nf">pop</span> <span class="no">rcx</span>
+  <span class="nf">pop</span> <span class="no">rbx</span>
+  <span class="nf">pop</span> <span class="no">rax</span>
+  <span class="nf">iretq</span>
+<span class="err">%</span><span class="nf">endmacro</span>
+<span class="err">//保存异常下的寄存器</span>
+<span class="err">%</span><span class="nf">macro</span>  <span class="no">SAVEALLFAULT</span> <span class="mi">0</span>
+  <span class="nf">push</span> <span class="no">rax</span>
+  <span class="nf">push</span> <span class="no">rbx</span>
+  <span class="nf">push</span> <span class="no">rcx</span>
+  <span class="nf">push</span> <span class="no">rdx</span>
+  <span class="nf">push</span> <span class="no">rbp</span>
+  <span class="nf">push</span> <span class="no">rsi</span>
+  <span class="nf">push</span> <span class="no">rdi</span>
+  <span class="nf">push</span> <span class="no">r8</span>
+  <span class="nf">push</span> <span class="no">r9</span>
+  <span class="nf">push</span> <span class="no">r10</span>
+  <span class="nf">push</span> <span class="no">r11</span>
+  <span class="nf">push</span> <span class="no">r12</span>
+  <span class="nf">push</span> <span class="no">r13</span>
+  <span class="nf">push</span> <span class="no">r14</span>
+  <span class="nf">push</span> <span class="no">r15</span>
+  <span class="nf">xor</span> <span class="no">r14</span><span class="p">,</span><span class="no">r14</span>
+  <span class="nf">mov</span> <span class="no">r14w</span><span class="p">,</span><span class="no">ds</span>
+  <span class="nf">push</span> <span class="no">r14</span>
+  <span class="nf">mov</span> <span class="no">r14w</span><span class="p">,</span><span class="no">es</span>
+  <span class="nf">push</span> <span class="no">r14</span>
+  <span class="nf">mov</span> <span class="no">r14w</span><span class="p">,</span><span class="no">fs</span>
+  <span class="nf">push</span> <span class="no">r14</span>
+  <span class="nf">mov</span> <span class="no">r14w</span><span class="p">,</span><span class="no">gs</span>
+  <span class="nf">push</span> <span class="no">r14</span>
+<span class="err">%</span><span class="nf">endmacro</span>
+<span class="err">//恢复异常下寄存器</span>
+<span class="err">%</span><span class="nf">macro</span>  <span class="no">RESTOREALLFAULT</span>  <span class="mi">0</span>
+  <span class="nf">pop</span> <span class="no">r14</span>
+  <span class="nf">mov</span> <span class="no">gs</span><span class="p">,</span><span class="no">r14w</span>
+  <span class="nf">pop</span> <span class="no">r14</span> 
+  <span class="no">mov</span> <span class="no">fs</span><span class="p">,</span><span class="no">r14w</span>
+  <span class="nf">pop</span> <span class="no">r14</span>
+  <span class="nf">mov</span> <span class="no">es</span><span class="p">,</span><span class="no">r14w</span>
+  <span class="nf">pop</span> <span class="no">r14</span>
+  <span class="nf">mov</span> <span class="no">ds</span><span class="p">,</span><span class="no">r14w</span>
+  <span class="nf">pop</span> <span class="no">r15</span>
+  <span class="nf">pop</span> <span class="no">r14</span>
+  <span class="nf">pop</span> <span class="no">r13</span>
+  <span class="nf">pop</span> <span class="no">r12</span>
+  <span class="nf">pop</span> <span class="no">r11</span>
+  <span class="nf">pop</span> <span class="no">r10</span>
+  <span class="nf">pop</span> <span class="no">r9</span>
+  <span class="nf">pop</span> <span class="no">r8</span>
+  <span class="nf">pop</span> <span class="no">rdi</span>
+  <span class="nf">pop</span> <span class="no">rsi</span>
+  <span class="nf">pop</span> <span class="no">rbp</span>
+  <span class="nf">pop</span> <span class="no">rdx</span>
+  <span class="nf">pop</span> <span class="no">rcx</span>
+  <span class="nf">pop</span> <span class="no">rbx</span>
+  <span class="nf">pop</span> <span class="no">rax</span>
+  <span class="nf">add</span> <span class="no">rsp</span><span class="p">,</span><span class="mi">8</span>
+  <span class="nf">iretq</span>
+<span class="err">%</span><span class="nf">endmacro</span>
+<span class="err">//没有错误码</span><span class="nf">CPU异常</span>
+<span class="err">%</span><span class="nf">macro</span>  <span class="no">SRFTFAULT</span> <span class="mi">1</span>
+  <span class="nf">push</span>    <span class="no">_NOERRO_CODE</span>
+  <span class="nf">SAVEALLFAULT</span>
+  <span class="nf">mov</span> <span class="no">r14w</span><span class="p">,</span><span class="mi">0x10</span>
+  <span class="nf">mov</span> <span class="no">ds</span><span class="p">,</span><span class="no">r14w</span>
+  <span class="nf">mov</span> <span class="no">es</span><span class="p">,</span><span class="no">r14w</span>
+  <span class="nf">mov</span> <span class="no">fs</span><span class="p">,</span><span class="no">r14w</span>
+  <span class="nf">mov</span> <span class="no">gs</span><span class="p">,</span><span class="no">r14w</span>
+  <span class="nf">mov</span>   <span class="no">rdi</span><span class="p">,</span><span class="err">%</span><span class="mi">1</span> <span class="c">;rdi, rsi
+</span><span class="c"></span>  <span class="no">mov</span>   <span class="no">rsi</span><span class="p">,</span><span class="no">rsp</span>
+  <span class="nf">call</span>   <span class="no">hal_fault_allocator</span>
+  <span class="nf">RESTOREALLFAULT</span>
+<span class="err">%</span><span class="nf">endmacro</span>
+<span class="err">//</span><span class="nf">CPU异常</span>
+<span class="err">%</span><span class="nf">macro</span>  <span class="no">SRFTFAULT_ECODE</span> <span class="mi">1</span>
+  <span class="nf">SAVEALLFAULT</span>
+  <span class="nf">mov</span> <span class="no">r14w</span><span class="p">,</span><span class="mi">0x10</span>
+  <span class="nf">mov</span> <span class="no">ds</span><span class="p">,</span><span class="no">r14w</span>
+  <span class="nf">mov</span> <span class="no">es</span><span class="p">,</span><span class="no">r14w</span>
+  <span class="nf">mov</span> <span class="no">fs</span><span class="p">,</span><span class="no">r14w</span>
+  <span class="nf">mov</span> <span class="no">gs</span><span class="p">,</span><span class="no">r14w</span>
+  <span class="nf">mov</span>   <span class="no">rdi</span><span class="p">,</span><span class="err">%</span><span class="mi">1</span>
+  <span class="nf">mov</span>   <span class="no">rsi</span><span class="p">,</span><span class="no">rsp</span>
+  <span class="nf">call</span>   <span class="no">hal_fault_allocator</span>
+  <span class="nf">RESTOREALLFAULT</span>
+<span class="err">%</span><span class="nf">endmacro</span>
+<span class="err">//硬件中断</span>
+<span class="err">%</span><span class="nf">macro</span>  <span class="no">HARWINT</span>  <span class="mi">1</span>
+  <span class="nf">SAVEALL</span>
+  <span class="nf">mov</span> <span class="no">r14w</span><span class="p">,</span><span class="mi">0x10</span>
+  <span class="nf">mov</span> <span class="no">ds</span><span class="p">,</span><span class="no">r14w</span>
+  <span class="nf">mov</span> <span class="no">es</span><span class="p">,</span><span class="no">r14w</span>
+  <span class="nf">mov</span> <span class="no">fs</span><span class="p">,</span><span class="no">r14w</span>
+  <span class="nf">mov</span> <span class="no">gs</span><span class="p">,</span><span class="no">r14w</span>
+  <span class="nf">mov</span>  <span class="no">rdi</span><span class="p">,</span> <span class="err">%</span><span class="mi">1</span>
+  <span class="nf">mov</span>   <span class="no">rsi</span><span class="p">,</span><span class="no">rsp</span>
+  <span class="nf">call</span>    <span class="no">hal_intpt_allocator</span>
+  <span class="nf">RESTOREALL</span>
+<span class="err">%</span><span class="nf">endmacro</span>
+
+
+<span class="err">//除法错误异常</span> <span class="err">比如除0</span>
+<span class="nl">exc_divide_error:</span>
+  <span class="nf">SRFTFAULT</span> <span class="mi">0</span>
+<span class="err">//单步执行异常</span>
+<span class="nl">exc_single_step_exception:</span>
+  <span class="nf">SRFTFAULT</span> <span class="mi">1</span>
+<span class="nl">exc_nmi:</span>
+  <span class="nf">SRFTFAULT</span> <span class="mi">2</span>
+<span class="err">//调试断点异常</span>
+<span class="nl">exc_breakpoint_exception:</span>
+  <span class="nf">SRFTFAULT</span> <span class="mi">3</span>
+<span class="err">//溢出异常</span>
+<span class="nl">exc_overflow:</span>
+  <span class="nf">SRFTFAULT</span> <span class="mi">4</span>
+<span class="err">//段不存在异常</span>
+<span class="nl">exc_segment_not_present:</span>
+  <span class="nf">SRFTFAULT_ECODE</span> <span class="mi">11</span>
+<span class="err">//栈异常</span>
+<span class="nl">exc_stack_exception:</span>
+  <span class="nf">SRFTFAULT_ECODE</span> <span class="mi">12</span>
+<span class="err">//通用异常</span>
+<span class="nl">exc_general_protection:</span>
+  <span class="nf">SRFTFAULT_ECODE</span> <span class="mi">13</span>
+<span class="err">//缺页异常</span>
+<span class="nl">exc_page_fault:</span>
+  <span class="nf">SRFTFAULT_ECODE</span> <span class="mi">14</span>
+<span class="nl">hxi_exc_general_intpfault:</span>
+  <span class="nf">SRFTFAULT</span> <span class="mi">256</span>
+<span class="err">//硬件1～7号中断</span>
+<span class="nl">hxi_hwint00:</span>
+  <span class="nf">HARWINT</span>  <span class="p">(</span><span class="no">INT_VECTOR_IRQ0</span><span class="err">+</span><span class="mi">0</span><span class="p">)</span>
+<span class="nl">hxi_hwint01:</span>
+  <span class="nf">HARWINT</span>  <span class="p">(</span><span class="no">INT_VECTOR_IRQ0</span><span class="err">+</span><span class="mi">1</span><span class="p">)</span>
+<span class="nl">hxi_hwint02:</span>
+  <span class="nf">HARWINT</span>  <span class="p">(</span><span class="no">INT_VECTOR_IRQ0</span><span class="err">+</span><span class="mi">2</span><span class="p">)</span>
+<span class="nl">hxi_hwint03:</span>
+  <span class="nf">HARWINT</span>  <span class="p">(</span><span class="no">INT_VECTOR_IRQ0</span><span class="err">+</span><span class="mi">3</span><span class="p">)</span>
+<span class="nl">hxi_hwint04:</span>
+  <span class="nf">HARWINT</span>  <span class="p">(</span><span class="no">INT_VECTOR_IRQ0</span><span class="err">+</span><span class="mi">4</span><span class="p">)</span>
+<span class="nl">hxi_hwint05:</span>
+  <span class="nf">HARWINT</span>  <span class="p">(</span><span class="no">INT_VECTOR_IRQ0</span><span class="err">+</span><span class="mi">5</span><span class="p">)</span>
+<span class="nl">hxi_hwint06:</span>
+  <span class="nf">HARWINT</span>  <span class="p">(</span><span class="no">INT_VECTOR_IRQ0</span><span class="err">+</span><span class="mi">6</span><span class="p">)</span>
+<span class="nl">hxi_hwint07:</span>
+  <span class="nf">HARWINT</span>  <span class="p">(</span><span class="no">INT_VECTOR_IRQ0</span><span class="err">+</span><span class="mi">7</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>初始化函数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">init_idt_descriptor</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="c1">//一开始把所有中断的处理程序设置为保留的通用处理程序
+</span><span class="c1"></span>    <span class="k">for</span> <span class="p">(</span><span class="n">u16_t</span> <span class="n">intindx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">intindx</span> <span class="o">&lt;=</span> <span class="mi">255</span><span class="p">;</span> <span class="n">intindx</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">set_idt_desc</span><span class="p">((</span><span class="n">u8_t</span><span class="p">)</span><span class="n">intindx</span><span class="p">,</span> <span class="n">DA_386IGate</span><span class="p">,</span> <span class="n">hxi_exc_general_intpfault</span><span class="p">,</span> <span class="n">PRIVILEGE_KRNL</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">set_idt_desc</span><span class="p">(</span><span class="n">INT_VECTOR_DIVIDE</span><span class="p">,</span> <span class="n">DA_386IGate</span><span class="p">,</span> <span class="n">exc_divide_error</span><span class="p">,</span> <span class="n">PRIVILEGE_KRNL</span><span class="p">);</span>
+    <span class="n">set_idt_desc</span><span class="p">(</span><span class="n">INT_VECTOR_DEBUG</span><span class="p">,</span> <span class="n">DA_386IGate</span><span class="p">,</span> <span class="n">exc_single_step_exception</span><span class="p">,</span> <span class="n">PRIVILEGE_KRNL</span><span class="p">);</span>
+    <span class="n">set_idt_desc</span><span class="p">(</span><span class="n">INT_VECTOR_NMI</span><span class="p">,</span> <span class="n">DA_386IGate</span><span class="p">,</span> <span class="n">exc_nmi</span><span class="p">,</span> <span class="n">PRIVILEGE_KRNL</span><span class="p">);</span>
+    <span class="n">set_idt_desc</span><span class="p">(</span><span class="n">INT_VECTOR_BREAKPOINT</span><span class="p">,</span> <span class="n">DA_386IGate</span><span class="p">,</span> <span class="n">exc_breakpoint_exception</span><span class="p">,</span> <span class="n">PRIVILEGE_USER</span><span class="p">);</span>
+    <span class="n">set_idt_desc</span><span class="p">(</span><span class="n">INT_VECTOR_OVERFLOW</span><span class="p">,</span> <span class="n">DA_386IGate</span><span class="p">,</span> <span class="n">exc_overflow</span><span class="p">,</span> <span class="n">PRIVILEGE_USER</span><span class="p">);</span>
+<span class="c1">//篇幅所限，未全部展示
+</span><span class="c1"></span>    <span class="n">set_idt_desc</span><span class="p">(</span><span class="n">INT_VECTOR_PAGE_FAULT</span><span class="p">,</span> <span class="n">DA_386IGate</span><span class="p">,</span> <span class="n">exc_page_fault</span><span class="p">,</span> <span class="n">PRIVILEGE_KRNL</span><span class="p">);</span>
+    <span class="n">set_idt_desc</span><span class="p">(</span><span class="n">INT_VECTOR_IRQ0</span> <span class="o">+</span> <span class="mi">0</span><span class="p">,</span> <span class="n">DA_386IGate</span><span class="p">,</span> <span class="n">hxi_hwint00</span><span class="p">,</span> <span class="n">PRIVILEGE_KRNL</span><span class="p">);</span>
+    <span class="n">set_idt_desc</span><span class="p">(</span><span class="n">INT_VECTOR_IRQ0</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">DA_386IGate</span><span class="p">,</span> <span class="n">hxi_hwint01</span><span class="p">,</span> <span class="n">PRIVILEGE_KRNL</span><span class="p">);</span>
+    <span class="n">set_idt_desc</span><span class="p">(</span><span class="n">INT_VECTOR_IRQ0</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="n">DA_386IGate</span><span class="p">,</span> <span class="n">hxi_hwint02</span><span class="p">,</span> <span class="n">PRIVILEGE_KRNL</span><span class="p">);</span>
+    <span class="n">set_idt_desc</span><span class="p">(</span><span class="n">INT_VECTOR_IRQ0</span> <span class="o">+</span> <span class="mi">3</span><span class="p">,</span> <span class="n">DA_386IGate</span><span class="p">,</span> <span class="n">hxi_hwint03</span><span class="p">,</span> <span class="n">PRIVILEGE_KRNL</span><span class="p">);</span>
+    <span class="c1">//篇幅所限，未全部展示
+</span><span class="c1"></span>     <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>CPU响应中断后，需要相应的分发器处理，具体的中断处理框架如下图</p>
+<p><img src="/image/play_os_in_action/13_1.webp" alt="interrupt-process"></p>
+<p>中断异常描述数据结构<code>intfltdsc_t</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c">
+<span class="k">typedef</span> <span class="k">struct</span> <span class="n">s_INTFLTDSC</span><span class="p">{</span>    
+    <span class="n">spinlock_t</span>  <span class="n">i_lock</span><span class="p">;</span>    
+    <span class="n">u32_t</span>       <span class="n">i_flg</span><span class="p">;</span>    
+    <span class="n">u32_t</span>       <span class="n">i_stus</span><span class="p">;</span>    
+    <span class="n">uint_t</span>      <span class="n">i_prity</span><span class="p">;</span>        <span class="c1">//中断优先级    
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">i_irqnr</span><span class="p">;</span>        <span class="c1">//中断号    
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">i_deep</span><span class="p">;</span>         <span class="c1">//中断嵌套深度    
+</span><span class="c1"></span>    <span class="n">u64_t</span>       <span class="n">i_indx</span><span class="p">;</span>         <span class="c1">//中断计数    
+</span><span class="c1"></span>    <span class="n">list_h_t</span>    <span class="n">i_serlist</span><span class="p">;</span>      <span class="c1">//也可以使用中断回调函数的方式
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">i_sernr</span><span class="p">;</span>        <span class="c1">//中断回调函数个数   
+</span><span class="c1"></span>    <span class="n">list_h_t</span>    <span class="n">i_serthrdlst</span><span class="p">;</span>   <span class="c1">//中断线程链表头    
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">i_serthrdnr</span><span class="p">;</span>    <span class="c1">//中断线程个数    
+</span><span class="c1"></span>    <span class="kt">void</span><span class="o">*</span>       <span class="n">i_onethread</span><span class="p">;</span>    <span class="c1">//只有一个中断线程时直接用指针    
+</span><span class="c1"></span>    <span class="kt">void</span><span class="o">*</span>       <span class="n">i_rbtreeroot</span><span class="p">;</span>   <span class="c1">//如果中断线程太多则按优先级组成红黑树
+</span><span class="c1"></span>    <span class="n">list_h_t</span>    <span class="n">i_serfisrlst</span><span class="p">;</span>      
+    <span class="n">uint_t</span>      <span class="n">i_serfisrnr</span><span class="p">;</span>       
+    <span class="kt">void</span><span class="o">*</span>       <span class="n">i_msgmpool</span><span class="p">;</span>     <span class="c1">//可能的中断消息池    
+</span><span class="c1"></span>    <span class="kt">void</span><span class="o">*</span>       <span class="n">i_privp</span><span class="p">;</span>    
+    <span class="kt">void</span><span class="o">*</span>       <span class="n">i_extp</span><span class="p">;</span>
+<span class="p">}</span><span class="n">intfltdsc_t</span><span class="p">;</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>中断可以由另一个线程执行 ，也可以是一个回调函数，回调函数存放的结构体</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="nf">drvstus_t</span> <span class="p">(</span><span class="o">*</span><span class="n">intflthandle_t</span><span class="p">)(</span><span class="n">uint_t</span> <span class="n">ift_nr</span><span class="p">,</span><span class="kt">void</span><span class="o">*</span> <span class="n">device</span><span class="p">,</span><span class="kt">void</span><span class="o">*</span> <span class="n">sframe</span><span class="p">);</span> <span class="c1">//中断处理函数的指针类型
+</span><span class="c1"></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">s_INTSERDSC</span><span class="p">{</span>    
+    <span class="n">list_h_t</span>    <span class="n">s_list</span><span class="p">;</span>        <span class="c1">//在中断异常描述符中的链表
+</span><span class="c1"></span>    <span class="n">list_h_t</span>    <span class="n">s_indevlst</span><span class="p">;</span>    <span class="c1">//在设备描述描述符中的链表
+</span><span class="c1"></span>    <span class="n">u32_t</span>       <span class="n">s_flg</span><span class="p">;</span>        
+    <span class="n">intfltdsc_t</span><span class="o">*</span> <span class="n">s_intfltp</span><span class="p">;</span>    <span class="c1">//指向中断异常描述符 
+</span><span class="c1"></span>    <span class="kt">void</span><span class="o">*</span>       <span class="n">s_device</span><span class="p">;</span>      <span class="c1">//指向设备描述符
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">s_indx</span><span class="p">;</span>    
+    <span class="n">intflthandle_t</span> <span class="n">s_handle</span><span class="p">;</span>   <span class="c1">//中断处理的回调函数指针
+</span><span class="c1"></span><span class="p">}</span><span class="n">intserdsc_t</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>当内核或者设备 驱动要安装一个中断处理函数时，先申请一个<code>intserdsc_t</code>结构体，然后
+把中断函数的地址写入其中，最后把结构体挂载到对应的<code>intfltdsc_t</code>中的<code>i_serfisrlst</code>链表中
+由于中断信号有限，而驱动设备可以有更多，所以发生中断时，对应信号所有的处理函数会依次执行，
+如果不是自己设备产生的中断，就会跳过。</p>
+<p>分发器函数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="c1">//中断处理函数
+</span><span class="c1"></span><span class="kt">void</span> <span class="nf">hal_do_hwint</span><span class="p">(</span><span class="n">uint_t</span> <span class="n">intnumb</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">krnlsframp</span><span class="p">)</span>
+<span class="p">{</span>    
+    <span class="n">intfltdsc_t</span> <span class="o">*</span><span class="n">ifdscp</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>    
+    <span class="n">cpuflg_t</span> <span class="n">cpuflg</span><span class="p">;</span>
+    <span class="c1">//根据中断号获取中断异常描述符地址    
+</span><span class="c1"></span>    <span class="n">ifdscp</span> <span class="o">=</span> <span class="n">hal_retn_intfltdsc</span><span class="p">(</span><span class="n">intnumb</span><span class="p">);</span>
+    <span class="c1">//对断异常描述符加锁并中断    
+</span><span class="c1"></span>    <span class="n">hal_spinlock_saveflg_cli</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ifdscp</span><span class="o">-&gt;</span><span class="n">i_lock</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">cpuflg</span><span class="p">);</span>    
+    <span class="n">ifdscp</span><span class="o">-&gt;</span><span class="n">i_indx</span><span class="o">++</span><span class="p">;</span>    
+    <span class="n">ifdscp</span><span class="o">-&gt;</span><span class="n">i_deep</span><span class="o">++</span><span class="p">;</span>
+    <span class="c1">//运行中断处理的回调函数
+</span><span class="c1"></span>    <span class="n">hal_run_intflthandle</span><span class="p">(</span><span class="n">intnumb</span><span class="p">,</span> <span class="n">krnlsframp</span><span class="p">);</span>    
+    <span class="n">ifdscp</span><span class="o">-&gt;</span><span class="n">i_deep</span><span class="o">--</span><span class="p">;</span>
+    <span class="c1">//解锁并恢复中断状态    
+</span><span class="c1"></span>    <span class="n">hal_spinunlock_restflg_sti</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ifdscp</span><span class="o">-&gt;</span><span class="n">i_lock</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">cpuflg</span><span class="p">);</span>    
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">//异常分发器
+</span><span class="c1"></span><span class="kt">void</span> <span class="nf">hal_fault_allocator</span><span class="p">(</span><span class="n">uint_t</span> <span class="n">faultnumb</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">krnlsframp</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">//我们的异常处理回调函数也是放在中断异常描述符中的
+</span><span class="c1"></span>    <span class="n">hal_do_hwint</span><span class="p">(</span><span class="n">faultnumb</span><span class="p">,</span> <span class="n">krnlsframp</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">//中断分发器
+</span><span class="c1"></span><span class="kt">void</span> <span class="nf">hal_hwint_allocator</span><span class="p">(</span><span class="n">uint_t</span> <span class="n">intnumb</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">krnlsframp</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">hal_do_hwint</span><span class="p">(</span><span class="n">intnumb</span><span class="p">,</span> <span class="n">krnlsframp</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>调用回调函数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">hal_run_intflthandle</span><span class="p">(</span><span class="n">uint_t</span> <span class="n">ifdnr</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">sframe</span><span class="p">)</span>
+<span class="p">{</span>    
+    <span class="n">intserdsc_t</span> <span class="o">*</span><span class="n">isdscp</span><span class="p">;</span>    
+    <span class="n">list_h_t</span> <span class="o">*</span><span class="n">lst</span><span class="p">;</span>
+    <span class="c1">//根据中断号获取中断异常描述符地址    
+</span><span class="c1"></span>    <span class="n">intfltdsc_t</span> <span class="o">*</span><span class="n">ifdscp</span> <span class="o">=</span> <span class="n">hal_retn_intfltdsc</span><span class="p">(</span><span class="n">ifdnr</span><span class="p">);</span>
+    <span class="c1">//遍历i_serlist链表    
+</span><span class="c1"></span>    <span class="n">list_for_each</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ifdscp</span><span class="o">-&gt;</span><span class="n">i_serlist</span><span class="p">)</span>    
+    <span class="p">{</span>   
+        <span class="c1">//获取i_serlist链表上对象即intserdsc_t结构
+</span><span class="c1"></span>        <span class="n">isdscp</span> <span class="o">=</span> <span class="n">list_entry</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span> <span class="n">intserdsc_t</span><span class="p">,</span> <span class="n">s_list</span><span class="p">);</span>  
+        <span class="c1">//调用中断处理回调函数      
+</span><span class="c1"></span>        <span class="n">isdscp</span><span class="o">-&gt;</span><span class="n">s_handle</span><span class="p">(</span><span class="n">ifdnr</span><span class="p">,</span> <span class="n">isdscp</span><span class="o">-&gt;</span><span class="n">s_device</span><span class="p">,</span> <span class="n">sframe</span><span class="p">);</span>    
+    <span class="p">}</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="初始化中断控制器">初始化中断控制器</h3>
+<p>中断控制器可以屏蔽或启动哪些设备，也可以设定设备之间的优先级
+x86平台最开始使用的是8259A控制器，以级联的方式存在，有15个信号源</p>
+<p><img src="/image/play_os_in_action/13_2.webp" alt="8259A"></p>
+<h1 id="第十四讲-linux初始化上">第十四讲 Linux初始化（上）</h1>
+<h2 id="全局流程">全局流程</h2>
+<p>机器加电后，BIOS会进行自检，然后加载引导设备中的引导扇区，在安装有Linux
+操作系统的环境的引导扇区有GRUB程序，GRUB会加载Linux内核映像vmlinuz
+<img src="/image/play_os_in_action/14_1.webp" alt="linux_boot1"></p>
+<h2 id="从bios到grub">从BIOS到GRUB</h2>
+<p>加电时，会将CS和IP寄存器设置为0XF000和0XFFF0，这个对应物理地址0XFFF0（CS左移4位+IP），
+这个 地址连接了主板上的一个小 ROM芯片，这个芯片和内存有相同的访问机制和寻址方式，
+只是在断电时也不会丢失数据，BIOS程序就存储在这个芯片上。</p>
+<p>BIOS一开始会初始化CPU；然后检查内存，将自己的一部分复制到内存，跳转到内存中运行；
+接下来枚举本地设备进行初始化，检查硬件是否损坏；
+之后在内存中建立中断表和中断服程序，从0x00000~0x003ff的1KB空间构建中断表，中断表有256个条目，每个条目4字节（CS+IP寄存器），
+0x00400~0x004FF的256KBk空间构建BIOSu数据区，其中在0x0e05b的地址加载了8KB大小的和中断表对应的中断服务程序。</p>
+<p>当BIOS找到启动区后（设备的0盘0道1扇区，共 512字节，最后两字节为0x55和0xaa，即代表包含GRUB启动程序），将数据复制到
+0x7c00起始的内存地址，然后加控制权交给了GRUB</p>
+<h2 id="grub启动">GRUB启动</h2>
+<p>由于GRUB程序不止512字节，所以会分多次加载。
+其中有两个重要的文件，第一个是<code>boot.img</code>，
+<code>boot.img</code>会被GRUB程序写到硬盘的启动区，同时在文件中的第一个位置
+写入<code>core.img</code>占用的第一个扇区的区号；
+第二个文件是<code>core.img</code>，<code>core.img</code>中嵌入了足够多的功能，
+可以识别硬盘文件系统 、访问<code>/boot/grub</code>目录、加载启动菜单等</p>
+<h2 id="详解vmlinuz文件结构">详解vmlinuz文件结构</h2>
+<p><img src="/image/play_os_in_action/14_2.webp" alt="linux_vmlinuz"></p>
+<h1 id="第十五讲-linux初始化下">第十五讲 Linux初始化（下）</h1>
+<p><img src="/image/play_os_in_action/15_1.webp" alt="linux_start_kernel"></p>
+<ol>
+<li>
+<p>GRUB 加载 vmlinuz 文件之后，会把控制权交给 vmlinuz 文件的 setup.bin 的部分中 _start，它会设置好栈，清空 bss，设置好 setup_header 结构，调用 16 位 main 切换到保护模式，最后跳转到 1MB 处的 vmlinux.bin 文件中。</p>
+</li>
+<li>
+<p>从 vmlinux.bin 文件中 startup32、startup64 函数开始建立新的全局段描述符表和 MMU 页表，切换到长模式下解压 vmlinux.bin.gz。释放出 vmlinux 文件之后，由解析 elf 格式的函数进行解析，释放 vmlinux 中的代码段和数据段到指定的内存。然后调用其中的 startup_64 函数，在这个函数的最后调用 Linux 内核的第一个 C 函数。</p>
+</li>
+<li>
+<p>Linux 内核第一个 C 函数重新设置 MMU 页表，随后便调用了最有名的 start_kernel 函数， start_kernel 函数中调用了大多数 Linux 内核功能性初始化函数，在最后调用 rest_init 函数建立了两个内核线程，在其中的 kernel_init 线程建立了第一个用户态进程。</p>
+</li>
+</ol>
 <h1 id="参考">参考</h1>
 <ul>
 <li><a href="https://stackoverflow.com/questions/37146637/why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux">why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux</a></li>
