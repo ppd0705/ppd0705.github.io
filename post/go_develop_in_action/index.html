@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]Go项目开发实战（更新中）">
 <meta itemprop="description" content="第一讲 开源规范 开源协议概述 MIT是相对自由开发的协议 第二讲 文档规范 最重要的三类文档：README文档、项目文档和API文档 README规范 主"><meta itemprop="datePublished" content="2021-06-28T07:28:37+08:00" />
 <meta itemprop="dateModified" content="2021-06-28T07:28:37+08:00" />
-<meta itemprop="wordCount" content="14344">
+<meta itemprop="wordCount" content="15351">
 <meta itemprop="keywords" content="Golang," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]Go项目开发实战（更新中）"/>
 <meta name="twitter:description" content="第一讲 开源规范 开源协议概述 MIT是相对自由开发的协议 第二讲 文档规范 最重要的三类文档：README文档、项目文档和API文档 README规范 主"/>
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 14344 words </span>
-          <span class="more-meta"> 29 min read </span>
+        <span class="more-meta"> 15351 words </span>
+          <span class="more-meta"> 31 min read </span>
 
         
         
@@ -607,6 +607,34 @@
             <li><a href="#插件化选择json库">插件化选择JSON库</a></li>
             <li><a href="#调用链实现">调用链实现</a></li>
             <li><a href="#数据一致性">数据一致性</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#第二十二讲-gorm介绍">第二十二讲 GORM介绍</a>
+      <ul>
+        <li><a href="#常用操作">常用操作</a>
+          <ul>
+            <li><a href="#模型定义">模型定义</a></li>
+            <li><a href="#连接数据库">连接数据库</a></li>
+            <li><a href="#创建记录">创建记录</a></li>
+            <li><a href="#删除记录">删除记录</a></li>
+            <li><a href="#更新记录">更新记录</a></li>
+            <li><a href="#查询记录">查询记录</a></li>
+            <li><a href="#钩子">钩子</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#第二十三讲-数据流服务-authz-server-设计">第二十三讲 数据流服务 authz-server 设计</a>
+      <ul>
+        <li><a href="#访问控制策略库-ladon">访问控制策略库 ladon</a></li>
+        <li><a href="#authz-server-代码实现">authz-server 代码实现</a>
+          <ul>
+            <li><a href="#启动流程-1">启动流程</a></li>
+            <li><a href="#api请求处理流程">API请求处理流程</a></li>
+            <li><a href="#代码架构-1">代码架构</a></li>
+            <li><a href="#缓存更新">缓存更新</a></li>
           </ul>
         </li>
       </ul>
@@ -3373,6 +3401,438 @@ ExtendShadow 是 Mysql text 类型
 <li>当api-server数据更新时，发通过redis发信心给authz-server</li>
 <li>authz-server订阅收到信息后会重新通过grpc接口加载全量数据</li>
 </ul>
+<h1 id="第二十二讲-gorm介绍">第二十二讲 GORM介绍</h1>
+<h2 id="常用操作">常用操作</h2>
+<h3 id="模型定义">模型定义</h3>
+<p>通过<code>column</code>标签指定列名，通过给Model添加TableName方法指定表名</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go">
+<span class="kd">type</span> <span class="nx">Animal</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="nx">AnimalID</span> <span class="kt">int64</span>     <span class="s">`gorm:&#34;column:animalID;primarykey&#34;`</span> <span class="c1">// 将列名设为 `animalID`
+</span><span class="c1"></span>    <span class="nx">Birthday</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span> <span class="s">`gorm:&#34;column:birthday&#34;`</span>            <span class="c1">// 将列名设为 `birthday`
+</span><span class="c1"></span>    <span class="nx">Age</span>      <span class="kt">int64</span>     <span class="s">`gorm:&#34;column:age&#34;`</span>                 <span class="c1">// 将列名设为 `age`
+</span><span class="c1"></span><span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">a</span> <span class="o">*</span><span class="nx">Animal</span><span class="p">)</span> <span class="nf">TableName</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="s">&#34;animal&#34;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="连接数据库">连接数据库</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go">
+<span class="kn">import</span> <span class="p">(</span>
+  <span class="s">&#34;gorm.io/driver/mysql&#34;</span>
+  <span class="s">&#34;gorm.io/gorm&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// 参考 https://github.com/go-sql-driver/mysql#dsn-data-source-name 获取详情
+</span><span class="c1"></span>  <span class="nx">dsn</span> <span class="o">:=</span> <span class="s">&#34;user:pass@tcp(127.0.0.1:3306)/dbname?charset=utf8mb4&amp;parseTime=True&amp;loc=Local&#34;</span>
+  <span class="nx">db</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">gorm</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="nx">mysql</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="nx">dsn</span><span class="p">),</span> <span class="o">&amp;</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">Config</span><span class="p">{})</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="创建记录">创建记录</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">gorm</span><span class="p">.</span><span class="nx">Model</span>
+  <span class="nx">Name</span>         <span class="kt">string</span>
+  <span class="nx">Age</span>          <span class="kt">uint8</span>
+  <span class="nx">Birthday</span>     <span class="o">*</span><span class="nx">time</span><span class="p">.</span><span class="nx">Time</span>
+<span class="p">}</span>
+<span class="nx">user</span> <span class="o">:=</span> <span class="nx">User</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;Jinzhu&#34;</span><span class="p">,</span> <span class="nx">Age</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span> <span class="nx">Birthday</span><span class="p">:</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">()}</span>
+<span class="nx">result</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">)</span> <span class="c1">// 通过数据的指针来创建
+</span></code></pre></td></tr></table>
+</div>
+</div><p>db.Create 函数会返回三个值</p>
+<ul>
+<li>user.ID: 主键，直接赋值给user变量</li>
+<li>result.Error: error</li>
+<li>result.RowsAffected: 插入记录的条数</li>
+</ul>
+<h3 id="删除记录">删除记录</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go">
+<span class="c1">// DELETE from users where id = 10 AND name = &#34;jinzhu&#34;;
+</span><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;name = ?&#34;</span><span class="p">,</span> <span class="s">&#34;jinzhu&#34;</span><span class="p">).</span><span class="nf">Delete</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">User</span><span class="p">{})</span>
+
+
+<span class="c1">// DELETE FROM users WHERE id = 10;
+</span><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Delete</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">User</span><span class="p">{},</span> <span class="mi">10</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>当模型中包含<code>DeletedAt</code>字段时，默认 执行 软删除</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go">
+<span class="c1">// UPDATE users SET deleted_at=&#34;2013-10-29 10:23&#34; WHERE age = 20;
+</span><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;age = ?&#34;</span><span class="p">,</span> <span class="mi">20</span><span class="p">).</span><span class="nf">Delete</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">User</span><span class="p">{})</span>
+
+<span class="c1">// SELECT * FROM users WHERE age = 20 AND deleted_at IS NULL;
+</span><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;age = 20&#34;</span><span class="p">).</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>永久删除可用 Unscoped</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="c1">// DELETE FROM orders WHERE id=10;
+</span><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Unscoped</span><span class="p">().</span><span class="nf">Delete</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">order</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="更新记录">更新记录</h3>
+<p>获取记录实例再更新</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="nx">db</span><span class="p">.</span><span class="nf">First</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">)</span>
+
+<span class="nx">user</span><span class="p">.</span><span class="nx">Name</span> <span class="p">=</span> <span class="s">&#34;jinzhu 2&#34;</span>
+<span class="nx">user</span><span class="p">.</span><span class="nx">Age</span> <span class="p">=</span> <span class="mi">100</span>
+<span class="c1">// UPDATE users SET name=&#39;jinzhu 2&#39;, age=100, birthday=&#39;2016-01-01&#39;, updated_at = &#39;2013-11-17 21:34:10&#39; WHERE id=111;
+</span><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Save</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>指定列更新</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="c1">// UPDATE users SET age=200, updated_at=&#39;2013-11-17 21:34:10&#39; WHERE name=&#39;colin&#39;;
+</span><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Model</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">User</span><span class="p">{}).</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;name = ?&#34;</span><span class="p">,</span> <span class="s">&#34;colin&#34;</span><span class="p">).</span><span class="nf">Update</span><span class="p">(</span><span class="s">&#34;age&#34;</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+
+<span class="c1">// UPDATE users SET name=&#39;hello&#39;, age=18, updated_at = &#39;2013-11-17 21:34:10&#39; WHERE name = &#39;colin&#39;;
+</span><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Model</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">).</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="s">&#34;colin&#34;</span><span class="p">).</span><span class="nf">Updates</span><span class="p">(</span><span class="nx">User</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;hello&#34;</span><span class="p">,</span> <span class="nx">Age</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span> <span class="nx">Active</span><span class="p">:</span> <span class="kc">false</span><span class="p">})</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="查询记录">查询记录</h3>
+<p>简单查询</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 获取第一条记录（主键升序）
+</span><span class="c1">// SELECT * FROM users ORDER BY id LIMIT 1;
+</span><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">First</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">)</span>
+
+<span class="c1">// 获取最后一条记录（主键降序）
+</span><span class="c1">// SELECT * FROM users ORDER BY id DESC LIMIT 1;
+</span><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Last</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">)</span>
+<span class="nx">result</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">First</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">)</span>
+<span class="nx">result</span><span class="p">.</span><span class="nx">RowsAffected</span> <span class="c1">// 返回找到的记录数
+</span><span class="c1"></span><span class="nx">result</span><span class="p">.</span><span class="nx">Error</span>        <span class="c1">// returns error
+</span><span class="c1"></span>
+<span class="c1">// 检查 ErrRecordNotFound 错误
+</span><span class="c1"></span><span class="nx">errors</span><span class="p">.</span><span class="nf">Is</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">Error</span><span class="p">,</span> <span class="nx">gorm</span><span class="p">.</span><span class="nx">ErrRecordNotFound</span><span class="p">)</span>
+
+
+<span class="nx">users</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="o">*</span><span class="nx">User</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="c1">// SELECT * FROM users WHERE name &lt;&gt; &#39;jinzhu&#39;;
+</span><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;name &lt;&gt; ?&#34;</span><span class="p">,</span> <span class="s">&#34;jinzhu&#34;</span><span class="p">).</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">users</span><span class="p">)</span>
+
+
+<span class="kd">type</span> <span class="nx">APIUser</span> <span class="kd">struct</span> <span class="p">{</span>
+<span class="nx">ID</span>   <span class="kt">uint</span>
+<span class="nx">Name</span> <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="c1">// SELECT `id`, `name` FROM `users` LIMIT 10;
+</span><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Model</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">User</span><span class="p">{}).</span><span class="nf">Limit</span><span class="p">(</span><span class="mi">10</span><span class="p">).</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">APIUser</span><span class="p">{})</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>高级查询</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="c1">// SELECT * FROM users ORDER BY age desc, name;
+</span><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Order</span><span class="p">(</span><span class="s">&#34;age desc, name&#34;</span><span class="p">).</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">users</span><span class="p">)</span>
+
+<span class="c1">// SELECT * FROM users OFFSET 5 LIMIT 10;
+</span><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Limit</span><span class="p">(</span><span class="mi">10</span><span class="p">).</span><span class="nf">Offset</span><span class="p">(</span><span class="mi">5</span><span class="p">).</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">users</span><span class="p">)</span>
+
+<span class="c1">// Distinct
+</span><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Distinct</span><span class="p">(</span><span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="s">&#34;age&#34;</span><span class="p">).</span><span class="nf">Order</span><span class="p">(</span><span class="s">&#34;name, age desc&#34;</span><span class="p">).</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">results</span><span class="p">)</span>
+
+
+<span class="kd">var</span> <span class="nx">count</span> <span class="kt">int64</span>
+<span class="c1">// SELECT count(1) FROM users WHERE name = &#39;jinzhu&#39;; (count)
+</span><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Model</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">User</span><span class="p">{}).</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;name = ?&#34;</span><span class="p">,</span> <span class="s">&#34;jinzhu&#34;</span><span class="p">).</span><span class="nf">Count</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">count</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>原生SQL</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go">
+<span class="kd">type</span> <span class="nx">Result</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">ID</span>   <span class="kt">int</span>
+  <span class="nx">Name</span> <span class="kt">string</span>
+  <span class="nx">Age</span>  <span class="kt">int</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">result</span> <span class="nx">Result</span>
+<span class="nx">db</span><span class="p">.</span><span class="nf">Raw</span><span class="p">(</span><span class="s">&#34;SELECT id, name, age FROM users WHERE name = ?&#34;</span><span class="p">,</span> <span class="mi">3</span><span class="p">).</span><span class="nf">Scan</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">result</span><span class="p">)</span>
+
+
+<span class="nx">db</span><span class="p">.</span><span class="nf">Exec</span><span class="p">(</span><span class="s">&#34;DROP TABLE users&#34;</span><span class="p">)</span>
+<span class="nx">db</span><span class="p">.</span><span class="nf">Exec</span><span class="p">(</span><span class="s">&#34;UPDATE orders SET shipped_at=? WHERE id IN ?&#34;</span><span class="p">,</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">(),</span> <span class="p">[]</span><span class="kt">int64</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">})</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="钩子">钩子</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 插入记录前执行 BeforeCreate
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">u</span> <span class="o">*</span><span class="nx">User</span><span class="p">)</span> <span class="nf">BeforeCreate</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">)</span> <span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">u</span><span class="p">.</span><span class="nx">UUID</span> <span class="p">=</span> <span class="nx">uuid</span><span class="p">.</span><span class="nf">New</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nx">u</span><span class="p">.</span><span class="nx">Name</span> <span class="o">==</span> <span class="s">&#34;admin&#34;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;invalid name&#34;</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">return</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="第二十三讲-数据流服务-authz-server-设计">第二十三讲 数据流服务 authz-server 设计</h1>
+<h2 id="访问控制策略库-ladon">访问控制策略库 ladon</h2>
+<p>策略样例</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+  <span class="nt">&#34;description&#34;</span><span class="p">:</span> <span class="s2">&#34;One policy to rule them all.&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;subjects&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&#34;users:&lt;peter|ken&gt;&#34;</span><span class="p">,</span> <span class="s2">&#34;users:maria&#34;</span><span class="p">,</span> <span class="s2">&#34;groups:admins&#34;</span><span class="p">],</span>
+  <span class="nt">&#34;actions&#34;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&#34;delete&#34;</span><span class="p">,</span> <span class="s2">&#34;&lt;create|update&gt;&#34;</span><span class="p">],</span>
+  <span class="nt">&#34;effect&#34;</span><span class="p">:</span> <span class="s2">&#34;allow&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;resources&#34;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&#34;resources:articles:&lt;.*&gt;&#34;</span><span class="p">,</span>
+    <span class="s2">&#34;resources:printer&#34;</span>
+  <span class="p">],</span>
+  <span class="nt">&#34;conditions&#34;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&#34;remoteIP&#34;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;CIDRCondition&#34;</span><span class="p">,</span>
+        <span class="nt">&#34;options&#34;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&#34;cidr&#34;</span><span class="p">:</span> <span class="s2">&#34;192.168.0.1/16&#34;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>一般策略包含6个元素</p>
+<ul>
+<li>主题 subject：授权主体，必须唯一</li>
+<li>操作 action</li>
+<li>效力 effect：表示结果是允许 allow 还是拒绝 deny</li>
+<li>资源 resource：操作的对象</li>
+<li>约束条件 condition：如IP、日期等</li>
+<li>描述 description：策略说明</li>
+</ul>
+<p>假如有一个如下请求</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json">
+<span class="p">{</span>
+  <span class="nt">&#34;subject&#34;</span><span class="p">:</span> <span class="s2">&#34;users:peter&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;action&#34;</span> <span class="p">:</span> <span class="s2">&#34;delete&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;resource&#34;</span><span class="p">:</span> <span class="s2">&#34;resources:articles:ladon-introduction&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;context&#34;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&#34;remoteIP&#34;</span><span class="p">:</span> <span class="s2">&#34;192.168.0.5&#34;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>那么操作是允许的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+    <span class="nt">&#34;allowed&#34;</span><span class="p">:</span> <span class="kc">true</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="authz-server-代码实现">authz-server 代码实现</h2>
+<h3 id="启动流程-1">启动流程</h3>
+<p><img src="/image/go_develop_in_action/31_1.webp" alt="authz-server-start"></p>
+<h3 id="api请求处理流程">API请求处理流程</h3>
+<p><img src="/image/go_develop_in_action/31_2.webp" alt="authz-server-request"></p>
+<h3 id="代码架构-1">代码架构</h3>
+<p><img src="/image/go_develop_in_action/31_3.webp" alt="authz-server-architecture"></p>
+<h3 id="缓存更新">缓存更新</h3>
+<p><img src="/image/go_develop_in_action/31_4.webp" alt="authz-server-cache"></p>
 <h1 id="参考">参考</h1>
 <ul>
 <li><a href="https://time.geekbang.org/column/intro/418">课程资源-Go 语言项目开发实战</a></li>
