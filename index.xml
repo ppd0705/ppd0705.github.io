@@ -8616,6 +8616,72 @@ ExtendShadow 是 Mysql text 类型
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/31_3.webp&#34; alt=&#34;authz-server-architecture&#34;&gt;&lt;/p&gt;
 &lt;h3 id=&#34;缓存更新&#34;&gt;缓存更新&lt;/h3&gt;
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/31_4.webp&#34; alt=&#34;authz-server-cache&#34;&gt;&lt;/p&gt;
+&lt;h1 id=&#34;第二十四讲-数据采集&#34;&gt;第二十四讲 数据采集&lt;/h1&gt;
+&lt;p&gt;通常一个大型应用为了后期排障和运营分析，会收集一些请求日志&lt;/p&gt;
+&lt;h2 id=&#34;功能设计&#34;&gt;功能设计&lt;/h2&gt;
+&lt;p&gt;数据采集系统通常分为两部分：数据上报、数据处理&lt;/p&gt;
+&lt;p&gt;为了提高异步数据上报的吞吐量，可以先将数据缓存在内存中，并使用多个worker去
+消费内存中的数据&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/32_1.webp&#34; alt=&#34;data-collect&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;功能实现&#34;&gt;功能实现&lt;/h2&gt;
+&lt;p&gt;iam中 authz-server实现了数据上报功能，pump服务实现数据采集功能&lt;/p&gt;
+&lt;h3 id=&#34;数据上报&#34;&gt;数据上报&lt;/h3&gt;
+&lt;p&gt;authz-sever实现要点&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;上报功能开启、批量上报数量、时间间隔都可以配置&lt;/li&gt;
+&lt;li&gt;多个 worker共同消费一个chan 提高消费能力&lt;/li&gt;
+&lt;li&gt;优雅关停，确保停止时缓存的数据也会上报&lt;/li&gt;
+&lt;li&gt;使用msgpack序列化消息，msgpack比json更快更小&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;数据采集&#34;&gt;数据采集&lt;/h3&gt;
+&lt;p&gt;pump服务消费Redis中的消费数据，然后保存在MongoDB中&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/32_2.webp&#34; alt=&#34;iam-pump-architecture&#34;&gt;&lt;/p&gt;
+&lt;h1 id=&#34;第二十五讲-公有云sdk设计&#34;&gt;第二十五讲 公有云SDK设计&lt;/h1&gt;
+&lt;h2 id=&#34;目录结构&#34;&gt;目录结构&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;├── examples            # 示例代码存放目录
+│   └── authz.go
+├── README.md           # SDK使用文档
+├── sdk                 # 公共包，封装了SDK配置、API请求、认证等代码
+│   ├── client.go
+│   ├── config.go
+│   ├── credential.go
+│   └── ...
+└── services            # API封装
+    ├── common
+    │   └── model
+    ├── iam             # iam服务的API接口
+    │   ├── authz.go
+    │   ├── client.go
+    │   └── ...
+    └── tms             # tms服务的API接口
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;设计方法&#34;&gt;设计方法&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/go_develop_in_action/31_1.webp&#34; alt=&#34;sdk-architecture&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Client构造SDK客户端，请求Builder和Signer来构建请求参数，之后
+请求Request模块发送请求&lt;/p&gt;
+&lt;h1 id=&#34;第二十六讲-iam-sdk设计&#34;&gt;第二十六讲 IAM SDK设计&lt;/h1&gt;
+&lt;p&gt;设计风格参考k8s的设计方式&lt;/p&gt;
 &lt;h1 id=&#34;参考&#34;&gt;参考&lt;/h1&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://time.geekbang.org/column/intro/418&#34;&gt;课程资源-Go 语言项目开发实战&lt;/a&gt;&lt;/li&gt;

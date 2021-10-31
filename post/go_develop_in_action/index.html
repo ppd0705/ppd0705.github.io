@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]Go项目开发实战（更新中）">
 <meta itemprop="description" content="第一讲 开源规范 开源协议概述 MIT是相对自由开发的协议 第二讲 文档规范 最重要的三类文档：README文档、项目文档和API文档 README规范 主"><meta itemprop="datePublished" content="2021-06-28T07:28:37+08:00" />
 <meta itemprop="dateModified" content="2021-06-28T07:28:37+08:00" />
-<meta itemprop="wordCount" content="15351">
+<meta itemprop="wordCount" content="15924">
 <meta itemprop="keywords" content="Golang," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]Go项目开发实战（更新中）"/>
 <meta name="twitter:description" content="第一讲 开源规范 开源协议概述 MIT是相对自由开发的协议 第二讲 文档规范 最重要的三类文档：README文档、项目文档和API文档 README规范 主"/>
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 15351 words </span>
-          <span class="more-meta"> 31 min read </span>
+        <span class="more-meta"> 15924 words </span>
+          <span class="more-meta"> 32 min read </span>
 
         
         
@@ -639,6 +639,24 @@
         </li>
       </ul>
     </li>
+    <li><a href="#第二十四讲-数据采集">第二十四讲 数据采集</a>
+      <ul>
+        <li><a href="#功能设计">功能设计</a></li>
+        <li><a href="#功能实现">功能实现</a>
+          <ul>
+            <li><a href="#数据上报">数据上报</a></li>
+            <li><a href="#数据采集">数据采集</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#第二十五讲-公有云sdk设计">第二十五讲 公有云SDK设计</a>
+      <ul>
+        <li><a href="#目录结构">目录结构</a></li>
+        <li><a href="#设计方法">设计方法</a></li>
+      </ul>
+    </li>
+    <li><a href="#第二十六讲-iam-sdk设计">第二十六讲 IAM SDK设计</a></li>
     <li><a href="#参考">参考</a></li>
   </ul>
 </nav>
@@ -3833,6 +3851,72 @@ ExtendShadow 是 Mysql text 类型
 <p><img src="/image/go_develop_in_action/31_3.webp" alt="authz-server-architecture"></p>
 <h3 id="缓存更新">缓存更新</h3>
 <p><img src="/image/go_develop_in_action/31_4.webp" alt="authz-server-cache"></p>
+<h1 id="第二十四讲-数据采集">第二十四讲 数据采集</h1>
+<p>通常一个大型应用为了后期排障和运营分析，会收集一些请求日志</p>
+<h2 id="功能设计">功能设计</h2>
+<p>数据采集系统通常分为两部分：数据上报、数据处理</p>
+<p>为了提高异步数据上报的吞吐量，可以先将数据缓存在内存中，并使用多个worker去
+消费内存中的数据</p>
+<p><img src="/image/go_develop_in_action/32_1.webp" alt="data-collect"></p>
+<h2 id="功能实现">功能实现</h2>
+<p>iam中 authz-server实现了数据上报功能，pump服务实现数据采集功能</p>
+<h3 id="数据上报">数据上报</h3>
+<p>authz-sever实现要点</p>
+<ul>
+<li>上报功能开启、批量上报数量、时间间隔都可以配置</li>
+<li>多个 worker共同消费一个chan 提高消费能力</li>
+<li>优雅关停，确保停止时缓存的数据也会上报</li>
+<li>使用msgpack序列化消息，msgpack比json更快更小</li>
+</ul>
+<h3 id="数据采集">数据采集</h3>
+<p>pump服务消费Redis中的消费数据，然后保存在MongoDB中</p>
+<p><img src="/image/go_develop_in_action/32_2.webp" alt="iam-pump-architecture"></p>
+<h1 id="第二十五讲-公有云sdk设计">第二十五讲 公有云SDK设计</h1>
+<h2 id="目录结构">目录结构</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">├── examples            # 示例代码存放目录
+│   └── authz.go
+├── README.md           # SDK使用文档
+├── sdk                 # 公共包，封装了SDK配置、API请求、认证等代码
+│   ├── client.go
+│   ├── config.go
+│   ├── credential.go
+│   └── ...
+└── services            # API封装
+    ├── common
+    │   └── model
+    ├── iam             # iam服务的API接口
+    │   ├── authz.go
+    │   ├── client.go
+    │   └── ...
+    └── tms             # tms服务的API接口
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="设计方法">设计方法</h2>
+<p><img src="/image/go_develop_in_action/31_1.webp" alt="sdk-architecture"></p>
+<p>Client构造SDK客户端，请求Builder和Signer来构建请求参数，之后
+请求Request模块发送请求</p>
+<h1 id="第二十六讲-iam-sdk设计">第二十六讲 IAM SDK设计</h1>
+<p>设计风格参考k8s的设计方式</p>
 <h1 id="参考">参考</h1>
 <ul>
 <li><a href="https://time.geekbang.org/column/intro/418">课程资源-Go 语言项目开发实战</a></li>
