@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]Go项目开发实战（更新中）">
 <meta itemprop="description" content="第一讲 开源规范 开源协议概述 MIT是相对自由开发的协议 第二讲 文档规范 最重要的三类文档：README文档、项目文档和API文档 README规范 主"><meta itemprop="datePublished" content="2021-06-28T07:28:37+08:00" />
 <meta itemprop="dateModified" content="2021-06-28T07:28:37+08:00" />
-<meta itemprop="wordCount" content="16249">
+<meta itemprop="wordCount" content="16346">
 <meta itemprop="keywords" content="Golang," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]Go项目开发实战（更新中）"/>
 <meta name="twitter:description" content="第一讲 开源规范 开源协议概述 MIT是相对自由开发的协议 第二讲 文档规范 最重要的三类文档：README文档、项目文档和API文档 README规范 主"/>
@@ -302,7 +302,7 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 16249 words </span>
+        <span class="more-meta"> 16346 words </span>
           <span class="more-meta"> 33 min read </span>
 
         
@@ -666,6 +666,12 @@
             <li><a href="#服务级客户端">服务级客户端</a></li>
           </ul>
         </li>
+      </ul>
+    </li>
+    <li><a href="#第二十七讲-iam-命令行工具设计">第二十七讲 IAM 命令行工具设计</a>
+      <ul>
+        <li><a href="#大型系统客户端的特点">大型系统客户端的特点</a></li>
+        <li><a href="#iamctl核心实现">iamctl核心实现</a></li>
       </ul>
     </li>
     <li><a href="#参考">参考</a></li>
@@ -4058,7 +4064,18 @@ ExtendShadow 是 Mysql text 类型
 <span class="nx">rsp</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">Authz</span><span class="p">().</span><span class="nf">Authorize</span><span class="p">()</span>
 </code></pre></td></tr></table>
 </div>
-</div><h1 id="参考">参考</h1>
+</div><h1 id="第二十七讲-iam-命令行工具设计">第二十七讲 IAM 命令行工具设计</h1>
+<p><img src="/image/go_develop_in_action/35_1.webp" alt="cli-call"></p>
+<h2 id="大型系统客户端的特点">大型系统客户端的特点</h2>
+<ul>
+<li>支持命令和子命令</li>
+<li>支持特殊命令如version、completion（bash补全）</li>
+<li>支持全局选项</li>
+<li>支持<code>-h/--help</code>(帮助信息)</li>
+</ul>
+<h2 id="iamctl核心实现">iamctl核心实现</h2>
+<p><img src="/image/go_develop_in_action/35_2.webp" alt="cli-functions"></p>
+<h1 id="参考">参考</h1>
 <ul>
 <li><a href="https://time.geekbang.org/column/intro/418">课程资源-Go 语言项目开发实战</a></li>
 <li><a href="https://www.techgrow.cn/posts/5bd5a253.html">gcc升级</a></li>
