@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]Go项目开发实战（更新中）">
 <meta itemprop="description" content="第一讲 开源规范 开源协议概述 MIT是相对自由开发的协议 第二讲 文档规范 最重要的三类文档：README文档、项目文档和API文档 README规范 主"><meta itemprop="datePublished" content="2021-06-28T07:28:37+08:00" />
 <meta itemprop="dateModified" content="2021-06-28T07:28:37+08:00" />
-<meta itemprop="wordCount" content="16346">
+<meta itemprop="wordCount" content="17448">
 <meta itemprop="keywords" content="Golang," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]Go项目开发实战（更新中）"/>
 <meta name="twitter:description" content="第一讲 开源规范 开源协议概述 MIT是相对自由开发的协议 第二讲 文档规范 最重要的三类文档：README文档、项目文档和API文档 README规范 主"/>
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 16346 words </span>
-          <span class="more-meta"> 33 min read </span>
+        <span class="more-meta"> 17448 words </span>
+          <span class="more-meta"> 35 min read </span>
 
         
         
@@ -672,6 +672,28 @@
       <ul>
         <li><a href="#大型系统客户端的特点">大型系统客户端的特点</a></li>
         <li><a href="#iamctl核心实现">iamctl核心实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#第二十八讲-如何编写单元测试和性能测试用例">第二十八讲 如何编写单元测试和性能测试用例</a>
+      <ul>
+        <li><a href="#单元测试">单元测试</a></li>
+        <li><a href="#性能测试">性能测试</a></li>
+      </ul>
+    </li>
+    <li><a href="#第二十九讲-iam测试介绍">第二十九讲 IAM测试介绍</a>
+      <ul>
+        <li><a href="#示例测试">示例测试</a></li>
+        <li><a href="#testmain-函数">TestMain 函数</a></li>
+        <li><a href="#mock测试">Mock测试</a>
+          <ul>
+            <li><a href="#生成方式">生成方式</a></li>
+            <li><a href="#编写测试用例">编写测试用例</a></li>
+          </ul>
+        </li>
+        <li><a href="#fake测试">Fake测试</a></li>
+        <li><a href="#何时编写和执行单元测试">何时编写和执行单元测试</a></li>
+        <li><a href="#测试覆盖率">测试覆盖率</a></li>
+        <li><a href="#iam如何运行测试">IAM如何运行测试</a></li>
       </ul>
     </li>
     <li><a href="#参考">参考</a></li>
@@ -4075,7 +4097,276 @@ ExtendShadow 是 Mysql text 类型
 </ul>
 <h2 id="iamctl核心实现">iamctl核心实现</h2>
 <p><img src="/image/go_develop_in_action/35_2.webp" alt="cli-functions"></p>
-<h1 id="参考">参考</h1>
+<h1 id="第二十八讲-如何编写单元测试和性能测试用例">第二十八讲 如何编写单元测试和性能测试用例</h1>
+<h2 id="单元测试">单元测试</h2>
+<p>示例</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">TestAbs</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">T</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">tests</span> <span class="o">:=</span> <span class="p">[]</span><span class="kd">struct</span> <span class="p">{</span>
+        <span class="nx">x</span>    <span class="kt">float64</span>
+        <span class="nx">want</span> <span class="kt">float64</span>
+    <span class="p">}{</span>
+        <span class="p">{</span><span class="o">-</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">},</span>
+        <span class="p">{</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">},</span>
+        <span class="p">{</span><span class="o">-</span><span class="mf">3.1</span><span class="p">,</span> <span class="mf">3.1</span><span class="p">},</span>
+        <span class="p">{</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">},</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">tt</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">tests</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="nx">got</span> <span class="o">:=</span> <span class="nf">Abs</span><span class="p">(</span><span class="nx">tt</span><span class="p">.</span><span class="nx">x</span><span class="p">);</span> <span class="nx">got</span> <span class="o">!=</span> <span class="nx">tt</span><span class="p">.</span><span class="nx">want</span> <span class="p">{</span>
+            <span class="nx">t</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;Abs() = %f, want %v&#34;</span><span class="p">,</span> <span class="nx">got</span><span class="p">,</span> <span class="nx">tt</span><span class="p">.</span><span class="nx">want</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>可以使用 <a href="github.com/stretchr/testify/assert">assert</a>库封装好的Equal、Less等 判断函数
+可以使用 <a href="https://github.com/cweill/gotests">gotests</a>自动生成测试代码，这样只用填写测试参数就可以了</p>
+<h2 id="性能测试">性能测试</h2>
+<p>性能测试函数以<code>Benchmark</code>开头，参数类型为<code>*testing.B</code>，其中循环次数<code>N</code>会在运行时动态 吊装，以便可靠的计时</p>
+<p><code>go test</code>需要添加 <code>-bench &lt;pattern&gt;</code>参数才会执行性能测试</p>
+<h1 id="第二十九讲-iam测试介绍">第二十九讲 IAM测试介绍</h1>
+<h2 id="示例测试">示例测试</h2>
+<p>示例测试以<code>Example</code>开头， 执行<code>go test</code>命令时，会比较标出输出和注释的内容</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">ExmapleMax</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nf">Max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+	<span class="c1">// Output:
+</span><span class="c1"></span>	<span class="c1">// 2
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="testmain-函数">TestMain 函数</h2>
+<p>TestMain是一个特使的函数，可以在测试前后做相应的准备和清理工作，中间调用<code>m.Run()</code>函数才会执行普通的 测试函数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span>  <span class="nf">TestMain</span><span class="p">(</span><span class="nx">m</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">M</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;do some setup&#34;</span><span class="p">)</span>
+	<span class="nx">m</span><span class="p">.</span><span class="nf">Run</span><span class="p">()</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;do some setdown&#34;</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="mock测试">Mock测试</h2>
+<p>使用<code>mockgen</code>生成Mock代码</p>
+<p>参数说明
+<img src="/image/go_develop_in_action/37_1.webp" alt="mockgen"></p>
+<h3 id="生成方式">生成方式</h3>
+<ol>
+<li>源码模式</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">$ mockgen -destination spider/mock/mock_spider.go -package spider -source spider/spider.go
+</code></pre></td></tr></table>
+</div>
+</div><ol start="2">
+<li>反射模式</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">$ mockgen -destination spider/mock/mock_spider.go -package spider github.com/marmotedu/gopractise-demo/gomock/spider Spider<span class="sb">```</span>
+</code></pre></td></tr></table>
+</div>
+</div><ol start="3">
+<li>注释
+在文件代码中添加注释</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="c1">//go:generate mockgen -destination mock_spider.go -package spider github.com/cz-it/blog/blog/Go/testing/gomock/example/spider Spider 
+</span></code></pre></td></tr></table>
+</div>
+</div><p>然后执行以下面了就可自动生成Mock代码</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">$ go generate ./...
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="编写测试用例">编写测试用例</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 1. 创建Mock控制器
+</span><span class="c1"></span><span class="nx">ctrl</span> <span class="o">:=</span> <span class="nx">gomock</span><span class="p">.</span><span class="nf">NewController</span><span class="p">(</span><span class="nx">t</span><span class="p">)</span>
+<span class="k">defer</span> <span class="nx">ctrl</span><span class="p">.</span><span class="nf">Finish</span><span class="p">()</span>
+
+<span class="c1">// 2. 创建Mock对象
+</span><span class="c1"></span><span class="nx">mockSpider</span> <span class="o">:=</span> <span class="nx">spider</span><span class="p">.</span><span class="nf">NewMockSpider</span><span class="p">(</span><span class="nx">ctrl</span><span class="p">)</span>
+<span class="nx">want</span> <span class="o">:=</span> <span class="s">&#34;1.2.1&#34;</span>
+
+<span class="c1">// 3. 指定方法的入参和返回值
+</span><span class="c1"></span><span class="nx">mockSpider</span><span class="p">.</span><span class="nf">EXPECT</span><span class="p">().</span><span class="nf">GetBody</span><span class="p">().</span><span class="nf">Return</span><span class="p">(</span><span class="nx">want</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>参数匹配</p>
+<ul>
+<li>gomock.Any()，可以用来表示任意的入参。</li>
+<li>gomock.Eq(value)，用来表示与 value 等价的值。</li>
+<li>gomock.Not(value)，用来表示非 value 以外的值。</li>
+<li>gomock.Nil()，用来表示 None 值</li>
+</ul>
+<p>Call对象约束</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">Call</span><span class="p">)</span> <span class="nf">After</span><span class="p">(</span><span class="nx">preReq</span> <span class="o">*</span><span class="nx">Call</span><span class="p">)</span> <span class="o">*</span><span class="nx">Call</span> <span class="c1">// After声明调用在preReq完成后执行
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">Call</span><span class="p">)</span> <span class="nf">AnyTimes</span><span class="p">()</span> <span class="o">*</span><span class="nx">Call</span> <span class="c1">// 允许调用次数为 0 次或更多次
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">Call</span><span class="p">)</span> <span class="nf">Do</span><span class="p">(</span><span class="nx">f</span> <span class="kd">interface</span><span class="p">{})</span> <span class="o">*</span><span class="nx">Call</span> <span class="c1">// 声明在匹配时要运行的操作
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">Call</span><span class="p">)</span> <span class="nf">MaxTimes</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">)</span> <span class="o">*</span><span class="nx">Call</span> <span class="c1">// 设置最大的调用次数为 n 次
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">Call</span><span class="p">)</span> <span class="nf">MinTimes</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">)</span> <span class="o">*</span><span class="nx">Call</span> <span class="c1">// 设置最小的调用次数为 n 次
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">Call</span><span class="p">)</span> <span class="nf">Return</span><span class="p">(</span><span class="nx">rets</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="o">*</span><span class="nx">Call</span> <span class="c1">//  // 声明模拟函数调用返回的值
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">Call</span><span class="p">)</span> <span class="nf">SetArg</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">value</span> <span class="kd">interface</span><span class="p">{})</span> <span class="o">*</span><span class="nx">Call</span> <span class="c1">// 声明使用指针设置第 n 个参数的值
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">Call</span><span class="p">)</span> <span class="nf">Times</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">)</span> <span class="o">*</span><span class="nx">Call</span> <span class="c1">// 设置调用次数为 n 次
+</span></code></pre></td></tr></table>
+</div>
+</div><h2 id="fake测试">Fake测试</h2>
+<p>对比比较复杂的接口，可以实现一个假的实例</p>
+<h2 id="何时编写和执行单元测试">何时编写和执行单元测试</h2>
+<p>推荐边写代码边写测试</p>
+<h2 id="测试覆盖率">测试覆盖率</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">// 会生成一个converrate.out的文件
+$ go <span class="nb">test</span> -coverprofile<span class="o">=</span>coverage.out
+
+
+// 分析文件
+$ go tool cover -func<span class="o">=</span>coverage.out
+
+
+// 转成html文件
+$ go tool cover -html<span class="o">=</span>coverage.out -o coverage.html
+
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="iam如何运行测试">IAM如何运行测试</h2>
+<ol>
+<li>make test</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nf">.PHONY</span><span class="o">:</span> <span class="n">go</span>.<span class="n">test</span>
+<span class="nf">go.test</span><span class="o">:</span> <span class="n">tools</span>.<span class="n">verify</span>.<span class="n">go</span>-<span class="n">junit</span>-<span class="n">report</span>
+  @echo <span class="s2">&#34;===========&gt; Run unit test&#34;</span>
+  @set -o pipefail<span class="p">;</span><span class="k">$(</span>GO<span class="k">)</span> <span class="nb">test</span> -race -cover -coverprofile<span class="o">=</span><span class="k">$(</span>OUTPUT_DIR<span class="k">)</span>/coverage.out <span class="se">\\</span>
+    -timeout<span class="o">=</span>10m -short -v <span class="sb">`</span>go list ./...<span class="p">|</span><span class="se">\
+</span><span class="se"></span>    egrep -v <span class="k">$(</span>subst <span class="k">$(</span>SPACE<span class="k">)</span>,<span class="s1">&#39;|&#39;</span>,<span class="k">$(</span>sort <span class="k">$(</span>EXCLUDE_TESTS<span class="k">)))</span><span class="sb">`</span> 2&gt;<span class="p">&amp;</span><span class="m">1</span> <span class="p">|</span> <span class="se">\\</span>
+    tee &gt;<span class="o">(</span>go-junit-report --set-exit-code &gt;<span class="k">$(</span>OUTPUT_DIR<span class="k">)</span>/report.xml<span class="o">)</span>
+  @sed -i <span class="s1">&#39;/mock_.*.go/d&#39;</span> <span class="k">$(</span>OUTPUT_DIR<span class="k">)</span>/coverage.out <span class="c1"># remove mock_.*.go files from test coverage</span>
+  @<span class="k">$(</span>GO<span class="k">)</span> tool cover -html<span class="o">=</span><span class="k">$(</span>OUTPUT_DIR<span class="k">)</span>/coverage.out -o <span class="k">$(</span>OUTPUT_DIR<span class="k">)</span>/coverage.html
+</code></pre></td></tr></table>
+</div>
+</div><p>测试中设置了超时时间、竞态检查、代码覆盖率检查、过滤Mock等不需要写测试的目录</p>
+<ol start="2">
+<li>make cover</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nf">.PHONY</span><span class="o">:</span> <span class="n">go</span>.<span class="n">test</span>.<span class="n">cover</span>
+<span class="nf">go.test.cover</span><span class="o">:</span> <span class="n">go</span>.<span class="n">test</span>
+  @<span class="k">$(</span>GO<span class="k">)</span> tool cover -func<span class="o">=</span><span class="k">$(</span>OUTPUT_DIR<span class="k">)</span>/coverage.out <span class="p">|</span> <span class="se">\\</span>
+    awk -v <span class="nv">target</span><span class="o">=</span><span class="k">$(</span>COVERAGE<span class="k">)</span> -f <span class="k">$(</span>ROOT_DIR<span class="k">)</span>/scripts/coverage.awk
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="参考">参考</h1>
 <ul>
 <li><a href="https://time.geekbang.org/column/intro/418">课程资源-Go 语言项目开发实战</a></li>
 <li><a href="https://www.techgrow.cn/posts/5bd5a253.html">gcc升级</a></li>
