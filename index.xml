@@ -6,10 +6,44 @@
     <description>Recent content on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 19 Sep 2021 22:49:39 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 21 Nov 2021 11:09:55 +0800</lastBuildDate>
     
         <atom:link href="https://ppd0705.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>非典型 NOIP 经历</title>
+      <link>https://ppd0705.github.io/post/noip_expirence/</link>
+      <pubDate>Sun, 21 Nov 2021 11:09:55 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/noip_expirence/</guid>
+      
+        <description>&lt;p&gt;&lt;em&gt;TL;DR&lt;/em&gt;: 愉快地在机房划水2年，没有拿到高考加分。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/no_pascal_at_noip.jpeg&#34; alt=&#34;no_pascal&#34;&gt;&lt;/p&gt;
+&lt;p&gt;看到有人发文说 Pascal 正式退出赛事舞台，不禁想写一下脑海残存的高中参赛经历。&lt;/p&gt;
+&lt;p&gt;高中以前，可以说我在学校过的很顺遂，三五个打小认识的上下学伙伴，每次开学都是对得上号的同学，官方语言为熟悉的方言，当然还有亮眼的考试成绩，老师的信任和肯定。&lt;/p&gt;
+&lt;p&gt;当我突然离开熟悉的环境独自去了一个当时觉得遥远的高中时，举足无措，充满了茫然，现在想想，我到毕业都没有多融入高中生活。&lt;/p&gt;
+&lt;p&gt;陌生的环境，拥挤的教室，一堂接一堂紧凑的课程，中下游的考试成绩，以及青春期意识到自己的矮和丑的自卑，这些应该都是难以融入的原因。&lt;/p&gt;
+&lt;p&gt;在充满着不适的学习生活中，巧合地我跟着一个同学去了计算机老师新发起的编程兴趣班，没想到同学去了一次没有再去，而我却成为
+最后留下来的四个人之一。&lt;/p&gt;
+&lt;p&gt;记得当时是晚自习的时候去机房上课，老师讲课的时候控制所有的电脑，投屏她的幻灯片，讲完我们各自照着写代码编译调试。
+除了&lt;code&gt;begin&lt;/code&gt;、&lt;code&gt;end&lt;/code&gt; 关键字，我已经对 Pascal 这门语言没有任何记忆，当时学基础的语法很吃力，完全没有概念，记不住。
+磕磕绊绊地学会基本的语法，能打印杨辉三角形之后，后面应该就开始了一系列算法的学习。&lt;/p&gt;
+&lt;p&gt;身处一个小县城高中，当时学习资料和资讯极其匮乏，就一本官方的教材，老师本身应该也没有竞赛经历，更多地只能讲解理论，解题更多靠自己去练习和领悟。
+在老师的帮助下，我们当时集资报了一个大班培训网课，几个人围着小小的电脑屏幕听着课。记得有一次课是元宵节，还没开学，我们提前返校到学校附近的老师家上课，
+老师和她的家人盛情地做了好多好吃的菜招待我们，不过我们好像当时有点拘谨。&lt;/p&gt;
+&lt;p&gt;后来老师为了方便我们练习，给了一个机房的备用钥匙给我们，当时的我们应该感到很惊喜和被信任，一下子偌大的机房可以自由使用，现在想想也是很高兴，那可是还
+没有智能机的时代呀！记得当时为了节约时间，我会在下午上完最后一下课之后就冲到食堂在人潮来临之前买个红薯就跑到机房去了。
+那时我基本不玩游戏，我后面沉迷的LOL当时还在研发中，有段时间QQ农场很火，我会用这个特权在机房里收收菜。&lt;/p&gt;
+&lt;p&gt;去长沙比赛也是个令人兴奋的事情，记得当时考点在长沙理工大学，感觉大学好大，比高中大多了，走到考场要花很长时间。
+当时对高考能考上什么学校没有什么概念，学算法也更多是一种爱好，老师也没有给压力。
+但比赛就是比赛，成绩会赤裸裸地告诉你有多菜，也不知道当时老师的心情是怎么样的，我们几个两次参赛都没有拿到好成绩，
+记得当时我对第二次的成绩是感觉有些遗憾的，我应该做的更好。可能能给老师安慰的是我们几个高考发挥都算正常，没有被
+班主任说比赛影响文化成绩的机会。&lt;/p&gt;
+&lt;p&gt;总的来说，感谢那两年的算法学习经历，让我可以光明正大地离开教室去机房让大脑放空；感谢老师对我们的关心、耐心和信任。&lt;/p&gt;
+</description>
+      
+    </item>
     
     <item>
       <title>期现套利策略介绍和实现</title>
@@ -16883,53 +16917,6 @@ dotnet run
 &lt;h4 id=&#34;参考&#34;&gt;参考&lt;/h4&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://readthedocs.org/projects/asgi/downloads/pdf/latest/&#34;&gt;ASGI官方文档&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-      
-    </item>
-    
-    <item>
-      <title>gunicorn笔记</title>
-      <link>https://ppd0705.github.io/post/gunicorn_note/</link>
-      <pubDate>Thu, 20 Feb 2020 21:29:37 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/gunicorn_note/</guid>
-      
-        <description>&lt;h4 id=&#34;简介&#34;&gt;简介&lt;/h4&gt;
-&lt;p&gt;gunicorn是一遵守WSGI协议的web服务器， 其整体架构是Master/Workers模型。master进程通过信号机制管理worker进程；而实际的请求由worker进程处理，worker类型有多种(sync, gevent, asycnio, tornado&amp;hellip;)可通过参数指定。&lt;/p&gt;
-&lt;h4 id=&#34;信号处理&#34;&gt;信号处理&lt;/h4&gt;
-&lt;h5 id=&#34;master&#34;&gt;Master&lt;/h5&gt;
-&lt;ul&gt;
-&lt;li&gt;CHLD（子进程退出事发给父进程）: 通过os.waitpid得异常pid并pop出woker队列，关闭改woker.tmp&lt;/li&gt;
-&lt;li&gt;HUP(重载workers): 更新配置，新建linsener,新建workers, 给旧wokers发TERM信号&lt;/li&gt;
-&lt;li&gt;QUIT(停止): 给wokers发QUIT信号&lt;/li&gt;
-&lt;li&gt;INT:  同QUIT&lt;/li&gt;
-&lt;li&gt;TERM: 给wokers发TERM信号，gracefual_time之后发KILL信号&lt;/li&gt;
-&lt;li&gt;TTIN: num_workers += 1&lt;/li&gt;
-&lt;li&gt;TTOU: num_workers -=1&lt;/li&gt;
-&lt;li&gt;USR1: 重开logfile并给wokers发USR1信号&lt;/li&gt;
-&lt;li&gt;USR2: os.execvpe, 新启master/wokers, 新master是老master的子进程, 这个和HUP信号的区别在于会重新加载gunicorn，且旧workers不会退出&lt;/li&gt;
-&lt;li&gt;WINCH(窗口大小改变的信号): 针对gunicorn后台运行时，给所有woker发TERM信号，把worker数改为0&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h5 id=&#34;workers&#34;&gt;Workers&lt;/h5&gt;
-&lt;ul&gt;
-&lt;li&gt;QUIT(停止): alive=False, sys.exit(0)&lt;/li&gt;
-&lt;li&gt;INT:  同QUIT&lt;/li&gt;
-&lt;li&gt;TERM: alive=False&lt;/li&gt;
-&lt;li&gt;USR1: 重开logfile&lt;/li&gt;
-&lt;li&gt;ABRT: alive=False，sys.exit(1)&lt;/li&gt;
-&lt;li&gt;WINCH: 忽略&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;监控&#34;&gt;监控&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;Master: 通过worker的tmpfile的st_ctime来判断子进程是否正常，如果为否则发送ABRT信号给对应子进程&lt;/li&gt;
-&lt;li&gt;Workers: worker会创建一个tmpfile,并一直刷新st_ctime; 同时ppid是否有变，如果变了则直接退出&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;参考&#34;&gt;参考&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://docs.gunicorn.org/en/stable/design.html&#34;&gt;官方文档&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://docs.oracle.com/cd/E19455-01/806-4750/signals-7/index.html&#34;&gt;sigchld&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://docs.gunicorn.org/en/stable/signals.html#binary-upgrade&#34;&gt;gunicorn-binary-upgrade&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
       
