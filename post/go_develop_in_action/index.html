@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]Go项目开发实战（更新中）">
 <meta itemprop="description" content="第一讲 开源规范 开源协议概述 MIT是相对自由开发的协议 第二讲 文档规范 最重要的三类文档：README文档、项目文档和API文档 README规范 主"><meta itemprop="datePublished" content="2021-06-28T07:28:37+08:00" />
 <meta itemprop="dateModified" content="2021-06-28T07:28:37+08:00" />
-<meta itemprop="wordCount" content="17448">
+<meta itemprop="wordCount" content="18157">
 <meta itemprop="keywords" content="Golang," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]Go项目开发实战（更新中）"/>
 <meta name="twitter:description" content="第一讲 开源规范 开源协议概述 MIT是相对自由开发的协议 第二讲 文档规范 最重要的三类文档：README文档、项目文档和API文档 README规范 主"/>
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 17448 words </span>
-          <span class="more-meta"> 35 min read </span>
+        <span class="more-meta"> 18157 words </span>
+          <span class="more-meta"> 37 min read </span>
 
         
         
@@ -694,6 +694,38 @@
         <li><a href="#何时编写和执行单元测试">何时编写和执行单元测试</a></li>
         <li><a href="#测试覆盖率">测试覆盖率</a></li>
         <li><a href="#iam如何运行测试">IAM如何运行测试</a></li>
+      </ul>
+    </li>
+    <li><a href="#第三十讲-如何分析go语言代码性能">第三十讲 如何分析Go语言代码性能</a>
+      <ul>
+        <li><a href="#生成性能数据文件">生成性能数据文件</a>
+          <ul>
+            <li><a href="#命令行生成">命令行生成</a></li>
+            <li><a href="#代码生成">代码生成</a></li>
+            <li><a href="#nethttppprof包生成">net/http/pprof包生成</a></li>
+          </ul>
+        </li>
+        <li><a href="#性能分析">性能分析</a>
+          <ul>
+            <li><a href="#cpu性能分析">CPU性能分析</a></li>
+            <li><a href="#内存性能分析">内存性能分析</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#第三十一讲-apiserver性能测试和调优">第三十一讲 APIServer性能测试和调优</a>
+      <ul>
+        <li><a href="#api性能测试指标">API性能测试指标</a></li>
+        <li><a href="#api性能测试方法">API性能测试方法</a></li>
+        <li><a href="#api接口性能标准参考">API接口性能标准参考</a></li>
+        <li><a href="#性能测试注意事项">性能测试注意事项</a>
+          <ul>
+            <li><a href="#web框架性能">Web框架性能</a></li>
+            <li><a href="#api框架性能">API框架性能</a></li>
+            <li><a href="#测试环境">测试环境</a></li>
+            <li><a href="#web框架性能-1">Web框架性能</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
     <li><a href="#参考">参考</a></li>
@@ -4366,7 +4398,245 @@ $ go tool cover -html<span class="o">=</span>coverage.out -o coverage.html
     awk -v <span class="nv">target</span><span class="o">=</span><span class="k">$(</span>COVERAGE<span class="k">)</span> -f <span class="k">$(</span>ROOT_DIR<span class="k">)</span>/scripts/coverage.awk
 </code></pre></td></tr></table>
 </div>
-</div><h1 id="参考">参考</h1>
+</div><h1 id="第三十讲-如何分析go语言代码性能">第三十讲 如何分析Go语言代码性能</h1>
+<h2 id="生成性能数据文件">生成性能数据文件</h2>
+<h3 id="命令行生成">命令行生成</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">go <span class="nb">test</span> -bench<span class="o">=</span><span class="s2">&#34;.*&#34;</span> -cpuprofile cpu.profile  -memprofile mem.profile
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="代码生成">代码生成</h3>
+<p>用代码来生成性能数据文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+  <span class="s">&#34;os&#34;</span>
+  <span class="s">&#34;runtime/pprof&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">cpuOut</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="s">&#34;cpu.out&#34;</span><span class="p">)</span>
+  <span class="k">defer</span> <span class="nx">cpuOut</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+  <span class="nx">pprof</span><span class="p">.</span><span class="nf">StartCPUProfile</span><span class="p">(</span><span class="nx">cpuOut</span><span class="p">)</span>
+  <span class="k">defer</span> <span class="nx">pprof</span><span class="p">.</span><span class="nf">StopCPUProfile</span><span class="p">()</span>
+
+  <span class="nx">memOut</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="s">&#34;mem.out&#34;</span><span class="p">)</span>
+  <span class="k">defer</span> <span class="nx">memOut</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+  <span class="k">defer</span> <span class="nx">pprof</span><span class="p">.</span><span class="nf">WriteHeapProfile</span><span class="p">(</span><span class="nx">memOut</span><span class="p">)</span>
+
+  <span class="nf">Sum</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">Sum</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="nethttppprof包生成">net/http/pprof包生成</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">Register</span><span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Engine</span><span class="p">,</span> <span class="nx">prefixOptions</span> <span class="o">...</span><span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">prefix</span> <span class="o">:=</span> <span class="nf">getPrefix</span><span class="p">(</span><span class="nx">prefixOptions</span><span class="o">...</span><span class="p">)</span>
+
+    <span class="nx">prefixRouter</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nf">Group</span><span class="p">(</span><span class="nx">prefix</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="o">...</span>
+        <span class="nx">prefixRouter</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;/profile&#34;</span><span class="p">,</span> <span class="nf">pprofHandler</span><span class="p">(</span><span class="nx">pprof</span><span class="p">.</span><span class="nx">Profile</span><span class="p">))</span>
+        <span class="o">...</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">pprofHandler</span><span class="p">(</span><span class="nx">h</span> <span class="nx">http</span><span class="p">.</span><span class="nx">HandlerFunc</span><span class="p">)</span> <span class="nx">gin</span><span class="p">.</span><span class="nx">HandlerFunc</span> <span class="p">{</span>
+    <span class="nx">handler</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nf">HandlerFunc</span><span class="p">(</span><span class="nx">h</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">handler</span><span class="p">.</span><span class="nf">ServeHTTP</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">Writer</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>可以通过web访问对应页面查看
+也可以将对应数据生成数据文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">curl http://127.0.0.1:8080/debug/pprof/heap -o mem.profile
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="性能分析">性能分析</h2>
+<p><img src="/image/go_develop_in_action/38_1.webp" alt="prof_analyze"></p>
+<h3 id="cpu性能分析">CPU性能分析</h3>
+<ol>
+<li>分析采样图</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">go tool pprof -svg cpu.profile &gt; cpu.svg <span class="c1"># svg 格式</span>
+</code></pre></td></tr></table>
+</div>
+</div><ol start="2">
+<li>分析火焰图</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">go tool pprof -http<span class="o">=</span><span class="s2">&#34;0.0.0.0:8081&#34;</span> v1.test cpu.profile
+</code></pre></td></tr></table>
+</div>
+</div><ol start="3">
+<li>交互模式查看详细数据</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">go tool  pprof v1.test cpu.profile
+</code></pre></td></tr></table>
+</div>
+</div><p>常用交互命令有三个：top、list、peek</p>
+<p><img src="/image/go_develop_in_action/38_2.webp" alt="pprof_interaction"></p>
+<h3 id="内存性能分析">内存性能分析</h3>
+<p>内存分析方式和CPU类似</p>
+<h1 id="第三十一讲-apiserver性能测试和调优">第三十一讲 APIServer性能测试和调优</h1>
+<h2 id="api性能测试指标">API性能测试指标</h2>
+<p>衡量API性能的指标有三个：</p>
+<ul>
+<li>并发数（Concurrent）：同时请求同一个API的用户个数</li>
+<li>请求响应时间（TTLB Time to last byte）：从客户端发起请求到收到服务端响应</li>
+<li>每秒查询数（QPS）：QPS = 并发数 / 平均请求响应时间</li>
+</ul>
+<p>但测试一个接口时 QPS = TPS，测N个接口则 QPS = N * TPS</p>
+<h2 id="api性能测试方法">API性能测试方法</h2>
+<p>这里采用 <a href="https://github.com/wg/wrk">wrk</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">wrk -t144 -c30000 -d30s -T30s --latency http://localhost:8080/healthz
+</code></pre></td></tr></table>
+</div>
+</div><p>集成脚本</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">scripts/wrktest.sh http://10.0.4.57:8080/healthz
+</code></pre></td></tr></table>
+</div>
+</div><p>结果
+<img src="/image/go_develop_in_action/38_3.webp" alt="wrk_plot"></p>
+<p>和net/http服务对比</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># start test server</span>
+<span class="c1">#  go run tools/httptest/main.go</span>
+
+<span class="c1"># client test</span>
+scripts/wrktest.sh -n http http://10.0.4.57:6667/healthz
+
+
+<span class="c1"># diff</span>
+scripts/wrktest.sh diff _output/wrk/apiserver.dat _output/wrk/http.dat
+</code></pre></td></tr></table>
+</div>
+</div><p>对比结果
+<img src="/image/go_develop_in_action/38_4.webp" alt="wrk_diff"></p>
+<h2 id="api接口性能标准参考">API接口性能标准参考</h2>
+<p><img src="/image/go_develop_in_action/38_5.webp" alt="prof_standard"></p>
+<h2 id="性能测试注意事项">性能测试注意事项</h2>
+<h3 id="web框架性能">Web框架性能</h3>
+<p>对Web框架测试选用的接口要足够简单</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="nx">s</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;/healthz&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">core</span><span class="p">.</span><span class="nf">WriteResponse</span><span class="p">(</span><span class="nx">c</span><span class="p">,</span> <span class="kc">nil</span><span class="p">,</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;status&#34;</span><span class="p">:</span> <span class="s">&#34;ok&#34;</span><span class="p">})</span>
+<span class="p">})</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="api框架性能">API框架性能</h3>
+<p>针对写接口，可借助单元测试来测试性能
+对于读接口使用wrK这类压力测试工具来测试，通常读接口更可能遇到性能问题</p>
+<h3 id="测试环境">测试环境</h3>
+<p>有单独的环境，保证每次都在同一个测试环境测试</p>
+<h3 id="web框架性能-1">Web框架性能</h3>
+<h1 id="参考">参考</h1>
 <ul>
 <li><a href="https://time.geekbang.org/column/intro/418">课程资源-Go 语言项目开发实战</a></li>
 <li><a href="https://www.techgrow.cn/posts/5bd5a253.html">gcc升级</a></li>
