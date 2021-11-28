@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]操作系统实战（更新中）">
 <meta itemprop="description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"><meta itemprop="datePublished" content="2021-07-30T08:06:33+08:00" />
 <meta itemprop="dateModified" content="2021-07-30T08:06:33+08:00" />
-<meta itemprop="wordCount" content="26832">
+<meta itemprop="wordCount" content="28400">
 <meta itemprop="keywords" content="C,操作系统," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]操作系统实战（更新中）"/>
 <meta name="twitter:description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"/>
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 26832 words </span>
-          <span class="more-meta"> 54 min read </span>
+        <span class="more-meta"> 28400 words </span>
+          <span class="more-meta"> 57 min read </span>
 
         
         
@@ -528,6 +528,34 @@
       </ul>
     </li>
     <li><a href="#第十五讲-linux初始化下">第十五讲 Linux初始化（下）</a></li>
+    <li><a href="#第十六讲-划分土地上如何划分和组织内存">第十六讲 划分土地（上）：如何划分和组织内存</a>
+      <ul>
+        <li><a href="#如何表示一个页">如何表示一个页</a></li>
+        <li><a href="#内存区">内存区</a>
+          <ul>
+            <li><a href="#硬件区">硬件区</a></li>
+            <li><a href="#内核区">内核区</a></li>
+            <li><a href="#应用区">应用区</a></li>
+          </ul>
+        </li>
+        <li><a href="#组织内存页">组织内存页</a></li>
+      </ul>
+    </li>
+    <li><a href="#第十七讲-划分土地中如何实现内存页面初始化">第十七讲 划分土地（中）：如何实现内存页面初始化</a>
+      <ul>
+        <li><a href="#内存页结构初始化">内存页结构初始化</a></li>
+        <li><a href="#内存区结构构初始化">内存区结构构初始化</a></li>
+        <li><a href="#处理内存占用">处理内存占用</a></li>
+        <li><a href="#合并内存页到内存区">合并内存页到内存区</a></li>
+        <li><a href="#虚实地址映射">虚实地址映射</a></li>
+      </ul>
+    </li>
+    <li><a href="#第十八讲-划分土地下如何实现内存页的分配和释放">第十八讲 划分土地（下）：如何实现内存页的分配和释放</a>
+      <ul>
+        <li><a href="#内存页的分配">内存页的分配</a></li>
+        <li><a href="#内存页的释放">内存页的释放</a></li>
+      </ul>
+    </li>
     <li><a href="#参考">参考</a></li>
   </ul>
 </nav>
@@ -5745,6 +5773,149 @@ x86平台最开始使用的是8259A控制器，以级联的方式存在，有15�
 <p>Linux 内核第一个 C 函数重新设置 MMU 页表，随后便调用了最有名的 start_kernel 函数， start_kernel 函数中调用了大多数 Linux 内核功能性初始化函数，在最后调用 rest_init 函数建立了两个内核线程，在其中的 kernel_init 线程建立了第一个用户态进程。</p>
 </li>
 </ol>
+<h1 id="第十六讲-划分土地上如何划分和组织内存">第十六讲 划分土地（上）：如何划分和组织内存</h1>
+<p>由于分段模式难以映射虚拟地址空间，我们使用分页模式管理内存，每页大小为4KB</p>
+<h2 id="如何表示一个页">如何表示一个页</h2>
+<p><img src="/image/play_os_in_action/16_1.webp" alt="memory_page_view"></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="c1">//物理地址和标志  
+</span><span class="c1"></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">s_PHYADRFLGS</span>
+<span class="p">{</span>
+    <span class="n">u64_t</span> <span class="nl">paf_alloc</span><span class="p">:</span><span class="mi">1</span><span class="p">;</span>     <span class="c1">//分配位
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="nl">paf_shared</span><span class="p">:</span><span class="mi">1</span><span class="p">;</span>    <span class="c1">//共享位
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="nl">paf_swap</span><span class="p">:</span><span class="mi">1</span><span class="p">;</span>      <span class="c1">//交换位
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="nl">paf_cache</span><span class="p">:</span><span class="mi">1</span><span class="p">;</span>     <span class="c1">//缓存位
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="nl">paf_kmap</span><span class="p">:</span><span class="mi">1</span><span class="p">;</span>      <span class="c1">//映射位
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="nl">paf_lock</span><span class="p">:</span><span class="mi">1</span><span class="p">;</span>      <span class="c1">//锁定位
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="nl">paf_dirty</span><span class="p">:</span><span class="mi">1</span><span class="p">;</span>     <span class="c1">//脏位
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="nl">paf_busy</span><span class="p">:</span><span class="mi">1</span><span class="p">;</span>      <span class="c1">//忙位
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="nl">paf_rv2</span><span class="p">:</span><span class="mi">4</span><span class="p">;</span>       <span class="c1">//保留位
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="nl">paf_padrs</span><span class="p">:</span><span class="mi">52</span><span class="p">;</span>    <span class="c1">//页物理地址位
+</span><span class="c1"></span><span class="p">}</span><span class="n">__attribute__</span><span class="p">((</span><span class="n">packed</span><span class="p">))</span> <span class="n">phyadrflgs_t</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>页的物理地址是4KB(0x1000=2**12)对齐的，所以低12位可用作其他标志位</p>
+<h2 id="内存区">内存区</h2>
+<p><img src="/image/play_os_in_action/16_2.webp" alt="memory_partition"></p>
+<p>将物理内存分为三个区： 硬件区、内核区和应用区</p>
+<h3 id="硬件区">硬件区</h3>
+<p>硬件区占用地址区间为 0~32MB，用于一些不依赖 CPU 直接和内存交换数据的硬件，如 DMA</p>
+<h3 id="内核区">内核区</h3>
+<p>用于内核</p>
+<h3 id="应用区">应用区</h3>
+<p>用于用户态程序</p>
+<p>按需分配，应用用到一个页，就分配一个页，如果访问到没有和物理内存页建立映射关系的虚拟内存页，
+CPU 会产生缺页中断，操作系统会非配一个物理页，并和虚拟也建好映射关系</p>
+<h2 id="组织内存页">组织内存页</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c">
+<span class="k">typedef</span> <span class="k">struct</span> <span class="n">s_BAFHLST</span>
+<span class="p">{</span>
+    <span class="n">spinlock_t</span> <span class="n">af_lock</span><span class="p">;</span>    <span class="c1">//保护自身结构的自旋锁
+</span><span class="c1"></span>    <span class="n">u32_t</span> <span class="n">af_stus</span><span class="p">;</span>         <span class="c1">//状态 
+</span><span class="c1"></span>    <span class="n">uint_t</span> <span class="n">af_oder</span><span class="p">;</span>        <span class="c1">//页面数的位移量
+</span><span class="c1"></span>    <span class="n">uint_t</span> <span class="n">af_oderpnr</span><span class="p">;</span>     <span class="c1">//oder对应的页面数比如 oder为2那就是1&lt;&lt;2=4
+</span><span class="c1"></span>    <span class="n">uint_t</span> <span class="n">af_fobjnr</span><span class="p">;</span>      <span class="c1">//多少个空闲msadsc_t结构，即空闲页面
+</span><span class="c1"></span>    <span class="n">uint_t</span> <span class="n">af_mobjnr</span><span class="p">;</span>      <span class="c1">//此结构的msadsc_t结构总数，即此结构总页面
+</span><span class="c1"></span>    <span class="n">uint_t</span> <span class="n">af_alcindx</span><span class="p">;</span>     <span class="c1">//此结构的分配计数
+</span><span class="c1"></span>    <span class="n">uint_t</span> <span class="n">af_freindx</span><span class="p">;</span>     <span class="c1">//此结构的释放计数
+</span><span class="c1"></span>    <span class="n">list_h_t</span> <span class="n">af_frelst</span><span class="p">;</span>    <span class="c1">//挂载此结构的空闲msadsc_t结构
+</span><span class="c1"></span>    <span class="n">list_h_t</span> <span class="n">af_alclst</span><span class="p">;</span>    <span class="c1">//挂载此结构已经分配的msadsc_t结构
+</span><span class="c1"></span><span class="p">}</span><span class="n">bafhlst_t</span><span class="p">;</span>
+
+
+<span class="cp">#define MDIVMER_ARR_LMAX 52
+</span><span class="cp"></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">s_MEMDIVMER</span>
+<span class="p">{</span>
+    <span class="n">spinlock_t</span> <span class="n">dm_lock</span><span class="p">;</span>      <span class="c1">//保护自身结构的自旋锁
+</span><span class="c1"></span>    <span class="n">u32_t</span> <span class="n">dm_stus</span><span class="p">;</span>           <span class="c1">//状态
+</span><span class="c1"></span>    <span class="n">uint_t</span> <span class="n">dm_divnr</span><span class="p">;</span>         <span class="c1">//内存分配次数
+</span><span class="c1"></span>    <span class="n">uint_t</span> <span class="n">dm_mernr</span><span class="p">;</span>         <span class="c1">//内存合并次数
+</span><span class="c1"></span>    <span class="n">bafhlst_t</span> <span class="n">dm_mdmlielst</span><span class="p">[</span><span class="n">MDIVMER_ARR_LMAX</span><span class="p">];</span><span class="c1">//bafhlst_t结构数组
+</span><span class="c1"></span>    <span class="n">bafhlst_t</span> <span class="n">dm_onemsalst</span><span class="p">;</span>  <span class="c1">//单个的bafhlst_t结构
+</span><span class="c1"></span><span class="p">}</span><span class="n">memdivmer_t</span><span class="p">;</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>dm_mdmlielst第 n个元素挂载 2 ** n  个 物理地址连续的msadsc_t 结构，</p>
+<p><img src="/image/play_os_in_action/16_3.jpg" alt="memory_part"></p>
+<h1 id="第十七讲-划分土地中如何实现内存页面初始化">第十七讲 划分土地（中）：如何实现内存页面初始化</h1>
+<h2 id="内存页结构初始化">内存页结构初始化</h2>
+<h2 id="内存区结构构初始化">内存区结构构初始化</h2>
+<h2 id="处理内存占用">处理内存占用</h2>
+<h2 id="合并内存页到内存区">合并内存页到内存区</h2>
+<h2 id="虚实地址映射">虚实地址映射</h2>
+<h1 id="第十八讲-划分土地下如何实现内存页的分配和释放">第十八讲 划分土地（下）：如何实现内存页的分配和释放</h1>
+<h2 id="内存页的分配">内存页的分配</h2>
+<p>比如现在我们要分配一个页面，这个算法将执行如下步骤：</p>
+<ol>
+<li>根据一个页面的请求，会返回 m_mdmlielst 数组中的第 0 个 bafhlst_t 结构。</li>
+<li>如果第 0 个 bafhlst_t 结构中有 msadsc_t 结构就直接返回，若没有 msadsc_t 结构，就会继续查找 m_mdmlielst 数组中的第 1 个 bafhlst_t 结构。</li>
+<li>如果第 1 个 bafhlst_t 结构中也没有 msadsc_t 结构，就会继续查找 m_mdmlielst 数组中的第 2 个 bafhlst_t 结构。</li>
+<li>如果第 2 个 bafhlst_t 结构中有 msadsc_t 结构，记住第 2 个 bafhlst_t 结构中对应是 4 个连续的 msadsc_t 结构。这时让这 4 个连续的 msadsc_t 结构从第 2 个 bafhlst_t 结构中脱离。</li>
+<li>把这 4 个连续的 msadsc_t 结构，对半分割成 2 个双 msadsc_t 结构，把其中一个双 msadsc_t 结构挂载到第 1 个 bafhlst_t 结构中。</li>
+<li>把剩下一个双 msadsc_t 结构，继续对半分割成两个单 msadsc_t 结构，把其中一个单 msadsc_t 结构挂载到第 0 个 bafhlst_t 结构中，剩下一个单 msadsc_t 结构返回给请求者，完成内存分配。</li>
+</ol>
+<p><img src="/image/play_os_in_action/18_1.jpg" alt="memory_divide"></p>
+<h2 id="内存页的释放">内存页的释放</h2>
+<p>比如现在我们要释放一个页面，这个算法将执行如下步骤。</p>
+<ol>
+<li>释放一个页面，会返回 m_mdmlielst 数组中的第 0 个 bafhlst_t 结构。</li>
+<li>设置这个页面对应的 msadsc_t 结构的相关信息，表示已经执行了释放操作。</li>
+<li>开始查看第 0 个 bafhlst_t 结构中有没有空闲的 msadsc_t，并且它和要释放的 msadsc_t 对应的物理地址是连续的。没有则把这个释放的 msadsc_t 挂载第 0 个 bafhlst_t 结构中，算法结束，否则进入下一步。</li>
+<li>把第 0 个 bafhlst_t 结构中的 msadsc_t 结构拿出来与释放的 msadsc_t 结构，合并成 2 个连续且更大的 msadsc_t。</li>
+<li>继续查看第 1 个 bafhlst_t 结构中有没有空闲的 msadsc_t，而且这个空闲 msadsc_t 要和上一步合并的 2 个 msadsc_t 对应的物理地址是连续的。没有则把这个合并的 2 个 msadsc_t 挂载第 1 个 bafhlst_t 结构中，算法结束，否则进入下一步。</li>
+<li>把第 1 个 bafhlst_t 结构中的 2 个连续的 msadsc_t 结构，还有合并的 2 个地址连续的 msadsc_t 结构拿出来，合并成 4 个连续且更大的 msadsc_t 结构。</li>
+<li>继续查看第 2 个 bafhlst_t 结构，有没有空闲的 msadsc_t 结构，并且它要和上一步合并的 4 个 msadsc_t 结构对应的物理地址是连续的。没有则把这个合并的 4 个 msadsc_t 挂载第 2 个 bafhlst_t 结构中，算法结束。</li>
+</ol>
+<p><img src="/image/play_os_in_action/18_2.jpg" alt="memory_recollect"></p>
 <h1 id="参考">参考</h1>
 <ul>
 <li><a href="https://stackoverflow.com/questions/37146637/why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux">why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux</a></li>
