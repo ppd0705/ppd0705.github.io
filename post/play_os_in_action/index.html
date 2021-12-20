@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]操作系统实战（更新中）">
 <meta itemprop="description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"><meta itemprop="datePublished" content="2021-07-30T08:06:33+08:00" />
 <meta itemprop="dateModified" content="2021-07-30T08:06:33+08:00" />
-<meta itemprop="wordCount" content="28400">
+<meta itemprop="wordCount" content="29782">
 <meta itemprop="keywords" content="C,操作系统," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]操作系统实战（更新中）"/>
 <meta name="twitter:description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"/>
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 28400 words </span>
-          <span class="more-meta"> 57 min read </span>
+        <span class="more-meta"> 29782 words </span>
+          <span class="more-meta"> 60 min read </span>
 
         
         
@@ -556,6 +556,27 @@
         <li><a href="#内存页的释放">内存页的释放</a></li>
       </ul>
     </li>
+    <li><a href="#第十九讲-如何管理内存对象">第十九讲 如何管理内存对象</a></li>
+    <li><a href="#第二十讲-如何表示虚拟内存">第二十讲 如何表示虚拟内存</a>
+      <ul>
+        <li><a href="#空间划分">空间划分</a>
+          <ul>
+            <li><a href="#x86">x86</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#第二十一讲-如何分配和释放虚拟内存">第二十一讲 如何分配和释放虚拟内存</a></li>
+    <li><a href="#第二十二讲-linux伙伴系统">第二十二讲 Linux伙伴系统</a>
+      <ul>
+        <li><a href="#如何表示一个页-1">如何表示一个页</a></li>
+        <li><a href="#如何表示一个区">如何表示一个区</a></li>
+        <li><a href="#如何表示一个内存节点">如何表示一个内存节点</a></li>
+        <li><a href="#何为伙伴">何为伙伴</a></li>
+        <li><a href="#页面分配流程">页面分配流程</a></li>
+      </ul>
+    </li>
+    <li><a href="#第二十三讲-linux-slab分配内存">第二十三讲 Linux SLAB分配内存</a></li>
     <li><a href="#参考">参考</a></li>
   </ul>
 </nav>
@@ -5903,7 +5924,7 @@ CPU 会产生缺页中断，操作系统会非配一个物理页，并和虚拟�
 <li>把这 4 个连续的 msadsc_t 结构，对半分割成 2 个双 msadsc_t 结构，把其中一个双 msadsc_t 结构挂载到第 1 个 bafhlst_t 结构中。</li>
 <li>把剩下一个双 msadsc_t 结构，继续对半分割成两个单 msadsc_t 结构，把其中一个单 msadsc_t 结构挂载到第 0 个 bafhlst_t 结构中，剩下一个单 msadsc_t 结构返回给请求者，完成内存分配。</li>
 </ol>
-<p><img src="/image/play_os_in_action/18_1.jpg" alt="memory_divide"></p>
+<p><img src="/image/play_os_in_action/18_1.webp" alt="memory_divide"></p>
 <h2 id="内存页的释放">内存页的释放</h2>
 <p>比如现在我们要释放一个页面，这个算法将执行如下步骤。</p>
 <ol>
@@ -5915,7 +5936,223 @@ CPU 会产生缺页中断，操作系统会非配一个物理页，并和虚拟�
 <li>把第 1 个 bafhlst_t 结构中的 2 个连续的 msadsc_t 结构，还有合并的 2 个地址连续的 msadsc_t 结构拿出来，合并成 4 个连续且更大的 msadsc_t 结构。</li>
 <li>继续查看第 2 个 bafhlst_t 结构，有没有空闲的 msadsc_t 结构，并且它要和上一步合并的 4 个 msadsc_t 结构对应的物理地址是连续的。没有则把这个合并的 4 个 msadsc_t 挂载第 2 个 bafhlst_t 结构中，算法结束。</li>
 </ol>
-<p><img src="/image/play_os_in_action/18_2.jpg" alt="memory_recollect"></p>
+<p><img src="/image/play_os_in_action/18_2.webp" alt="memory_recollect"></p>
+<h1 id="第十九讲-如何管理内存对象">第十九讲 如何管理内存对象</h1>
+<h1 id="第二十讲-如何表示虚拟内存">第二十讲 如何表示虚拟内存</h1>
+<h2 id="空间划分">空间划分</h2>
+<h3 id="x86">x86</h3>
+<p><img src="/image/play_os_in_action/20_1.webp" alt="x86_virtual_mem"></p>
+<p>长模式下地址分成了三段，CPU目前只实现了 48位地址空间，高16位要么全是0，要么全是1</p>
+<h1 id="第二十一讲-如何分配和释放虚拟内存">第二十一讲 如何分配和释放虚拟内存</h1>
+<h1 id="第二十二讲-linux伙伴系统">第二十二讲 Linux伙伴系统</h1>
+<p>Linux使用伙伴系统来管理物理内存页面</p>
+<h2 id="如何表示一个页-1">如何表示一个页</h2>
+<p>早期 Linux 使用位图，后来使用字节数组，目前使用 page 结构体表示</p>
+<h2 id="如何表示一个区">如何表示一个区</h2>
+<p>属性相同的物理内存页，归结到同一个区</p>
+<p>可使用 <code>cat /proc/zoneinfo | grep  None</code> 查看分区</p>
+<p>Linux 使用 zone 结构体表示一个区，其中 <code>free_area[MAX_ORDER]</code>结构体数组分别
+表示挂载地址连续的 pages, 可能的数量为 1, 2, 4, &hellip;, 1024</p>
+<h2 id="如何表示一个内存节点">如何表示一个内存节点</h2>
+<p>在多核服务器中，每个核都会有自己的本地内存，访问自己的本地内存比较快，
+访问其他核的本地内存就比较慢，这个结构称之为 Non-Uniform Memory Access (NUMA)</p>
+<p><img src="/image/play_os_in_action/22_1.webp" alt="Non-Uniform Memory Access"></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C">
+<span class="k">enum</span> <span class="p">{</span>
+    <span class="n">ZONELIST_FALLBACK</span><span class="p">,</span>
+<span class="cp">#ifdef CONFIG_NUMA
+</span><span class="cp"></span>    <span class="n">ZONELIST_NOFALLBACK</span><span class="p">,</span>
+<span class="cp">#endif
+</span><span class="cp"></span>    <span class="n">MAX_ZONELISTS</span>
+<span class="p">};</span>
+<span class="k">struct</span> <span class="n">zoneref</span> <span class="p">{</span>
+    <span class="k">struct</span> <span class="n">zone</span> <span class="o">*</span><span class="n">zone</span><span class="p">;</span><span class="c1">//内存区指针
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="n">zone_idx</span><span class="p">;</span>     <span class="c1">//内存区对应的索引
+</span><span class="c1"></span><span class="p">};</span>
+<span class="k">struct</span> <span class="n">zonelist</span> <span class="p">{</span>
+    <span class="k">struct</span> <span class="n">zoneref</span> <span class="n">_zonerefs</span><span class="p">[</span><span class="n">MAX_ZONES_PER_ZONELIST</span> <span class="o">+</span> <span class="mi">1</span><span class="p">];</span>
+<span class="p">};</span>
+<span class="c1">//zone枚举类型 从0开始
+</span><span class="c1"></span><span class="k">enum</span> <span class="n">zone_type</span> <span class="p">{</span>
+<span class="cp">#ifdef CONFIG_ZONE_DMA
+</span><span class="cp"></span>    <span class="n">ZONE_DMA</span><span class="p">,</span>
+<span class="cp">#endif
+</span><span class="cp">#ifdef CONFIG_ZONE_DMA32
+</span><span class="cp"></span>    <span class="n">ZONE_DMA32</span><span class="p">,</span>
+<span class="cp">#endif
+</span><span class="cp"></span>    <span class="n">ZONE_NORMAL</span><span class="p">,</span>
+<span class="cp">#ifdef CONFIG_HIGHMEM
+</span><span class="cp"></span>    <span class="n">ZONE_HIGHMEM</span><span class="p">,</span>
+<span class="cp">#endif
+</span><span class="cp"></span>    <span class="n">ZONE_MOVABLE</span><span class="p">,</span>
+<span class="cp">#ifdef CONFIG_ZONE_DEVICE
+</span><span class="cp"></span>    <span class="n">ZONE_DEVICE</span><span class="p">,</span>
+<span class="cp">#endif
+</span><span class="cp"></span>    <span class="n">__MAX_NR_ZONES</span>
+
+<span class="p">};</span>
+<span class="c1">//定义MAX_NR_ZONES为__MAX_NR_ZONES 最大为6
+</span><span class="c1"></span><span class="n">DEFINE</span><span class="p">(</span><span class="n">MAX_NR_ZONES</span><span class="p">,</span> <span class="n">__MAX_NR_ZONES</span><span class="p">);</span>
+<span class="c1">//内存节点
+</span><span class="c1"></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">pglist_data</span> <span class="p">{</span>
+    <span class="c1">//定一个内存区数组，最大为6个zone元素
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">zone</span> <span class="n">node_zones</span><span class="p">[</span><span class="n">MAX_NR_ZONES</span><span class="p">];</span>
+    <span class="c1">//两个zonelist，一个是指向本节点的的内存区，另一个指向由本节点分配不到内存时可选的备用内存区。
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">zonelist</span> <span class="n">node_zonelists</span><span class="p">[</span><span class="n">MAX_ZONELISTS</span><span class="p">];</span>
+    <span class="c1">//本节点有多少个内存区
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="n">nr_zones</span><span class="p">;</span> 
+    <span class="c1">//本节点开始的page索引号
+</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">node_start_pfn</span><span class="p">;</span>
+    <span class="c1">//本节点有多少个可用的页面 
+</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">node_present_pages</span><span class="p">;</span>
+    <span class="c1">//本节点有多少个可用的页面包含内存空洞 
+</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">node_spanned_pages</span><span class="p">;</span>
+    <span class="c1">//节点id
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="n">node_id</span><span class="p">;</span>
+    <span class="c1">//交换内存页面相关的字段
+</span><span class="c1"></span>    <span class="n">wait_queue_head_t</span> <span class="n">kswapd_wait</span><span class="p">;</span>
+    <span class="n">wait_queue_head_t</span> <span class="n">pfmemalloc_wait</span><span class="p">;</span>
+    <span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span><span class="n">kswapd</span><span class="p">;</span> 
+    <span class="c1">//本节点保留的内存页面
+</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">long</span>       <span class="n">totalreserve_pages</span><span class="p">;</span>
+    <span class="c1">//自旋锁
+</span><span class="c1"></span>    <span class="n">spinlock_t</span>      <span class="n">lru_lock</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">pg_data_t</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>pglist_data 结构包含 长度为 2 的 zonelist 数组，第一个 zonelist 指向本节点内的内存区，另一个指向
+其他节点内存区，一遍本节点内存不足时备用</p>
+<p>pglist_data、zonelist、zone、 page之间的关系如下图</p>
+<p><img src="/image/play_os_in_action/22_2.webp" alt="summary"></p>
+<h2 id="何为伙伴">何为伙伴</h2>
+<p><img src="/image/play_os_in_action/22_3.webp" alt="buddy-relationship"></p>
+<p>page(0, 1) 是伙伴， page(2, 3) 是伙伴，A 和 B 是伙伴， E 和 F 是伙伴</p>
+<h2 id="页面分配流程">页面分配流程</h2>
+<p>首先找到内存节点， 接着找到内存区， 然后找到合适的空闲链表 ，最后在其中找到 page, 完成物理内存分配</p>
+<h1 id="第二十三讲-linux-slab分配内存">第二十三讲 Linux SLAB分配内存</h1>
+<p>对于小对象，使用SLAB分配器分配</p>
+<p>SLAB将一组连续的内存页划分成相同大小的块，这种块称之为 SLAB 对象，除此之外，
+还有 SLAB 管理头和着色区。</p>
+<p><img src="/image/play_os_in_action/23_1.jpg" alt="slab-object"></p>
+<p>SLAB管理头用 kmem_cache 结构表示</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="k">struct</span> <span class="n">array_cache</span> <span class="p">{</span>
+    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">avail</span><span class="p">;</span>
+    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">limit</span><span class="p">;</span>
+    <span class="kt">void</span> <span class="o">*</span><span class="n">entry</span><span class="p">[];</span> 
+<span class="p">};</span>
+<span class="k">struct</span> <span class="n">kmem_cache</span> <span class="p">{</span>
+    <span class="c1">//是每个CPU一个array_cache类型的变量，cpu_cache是用于管理空闲对象的 
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">array_cache</span> <span class="n">__percpu</span> <span class="o">*</span><span class="n">cpu_cache</span><span class="p">;</span>
+    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">size</span><span class="p">;</span> <span class="c1">//cache大小
+</span><span class="c1"></span>    <span class="n">slab_flags_t</span> <span class="n">flags</span><span class="p">;</span><span class="c1">//slab标志
+</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">num</span><span class="p">;</span><span class="c1">//对象个数
+</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">gfporder</span><span class="p">;</span><span class="c1">//分配内存页面的order
+</span><span class="c1"></span>    <span class="n">gfp_t</span> <span class="n">allocflags</span><span class="p">;</span>
+    <span class="n">size_t</span> <span class="n">colour</span><span class="p">;</span><span class="c1">//着色区大小
+</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">colour_off</span><span class="p">;</span><span class="c1">//着色区的开始偏移
+</span><span class="c1"></span>    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">;</span><span class="c1">//本SLAB的名字
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">list_head</span> <span class="n">list</span><span class="p">;</span><span class="c1">//所有的SLAB都要链接起来
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="n">refcount</span><span class="p">;</span><span class="c1">//引用计数
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="n">object_size</span><span class="p">;</span><span class="c1">//对象大小
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="n">align</span><span class="p">;</span><span class="c1">//对齐大小
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">kmem_cache_node</span> <span class="o">*</span><span class="n">node</span><span class="p">[</span><span class="n">MAX_NUMNODES</span><span class="p">];</span><span class="c1">//指向管理kmemcache的上层结构
+</span><span class="c1"></span><span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>每个CPU都有自己的 array_cache，entry[] 是一个 LIFO 顺序数组 ，avail 和  limit
+分别指定了当前可用对象的数目和允许容纳的最大数目</p>
+<p><img src="/image/play_os_in_action/23_2.webp" alt="kmem_cache"></p>
 <h1 id="参考">参考</h1>
 <ul>
 <li><a href="https://stackoverflow.com/questions/37146637/why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux">why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux</a></li>
