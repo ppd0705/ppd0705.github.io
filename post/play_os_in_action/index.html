@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]操作系统实战（更新中）">
 <meta itemprop="description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"><meta itemprop="datePublished" content="2021-07-30T08:06:33+08:00" />
 <meta itemprop="dateModified" content="2021-07-30T08:06:33+08:00" />
-<meta itemprop="wordCount" content="29782">
+<meta itemprop="wordCount" content="38418">
 <meta itemprop="keywords" content="C,操作系统," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]操作系统实战（更新中）"/>
 <meta name="twitter:description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"/>
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 29782 words </span>
-          <span class="more-meta"> 60 min read </span>
+        <span class="more-meta"> 38418 words </span>
+          <span class="more-meta"> 77 min read </span>
 
         
         
@@ -576,7 +576,83 @@
         <li><a href="#页面分配流程">页面分配流程</a></li>
       </ul>
     </li>
-    <li><a href="#第二十三讲-linux-slab分配内存">第二十三讲 Linux SLAB分配内存</a></li>
+    <li><a href="#第二十三讲-linux-slab分配内存">第二十三讲 Linux SLAB分配内存</a>
+      <ul>
+        <li><a href="#第一个kmem_cache">第一个kmem_cache</a></li>
+        <li><a href="#管理-kmem_cache">管理 kmem_cache</a></li>
+        <li><a href="#slab分配对象">SLAB分配对象</a></li>
+      </ul>
+    </li>
+    <li><a href="#第二十四讲-什么是进程">第二十四讲 什么是进程</a>
+      <ul>
+        <li><a href="#进程的结构">进程的结构</a></li>
+        <li><a href="#实现进程">实现进程</a>
+          <ul>
+            <li><a href="#如何表示一个进程">如何表示一个进程</a></li>
+            <li><a href="#进程的地址空间">进程的地址空间</a></li>
+            <li><a href="#进程的机器上下文">进程的机器上下文</a></li>
+          </ul>
+        </li>
+        <li><a href="#建立进程">建立进程</a></li>
+      </ul>
+    </li>
+    <li><a href="#第二十五讲--多进程如何调度">第二十五讲  多进程如何调度</a>
+      <ul>
+        <li><a href="#管理进程">管理进程</a>
+          <ul>
+            <li><a href="#进程的生命周期">进程的生命周期</a></li>
+            <li><a href="#如何组织进程">如何组织进程</a></li>
+          </ul>
+        </li>
+        <li><a href="#设计进程调度器">设计进程调度器</a>
+          <ul>
+            <li><a href="#进程调度器入口">进程调度器入口</a></li>
+          </ul>
+        </li>
+        <li><a href="#进程切换">进程切换</a></li>
+      </ul>
+    </li>
+    <li><a href="#第二十六讲--如何实现进程的等待与唤醒">第二十六讲  如何实现进程的等待与唤醒</a>
+      <ul>
+        <li><a href="#进程的等待和唤醒">进程的等待和唤醒</a>
+          <ul>
+            <li><a href="#等待数据结构">等待数据结构</a></li>
+            <li><a href="#进程等待">进程等待</a></li>
+            <li><a href="#进程唤醒">进程唤醒</a></li>
+          </ul>
+        </li>
+        <li><a href="#空转进程">空转进程</a>
+          <ul>
+            <li><a href="#建立空转进程">建立空转进程</a></li>
+            <li><a href="#空转进程运行">空转进程运行</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#第二十七讲--linux如何实现进程和进程调度">第二十七讲  Linux如何实现进程和进程调度</a>
+      <ul>
+        <li><a href="#进程">进程</a>
+          <ul>
+            <li><a href="#进程数据结构">进程数据结构</a></li>
+            <li><a href="#创建-task_struct-实例">创建 task_struct 实例</a></li>
+            <li><a href="#进程地址空间">进程地址空间</a></li>
+            <li><a href="#进程文件表">进程文件表</a></li>
+          </ul>
+        </li>
+        <li><a href="#进程调度">进程调度</a>
+          <ul>
+            <li><a href="#进程调度实体数据结构">进程调度实体数据结构</a></li>
+            <li><a href="#进程运行队列">进程运行队列</a></li>
+            <li><a href="#调度实体和运行队列的关系">调度实体和运行队列的关系</a></li>
+            <li><a href="#调度器类">调度器类</a></li>
+            <li><a href="#cfs调度器">CFS调度器</a></li>
+            <li><a href="#进程调度延迟">进程调度延迟</a></li>
+            <li><a href="#虚拟时间">虚拟时间</a></li>
+            <li><a href="#定时周期调度">定时周期调度</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
     <li><a href="#参考">参考</a></li>
   </ul>
 </nav>
@@ -6086,7 +6162,7 @@ CPU 会产生缺页中断，操作系统会非配一个物理页，并和虚拟�
 </code></pre></td></tr></table>
 </div>
 </div><p>pglist_data 结构包含 长度为 2 的 zonelist 数组，第一个 zonelist 指向本节点内的内存区，另一个指向
-其他节点内存区，一遍本节点内存不足时备用</p>
+其他节点内存区，以便本节点内存不足时备用</p>
 <p>pglist_data、zonelist、zone、 page之间的关系如下图</p>
 <p><img src="/image/play_os_in_action/22_2.webp" alt="summary"></p>
 <h2 id="何为伙伴">何为伙伴</h2>
@@ -6150,10 +6226,1537 @@ CPU 会产生缺页中断，操作系统会非配一个物理页，并和虚拟�
 </span><span class="c1"></span><span class="p">};</span>
 </code></pre></td></tr></table>
 </div>
-</div><p>每个CPU都有自己的 array_cache，entry[] 是一个 LIFO 顺序数组 ，avail 和  limit
+</div><p>不同对象大小会有 不同 的kmem_cache，
+一个kmem_cache中，每个CPU都有自己的 array_cache，entry[] 是一个 LIFO 顺序数组 ，avail 和  limit
 分别指定了当前可用对象的数目和允许容纳的最大数目</p>
 <p><img src="/image/play_os_in_action/23_2.webp" alt="kmem_cache"></p>
-<h1 id="参考">参考</h1>
+<h2 id="第一个kmem_cache">第一个kmem_cache</h2>
+<p>第一个kmem_cache是静态定义在代码中的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C">
+<span class="k">static</span> <span class="k">struct</span> <span class="n">kmem_cache</span> <span class="n">kmem_cache_boot</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">.</span><span class="n">batchcount</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">.</span><span class="n">limit</span> <span class="o">=</span> <span class="n">BOOT_CPUCACHE_ENTRIES</span><span class="p">,</span>
+    <span class="p">.</span><span class="n">shared</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">.</span><span class="n">size</span> <span class="o">=</span> <span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="n">kmem_cache</span><span class="p">),</span>
+    <span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="s">&#34;kmem_cache&#34;</span><span class="p">,</span>
+<span class="p">};</span>
+
+<span class="kt">void</span> <span class="n">__init</span> <span class="nf">kmem_cache_init</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="c1">//指向静态定义的kmem_cache_boot
+</span><span class="c1"></span>    <span class="n">kmem_cache</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">kmem_cache_boot</span><span class="p">;</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">NUM_INIT_LISTS</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">kmem_cache_node_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">init_kmem_cache_node</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+    <span class="c1">//建立保存kmem_cache结构的kmem_cache
+</span><span class="c1"></span>    <span class="n">create_boot_cache</span><span class="p">(</span><span class="n">kmem_cache</span><span class="p">,</span> <span class="s">&#34;kmem_cache&#34;</span><span class="p">,</span>
+        <span class="n">offsetof</span><span class="p">(</span><span class="k">struct</span> <span class="n">kmem_cache</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span> <span class="o">+</span>
+                  <span class="n">nr_node_ids</span> <span class="o">*</span> <span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="n">kmem_cache_node</span> <span class="o">*</span><span class="p">),</span>
+                  <span class="n">SLAB_HWCACHE_ALIGN</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="c1">//加入全局slab_caches链表中
+</span><span class="c1"></span>    <span class="n">list_add</span><span class="p">(</span><span class="o">&amp;</span><span class="n">kmem_cache</span><span class="o">-&gt;</span><span class="n">list</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">slab_caches</span><span class="p">);</span>
+    <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">nid</span><span class="p">;</span>
+        <span class="n">for_each_online_node</span><span class="p">(</span><span class="n">nid</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">init_list</span><span class="p">(</span><span class="n">kmem_cache</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">init_kmem_cache_node</span><span class="p">[</span><span class="n">CACHE_CACHE</span> <span class="o">+</span> <span class="n">nid</span><span class="p">],</span> <span class="n">nid</span><span class="p">);</span>
+            <span class="n">init_list</span><span class="p">(</span><span class="n">kmalloc_caches</span><span class="p">[</span><span class="n">KMALLOC_NORMAL</span><span class="p">][</span><span class="n">INDEX_NODE</span><span class="p">],</span>                      <span class="o">&amp;</span><span class="n">init_kmem_cache_node</span><span class="p">[</span><span class="n">SIZE_NODE</span> <span class="o">+</span> <span class="n">nid</span><span class="p">],</span> <span class="n">nid</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="c1">//建立kmalloc函数使用的的kmem_cache
+</span><span class="c1"></span>    <span class="n">create_kmalloc_caches</span><span class="p">(</span><span class="n">ARCH_KMALLOC_FLAGS</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="管理-kmem_cache">管理 kmem_cache</h2>
+<p>使用 kem_cache_node 结构体管理 kmem_cache</p>
+<p><img src="/image/play_os_in_action/23_3.jpg" alt="kmem_cache_node"></p>
+<h2 id="slab分配对象">SLAB分配对象</h2>
+<p><img src="/image/play_os_in_action/23_4.webp" alt="kmem_cache_node"></p>
+<h1 id="第二十四讲-什么是进程">第二十四讲 什么是进程</h1>
+<h2 id="进程的结构">进程的结构</h2>
+<p>进程是一个应用程序运行时刻的实例</p>
+<p>每个进程拥有整个CPU虚拟地址空间，
+空间分为两部分，上半部分是所有进程共享的内核部分，里面放着放着一份内核代码和数据，
+下半部分是应用程序</p>
+<p><img src="/image/play_os_in_action/24_1.webp" alt="process_structure"></p>
+<p>当 CPU 在 R0 特权级别运行时，就运行在上半部分的内核空间地址，当
+CPU 在 R3 特权级别运行时，就运行在下半部分的应用程序地址空间</p>
+<p>各进程的虚拟地址空间是相同的，他们之间的物理空间不同，是由 MMU 页表进行隔离的</p>
+<p>内核服务机制：通过挺住应用程序的代码运行，进入内核地址空间运行内核代码，然后返回结果。这个过程内核需要记录每个应用程序访问了哪些资源，通过资源描述符表示。</p>
+<p><img src="/image/play_os_in_action/24_2.webp" alt="process_structure_detail"></p>
+<p>上图中带 * 号的部分每个进程都独有一份</p>
+<h2 id="实现进程">实现进程</h2>
+<h3 id="如何表示一个进程">如何表示一个进程</h3>
+<p>一个进程，通常有状态， id， 运行时间，优先级，应用程序栈，内核栈，机器上下文，资源描述符，地址空间等</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">s_THREAD</span>
+<span class="p">{</span>
+    <span class="n">spinlock_t</span>  <span class="n">td_lock</span><span class="p">;</span>           <span class="c1">//进程的自旋锁
+</span><span class="c1"></span>    <span class="n">list_h_t</span>    <span class="n">td_list</span><span class="p">;</span>           <span class="c1">//进程链表 
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">td_flgs</span><span class="p">;</span>           <span class="c1">//进程的标志
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">td_stus</span><span class="p">;</span>           <span class="c1">//进程的状态
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">td_cpuid</span><span class="p">;</span>          <span class="c1">//进程所在的CPU的id
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">td_id</span><span class="p">;</span>             <span class="c1">//进程的id
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">td_tick</span><span class="p">;</span>           <span class="c1">//进程运行了多少tick
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">td_privilege</span><span class="p">;</span>      <span class="c1">//进程的权限
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">td_priority</span><span class="p">;</span>       <span class="c1">//进程的优先级
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">td_runmode</span><span class="p">;</span>        <span class="c1">//进程的运行模式
+</span><span class="c1"></span>    <span class="n">adr_t</span>       <span class="n">td_krlstktop</span><span class="p">;</span>      <span class="c1">//应用程序内核栈顶地址
+</span><span class="c1"></span>    <span class="n">adr_t</span>       <span class="n">td_krlstkstart</span><span class="p">;</span>    <span class="c1">//应用程序内核栈开始地址
+</span><span class="c1"></span>    <span class="n">adr_t</span>       <span class="n">td_usrstktop</span><span class="p">;</span>      <span class="c1">//应用程序栈顶地址
+</span><span class="c1"></span>    <span class="n">adr_t</span>       <span class="n">td_usrstkstart</span><span class="p">;</span>    <span class="c1">//应用程序栈开始地址
+</span><span class="c1"></span>    <span class="n">mmadrsdsc_t</span><span class="o">*</span> <span class="n">td_mmdsc</span><span class="p">;</span>         <span class="c1">//地址空间结构
+</span><span class="c1"></span>    <span class="n">context_t</span>   <span class="n">td_context</span><span class="p">;</span>        <span class="c1">//机器上下文件结构
+</span><span class="c1"></span>    <span class="n">objnode_t</span><span class="o">*</span>  <span class="n">td_handtbl</span><span class="p">[</span><span class="n">TD_HAND_MAX</span><span class="p">];</span><span class="c1">//打开的对象数组
+</span><span class="c1"></span><span class="p">}</span><span class="n">thread_t</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在 Cosmos 中，我们使用 thread_t 结构表示一个进程
+进程的内核栈和应用程序栈是两块内存空间
+进程的权限区分进程是用户进程还是系统进程
+进程打开的文件对应的资源描述符保存在 td_handtbl 数据中</p>
+<h3 id="进程的地址空间">进程的地址空间</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">s_MMADRSDSC</span>
+<span class="p">{</span>
+    <span class="n">spinlock_t</span> <span class="n">msd_lock</span><span class="p">;</span>               <span class="c1">//保护自身的自旋锁
+</span><span class="c1"></span>    <span class="n">list_h_t</span> <span class="n">msd_list</span><span class="p">;</span>                 <span class="c1">//链表
+</span><span class="c1"></span>    <span class="n">uint_t</span> <span class="n">msd_flag</span><span class="p">;</span>                   <span class="c1">//状态和标志
+</span><span class="c1"></span>    <span class="n">uint_t</span> <span class="n">msd_stus</span><span class="p">;</span>
+    <span class="n">uint_t</span> <span class="n">msd_scount</span><span class="p">;</span>                 <span class="c1">//计数，该结构可能被共享
+</span><span class="c1"></span>    <span class="n">sem_t</span>  <span class="n">msd_sem</span><span class="p">;</span>                    <span class="c1">//信号量
+</span><span class="c1"></span>    <span class="n">mmudsc_t</span> <span class="n">msd_mmu</span><span class="p">;</span>                  <span class="c1">//MMU页表相关的信息
+</span><span class="c1"></span>    <span class="n">virmemadrs_t</span> <span class="n">msd_virmemadrs</span><span class="p">;</span>       <span class="c1">//虚拟地址空间结构
+</span><span class="c1"></span>    <span class="n">adr_t</span> <span class="n">msd_stext</span><span class="p">;</span>                   <span class="c1">//应用的指令区的开始、结束地址
+</span><span class="c1"></span>    <span class="n">adr_t</span> <span class="n">msd_etext</span><span class="p">;</span>
+    <span class="n">adr_t</span> <span class="n">msd_sdata</span><span class="p">;</span>                   <span class="c1">//应用的数据区的开始、结束地址
+</span><span class="c1"></span>    <span class="n">adr_t</span> <span class="n">msd_edata</span><span class="p">;</span>
+    <span class="n">adr_t</span> <span class="n">msd_sbss</span><span class="p">;</span>                    <span class="c1">//应用初始化为0的区域开始、结束地址
+</span><span class="c1"></span>    <span class="n">adr_t</span> <span class="n">msd_ebss</span><span class="p">;</span>
+    <span class="n">adr_t</span> <span class="n">msd_sbrk</span><span class="p">;</span>                    <span class="c1">//应用的堆区的开始、结束地址
+</span><span class="c1"></span>    <span class="n">adr_t</span> <span class="n">msd_ebrk</span><span class="p">;</span>
+<span class="p">}</span><span class="n">mmadrsdsc_t</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>使用 mmadrsdsc_t 结构体表示一个进程的完整的地址空间</p>
+<h3 id="进程的机器上下文">进程的机器上下文</h3>
+<p>机器的上下文分为两部分：CPU 寄存器；内核函数调用路径。</p>
+<p>中断发生时，CPU 通用寄存器会压入内核栈中</p>
+<p>进程切换函数中会保存栈寄存器的值， 用 context_t 结构体表示</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">s_CONTEXT</span>
+<span class="p">{</span>  
+    <span class="n">uint_t</span>       <span class="n">ctx_nextrip</span><span class="p">;</span> <span class="c1">//保存下一次运行的地址
+</span><span class="c1"></span>    <span class="n">uint_t</span>       <span class="n">ctx_nextrsp</span><span class="p">;</span> <span class="c1">//保存下一次运行时内核栈的地址 
+</span><span class="c1"></span>    <span class="n">x64tss_t</span><span class="o">*</span>    <span class="n">ctx_nexttss</span><span class="p">;</span> <span class="c1">//指向tss结构
+</span><span class="c1"></span><span class="p">}</span><span class="n">context_t</span><span class="p">;</span>
+
+
+<span class="c1">// cosmos/hal/x86/halglobal.c
+</span><span class="c1">// 每个CPU核心一个tss 
+</span><span class="c1"></span><span class="n">HAL_DEFGLOB_VARIABLE</span><span class="p">(</span><span class="n">x64tss_t</span><span class="p">,</span><span class="n">x64tss</span><span class="p">)[</span><span class="n">CPUCORE_MAX</span><span class="p">];</span> 
+
+<span class="k">typedef</span> <span class="k">struct</span> <span class="n">s_X64TSS</span>
+<span class="p">{</span>
+    <span class="n">u32_t</span> <span class="n">reserv0</span><span class="p">;</span> <span class="c1">//保留
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">rsp0</span><span class="p">;</span>  <span class="c1">//R0特权级的栈地址
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">rsp1</span><span class="p">;</span>  <span class="c1">//R1特权级的栈地址，我们未使用
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">rsp2</span><span class="p">;</span>  <span class="c1">//R2特权级的栈地址，我们未使用
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">reserv28</span><span class="p">;</span><span class="c1">//保留
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">ist</span><span class="p">[</span><span class="mi">7</span><span class="p">];</span>  <span class="c1">//我们未使用
+</span><span class="c1"></span>    <span class="n">u64_t</span> <span class="n">reserv92</span><span class="p">;</span><span class="c1">//保留
+</span><span class="c1"></span>    <span class="n">u16_t</span> <span class="n">reserv100</span><span class="p">;</span><span class="c1">//保留
+</span><span class="c1"></span>    <span class="n">u16_t</span> <span class="n">iobase</span><span class="p">;</span>   <span class="c1">//我们未使用
+</span><span class="c1"></span><span class="p">}</span><span class="n">__attribute__</span><span class="p">((</span><span class="n">packed</span><span class="p">))</span> <span class="n">x64tss_t</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="建立进程">建立进程</h2>
+<p>建立进程是会创建 thread_t 结构的变量实例，并建立对应的应用程序栈、内核栈和进程地址空间。</p>
+<p>内核进程的的区别在于这个进程只会在内核地址空间中运行，
+用户进程会多分配一个应用程序栈，除了十分内核空间页表外，多了一份用户空间页表</p>
+<h1 id="第二十五讲--多进程如何调度">第二十五讲  多进程如何调度</h1>
+<h2 id="管理进程">管理进程</h2>
+<h3 id="进程的生命周期">进程的生命周期</h3>
+<p>我们定义进程有如下状态</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#define TDSTUS_RUN 0        </span><span class="c1">//进程运行状态
+</span><span class="c1"></span><span class="cp">#define TDSTUS_SLEEP 3      </span><span class="c1">//进程睡眠状态
+</span><span class="c1"></span><span class="cp">#define TDSTUS_WAIT 4       </span><span class="c1">//进程等待状态
+</span><span class="c1"></span><span class="cp">#define TDSTUS_NEW 5        </span><span class="c1">//进程新建状态
+</span><span class="c1"></span><span class="cp">#define TDSTUS_ZOMB 6       </span><span class="c1">//进程僵死状态
+</span></code></pre></td></tr></table>
+</div>
+</div><p>进程状态切换如下</p>
+<p><img src="/image/play_os_in_action/25_1.webp" alt="process-status-transfer"></p>
+<h3 id="如何组织进程">如何组织进程</h3>
+<p>由于进程随时可能创建或退出，我们使用灵活的链表结构组织进程，由于进程有优先级，
+我们设计每个优先级对应一个链表头</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">s_THRDLST</span>
+<span class="p">{</span>
+    <span class="n">list_h_t</span>    <span class="n">tdl_lsth</span><span class="p">;</span>                <span class="c1">//挂载进程的链表头
+</span><span class="c1"></span>    <span class="n">thread_t</span><span class="o">*</span>   <span class="n">tdl_curruntd</span><span class="p">;</span>            <span class="c1">//该链表上正在运行的进程
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">tdl_nr</span><span class="p">;</span>                  <span class="c1">//该链表上进程个数
+</span><span class="c1"></span><span class="p">}</span><span class="n">thrdlst_t</span><span class="p">;</span>
+<span class="k">typedef</span> <span class="k">struct</span> <span class="n">s_SCHDATA</span>
+<span class="p">{</span>
+    <span class="n">spinlock_t</span>  <span class="n">sda_lock</span><span class="p">;</span>                <span class="c1">//自旋锁
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">sda_cpuid</span><span class="p">;</span>               <span class="c1">//当前CPU id
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">sda_schdflgs</span><span class="p">;</span>            <span class="c1">//标志
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">sda_premptidx</span><span class="p">;</span>           <span class="c1">//进程抢占计数
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">sda_threadnr</span><span class="p">;</span>            <span class="c1">//进程数
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">sda_prityidx</span><span class="p">;</span>            <span class="c1">//当前优先级
+</span><span class="c1"></span>    <span class="n">thread_t</span><span class="o">*</span>   <span class="n">sda_cpuidle</span><span class="p">;</span>             <span class="c1">//当前CPU的空转进程
+</span><span class="c1"></span>    <span class="n">thread_t</span><span class="o">*</span>   <span class="n">sda_currtd</span><span class="p">;</span>              <span class="c1">//当前正在运行的进程
+</span><span class="c1"></span>    <span class="n">thrdlst_t</span>   <span class="n">sda_thdlst</span><span class="p">[</span><span class="n">PRITY_MAX</span><span class="p">];</span>   <span class="c1">//进程链表数组
+</span><span class="c1"></span><span class="p">}</span><span class="n">schdata_t</span><span class="p">;</span>
+<span class="k">typedef</span> <span class="k">struct</span> <span class="n">s_SCHEDCALSS</span>
+<span class="p">{</span>
+    <span class="n">spinlock_t</span>  <span class="n">scls_lock</span><span class="p">;</span>                <span class="c1">//自旋锁
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">scls_cpunr</span><span class="p">;</span>               <span class="c1">//CPU个数
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">scls_threadnr</span><span class="p">;</span>            <span class="c1">//系统中所有的进程数
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">scls_threadid_inc</span><span class="p">;</span>        <span class="c1">//分配进程id所用
+</span><span class="c1"></span>    <span class="n">schdata_t</span>   <span class="n">scls_schda</span><span class="p">[</span><span class="n">CPUCORE_MAX</span><span class="p">];</span>  <span class="c1">//每个CPU调度数据结构
+</span><span class="c1"></span><span class="p">}</span><span class="n">schedclass_t</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><img src="/image/play_os_in_action/25_2.webp" alt="process-organization"></p>
+<h2 id="设计进程调度器">设计进程调度器</h2>
+<h3 id="进程调度器入口">进程调度器入口</h3>
+<p>找到当前运行的进程和下一运行的进程，从当前进程切换到下一进程</p>
+<p>为简单起见，我们选择优先级最高的进程为下一运行的进程</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="kt">void</span> <span class="nf">krlschedul</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">thread_t</span> <span class="o">*</span><span class="n">prev</span> <span class="o">=</span> <span class="n">krlsched_retn_currthread</span><span class="p">(),</span><span class="c1">//返回当前运行进程
+</span><span class="c1"></span>             <span class="o">*</span><span class="n">next</span> <span class="o">=</span> <span class="n">krlsched_select_thread</span><span class="p">();</span><span class="c1">//选择下一个运行的进程
+</span><span class="c1"></span>    <span class="n">save_to_new_context</span><span class="p">(</span><span class="n">next</span><span class="p">,</span> <span class="n">prev</span><span class="p">);</span><span class="c1">//从当前进程切换到下一个进程
+</span><span class="c1"></span>    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+
+
+<span class="n">thread_t</span> <span class="o">*</span><span class="nf">krlsched_retn_currthread</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">uint_t</span> <span class="n">cpuid</span> <span class="o">=</span> <span class="n">hal_retn_cpuid</span><span class="p">();</span>
+    <span class="c1">//通过cpuid获取当前cpu的调度数据结构
+</span><span class="c1"></span>    <span class="n">schdata_t</span> <span class="o">*</span><span class="n">schdap</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">osschedcls</span><span class="p">.</span><span class="n">scls_schda</span><span class="p">[</span><span class="n">cpuid</span><span class="p">];</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">schdap</span><span class="o">-&gt;</span><span class="n">sda_currtd</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+    <span class="p">{</span><span class="c1">//若调度数据结构中当前运行进程的指针为空，就出错死机
+</span><span class="c1"></span>        <span class="n">hal_sysdie</span><span class="p">(</span><span class="s">&#34;schdap-&gt;sda_currtd NULL&#34;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">schdap</span><span class="o">-&gt;</span><span class="n">sda_currtd</span><span class="p">;</span><span class="c1">//返回当前运行的进程
+</span><span class="c1"></span><span class="p">}</span>
+
+
+<span class="n">thread_t</span> <span class="o">*</span><span class="nf">krlsched_select_thread</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">thread_t</span> <span class="o">*</span><span class="n">retthd</span><span class="p">,</span> <span class="o">*</span><span class="n">tdtmp</span><span class="p">;</span>
+    <span class="n">cpuflg_t</span> <span class="n">cufg</span><span class="p">;</span>
+    <span class="n">uint_t</span> <span class="n">cpuid</span> <span class="o">=</span> <span class="n">hal_retn_cpuid</span><span class="p">();</span>
+    <span class="n">schdata_t</span> <span class="o">*</span><span class="n">schdap</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">osschedcls</span><span class="p">.</span><span class="n">scls_schda</span><span class="p">[</span><span class="n">cpuid</span><span class="p">];</span>
+    <span class="n">krlspinlock_cli</span><span class="p">(</span><span class="o">&amp;</span><span class="n">schdap</span><span class="o">-&gt;</span><span class="n">sda_lock</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">cufg</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">uint_t</span> <span class="n">pity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">pity</span> <span class="o">&lt;</span> <span class="n">PRITY_MAX</span><span class="p">;</span> <span class="n">pity</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span><span class="c1">//从最高优先级开始扫描
+</span><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span><span class="n">schdap</span><span class="o">-&gt;</span><span class="n">sda_thdlst</span><span class="p">[</span><span class="n">pity</span><span class="p">].</span><span class="n">tdl_nr</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="p">{</span><span class="c1">//若当前优先级的进程链表不为空
+</span><span class="c1"></span>            <span class="k">if</span> <span class="p">(</span><span class="n">list_is_empty_careful</span><span class="p">(</span><span class="o">&amp;</span><span class="p">(</span><span class="n">schdap</span><span class="o">-&gt;</span><span class="n">sda_thdlst</span><span class="p">[</span><span class="n">pity</span><span class="p">].</span><span class="n">tdl_lsth</span><span class="p">))</span> <span class="o">==</span> <span class="n">FALSE</span><span class="p">)</span>
+            <span class="p">{</span><span class="c1">//取出当前优先级进程链表下的第一个进程
+</span><span class="c1"></span>                <span class="n">tdtmp</span> <span class="o">=</span> <span class="n">list_entry</span><span class="p">(</span><span class="n">schdap</span><span class="o">-&gt;</span><span class="n">sda_thdlst</span><span class="p">[</span><span class="n">pity</span><span class="p">].</span><span class="n">tdl_lsth</span><span class="p">.</span><span class="n">next</span><span class="p">,</span> <span class="n">thread_t</span><span class="p">,</span> <span class="n">td_list</span><span class="p">);</span>
+                <span class="n">list_del</span><span class="p">(</span><span class="o">&amp;</span><span class="n">tdtmp</span><span class="o">-&gt;</span><span class="n">td_list</span><span class="p">);</span><span class="c1">//脱链
+</span><span class="c1"></span>                <span class="k">if</span> <span class="p">(</span><span class="n">schdap</span><span class="o">-&gt;</span><span class="n">sda_thdlst</span><span class="p">[</span><span class="n">pity</span><span class="p">].</span><span class="n">tdl_curruntd</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">)</span>
+                <span class="p">{</span><span class="c1">//将这sda_thdlst[pity].tdl_curruntd的进程挂入链表尾
+</span><span class="c1"></span>                    <span class="n">list_add_tail</span><span class="p">(</span><span class="o">&amp;</span><span class="p">(</span><span class="n">schdap</span><span class="o">-&gt;</span><span class="n">sda_thdlst</span><span class="p">[</span><span class="n">pity</span><span class="p">].</span><span class="n">tdl_curruntd</span><span class="o">-&gt;</span><span class="n">td_list</span><span class="p">),</span> <span class="o">&amp;</span><span class="n">schdap</span><span class="o">-&gt;</span><span class="n">sda_thdlst</span><span class="p">[</span><span class="n">pity</span><span class="p">].</span><span class="n">tdl_lsth</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="n">schdap</span><span class="o">-&gt;</span><span class="n">sda_thdlst</span><span class="p">[</span><span class="n">pity</span><span class="p">].</span><span class="n">tdl_curruntd</span> <span class="o">=</span> <span class="n">tdtmp</span><span class="p">;</span>
+                <span class="n">retthd</span> <span class="o">=</span> <span class="n">tdtmp</span><span class="p">;</span><span class="c1">//将选择的进程放入sda_thdlst[pity].tdl_curruntd中，并返回
+</span><span class="c1"></span>                <span class="k">goto</span> <span class="n">return_step</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">schdap</span><span class="o">-&gt;</span><span class="n">sda_thdlst</span><span class="p">[</span><span class="n">pity</span><span class="p">].</span><span class="n">tdl_curruntd</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">)</span>
+            <span class="p">{</span><span class="c1">//若sda_thdlst[pity].tdl_curruntd不为空就直接返回它
+</span><span class="c1"></span>                <span class="n">retthd</span> <span class="o">=</span> <span class="n">schdap</span><span class="o">-&gt;</span><span class="n">sda_thdlst</span><span class="p">[</span><span class="n">pity</span><span class="p">].</span><span class="n">tdl_curruntd</span><span class="p">;</span>
+                <span class="k">goto</span> <span class="n">return_step</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="c1">//如果最后也没有找到进程就返回默认的空转进程
+</span><span class="c1"></span>    <span class="n">schdap</span><span class="o">-&gt;</span><span class="n">sda_prityidx</span> <span class="o">=</span> <span class="n">PRITY_MIN</span><span class="p">;</span>
+    <span class="n">retthd</span> <span class="o">=</span> <span class="n">krlsched_retn_idlethread</span><span class="p">();</span>
+<span class="nl">return_step</span><span class="p">:</span>
+    <span class="c1">//解锁并返回进程
+</span><span class="c1"></span>    <span class="n">krlspinunlock_sti</span><span class="p">(</span><span class="o">&amp;</span><span class="n">schdap</span><span class="o">-&gt;</span><span class="n">sda_lock</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">cufg</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">retthd</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="进程切换">进程切换</h2>
+<p>假设进程 P1 调用的函数 A，接着在函数 A 中调用了函数 B，然后函数 B 调用了函数 C，
+最后在函数 C 中调用了调度器函数 S，这个函数 A 到函数 S 的路径就是进程 P1 的函数调用路径</p>
+<p><img src="/image/play_os_in_action/25_3.webp" alt="function_calling_road"></p>
+<ol>
+<li>将当前进程的通用寄存器保存到单签进程的内核栈中</li>
+<li>保存 CPU 的 RSP 寄存器到当前进程的机器上下文结构中</li>
+<li>读取保存在下一进程机器上下文结构中的 RSP 值，保存到 RSP 寄存器中</li>
+<li>切换 MMU 页表</li>
+<li>从下一个进程的内核栈中恢复通用寄存器</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="kt">void</span> <span class="nf">save_to_new_context</span><span class="p">(</span><span class="n">thread_t</span> <span class="o">*</span><span class="n">next</span><span class="p">,</span> <span class="n">thread_t</span> <span class="o">*</span><span class="n">prev</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">__asm__</span> <span class="n">__volatile__</span><span class="p">(</span>
+        <span class="s">&#34;pushfq </span><span class="se">\n\t</span><span class="s">&#34;</span><span class="c1">//保存当前进程的标志寄存器
+</span><span class="c1"></span>        <span class="s">&#34;cli </span><span class="se">\n\t</span><span class="s">&#34;</span>  <span class="c1">//关中断
+</span><span class="c1"></span>        <span class="c1">//保存当前进程的通用寄存器
+</span><span class="c1"></span>        <span class="s">&#34;pushq %%rax</span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;pushq %%rbx</span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;pushq %%rcx</span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;pushq %%rdx</span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;pushq %%rbp</span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;pushq %%rsi</span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;pushq %%rdi</span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;pushq %%r8</span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;pushq %%r9</span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;pushq %%r10</span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;pushq %%r11</span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;pushq %%r12</span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;pushq %%r13</span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;pushq %%r14</span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;pushq %%r15</span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="c1">//保存CPU的RSP寄存器到当前进程的机器上下文结构中
+</span><span class="c1"></span>        <span class="s">&#34;movq %%rsp,%[PREV_RSP] </span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="c1">//把下一个进程的机器上下文结构中的RSP的值，写入CPU的RSP寄存器中
+</span><span class="c1"></span>        <span class="s">&#34;movq %[NEXT_RSP],%%rsp </span><span class="se">\n\t</span><span class="s">&#34;</span><span class="c1">//事实上这里已经切换到下一个进程了，因为切换进程的内核栈    
+</span><span class="c1"></span>        <span class="c1">//调用__to_new_context函数切换MMU页表
+</span><span class="c1"></span>        <span class="s">&#34;callq __to_new_context</span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="c1">//恢复下一个进程的通用寄存器
+</span><span class="c1"></span>        <span class="s">&#34;popq %%r15</span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;popq %%r14</span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;popq %%r13</span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;popq %%r12</span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;popq %%r11</span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;popq %%r10</span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;popq %%r9</span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;popq %%r8</span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;popq %%rdi</span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;popq %%rsi</span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;popq %%rbp</span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;popq %%rdx</span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;popq %%rcx</span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;popq %%rbx</span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;popq %%rax</span><span class="se">\n\t</span><span class="s">&#34;</span>
+        <span class="s">&#34;popfq </span><span class="se">\n\t</span><span class="s">&#34;</span>      <span class="c1">//恢复下一个进程的标志寄存器
+</span><span class="c1"></span>        <span class="c1">//输出当前进程的内核栈地址
+</span><span class="c1"></span>        <span class="o">:</span> <span class="p">[</span> <span class="n">PREV_RSP</span> <span class="p">]</span> <span class="s">&#34;=m&#34;</span><span class="p">(</span><span class="n">prev</span><span class="o">-&gt;</span><span class="n">td_context</span><span class="p">.</span><span class="n">ctx_nextrsp</span><span class="p">)</span>
+        <span class="c1">//读取下一个进程的内核栈地址
+</span><span class="c1"></span>        <span class="o">:</span> <span class="p">[</span> <span class="n">NEXT_RSP</span> <span class="p">]</span> <span class="s">&#34;m&#34;</span><span class="p">(</span><span class="n">next</span><span class="o">-&gt;</span><span class="n">td_context</span><span class="p">.</span><span class="n">ctx_nextrsp</span><span class="p">),</span> <span class="s">&#34;D&#34;</span><span class="p">(</span><span class="n">next</span><span class="p">),</span> <span class="s">&#34;S&#34;</span><span class="p">(</span><span class="n">prev</span><span class="p">)</span><span class="c1">//为调用__to_new_context函数传递参数
+</span><span class="c1"></span>        <span class="o">:</span> <span class="s">&#34;memory&#34;</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="第二十六讲--如何实现进程的等待与唤醒">第二十六讲  如何实现进程的等待与唤醒</h1>
+<h2 id="进程的等待和唤醒">进程的等待和唤醒</h2>
+<h3 id="等待数据结构">等待数据结构</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">s_KWLST</span>
+<span class="p">{</span>   
+    <span class="n">spinlock_t</span> <span class="n">wl_lock</span><span class="p">;</span>  <span class="c1">//自旋锁
+</span><span class="c1"></span>    <span class="n">uint_t</span>   <span class="n">wl_tdnr</span><span class="p">;</span>    <span class="c1">//等待进程的个数
+</span><span class="c1"></span>    <span class="n">list_h_t</span> <span class="n">wl_list</span><span class="p">;</span>    <span class="c1">//挂载等待进程的链表头
+</span><span class="c1"></span><span class="p">}</span><span class="n">kwlst_t</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="进程等待">进程等待</h3>
+<p>设置进程状态为等待状态，从调度系统数据结构中脱离，然后加入到 kwlst_t 等待结构中</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="kt">void</span> <span class="nf">krlsched_wait</span><span class="p">(</span><span class="n">kwlst_t</span> <span class="o">*</span><span class="n">wlst</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">cpuflg_t</span> <span class="n">cufg</span><span class="p">,</span> <span class="n">tcufg</span><span class="p">;</span>
+    <span class="n">uint_t</span> <span class="n">cpuid</span> <span class="o">=</span> <span class="n">hal_retn_cpuid</span><span class="p">();</span>
+    <span class="n">schdata_t</span> <span class="o">*</span><span class="n">schdap</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">osschedcls</span><span class="p">.</span><span class="n">scls_schda</span><span class="p">[</span><span class="n">cpuid</span><span class="p">];</span>
+    <span class="c1">//获取当前正在运行的进程
+</span><span class="c1"></span>    <span class="n">thread_t</span> <span class="o">*</span><span class="n">tdp</span> <span class="o">=</span> <span class="n">krlsched_retn_currthread</span><span class="p">();</span>
+    <span class="n">uint_t</span> <span class="n">pity</span> <span class="o">=</span> <span class="n">tdp</span><span class="o">-&gt;</span><span class="n">td_priority</span><span class="p">;</span>
+    <span class="n">krlspinlock_cli</span><span class="p">(</span><span class="o">&amp;</span><span class="n">schdap</span><span class="o">-&gt;</span><span class="n">sda_lock</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">cufg</span><span class="p">);</span>
+    <span class="n">krlspinlock_cli</span><span class="p">(</span><span class="o">&amp;</span><span class="n">tdp</span><span class="o">-&gt;</span><span class="n">td_lock</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">tcufg</span><span class="p">);</span>
+    <span class="n">tdp</span><span class="o">-&gt;</span><span class="n">td_stus</span> <span class="o">=</span> <span class="n">TDSTUS_WAIT</span><span class="p">;</span><span class="c1">//设置进程状态为等待状态
+</span><span class="c1"></span>    <span class="n">list_del</span><span class="p">(</span><span class="o">&amp;</span><span class="n">tdp</span><span class="o">-&gt;</span><span class="n">td_list</span><span class="p">);</span><span class="c1">//脱链
+</span><span class="c1"></span>    <span class="n">krlspinunlock_sti</span><span class="p">(</span><span class="o">&amp;</span><span class="n">tdp</span><span class="o">-&gt;</span><span class="n">td_lock</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">tcufg</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">schdap</span><span class="o">-&gt;</span><span class="n">sda_thdlst</span><span class="p">[</span><span class="n">pity</span><span class="p">].</span><span class="n">tdl_curruntd</span> <span class="o">==</span> <span class="n">tdp</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">schdap</span><span class="o">-&gt;</span><span class="n">sda_thdlst</span><span class="p">[</span><span class="n">pity</span><span class="p">].</span><span class="n">tdl_curruntd</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">schdap</span><span class="o">-&gt;</span><span class="n">sda_thdlst</span><span class="p">[</span><span class="n">pity</span><span class="p">].</span><span class="n">tdl_nr</span><span class="o">--</span><span class="p">;</span>
+    <span class="n">krlspinunlock_sti</span><span class="p">(</span><span class="o">&amp;</span><span class="n">schdap</span><span class="o">-&gt;</span><span class="n">sda_lock</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">cufg</span><span class="p">);</span>
+    <span class="n">krlwlst_add_thread</span><span class="p">(</span><span class="n">wlst</span><span class="p">,</span> <span class="n">tdp</span><span class="p">);</span><span class="c1">//将进程加入等待结构中
+</span><span class="c1"></span>    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="进程唤醒">进程唤醒</h3>
+<p>从等待数据结构中获取进程，设置状态为运行状态，最后加到到进程调度数据结构中</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="kt">void</span> <span class="nf">krlsched_up</span><span class="p">(</span><span class="n">kwlst_t</span> <span class="o">*</span><span class="n">wlst</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">cpuflg_t</span> <span class="n">cufg</span><span class="p">,</span> <span class="n">tcufg</span><span class="p">;</span>
+    <span class="n">uint_t</span> <span class="n">cpuid</span> <span class="o">=</span> <span class="n">hal_retn_cpuid</span><span class="p">();</span>
+    <span class="n">schdata_t</span> <span class="o">*</span><span class="n">schdap</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">osschedcls</span><span class="p">.</span><span class="n">scls_schda</span><span class="p">[</span><span class="n">cpuid</span><span class="p">];</span>
+    <span class="n">thread_t</span> <span class="o">*</span><span class="n">tdp</span><span class="p">;</span>
+    <span class="n">uint_t</span> <span class="n">pity</span><span class="p">;</span>
+    <span class="c1">//取出等待数据结构第一个进程并从等待数据结构中删除
+</span><span class="c1"></span>    <span class="n">tdp</span> <span class="o">=</span> <span class="n">krlwlst_del_thread</span><span class="p">(</span><span class="n">wlst</span><span class="p">);</span>
+    <span class="n">pity</span> <span class="o">=</span> <span class="n">tdp</span><span class="o">-&gt;</span><span class="n">td_priority</span><span class="p">;</span><span class="c1">//获取进程的优先级
+</span><span class="c1"></span>    <span class="n">krlspinlock_cli</span><span class="p">(</span><span class="o">&amp;</span><span class="n">schdap</span><span class="o">-&gt;</span><span class="n">sda_lock</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">cufg</span><span class="p">);</span>
+    <span class="n">krlspinlock_cli</span><span class="p">(</span><span class="o">&amp;</span><span class="n">tdp</span><span class="o">-&gt;</span><span class="n">td_lock</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">tcufg</span><span class="p">);</span>
+    <span class="n">tdp</span><span class="o">-&gt;</span><span class="n">td_stus</span> <span class="o">=</span> <span class="n">TDSTUS_RUN</span><span class="p">;</span><span class="c1">//设置进程的状态为运行状态
+</span><span class="c1"></span>    <span class="n">krlspinunlock_sti</span><span class="p">(</span><span class="o">&amp;</span><span class="n">tdp</span><span class="o">-&gt;</span><span class="n">td_lock</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">tcufg</span><span class="p">);</span>
+    <span class="n">list_add_tail</span><span class="p">(</span><span class="o">&amp;</span><span class="n">tdp</span><span class="o">-&gt;</span><span class="n">td_list</span><span class="p">,</span> <span class="o">&amp;</span><span class="p">(</span><span class="n">schdap</span><span class="o">-&gt;</span><span class="n">sda_thdlst</span><span class="p">[</span><span class="n">pity</span><span class="p">].</span><span class="n">tdl_lsth</span><span class="p">));</span><span class="c1">//加入进程优先级链表
+</span><span class="c1"></span>    <span class="n">schdap</span><span class="o">-&gt;</span><span class="n">sda_thdlst</span><span class="p">[</span><span class="n">pity</span><span class="p">].</span><span class="n">tdl_nr</span><span class="o">++</span><span class="p">;</span>
+    <span class="n">krlspinunlock_sti</span><span class="p">(</span><span class="o">&amp;</span><span class="n">schdap</span><span class="o">-&gt;</span><span class="n">sda_lock</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">cufg</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="空转进程">空转进程</h2>
+<p>当没有任何进程可以调度的时候，需要调度空转进程来运行</p>
+<h3 id="建立空转进程">建立空转进程</h3>
+<p>空转进程是一个内核进程，不加入调度系统，使用一个专门的指针指向它</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span><span class="lnt">83
+</span><span class="lnt">84
+</span><span class="lnt">85
+</span><span class="lnt">86
+</span><span class="lnt">87
+</span><span class="lnt">88
+</span><span class="lnt">89
+</span><span class="lnt">90
+</span><span class="lnt">91
+</span><span class="lnt">92
+</span><span class="lnt">93
+</span><span class="lnt">94
+</span><span class="lnt">95
+</span><span class="lnt">96
+</span><span class="lnt">97
+</span><span class="lnt">98
+</span><span class="lnt">99
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C">
+<span class="n">thread_t</span> <span class="o">*</span><span class="nf">new_cpuidle_thread</span><span class="p">()</span>
+<span class="p">{</span>
+
+    <span class="n">thread_t</span> <span class="o">*</span><span class="n">ret_td</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="n">bool_t</span> <span class="n">acs</span> <span class="o">=</span> <span class="n">FALSE</span><span class="p">;</span>
+    <span class="n">adr_t</span> <span class="n">krlstkadr</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="n">uint_t</span> <span class="n">cpuid</span> <span class="o">=</span> <span class="n">hal_retn_cpuid</span><span class="p">();</span>
+    <span class="n">schdata_t</span> <span class="o">*</span><span class="n">schdap</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">osschedcls</span><span class="p">.</span><span class="n">scls_schda</span><span class="p">[</span><span class="n">cpuid</span><span class="p">];</span>
+    <span class="n">krlstkadr</span> <span class="o">=</span> <span class="n">krlnew</span><span class="p">(</span><span class="n">DAFT_TDKRLSTKSZ</span><span class="p">);</span><span class="c1">//分配进程的内核栈
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">krlstkadr</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">//分配thread_t结构体变量
+</span><span class="c1"></span>    <span class="n">ret_td</span> <span class="o">=</span> <span class="n">krlnew_thread_dsc</span><span class="p">();</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">ret_td</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">acs</span> <span class="o">=</span> <span class="n">krldelete</span><span class="p">(</span><span class="n">krlstkadr</span><span class="p">,</span> <span class="n">DAFT_TDKRLSTKSZ</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">acs</span> <span class="o">==</span> <span class="n">FALSE</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">//设置进程具有系统权限
+</span><span class="c1"></span>    <span class="n">ret_td</span><span class="o">-&gt;</span><span class="n">td_privilege</span> <span class="o">=</span> <span class="n">PRILG_SYS</span><span class="p">;</span>
+    <span class="n">ret_td</span><span class="o">-&gt;</span><span class="n">td_priority</span> <span class="o">=</span> <span class="n">PRITY_MIN</span><span class="p">;</span>
+    <span class="c1">//设置进程的内核栈顶和内核栈开始地址
+</span><span class="c1"></span>    <span class="n">ret_td</span><span class="o">-&gt;</span><span class="n">td_krlstktop</span> <span class="o">=</span> <span class="n">krlstkadr</span> <span class="o">+</span> <span class="p">(</span><span class="n">adr_t</span><span class="p">)(</span><span class="n">DAFT_TDKRLSTKSZ</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="n">ret_td</span><span class="o">-&gt;</span><span class="n">td_krlstkstart</span> <span class="o">=</span> <span class="n">krlstkadr</span><span class="p">;</span>
+    <span class="c1">//初始化进程的内核栈
+</span><span class="c1"></span>    <span class="n">krlthread_kernstack_init</span><span class="p">(</span><span class="n">ret_td</span><span class="p">,</span> <span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="p">)</span><span class="n">krlcpuidle_main</span><span class="p">,</span> <span class="n">KMOD_EFLAGS</span><span class="p">);</span>
+    <span class="c1">//设置调度系统数据结构的空转进程和当前进程为ret_td
+</span><span class="c1"></span>    <span class="n">schdap</span><span class="o">-&gt;</span><span class="n">sda_cpuidle</span> <span class="o">=</span> <span class="n">ret_td</span><span class="p">;</span>
+    <span class="n">schdap</span><span class="o">-&gt;</span><span class="n">sda_currtd</span> <span class="o">=</span> <span class="n">ret_td</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">ret_td</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">//新建空转进程
+</span><span class="c1"></span><span class="kt">void</span> <span class="nf">new_cpuidle</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">thread_t</span> <span class="o">*</span><span class="n">thp</span> <span class="o">=</span> <span class="n">new_cpuidle_thread</span><span class="p">();</span><span class="c1">//建立空转进程
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">thp</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+    <span class="p">{</span><span class="c1">//失败则主动死机
+</span><span class="c1"></span>        <span class="n">hal_sysdie</span><span class="p">(</span><span class="s">&#34;newcpuilde err&#34;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">kprint</span><span class="p">(</span><span class="s">&#34;CPUIDLETASK: %x</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="p">(</span><span class="n">uint_t</span><span class="p">)</span><span class="n">thp</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+
+
+<span class="n">thread_t</span> <span class="o">*</span><span class="nf">new_cpuidle_thread</span><span class="p">()</span>
+<span class="p">{</span>
+
+    <span class="n">thread_t</span> <span class="o">*</span><span class="n">ret_td</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="n">bool_t</span> <span class="n">acs</span> <span class="o">=</span> <span class="n">FALSE</span><span class="p">;</span>
+    <span class="n">adr_t</span> <span class="n">krlstkadr</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="n">uint_t</span> <span class="n">cpuid</span> <span class="o">=</span> <span class="n">hal_retn_cpuid</span><span class="p">();</span>
+    <span class="n">schdata_t</span> <span class="o">*</span><span class="n">schdap</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">osschedcls</span><span class="p">.</span><span class="n">scls_schda</span><span class="p">[</span><span class="n">cpuid</span><span class="p">];</span>
+    <span class="n">krlstkadr</span> <span class="o">=</span> <span class="n">krlnew</span><span class="p">(</span><span class="n">DAFT_TDKRLSTKSZ</span><span class="p">);</span><span class="c1">//分配进程的内核栈
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">krlstkadr</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">//分配thread_t结构体变量
+</span><span class="c1"></span>    <span class="n">ret_td</span> <span class="o">=</span> <span class="n">krlnew_thread_dsc</span><span class="p">();</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">ret_td</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">acs</span> <span class="o">=</span> <span class="n">krldelete</span><span class="p">(</span><span class="n">krlstkadr</span><span class="p">,</span> <span class="n">DAFT_TDKRLSTKSZ</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">acs</span> <span class="o">==</span> <span class="n">FALSE</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">//设置进程具有系统权限
+</span><span class="c1"></span>    <span class="n">ret_td</span><span class="o">-&gt;</span><span class="n">td_privilege</span> <span class="o">=</span> <span class="n">PRILG_SYS</span><span class="p">;</span>
+    <span class="n">ret_td</span><span class="o">-&gt;</span><span class="n">td_priority</span> <span class="o">=</span> <span class="n">PRITY_MIN</span><span class="p">;</span>
+    <span class="c1">//设置进程的内核栈顶和内核栈开始地址
+</span><span class="c1"></span>    <span class="n">ret_td</span><span class="o">-&gt;</span><span class="n">td_krlstktop</span> <span class="o">=</span> <span class="n">krlstkadr</span> <span class="o">+</span> <span class="p">(</span><span class="n">adr_t</span><span class="p">)(</span><span class="n">DAFT_TDKRLSTKSZ</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="n">ret_td</span><span class="o">-&gt;</span><span class="n">td_krlstkstart</span> <span class="o">=</span> <span class="n">krlstkadr</span><span class="p">;</span>
+    <span class="c1">//初始化进程的内核栈
+</span><span class="c1"></span>    <span class="n">krlthread_kernstack_init</span><span class="p">(</span><span class="n">ret_td</span><span class="p">,</span> <span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="p">)</span><span class="n">krlcpuidle_main</span><span class="p">,</span> <span class="n">KMOD_EFLAGS</span><span class="p">);</span>
+    <span class="c1">//设置调度系统数据结构的空转进程和当前进程为ret_td
+</span><span class="c1"></span>    <span class="n">schdap</span><span class="o">-&gt;</span><span class="n">sda_cpuidle</span> <span class="o">=</span> <span class="n">ret_td</span><span class="p">;</span>
+    <span class="n">schdap</span><span class="o">-&gt;</span><span class="n">sda_currtd</span> <span class="o">=</span> <span class="n">ret_td</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">ret_td</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">//新建空转进程
+</span><span class="c1"></span><span class="kt">void</span> <span class="nf">new_cpuidle</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">thread_t</span> <span class="o">*</span><span class="n">thp</span> <span class="o">=</span> <span class="n">new_cpuidle_thread</span><span class="p">();</span><span class="c1">//建立空转进程
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">thp</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+    <span class="p">{</span><span class="c1">//失败则主动死机
+</span><span class="c1"></span>        <span class="n">hal_sysdie</span><span class="p">(</span><span class="s">&#34;newcpuilde err&#34;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">kprint</span><span class="p">(</span><span class="s">&#34;CPUIDLETASK: %x</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="p">(</span><span class="n">uint_t</span><span class="p">)</span><span class="n">thp</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="空转进程运行">空转进程运行</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="kt">void</span> <span class="nf">krlcpuidle_start</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">uint_t</span> <span class="n">cpuid</span> <span class="o">=</span> <span class="n">hal_retn_cpuid</span><span class="p">();</span>
+    <span class="n">schdata_t</span> <span class="o">*</span><span class="n">schdap</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">osschedcls</span><span class="p">.</span><span class="n">scls_schda</span><span class="p">[</span><span class="n">cpuid</span><span class="p">];</span>
+    <span class="c1">//取得空转进程
+</span><span class="c1"></span>    <span class="n">thread_t</span> <span class="o">*</span><span class="n">tdp</span> <span class="o">=</span> <span class="n">schdap</span><span class="o">-&gt;</span><span class="n">sda_cpuidle</span><span class="p">;</span>
+    <span class="c1">//设置空转进程的tss和R0特权级的栈
+</span><span class="c1"></span>    <span class="n">tdp</span><span class="o">-&gt;</span><span class="n">td_context</span><span class="p">.</span><span class="n">ctx_nexttss</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">x64tss</span><span class="p">[</span><span class="n">cpuid</span><span class="p">];</span>
+    <span class="n">tdp</span><span class="o">-&gt;</span><span class="n">td_context</span><span class="p">.</span><span class="n">ctx_nexttss</span><span class="o">-&gt;</span><span class="n">rsp0</span> <span class="o">=</span> <span class="n">tdp</span><span class="o">-&gt;</span><span class="n">td_krlstktop</span><span class="p">;</span>
+    <span class="c1">//设置空转进程的状态为运行状态
+</span><span class="c1"></span>    <span class="n">tdp</span><span class="o">-&gt;</span><span class="n">td_stus</span> <span class="o">=</span> <span class="n">TDSTUS_RUN</span><span class="p">;</span>
+    <span class="c1">//启动进程运行
+</span><span class="c1"></span>    <span class="n">retnfrom_first_sched</span><span class="p">(</span><span class="n">tdp</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="第二十七讲--linux如何实现进程和进程调度">第二十七讲  Linux如何实现进程和进程调度</h1>
+<h2 id="进程">进程</h2>
+<h3 id="进程数据结构">进程数据结构</h3>
+<p>使用 task_struct 表示一个运行中的应用程序</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="k">struct</span> <span class="n">task_struct</span> <span class="p">{</span>
+    <span class="k">struct</span> <span class="n">thread_info</span> <span class="n">thread_info</span><span class="p">;</span><span class="c1">//处理器特有数据 
+</span><span class="c1"></span>    <span class="k">volatile</span> <span class="kt">long</span>   <span class="n">state</span><span class="p">;</span>       <span class="c1">//进程状态 
+</span><span class="c1"></span>    <span class="kt">void</span>            <span class="o">*</span><span class="n">stack</span><span class="p">;</span>      <span class="c1">//进程内核栈地址 
+</span><span class="c1"></span>    <span class="n">refcount_t</span>      <span class="n">usage</span><span class="p">;</span>       <span class="c1">//进程使用计数
+</span><span class="c1"></span>    <span class="kt">int</span>             <span class="n">on_rq</span><span class="p">;</span>       <span class="c1">//进程是否在运行队列上
+</span><span class="c1"></span>    <span class="kt">int</span>             <span class="n">prio</span><span class="p">;</span>        <span class="c1">//动态优先级
+</span><span class="c1"></span>    <span class="kt">int</span>             <span class="n">static_prio</span><span class="p">;</span> <span class="c1">//静态优先级
+</span><span class="c1"></span>    <span class="kt">int</span>             <span class="n">normal_prio</span><span class="p">;</span> <span class="c1">//取决于静态优先级和调度策略
+</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">int</span>    <span class="n">rt_priority</span><span class="p">;</span> <span class="c1">//实时优先级
+</span><span class="c1"></span>    <span class="k">const</span> <span class="k">struct</span> <span class="n">sched_class</span>    <span class="o">*</span><span class="n">sched_class</span><span class="p">;</span><span class="c1">//指向其所在的调度类
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">sched_entity</span>         <span class="n">se</span><span class="p">;</span><span class="c1">//普通进程的调度实体
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">sched_rt_entity</span>      <span class="n">rt</span><span class="p">;</span><span class="c1">//实时进程的调度实体
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">sched_dl_entity</span>      <span class="n">dl</span><span class="p">;</span><span class="c1">//采用EDF算法调度实时进程的调度实体
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">sched_info</span>       <span class="n">sched_info</span><span class="p">;</span><span class="c1">//用于调度器统计进程的运行信息 
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">list_head</span>        <span class="n">tasks</span><span class="p">;</span><span class="c1">//所有进程的链表
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">mm_struct</span>        <span class="o">*</span><span class="n">mm</span><span class="p">;</span>  <span class="c1">//指向进程内存结构
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">mm_struct</span>        <span class="o">*</span><span class="n">active_mm</span><span class="p">;</span>
+    <span class="n">pid_t</span>               <span class="n">pid</span><span class="p">;</span>            <span class="c1">//进程id
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">task_struct</span> <span class="n">__rcu</span>    <span class="o">*</span><span class="n">parent</span><span class="p">;</span><span class="c1">//指向其父进程
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">list_head</span>        <span class="n">children</span><span class="p">;</span> <span class="c1">//链表中的所有元素都是它的子进程
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">list_head</span>        <span class="n">sibling</span><span class="p">;</span>  <span class="c1">//用于把当前进程插入到兄弟链表中
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">task_struct</span>      <span class="o">*</span><span class="n">group_leader</span><span class="p">;</span><span class="c1">//指向其所在进程组的领头进程
+</span><span class="c1"></span>    <span class="n">u64</span>             <span class="n">utime</span><span class="p">;</span>   <span class="c1">//用于记录进程在用户态下所经过的节拍数
+</span><span class="c1"></span>    <span class="n">u64</span>             <span class="n">stime</span><span class="p">;</span>   <span class="c1">//用于记录进程在内核态下所经过的节拍数
+</span><span class="c1"></span>    <span class="n">u64</span>             <span class="n">gtime</span><span class="p">;</span>   <span class="c1">//用于记录作为虚拟机进程所经过的节拍数
+</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">long</span>           <span class="n">min_flt</span><span class="p">;</span><span class="c1">//缺页统计 
+</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">long</span>           <span class="n">maj_flt</span><span class="p">;</span>
+    <span class="k">struct</span> <span class="n">fs_struct</span>        <span class="o">*</span><span class="n">fs</span><span class="p">;</span>    <span class="c1">//进程相关的文件系统信息
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">files_struct</span>     <span class="o">*</span><span class="n">files</span><span class="p">;</span><span class="c1">//进程打开的所有文件
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">vm_struct</span>        <span class="o">*</span><span class="n">stack_vm_area</span><span class="p">;</span><span class="c1">//内核栈的内存区
+</span><span class="c1"></span>  <span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="创建-task_struct-实例">创建 task_struct 实例</h3>
+<p>早期 task_struct 结构和内核栈放在一起，首先分配两个连续的页面
+作为进程的内核栈，再把 task_struct 结构体实例放在栈底。
+将 RSP 寄存器的值低 13 位清零，就可以得到实例地址</p>
+<p><img src="/image/play_os_in_action/27_1.webp" alt="task_struct1"></p>
+<p>后期随着 task_struct 结构体 越来越大，和内核栈分开了，使用 stack 字段指向内核栈地址</p>
+<h3 id="进程地址空间">进程地址空间</h3>
+<p>进程地址空间使用 mm_struct 结构表示</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="k">struct</span> <span class="n">mm_struct</span> <span class="p">{</span>
+        <span class="k">struct</span> <span class="n">vm_area_struct</span> <span class="o">*</span><span class="n">mmap</span><span class="p">;</span> <span class="c1">//虚拟地址区间链表VMAs
+</span><span class="c1"></span>        <span class="k">struct</span> <span class="n">rb_root</span> <span class="n">mm_rb</span><span class="p">;</span>   <span class="c1">//组织vm_area_struct结构的红黑树的根
+</span><span class="c1"></span>        <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">task_size</span><span class="p">;</span>    <span class="c1">//进程虚拟地址空间大小
+</span><span class="c1"></span>        <span class="n">pgd_t</span> <span class="o">*</span> <span class="n">pgd</span><span class="p">;</span>        <span class="c1">//指向MMU页表
+</span><span class="c1"></span>        <span class="n">atomic_t</span> <span class="n">mm_users</span><span class="p">;</span> <span class="c1">//多个进程共享这个mm_struct
+</span><span class="c1"></span>        <span class="n">atomic_t</span> <span class="n">mm_count</span><span class="p">;</span> <span class="c1">//mm_struct结构本身计数 
+</span><span class="c1"></span>        <span class="n">atomic_long_t</span> <span class="n">pgtables_bytes</span><span class="p">;</span><span class="c1">//页表占用了多个页
+</span><span class="c1"></span>        <span class="kt">int</span> <span class="n">map_count</span><span class="p">;</span>      <span class="c1">//多少个VMA
+</span><span class="c1"></span>        <span class="n">spinlock_t</span> <span class="n">page_table_lock</span><span class="p">;</span> <span class="c1">//保护页表的自旋锁
+</span><span class="c1"></span>        <span class="k">struct</span> <span class="n">list_head</span> <span class="n">mmlist</span><span class="p">;</span> <span class="c1">//挂入mm_struct结构的链表
+</span><span class="c1"></span>        <span class="c1">//进程应用程序代码开始、结束地址，应用程序数据的开始、结束地址 
+</span><span class="c1"></span>        <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">start_code</span><span class="p">,</span> <span class="n">end_code</span><span class="p">,</span> <span class="n">start_data</span><span class="p">,</span> <span class="n">end_data</span><span class="p">;</span>
+        <span class="c1">//进程应用程序堆区的开始、当前地址、栈开始地址 
+</span><span class="c1"></span>        <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">start_brk</span><span class="p">,</span> <span class="n">brk</span><span class="p">,</span> <span class="n">start_stack</span><span class="p">;</span>
+        <span class="c1">//进程应用程序参数区开始、结束地址
+</span><span class="c1"></span>        <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">arg_start</span><span class="p">,</span> <span class="n">arg_end</span><span class="p">,</span> <span class="n">env_start</span><span class="p">,</span> <span class="n">env_end</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="进程文件表">进程文件表</h3>
+<p>进程打开的文件表使用 files_struct 结构表示</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="k">struct</span> <span class="n">files_struct</span> <span class="p">{</span>
+ 
+    <span class="n">atomic_t</span> <span class="n">count</span><span class="p">;</span><span class="c1">//自动计数
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">fdtable</span> <span class="n">__rcu</span> <span class="o">*</span><span class="n">fdt</span><span class="p">;</span>
+    <span class="k">struct</span> <span class="n">fdtable</span> <span class="n">fdtab</span><span class="p">;</span>
+    <span class="n">spinlock_t</span> <span class="n">file_lock</span><span class="p">;</span> <span class="c1">//自旋锁
+</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">next_fd</span><span class="p">;</span><span class="c1">//下一个文件句柄
+</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">close_on_exec_init</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span><span class="c1">//执行exec()时要关闭的文件句柄
+</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">open_fds_init</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">full_fds_bits_init</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+    <span class="k">struct</span> <span class="n">file</span> <span class="n">__rcu</span> <span class="o">*</span> <span class="n">fd_array</span><span class="p">[</span><span class="n">NR_OPEN_DEFAULT</span><span class="p">];</span><span class="c1">//默认情况下打开文件的指针数组
+</span><span class="c1"></span><span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>当使用如 <code>int fd = open(&quot;/tmp/test.txt&quot;)</code> 打开一个文件时，会建立一个 <code>struct file</code>实例与之对应，并加入 fd_array 数组中</p>
+<p>Linux在新建一个进程时，会复制当前进程的files_struct结构</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="k">static</span> <span class="kt">int</span> <span class="nf">copy_files</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">clone_flags</span><span class="p">,</span> <span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span><span class="n">tsk</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">struct</span> <span class="n">files_struct</span> <span class="o">*</span><span class="n">oldf</span><span class="p">,</span> <span class="o">*</span><span class="n">newf</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">error</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">oldf</span> <span class="o">=</span> <span class="n">current</span><span class="o">-&gt;</span><span class="n">files</span><span class="p">;</span><span class="c1">//获取当前进程的files_struct的指针
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">oldf</span><span class="p">)</span>
+        <span class="k">goto</span> <span class="n">out</span><span class="p">;</span>
+
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">clone_flags</span> <span class="o">&amp;</span> <span class="n">CLONE_FILES</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">atomic_inc</span><span class="p">(</span><span class="o">&amp;</span><span class="n">oldf</span><span class="o">-&gt;</span><span class="n">count</span><span class="p">);</span>
+        <span class="k">goto</span> <span class="n">out</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">//分配新files_struct结构的实例变量，并复制当前的files_struct结构
+</span><span class="c1"></span>    <span class="n">newf</span> <span class="o">=</span> <span class="n">dup_fd</span><span class="p">(</span><span class="n">oldf</span><span class="p">,</span> <span class="n">NR_OPEN_MAX</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">error</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">newf</span><span class="p">)</span>
+        <span class="k">goto</span> <span class="n">out</span><span class="p">;</span>
+
+
+    <span class="n">tsk</span><span class="o">-&gt;</span><span class="n">files</span> <span class="o">=</span> <span class="n">newf</span><span class="p">;</span><span class="c1">//新进程的files_struct结构指针指向新的files_struct结构
+</span><span class="c1"></span>    <span class="n">error</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="nl">out</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">error</span><span class="p">;</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="进程调度">进程调度</h2>
+<p>Linux 有多种调度算法，我们具体介绍完全公平调度算法 （CFQ）</p>
+<h3 id="进程调度实体数据结构">进程调度实体数据结构</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C">
+<span class="k">struct</span> <span class="n">sched_entity</span> <span class="p">{</span>
+    <span class="k">struct</span> <span class="n">load_weight</span> <span class="n">load</span><span class="p">;</span><span class="c1">//表示当前调度实体的权重
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">rb_node</span> <span class="n">run_node</span><span class="p">;</span><span class="c1">//红黑树的数据节点
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">list_head</span> <span class="n">group_node</span><span class="p">;</span><span class="c1">// 链表节点，被链接到 percpu 的 rq-&gt;cfs_tasks
+</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">on_rq</span><span class="p">;</span> <span class="c1">//当前调度实体是否在就绪队列上
+</span><span class="c1"></span>    <span class="n">u64</span> <span class="n">exec_start</span><span class="p">;</span><span class="c1">//当前实体上次被调度执行的时间
+</span><span class="c1"></span>    <span class="n">u64</span> <span class="n">sum_exec_runtime</span><span class="p">;</span><span class="c1">//当前实体总执行时间
+</span><span class="c1"></span>    <span class="n">u64</span> <span class="n">prev_sum_exec_runtime</span><span class="p">;</span><span class="c1">//截止到上次统计，进程执行的时间
+</span><span class="c1"></span>    <span class="n">u64</span> <span class="n">vruntime</span><span class="p">;</span><span class="c1">//当前实体的虚拟时间
+</span><span class="c1"></span>    <span class="n">u64</span> <span class="n">nr_migrations</span><span class="p">;</span><span class="c1">//实体执行迁移的次数 
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">sched_statistics</span> <span class="n">statistics</span><span class="p">;</span><span class="c1">//统计信息包含进程的睡眠统计、等待延迟统计、CPU迁移统计、唤醒统计等。
+</span><span class="c1"></span><span class="cp">#ifdef CONFIG_FAIR_GROUP_SCHED
+</span><span class="cp"></span>    <span class="kt">int</span> <span class="n">depth</span><span class="p">;</span><span class="c1">// 表示当前实体处于调度组中的深度
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">sched_entity</span> <span class="o">*</span><span class="n">parent</span><span class="p">;</span><span class="c1">//指向父级调度实体
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">cfs_rq</span> <span class="o">*</span><span class="n">cfs_rq</span><span class="p">;</span><span class="c1">//当前调度实体属于的 cfs_rq.
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">cfs_rq</span> <span class="o">*</span><span class="n">my_q</span><span class="p">;</span>
+<span class="cp">#endif
+</span><span class="cp">#ifdef CONFIG_SMP
+</span><span class="cp"></span>    <span class="k">struct</span> <span class="n">sched_avg</span> <span class="n">avg</span> <span class="p">;</span><span class="c1">// 记录当前实体对于CPU的负载
+</span><span class="c1"></span><span class="cp">#endif
+</span><span class="cp"></span><span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在 task_struct 结构中 ，会包含至少一个 sched_entity 结构的变量，
+可以通过 sched_entity结构地址偏移访问 task_struct 结构</p>
+<p><img src="/image/play_os_in_action/27_2.webp" alt="sched_entity"></p>
+<h3 id="进程运行队列">进程运行队列</h3>
+<p>每个 CPU 分配一个进程运行队列，队列包含多重调度算法的队列</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C">
+<span class="k">struct</span> <span class="n">rq</span> <span class="p">{</span>
+    <span class="n">raw_spinlock_t</span>      <span class="n">lock</span><span class="p">;</span><span class="c1">//自旋锁
+</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">int</span>        <span class="n">nr_running</span><span class="p">;</span><span class="c1">//多个就绪运行进程
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">cfs_rq</span>       <span class="n">cfs</span><span class="p">;</span> <span class="c1">//作用于完全公平调度算法的运行队列
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">rt_rq</span>        <span class="n">rt</span><span class="p">;</span><span class="c1">//作用于实时调度算法的运行队列
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">dl_rq</span>        <span class="n">dl</span><span class="p">;</span><span class="c1">//作用于EDF调度算法的运行队列
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">task_struct</span> <span class="n">__rcu</span>    <span class="o">*</span><span class="n">curr</span><span class="p">;</span><span class="c1">//这个运行队列当前正在运行的进程
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">task_struct</span>  <span class="o">*</span><span class="n">idle</span><span class="p">;</span><span class="c1">//这个运行队列的空转进程
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">task_struct</span>  <span class="o">*</span><span class="n">stop</span><span class="p">;</span><span class="c1">//这个运行队列的停止进程
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">mm_struct</span>    <span class="o">*</span><span class="n">prev_mm</span><span class="p">;</span><span class="c1">//这个运行队列上一次运行进程的mm_struct
+</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">int</span>        <span class="n">clock_update_flags</span><span class="p">;</span><span class="c1">//时钟更新标志
+</span><span class="c1"></span>    <span class="n">u64</span>         <span class="n">clock</span><span class="p">;</span> <span class="c1">//运行队列的时间 
+</span><span class="c1"></span>    <span class="c1">//后面的代码省略
+</span><span class="c1"></span><span class="p">};</span>
+
+<span class="k">struct</span> <span class="n">rb_root_cached</span> <span class="p">{</span>
+    <span class="k">struct</span> <span class="n">rb_root</span> <span class="n">rb_root</span><span class="p">;</span>   <span class="c1">//红黑树的根
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">rb_node</span> <span class="o">*</span><span class="n">rb_leftmost</span><span class="p">;</span><span class="c1">//红黑树最左子节点
+</span><span class="c1"></span><span class="p">};</span>
+<span class="k">struct</span> <span class="n">cfs_rq</span> <span class="p">{</span>
+    <span class="k">struct</span> <span class="n">load_weight</span>  <span class="n">load</span><span class="p">;</span><span class="c1">//cfs_rq上所有调度实体的负载总和
+</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">nr_running</span><span class="p">;</span><span class="c1">//cfs_rq上所有的调度实体不含调度组中的调度实体
+</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">h_nr_running</span><span class="p">;</span><span class="c1">//cfs_rq上所有的调度实体包含调度组中所有调度实体
+</span><span class="c1"></span>    <span class="n">u64</span>         <span class="n">exec_clock</span><span class="p">;</span><span class="c1">//当前 cfs_rq 上执行的时间 
+</span><span class="c1"></span>    <span class="n">u64</span>         <span class="n">min_vruntime</span><span class="p">;</span><span class="c1">//最小虚拟运行时间
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">rb_root_cached</span>   <span class="n">tasks_timeline</span><span class="p">;</span><span class="c1">//所有调度实体的根
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">sched_entity</span> <span class="o">*</span><span class="n">curr</span><span class="p">;</span><span class="c1">//当前调度实体
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">sched_entity</span> <span class="o">*</span><span class="n">next</span><span class="p">;</span><span class="c1">//下一个调度实体
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">sched_entity</span> <span class="o">*</span><span class="n">last</span><span class="p">;</span><span class="c1">//上次执行过的调度实体
+</span><span class="c1"></span>    <span class="c1">//省略不关注的代码
+</span><span class="c1"></span><span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="调度实体和运行队列的关系">调度实体和运行队列的关系</h3>
+<p><img src="/image/play_os_in_action/27_3.webp" alt="running_queue"></p>
+<p>task_struct 结构中 包含 sched_entity 结构，sched_entity 通过红黑树
+组织起来，红黑树的根在 cfs_rq 结构中， cfs_rq 结构又被 包含在 rq 结构中</p>
+<h3 id="调度器类">调度器类</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="k">struct</span> <span class="n">sched_class</span> <span class="p">{</span>
+    <span class="c1">//向运行队列中添加一个进程，入队
+</span><span class="c1"></span>    <span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">enqueue_task</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">rq</span> <span class="o">*</span><span class="n">rq</span><span class="p">,</span> <span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span><span class="n">p</span><span class="p">,</span> <span class="kt">int</span> <span class="n">flags</span><span class="p">);</span>
+    <span class="c1">//向运行队列中删除一个进程，出队
+</span><span class="c1"></span>    <span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">dequeue_task</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">rq</span> <span class="o">*</span><span class="n">rq</span><span class="p">,</span> <span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span><span class="n">p</span><span class="p">,</span> <span class="kt">int</span> <span class="n">flags</span><span class="p">);</span>
+    <span class="c1">//检查当前进程是否可抢占
+</span><span class="c1"></span>    <span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">check_preempt_curr</span><span class="p">)(</span><span class="k">struct</span> <span class="n">rq</span> <span class="o">*</span><span class="n">rq</span><span class="p">,</span> <span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span><span class="n">p</span><span class="p">,</span> <span class="kt">int</span> <span class="n">flags</span><span class="p">);</span>
+    <span class="c1">//从运行队列中返回可以投入运行的一个进程
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="n">pick_next_task</span><span class="p">)(</span><span class="k">struct</span> <span class="n">rq</span> <span class="o">*</span><span class="n">rq</span><span class="p">);</span>
+<span class="p">}</span> <span class="p">;</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>Linux 定义了五个 sched_class 结构的实变量</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C">
+<span class="c1">//定义在链接脚本文件中
+</span><span class="c1"></span><span class="k">extern</span> <span class="k">struct</span> <span class="n">sched_class</span> <span class="n">__begin_sched_classes</span><span class="p">[];</span>
+<span class="k">extern</span> <span class="k">struct</span> <span class="n">sched_class</span> <span class="n">__end_sched_classes</span><span class="p">[];</span>
+
+<span class="cp">#define sched_class_highest (__end_sched_classes - 1)
+</span><span class="cp">#define sched_class_lowest  (__begin_sched_classes - 1)
+</span><span class="cp"></span>
+<span class="cp">#define for_class_range(class, _from, _to) \
+</span><span class="cp">    for (class = (_from); class != (_to); class--)
+</span><span class="cp"></span><span class="c1">//遍历每个调度类
+</span><span class="c1"></span><span class="cp">#define for_each_class(class) \
+</span><span class="cp">    for_class_range(class, sched_class_highest, sched_class_lowest)
+</span><span class="cp"></span>
+<span class="k">extern</span> <span class="k">const</span> <span class="k">struct</span> <span class="n">sched_class</span> <span class="n">stop_sched_class</span><span class="p">;</span><span class="c1">//停止调度类
+</span><span class="c1"></span><span class="k">extern</span> <span class="k">const</span> <span class="k">struct</span> <span class="n">sched_class</span> <span class="n">dl_sched_class</span><span class="p">;</span><span class="c1">//Deadline调度类
+</span><span class="c1"></span><span class="k">extern</span> <span class="k">const</span> <span class="k">struct</span> <span class="n">sched_class</span> <span class="n">rt_sched_class</span><span class="p">;</span><span class="c1">//实时调度类
+</span><span class="c1"></span><span class="k">extern</span> <span class="k">const</span> <span class="k">struct</span> <span class="n">sched_class</span> <span class="n">fair_sched_class</span><span class="p">;</span><span class="c1">//CFS调度类
+</span><span class="c1"></span><span class="k">extern</span> <span class="k">const</span> <span class="k">struct</span> <span class="n">sched_class</span> <span class="n">idle_sched_class</span><span class="p">;</span><span class="c1">//空转调度类
+</span></code></pre></td></tr></table>
+</div>
+</div><p>它们的优先级是：stop_sched_class &gt; dl_sched_class &gt; rt_sched_class &gt; fair_sched_class &gt; idle_sched_class</p>
+<p>CFS 调度器对应的类</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C">
+<span class="k">const</span> <span class="k">struct</span> <span class="n">sched_class</span> <span class="n">fair_sched_class</span>
+    <span class="nf">__section</span><span class="p">(</span><span class="s">&#34;__fair_sched_class&#34;</span><span class="p">)</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">.</span><span class="n">enqueue_task</span>       <span class="o">=</span> <span class="n">enqueue_task_fair</span><span class="p">,</span>
+    <span class="p">.</span><span class="n">dequeue_task</span>       <span class="o">=</span> <span class="n">dequeue_task_fair</span><span class="p">,</span>
+    <span class="p">.</span><span class="n">check_preempt_curr</span> <span class="o">=</span> <span class="n">check_preempt_wakeup</span><span class="p">,</span>
+    <span class="p">.</span><span class="n">pick_next_task</span>     <span class="o">=</span> <span class="n">__pick_next_task_fair</span><span class="p">,</span>
+<span class="p">};</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="cfs调度器">CFS调度器</h3>
+<p>CFS没有时间片的概念，分配的是CPU时间比例。</p>
+<p>举个例子，现在有 A、B 两个进程。进程 A 的权重是 1024，进程 B 的权重是 2048。
+那么进程 A 获得 CPU 的时间比例是 1024/(1024+2048) = 33.3%。
+进程 B 获得的 CPU 时间比例是 2048/(1024+2048)=66.7%。</p>
+<p>进程的时间 = CPU 总时间 * 进程的权重 / 就绪队列所有进程权重之和</p>
+<p>通过 nice 值设置进程权重，数据越小，权重越大</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="k">const</span> <span class="kt">int</span> <span class="n">sched_prio_to_weight</span><span class="p">[</span><span class="mi">40</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+ <span class="cm">/* -20 */</span>     <span class="mi">88761</span><span class="p">,</span>     <span class="mi">71755</span><span class="p">,</span>     <span class="mi">56483</span><span class="p">,</span>     <span class="mi">46273</span><span class="p">,</span>     <span class="mi">36291</span><span class="p">,</span>
+ <span class="cm">/* -15 */</span>     <span class="mi">29154</span><span class="p">,</span>     <span class="mi">23254</span><span class="p">,</span>     <span class="mi">18705</span><span class="p">,</span>     <span class="mi">14949</span><span class="p">,</span>     <span class="mi">11916</span><span class="p">,</span>
+ <span class="cm">/* -10 */</span>      <span class="mi">9548</span><span class="p">,</span>      <span class="mi">7620</span><span class="p">,</span>      <span class="mi">6100</span><span class="p">,</span>      <span class="mi">4904</span><span class="p">,</span>      <span class="mi">3906</span><span class="p">,</span>
+ <span class="cm">/*  -5 */</span>      <span class="mi">3121</span><span class="p">,</span>      <span class="mi">2501</span><span class="p">,</span>      <span class="mi">1991</span><span class="p">,</span>      <span class="mi">1586</span><span class="p">,</span>      <span class="mi">1277</span><span class="p">,</span>
+ <span class="cm">/*   0 */</span>      <span class="mi">1024</span><span class="p">,</span>       <span class="mi">820</span><span class="p">,</span>       <span class="mi">655</span><span class="p">,</span>       <span class="mi">526</span><span class="p">,</span>       <span class="mi">423</span><span class="p">,</span>
+ <span class="cm">/*   5 */</span>       <span class="mi">335</span><span class="p">,</span>       <span class="mi">272</span><span class="p">,</span>       <span class="mi">215</span><span class="p">,</span>       <span class="mi">172</span><span class="p">,</span>       <span class="mi">137</span><span class="p">,</span>
+ <span class="cm">/*  10 */</span>       <span class="mi">110</span><span class="p">,</span>        <span class="mi">87</span><span class="p">,</span>        <span class="mi">70</span><span class="p">,</span>        <span class="mi">56</span><span class="p">,</span>        <span class="mi">45</span><span class="p">,</span>
+ <span class="cm">/*  15 */</span>        <span class="mi">36</span><span class="p">,</span>        <span class="mi">29</span><span class="p">,</span>        <span class="mi">23</span><span class="p">,</span>        <span class="mi">18</span><span class="p">,</span>        <span class="mi">15</span><span class="p">,</span>
+<span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="进程调度延迟">进程调度延迟</h3>
+<p>调度延迟指的是保证每个可运行的进程都至少运行一次的时间间隔</p>
+<p>当可运行的进程少于等于 8 个时，调度延迟固定为 6ms；超过8个，
+就要保证每个进程至少运行一段时间才被调度，这个一段时间叫做 最小调度粒度时间。</p>
+<p>CFS 调度器 的默认最小调度粒度时间是 0.75ms</p>
+<h3 id="虚拟时间">虚拟时间</h3>
+<p>CFS引入了虚拟时间，保证每个进程允许的虚拟时间相等，
+nice 为 0 的进程的虚拟时间和实际时间是相等的<br>
+在选择下一个运行的进程时，只需要找到虚拟时间最小的进程就行了</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="n">vruntime</span> <span class="o">=</span> <span class="n">wtime</span><span class="o">*</span><span class="p">(</span> <span class="n">NICE_0_LOAD</span><span class="o">/</span><span class="n">weight</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="定时周期调度">定时周期调度</h3>
+<p>Linux会启动定时器，来更新进程的虚拟时间</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="k">static</span> <span class="kt">void</span> <span class="nf">update_curr</span><span class="p">(</span><span class="k">struct</span> <span class="n">cfs_rq</span> <span class="o">*</span><span class="n">cfs_rq</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">struct</span> <span class="n">sched_entity</span> <span class="o">*</span><span class="n">curr</span> <span class="o">=</span> <span class="n">cfs_rq</span><span class="o">-&gt;</span><span class="n">curr</span><span class="p">;</span>
+    <span class="n">u64</span> <span class="n">now</span> <span class="o">=</span> <span class="n">rq_clock_task</span><span class="p">(</span><span class="n">rq_of</span><span class="p">(</span><span class="n">cfs_rq</span><span class="p">));</span><span class="c1">//获取当前时间 
+</span><span class="c1"></span>    <span class="n">u64</span> <span class="n">delta_exec</span><span class="p">;</span>
+    <span class="n">delta_exec</span> <span class="o">=</span> <span class="n">now</span> <span class="o">-</span> <span class="n">curr</span><span class="o">-&gt;</span><span class="n">exec_start</span><span class="p">;</span><span class="c1">//间隔时间 
+</span><span class="c1"></span>    <span class="n">curr</span><span class="o">-&gt;</span><span class="n">exec_start</span> <span class="o">=</span> <span class="n">now</span><span class="p">;</span>
+    <span class="n">curr</span><span class="o">-&gt;</span><span class="n">sum_exec_runtime</span> <span class="o">+=</span> <span class="n">delta_exec</span><span class="p">;</span><span class="c1">//累计运行时间 
+</span><span class="c1"></span>    <span class="n">curr</span><span class="o">-&gt;</span><span class="n">vruntime</span> <span class="o">+=</span> <span class="n">calc_delta_fair</span><span class="p">(</span><span class="n">delta_exec</span><span class="p">,</span> <span class="n">curr</span><span class="p">);</span><span class="c1">//计算进程的虚拟时间 
+</span><span class="c1"></span>    <span class="n">update_min_vruntime</span><span class="p">(</span><span class="n">cfs_rq</span><span class="p">);</span><span class="c1">//更新运行队列中的最小虚拟时间，这是新建进程的虚拟时间，避免一个新建进程因为虚拟时间太小而长时间占用CPU
+</span><span class="c1"></span><span class="p">}</span>
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">entity_tick</span><span class="p">(</span><span class="k">struct</span> <span class="n">cfs_rq</span> <span class="o">*</span><span class="n">cfs_rq</span><span class="p">,</span> <span class="k">struct</span> <span class="n">sched_entity</span> <span class="o">*</span><span class="n">curr</span><span class="p">,</span> <span class="kt">int</span> <span class="n">queued</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">update_curr</span><span class="p">(</span><span class="n">cfs_rq</span><span class="p">);</span><span class="c1">//更新当前运行进程和运行队列相关的时间
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">cfs_rq</span><span class="o">-&gt;</span><span class="n">nr_running</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span><span class="c1">//当运行进程数量大于1就检查是否可抢占
+</span><span class="c1"></span>        <span class="n">check_preempt_tick</span><span class="p">(</span><span class="n">cfs_rq</span><span class="p">,</span> <span class="n">curr</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="cp">#define for_each_sched_entity(se) \
+</span><span class="cp">        for (; se; se = NULL)
+</span><span class="cp"></span><span class="k">static</span> <span class="kt">void</span> <span class="nf">task_tick_fair</span><span class="p">(</span><span class="k">struct</span> <span class="n">rq</span> <span class="o">*</span><span class="n">rq</span><span class="p">,</span> <span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span><span class="n">curr</span><span class="p">,</span> <span class="kt">int</span> <span class="n">queued</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">struct</span> <span class="n">cfs_rq</span> <span class="o">*</span><span class="n">cfs_rq</span><span class="p">;</span>
+    <span class="k">struct</span> <span class="n">sched_entity</span> <span class="o">*</span><span class="n">se</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">curr</span><span class="o">-&gt;</span><span class="n">se</span><span class="p">;</span><span class="c1">//获取当前进程的调度实体 
+</span><span class="c1"></span>    <span class="n">for_each_sched_entity</span><span class="p">(</span><span class="n">se</span><span class="p">)</span> <span class="p">{</span><span class="c1">//仅对当前进程的调度实体
+</span><span class="c1"></span>        <span class="n">cfs_rq</span> <span class="o">=</span> <span class="n">cfs_rq_of</span><span class="p">(</span><span class="n">se</span><span class="p">);</span><span class="c1">//获取当前进程的调度实体对应运行队列
+</span><span class="c1"></span>        <span class="n">entity_tick</span><span class="p">(</span><span class="n">cfs_rq</span><span class="p">,</span> <span class="n">se</span><span class="p">,</span> <span class="n">queued</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">scheduler_tick</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">cpu</span> <span class="o">=</span> <span class="n">smp_processor_id</span><span class="p">();</span>
+    <span class="k">struct</span> <span class="n">rq</span> <span class="o">*</span><span class="n">rq</span> <span class="o">=</span> <span class="n">cpu_rq</span><span class="p">(</span><span class="n">cpu</span><span class="p">);</span><span class="c1">//获取运行CPU运行进程队列
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span><span class="n">curr</span> <span class="o">=</span> <span class="n">rq</span><span class="o">-&gt;</span><span class="n">curr</span><span class="p">;</span><span class="c1">//获取当进程
+</span><span class="c1"></span>    <span class="n">update_rq_clock</span><span class="p">(</span><span class="n">rq</span><span class="p">);</span><span class="c1">//更新运行队列的时间等数据
+</span><span class="c1"></span>    <span class="n">curr</span><span class="o">-&gt;</span><span class="n">sched_class</span><span class="o">-&gt;</span><span class="n">task_tick</span><span class="p">(</span><span class="n">rq</span><span class="p">,</span> <span class="n">curr</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span><span class="c1">//更新当前时间的虚拟时间
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="参考">参考</h1>
 <ul>
 <li><a href="https://stackoverflow.com/questions/37146637/why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux">why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux</a></li>
 <li><a href="https://blog.csdn.net/ll15982534415/article/details/118771286">快速建立hdi文件</a></li>
