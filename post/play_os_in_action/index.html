@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]操作系统实战（更新中）">
 <meta itemprop="description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"><meta itemprop="datePublished" content="2021-07-30T08:06:33+08:00" />
 <meta itemprop="dateModified" content="2021-07-30T08:06:33+08:00" />
-<meta itemprop="wordCount" content="38418">
+<meta itemprop="wordCount" content="41838">
 <meta itemprop="keywords" content="C,操作系统," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]操作系统实战（更新中）"/>
 <meta name="twitter:description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"/>
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 38418 words </span>
-          <span class="more-meta"> 77 min read </span>
+        <span class="more-meta"> 41838 words </span>
+          <span class="more-meta"> 84 min read </span>
 
         
         
@@ -651,6 +651,46 @@
             <li><a href="#定时周期调度">定时周期调度</a></li>
           </ul>
         </li>
+      </ul>
+    </li>
+    <li><a href="#第二十八讲--如何管理设备">第二十八讲  如何管理设备</a>
+      <ul>
+        <li><a href="#计算机的结构">计算机的结构</a></li>
+        <li><a href="#设备分类">设备分类</a></li>
+        <li><a href="#设备驱动">设备驱动</a>
+          <ul>
+            <li><a href="#设备">设备</a></li>
+            <li><a href="#驱动程序">驱动程序</a></li>
+            <li><a href="#组织设备">组织设备</a></li>
+            <li><a href="#驱动程序功能">驱动程序功能</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#第二十九讲--如何注册设备">第二十九讲  如何注册设备</a>
+      <ul>
+        <li><a href="#注册流程">注册流程</a></li>
+        <li><a href="#驱动程序表">驱动程序表</a></li>
+        <li><a href="#运行驱动程序">运行驱动程序</a>
+          <ul>
+            <li><a href="#调用驱动程序入口函数">调用驱动程序入口函数</a></li>
+            <li><a href="#挂载设备到驱动上">挂载设备到驱动上</a></li>
+            <li><a href="#向内核注册设备">向内核注册设备</a></li>
+            <li><a href="#安装中断回调函数">安装中断回调函数</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#第三十讲--如何处理内核io">第三十讲  如何处理内核I/O</a>
+      <ul>
+        <li><a href="#io-包">I/O 包</a></li>
+        <li><a href="#发送-io-包">发送 I/O 包</a></li>
+        <li><a href="#实现systick设备驱动">实现systick设备驱动</a></li>
+      </ul>
+    </li>
+    <li><a href="#第三十一讲--linux如何获取所有设备信息">第三十一讲  Linux如何获取所有设备信息</a>
+      <ul>
+        <li><a href="#linux的设备信息">Linux的设备信息</a></li>
       </ul>
     </li>
     <li><a href="#参考">参考</a></li>
@@ -7756,7 +7796,771 @@ nice 为 0 的进程的虚拟时间和实际时间是相等的<br>
 </span><span class="c1"></span><span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><h1 id="参考">参考</h1>
+</div><h1 id="第二十八讲--如何管理设备">第二十八讲  如何管理设备</h1>
+<h2 id="计算机的结构">计算机的结构</h2>
+<p><img src="/image/play_os_in_action/28_1.webp" alt="computer_structure"></p>
+<p>各种设备通过总线相连</p>
+<h2 id="设备分类">设备分类</h2>
+<p>操作系统内核感知的设备并不需要和物理设备对应，这取决于
+设备控制代码的自身行为</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">#define NOT_DEVICE 0               //不表示任何设备
+#define BRIDGE_DEVICE 4            //总线桥接器设备
+#define CPUCORE_DEVICE 5           //CPU设备，CPU也是设备
+#define RAMCONTER_DEVICE 6        //内存控制器设备
+#define RAM_DEVICE 7              //内存设备
+#define USBHOSTCONTER_DEVICE 8    //USB主控制设备
+#define INTUPTCONTER_DEVICE 9     //中断控制器设备
+#define DMA_DEVICE 10             //DMA设备
+#define CLOCKPOWER_DEVICE 11      //时钟电源设备
+#define LCDCONTER_DEVICE 12        //LCD控制器设备
+#define NANDFLASH_DEVICE 13       //nandflash设备
+#define CAMERA_DEVICE 14          //摄像头设备
+#define UART_DEVICE 15             //串口设备
+#define TIMER_DEVICE 16            //定时器设备
+#define USB_DEVICE 17              //USB设备
+#define WATCHDOG_DEVICE 18        //看门狗设备
+#define RTC_DEVICE 22              //实时时钟设备
+#define SD_DEVICE 25               //SD卡设备
+#define AUDIO_DEVICE 26            //音频设备
+#define TOUCH_DEVICE 27           //触控设备
+#define NETWORK_DEVICE 28         //网络设备
+#define VIR_DEVICE 29               //虚拟设备
+#define FILESYS_DEVICE 30            //文件系统设备
+#define SYSTICK_DEVICE 31           //系统TICK设备
+#define UNKNOWN_DEVICE 32        //未知设备，也是设备
+#define HD_DEVICE 33        //硬盘设备
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="设备驱动">设备驱动</h2>
+<h3 id="设备">设备</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">s_DEVID</span>
+<span class="p">{</span>
+    <span class="n">uint_t</span>  <span class="n">dev_mtype</span><span class="p">;</span><span class="c1">//设备类型号
+</span><span class="c1"></span>    <span class="n">uint_t</span>  <span class="n">dev_stype</span><span class="p">;</span> <span class="c1">//设备子类型号
+</span><span class="c1"></span>    <span class="n">uint_t</span>  <span class="n">dev_nr</span><span class="p">;</span> <span class="c1">//设备序号
+</span><span class="c1"></span><span class="p">}</span><span class="n">devid_t</span><span class="p">;</span>
+<span class="k">typedef</span> <span class="k">struct</span> <span class="n">s_DEVICE</span>
+<span class="p">{</span>
+    <span class="n">list_h_t</span>    <span class="n">dev_list</span><span class="p">;</span><span class="c1">//设备链表
+</span><span class="c1"></span>    <span class="n">list_h_t</span>    <span class="n">dev_indrvlst</span><span class="p">;</span> <span class="c1">//设备在驱动程序数据结构中对应的挂载链表
+</span><span class="c1"></span>    <span class="n">list_h_t</span>    <span class="n">dev_intbllst</span><span class="p">;</span> <span class="c1">//设备在设备表数据结构中对应的挂载链表
+</span><span class="c1"></span>    <span class="n">spinlock_t</span>  <span class="n">dev_lock</span><span class="p">;</span> <span class="c1">//设备自旋锁
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">dev_count</span><span class="p">;</span> <span class="c1">//设备计数
+</span><span class="c1"></span>    <span class="n">sem_t</span>       <span class="n">dev_sem</span><span class="p">;</span> <span class="c1">//设备信号量
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">dev_stus</span><span class="p">;</span> <span class="c1">//设备状态
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">dev_flgs</span><span class="p">;</span> <span class="c1">//设备标志
+</span><span class="c1"></span>    <span class="n">devid_t</span>      <span class="n">dev_id</span><span class="p">;</span> <span class="c1">//设备ID
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">dev_intlnenr</span><span class="p">;</span> <span class="c1">//设备中断服务例程的个数
+</span><span class="c1"></span>    <span class="n">list_h_t</span>    <span class="n">dev_intserlst</span><span class="p">;</span> <span class="c1">//设备中断服务例程的链表
+</span><span class="c1"></span>    <span class="n">list_h_t</span>    <span class="n">dev_rqlist</span><span class="p">;</span> <span class="c1">//对设备的请求服务链表
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">dev_rqlnr</span><span class="p">;</span> <span class="c1">//对设备的请求服务个数
+</span><span class="c1"></span>    <span class="n">sem_t</span>       <span class="n">dev_waitints</span><span class="p">;</span> <span class="c1">//用于等待设备的信号量
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">s_DRIVER</span><span class="o">*</span> <span class="n">dev_drv</span><span class="p">;</span> <span class="c1">//设备对应的驱动程序数据结构的指针
+</span><span class="c1"></span>    <span class="kt">void</span><span class="o">*</span> <span class="n">dev_attrb</span><span class="p">;</span> <span class="c1">//设备属性指针
+</span><span class="c1"></span>    <span class="kt">void</span><span class="o">*</span> <span class="n">dev_privdata</span><span class="p">;</span> <span class="c1">//设备私有数据指针
+</span><span class="c1"></span>    <span class="kt">void</span><span class="o">*</span> <span class="n">dev_userdata</span><span class="p">;</span><span class="c1">//将来扩展所用
+</span><span class="c1"></span>    <span class="kt">void</span><span class="o">*</span> <span class="n">dev_extdata</span><span class="p">;</span><span class="c1">//将来扩展所用
+</span><span class="c1"></span>    <span class="n">char_t</span><span class="o">*</span> <span class="n">dev_name</span><span class="p">;</span> <span class="c1">//设备名
+</span><span class="c1"></span><span class="p">}</span><span class="n">device_t</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>设备 ID 表示设备的类型和设备号，指向驱动程序的指针用于访问设备时调用设备驱动程序。</p>
+<h3 id="驱动程序">驱动程序</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">s_DRIVER</span>
+<span class="p">{</span>
+    <span class="n">spinlock_t</span> <span class="n">drv_lock</span><span class="p">;</span> <span class="c1">//保护驱动程序数据结构的自旋锁
+</span><span class="c1"></span>    <span class="n">list_h_t</span> <span class="n">drv_list</span><span class="p">;</span><span class="c1">//挂载驱动程序数据结构的链表
+</span><span class="c1"></span>    <span class="n">uint_t</span> <span class="n">drv_stuts</span><span class="p">;</span> <span class="c1">//驱动程序的相关状态
+</span><span class="c1"></span>    <span class="n">uint_t</span> <span class="n">drv_flg</span><span class="p">;</span> <span class="c1">//驱动程序的相关标志
+</span><span class="c1"></span>    <span class="n">uint_t</span> <span class="n">drv_id</span><span class="p">;</span> <span class="c1">//驱动程序ID
+</span><span class="c1"></span>    <span class="n">uint_t</span> <span class="n">drv_count</span><span class="p">;</span> <span class="c1">//驱动程序的计数器
+</span><span class="c1"></span>    <span class="n">sem_t</span> <span class="n">drv_sem</span><span class="p">;</span> <span class="c1">//驱动程序的信号量
+</span><span class="c1"></span>    <span class="kt">void</span><span class="o">*</span> <span class="n">drv_safedsc</span><span class="p">;</span> <span class="c1">//驱动程序的安全体
+</span><span class="c1"></span>    <span class="kt">void</span><span class="o">*</span> <span class="n">drv_attrb</span><span class="p">;</span> <span class="c1">//LMOSEM内核要求的驱动程序属性体
+</span><span class="c1"></span>    <span class="kt">void</span><span class="o">*</span> <span class="n">drv_privdata</span><span class="p">;</span> <span class="c1">//驱动程序私有数据的指针
+</span><span class="c1"></span>    <span class="n">drivcallfun_t</span> <span class="n">drv_dipfun</span><span class="p">[</span><span class="n">IOIF_CODE_MAX</span><span class="p">];</span> <span class="c1">//驱动程序功能派发函数指针数组
+</span><span class="c1"></span>    <span class="n">list_h_t</span> <span class="n">drv_alldevlist</span><span class="p">;</span> <span class="c1">//挂载驱动程序所管理的所有设备的链表
+</span><span class="c1"></span>    <span class="n">drventyexit_t</span> <span class="n">drv_entry</span><span class="p">;</span> <span class="c1">//驱动程序的入口函数指针
+</span><span class="c1"></span>    <span class="n">drventyexit_t</span> <span class="n">drv_exit</span><span class="p">;</span> <span class="c1">//驱动程序的退出函数指针
+</span><span class="c1"></span>    <span class="kt">void</span><span class="o">*</span> <span class="n">drv_userdata</span><span class="p">;</span><span class="c1">//用于将来扩展
+</span><span class="c1"></span>    <span class="kt">void</span><span class="o">*</span> <span class="n">drv_extdata</span><span class="p">;</span> <span class="c1">//用于将来扩展
+</span><span class="c1"></span>    <span class="n">char_t</span><span class="o">*</span> <span class="n">drv_name</span><span class="p">;</span> <span class="c1">//驱动程序的名字
+</span><span class="c1"></span><span class="p">}</span><span class="n">driver_t</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>驱动程序实例化的时候会建立设备的数据结构</p>
+<h3 id="组织设备">组织设备</h3>
+<p>我们使用设备表来组织驱动和设备</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#define DEVICE_MAX 34
+</span><span class="cp"></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">s_DEVTLST</span>
+<span class="p">{</span>
+    <span class="n">uint_t</span> <span class="n">dtl_type</span><span class="p">;</span><span class="c1">//设备类型
+</span><span class="c1"></span>    <span class="n">uint_t</span> <span class="n">dtl_nr</span><span class="p">;</span><span class="c1">//设备计数
+</span><span class="c1"></span>    <span class="n">list_h_t</span> <span class="n">dtl_list</span><span class="p">;</span><span class="c1">//挂载设备device_t结构的链表
+</span><span class="c1"></span><span class="p">}</span><span class="n">devtlst_t</span><span class="p">;</span>
+<span class="k">typedef</span> <span class="k">struct</span> <span class="n">s_DEVTABLE</span>
+<span class="p">{</span>
+    <span class="n">list_h_t</span> <span class="n">devt_list</span><span class="p">;</span> <span class="c1">//设备表自身的链表
+</span><span class="c1"></span>    <span class="n">spinlock_t</span> <span class="n">devt_lock</span><span class="p">;</span> <span class="c1">//设备表自旋锁
+</span><span class="c1"></span>    <span class="n">list_h_t</span> <span class="n">devt_devlist</span><span class="p">;</span> <span class="c1">//全局设备链表
+</span><span class="c1"></span>    <span class="n">list_h_t</span> <span class="n">devt_drvlist</span><span class="p">;</span> <span class="c1">//全局驱动程序链表，驱动程序不需要分类，一个链表就行
+</span><span class="c1"></span>    <span class="n">uint_t</span>   <span class="n">devt_devnr</span><span class="p">;</span> <span class="c1">//全局设备计数
+</span><span class="c1"></span>    <span class="n">uint_t</span>   <span class="n">devt_drvnr</span><span class="p">;</span> <span class="c1">//全局驱动程序计数
+</span><span class="c1"></span>    <span class="n">devtlst_t</span> <span class="n">devt_devclsl</span><span class="p">[</span><span class="n">DEVICE_MAX</span><span class="p">];</span> <span class="c1">//分类存放设备数据结构的devtlst_t结构数组
+</span><span class="c1"></span><span class="p">}</span><span class="n">devtable_t</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><img src="/image/play_os_in_action/28_2.jpg" alt="device_structure"></p>
+<h3 id="驱动程序功能">驱动程序功能</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="c1">//驱动程序入口和退出函数
+</span><span class="c1"></span><span class="n">drvstus_t</span> <span class="nf">device_entry</span><span class="p">(</span><span class="n">driver_t</span><span class="o">*</span> <span class="n">drvp</span><span class="p">,</span><span class="n">uint_t</span> <span class="n">val</span><span class="p">,</span><span class="kt">void</span><span class="o">*</span> <span class="n">p</span><span class="p">);</span>
+<span class="n">drvstus_t</span> <span class="nf">device_exit</span><span class="p">(</span><span class="n">driver_t</span><span class="o">*</span> <span class="n">drvp</span><span class="p">,</span><span class="n">uint_t</span> <span class="n">val</span><span class="p">,</span><span class="kt">void</span><span class="o">*</span> <span class="n">p</span><span class="p">);</span>
+<span class="c1">//设备中断处理函数
+</span><span class="c1"></span><span class="n">drvstus_t</span> <span class="nf">device_handle</span><span class="p">(</span><span class="n">uint_t</span> <span class="n">ift_nr</span><span class="p">,</span><span class="kt">void</span><span class="o">*</span> <span class="n">devp</span><span class="p">,</span><span class="kt">void</span><span class="o">*</span> <span class="n">sframe</span><span class="p">);</span>
+<span class="c1">//打开、关闭设备函数
+</span><span class="c1"></span><span class="n">drvstus_t</span> <span class="nf">device_open</span><span class="p">(</span><span class="n">device_t</span><span class="o">*</span> <span class="n">devp</span><span class="p">,</span><span class="kt">void</span><span class="o">*</span> <span class="n">iopack</span><span class="p">);</span>
+<span class="n">drvstus_t</span> <span class="nf">device_close</span><span class="p">(</span><span class="n">device_t</span><span class="o">*</span> <span class="n">devp</span><span class="p">,</span><span class="kt">void</span><span class="o">*</span> <span class="n">iopack</span><span class="p">);</span>
+<span class="c1">//读、写设备数据函数
+</span><span class="c1"></span><span class="n">drvstus_t</span> <span class="nf">device_read</span><span class="p">(</span><span class="n">device_t</span><span class="o">*</span> <span class="n">devp</span><span class="p">,</span><span class="kt">void</span><span class="o">*</span> <span class="n">iopack</span><span class="p">);</span>
+<span class="n">drvstus_t</span> <span class="nf">device_write</span><span class="p">(</span><span class="n">device_t</span><span class="o">*</span> <span class="n">devp</span><span class="p">,</span><span class="kt">void</span><span class="o">*</span> <span class="n">iopack</span><span class="p">);</span>
+<span class="c1">//调整读写设备数据位置函数
+</span><span class="c1"></span><span class="n">drvstus_t</span> <span class="nf">device_lseek</span><span class="p">(</span><span class="n">device_t</span><span class="o">*</span> <span class="n">devp</span><span class="p">,</span><span class="kt">void</span><span class="o">*</span> <span class="n">iopack</span><span class="p">);</span>
+<span class="c1">//控制设备函数
+</span><span class="c1"></span><span class="n">drvstus_t</span> <span class="nf">device_ioctrl</span><span class="p">(</span><span class="n">device_t</span><span class="o">*</span> <span class="n">devp</span><span class="p">,</span><span class="kt">void</span><span class="o">*</span> <span class="n">iopack</span><span class="p">);</span>
+<span class="c1">//开启、停止设备函数
+</span><span class="c1"></span><span class="n">drvstus_t</span> <span class="nf">device_dev_start</span><span class="p">(</span><span class="n">device_t</span><span class="o">*</span> <span class="n">devp</span><span class="p">,</span><span class="kt">void</span><span class="o">*</span> <span class="n">iopack</span><span class="p">);</span>
+<span class="n">drvstus_t</span> <span class="nf">device_dev_stop</span><span class="p">(</span><span class="n">device_t</span><span class="o">*</span> <span class="n">devp</span><span class="p">,</span><span class="kt">void</span><span class="o">*</span> <span class="n">iopack</span><span class="p">);</span>
+<span class="c1">//设置设备电源函数
+</span><span class="c1"></span><span class="n">drvstus_t</span> <span class="nf">device_set_powerstus</span><span class="p">(</span><span class="n">device_t</span><span class="o">*</span> <span class="n">devp</span><span class="p">,</span><span class="kt">void</span><span class="o">*</span> <span class="n">iopack</span><span class="p">);</span>
+<span class="c1">//枚举设备函数
+</span><span class="c1"></span><span class="n">drvstus_t</span> <span class="nf">device_enum_dev</span><span class="p">(</span><span class="n">device_t</span><span class="o">*</span> <span class="n">devp</span><span class="p">,</span><span class="kt">void</span><span class="o">*</span> <span class="n">iopack</span><span class="p">);</span>
+<span class="c1">//刷新设备缓存函数
+</span><span class="c1"></span><span class="n">drvstus_t</span> <span class="nf">device_flush</span><span class="p">(</span><span class="n">device_t</span><span class="o">*</span> <span class="n">devp</span><span class="p">,</span><span class="kt">void</span><span class="o">*</span> <span class="n">iopack</span><span class="p">);</span>
+<span class="c1">//设备关机函数
+</span><span class="c1"></span><span class="n">drvstus_t</span> <span class="nf">device_shutdown</span><span class="p">(</span><span class="n">device_t</span><span class="o">*</span> <span class="n">devp</span><span class="p">,</span><span class="kt">void</span><span class="o">*</span> <span class="n">iopack</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>driver_t 结构体中 的 drv_dipfunc 函数指针数组存放了上述12个
+驱动函数的指针</p>
+<h1 id="第二十九讲--如何注册设备">第二十九讲  如何注册设备</h1>
+<h2 id="注册流程">注册流程</h2>
+<p>电脑插入一个 USB 鼠标时，会有如下步骤</p>
+<ol>
+<li>操作系统收到一个中断</li>
+<li>USB总线驱动的中断处理程序会执行</li>
+<li>调用内核相关服务，查找 USB 鼠标对应的驱动程序</li>
+<li>操作系统加载驱动程序</li>
+<li>驱动程序执行，向内核注册一个鼠标设备</li>
+</ol>
+<h2 id="驱动程序表">驱动程序表</h2>
+<p>加载驱动时，将驱动程序的入口函数加入驱动程序表</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="c1">//cosmos/kernel/krlglobal.c
+</span><span class="c1"></span><span class="n">KRL_DEFGLOB_VARIABLE</span><span class="p">(</span><span class="n">drventyexit_t</span><span class="p">,</span><span class="n">osdrvetytabl</span><span class="p">)[]</span><span class="o">=</span><span class="p">{</span><span class="nb">NULL</span><span class="p">};</span>
+
+<span class="kt">void</span> <span class="nf">init_krldriver</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="c1">//遍历驱动程序表中的每个驱动程序入口函数
+</span><span class="c1"></span>    <span class="k">for</span> <span class="p">(</span><span class="n">uint_t</span> <span class="n">ei</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">osdrvetytabl</span><span class="p">[</span><span class="n">ei</span><span class="p">]</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">;</span> <span class="n">ei</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>    <span class="c1">//运行一个驱动程序入口
+</span><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span><span class="n">krlrun_driverentry</span><span class="p">(</span><span class="n">osdrvetytabl</span><span class="p">[</span><span class="n">ei</span><span class="p">])</span> <span class="o">==</span> <span class="n">DFCERRSTUS</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">hal_sysdie</span><span class="p">(</span><span class="s">&#34;init driver err&#34;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">init_krl</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">init_krlmm</span><span class="p">();</span>
+    <span class="n">init_krldevice</span><span class="p">();</span>
+    <span class="n">init_krldriver</span><span class="p">();</span>
+    <span class="c1">//……
+</span><span class="c1"></span>    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="运行驱动程序">运行驱动程序</h2>
+<h3 id="调用驱动程序入口函数">调用驱动程序入口函数</h3>
+<p>建立一个 driver_t结构实例，将其作为参数传入驱动程序入口函数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="kt">void</span> <span class="nf">init_krldriver</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="c1">//遍历驱动程序表中的每个驱动程序入口函数
+</span><span class="c1"></span>    <span class="k">for</span> <span class="p">(</span><span class="n">uint_t</span> <span class="n">ei</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">osdrvetytabl</span><span class="p">[</span><span class="n">ei</span><span class="p">]</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">;</span> <span class="n">ei</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>    <span class="c1">//运行一个驱动程序入口
+</span><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span><span class="n">krlrun_driverentry</span><span class="p">(</span><span class="n">osdrvetytabl</span><span class="p">[</span><span class="n">ei</span><span class="p">])</span> <span class="o">==</span> <span class="n">DFCERRSTUS</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">hal_sysdie</span><span class="p">(</span><span class="s">&#34;init driver err&#34;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">init_krl</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">init_krlmm</span><span class="p">();</span>
+    <span class="n">init_krldevice</span><span class="p">();</span>
+    <span class="n">init_krldriver</span><span class="p">();</span>
+    <span class="c1">//……
+</span><span class="c1"></span>    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="挂载设备到驱动上">挂载设备到驱动上</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="n">drvstus_t</span> <span class="nf">krldev_add_driver</span><span class="p">(</span><span class="n">device_t</span> <span class="o">*</span><span class="n">devp</span><span class="p">,</span> <span class="n">driver_t</span> <span class="o">*</span><span class="n">drvp</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">list_h_t</span> <span class="o">*</span><span class="n">lst</span><span class="p">;</span>
+    <span class="n">device_t</span> <span class="o">*</span><span class="n">fdevp</span><span class="p">;</span>
+    <span class="c1">//遍历这个驱动上所有设备
+</span><span class="c1"></span>    <span class="n">list_for_each</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">drvp</span><span class="o">-&gt;</span><span class="n">drv_alldevlist</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">fdevp</span> <span class="o">=</span> <span class="n">list_entry</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span> <span class="n">device_t</span><span class="p">,</span> <span class="n">dev_indrvlst</span><span class="p">);</span>
+        <span class="c1">//比较设备ID有相同的则返回错误
+</span><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span><span class="n">krlcmp_devid</span><span class="p">(</span><span class="o">&amp;</span><span class="n">devp</span><span class="o">-&gt;</span><span class="n">dev_id</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">fdevp</span><span class="o">-&gt;</span><span class="n">dev_id</span><span class="p">)</span> <span class="o">==</span> <span class="n">TRUE</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">return</span> <span class="n">DFCERRSTUS</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="c1">//将设备挂载到驱动上
+</span><span class="c1"></span>    <span class="n">list_add</span><span class="p">(</span><span class="o">&amp;</span><span class="n">devp</span><span class="o">-&gt;</span><span class="n">dev_indrvlst</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">drvp</span><span class="o">-&gt;</span><span class="n">drv_alldevlist</span><span class="p">);</span>
+    <span class="n">devp</span><span class="o">-&gt;</span><span class="n">dev_drv</span> <span class="o">=</span> <span class="n">drvp</span><span class="p">;</span><span class="c1">//让设备中dev_drv字段指向管理自己的驱动
+</span><span class="c1"></span>    <span class="k">return</span> <span class="n">DFCOKSTUS</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="向内核注册设备">向内核注册设备</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="n">drvstus_t</span> <span class="nf">krlnew_device</span><span class="p">(</span><span class="n">device_t</span> <span class="o">*</span><span class="n">devp</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">device_t</span> <span class="o">*</span><span class="n">findevp</span><span class="p">;</span>
+    <span class="n">drvstus_t</span> <span class="n">rets</span> <span class="o">=</span> <span class="n">DFCERRSTUS</span><span class="p">;</span>
+    <span class="n">cpuflg_t</span> <span class="n">cpufg</span><span class="p">;</span>
+    <span class="n">list_h_t</span> <span class="o">*</span><span class="n">lstp</span><span class="p">;</span>
+    <span class="n">devtable_t</span> <span class="o">*</span><span class="n">dtbp</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">osdevtable</span><span class="p">;</span>
+    <span class="n">uint_t</span> <span class="n">devmty</span> <span class="o">=</span> <span class="n">devp</span><span class="o">-&gt;</span><span class="n">dev_id</span><span class="p">.</span><span class="n">dev_mtype</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">devp</span><span class="o">-&gt;</span><span class="n">dev_drv</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span><span class="c1">//没有驱动的设备不行
+</span><span class="c1"></span>    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">DFCERRSTUS</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">krlspinlock_cli</span><span class="p">(</span><span class="o">&amp;</span><span class="n">dtbp</span><span class="o">-&gt;</span><span class="n">devt_lock</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">cpufg</span><span class="p">);</span><span class="c1">//加锁
+</span><span class="c1"></span>    <span class="c1">//遍历设备类型链表上的所有设备
+</span><span class="c1"></span>    <span class="n">list_for_each</span><span class="p">(</span><span class="n">lstp</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">dtbp</span><span class="o">-&gt;</span><span class="n">devt_devclsl</span><span class="p">[</span><span class="n">devmty</span><span class="p">].</span><span class="n">dtl_list</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">findevp</span> <span class="o">=</span> <span class="n">list_entry</span><span class="p">(</span><span class="n">lstp</span><span class="p">,</span> <span class="n">device_t</span><span class="p">,</span> <span class="n">dev_intbllst</span><span class="p">);</span>
+        <span class="c1">//不能有设备ID相同的设备，如果有则出错
+</span><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span><span class="n">krlcmp_devid</span><span class="p">(</span><span class="o">&amp;</span><span class="n">devp</span><span class="o">-&gt;</span><span class="n">dev_id</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">findevp</span><span class="o">-&gt;</span><span class="n">dev_id</span><span class="p">)</span> <span class="o">==</span> <span class="n">TRUE</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">rets</span> <span class="o">=</span> <span class="n">DFCERRSTUS</span><span class="p">;</span>
+            <span class="k">goto</span> <span class="n">return_step</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="c1">//先把设备加入设备表的全局设备链表
+</span><span class="c1"></span>    <span class="n">list_add</span><span class="p">(</span><span class="o">&amp;</span><span class="n">devp</span><span class="o">-&gt;</span><span class="n">dev_intbllst</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">dtbp</span><span class="o">-&gt;</span><span class="n">devt_devclsl</span><span class="p">[</span><span class="n">devmty</span><span class="p">].</span><span class="n">dtl_list</span><span class="p">);</span>
+    <span class="c1">//将设备加入对应设备类型的链表中
+</span><span class="c1"></span>    <span class="n">list_add</span><span class="p">(</span><span class="o">&amp;</span><span class="n">devp</span><span class="o">-&gt;</span><span class="n">dev_list</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">dtbp</span><span class="o">-&gt;</span><span class="n">devt_devlist</span><span class="p">);</span>
+    <span class="n">dtbp</span><span class="o">-&gt;</span><span class="n">devt_devclsl</span><span class="p">[</span><span class="n">devmty</span><span class="p">].</span><span class="n">dtl_nr</span><span class="o">++</span><span class="p">;</span><span class="c1">//设备计数加一
+</span><span class="c1"></span>    <span class="n">dtbp</span><span class="o">-&gt;</span><span class="n">devt_devnr</span><span class="o">++</span><span class="p">;</span><span class="c1">//总的设备数加一
+</span><span class="c1"></span>    <span class="n">rets</span> <span class="o">=</span> <span class="n">DFCOKSTUS</span><span class="p">;</span>
+<span class="nl">return_step</span><span class="p">:</span>
+    <span class="n">krlspinunlock_sti</span><span class="p">(</span><span class="o">&amp;</span><span class="n">dtbp</span><span class="o">-&gt;</span><span class="n">devt_lock</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">cpufg</span><span class="p">);</span><span class="c1">//解锁
+</span><span class="c1"></span>    <span class="k">return</span> <span class="n">rets</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="安装中断回调函数">安装中断回调函数</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="c1">//中断回调函数类型
+</span><span class="c1"></span><span class="k">typedef</span> <span class="nf">drvstus_t</span> <span class="p">(</span><span class="o">*</span><span class="n">intflthandle_t</span><span class="p">)(</span><span class="n">uint_t</span> <span class="n">ift_nr</span><span class="p">,</span><span class="kt">void</span><span class="o">*</span> <span class="n">device</span><span class="p">,</span><span class="kt">void</span><span class="o">*</span> <span class="n">sframe</span><span class="p">);</span>
+<span class="c1">//安装中断回调函数接口
+</span><span class="c1"></span><span class="n">drvstus_t</span> <span class="nf">krlnew_devhandle</span><span class="p">(</span><span class="n">device_t</span> <span class="o">*</span><span class="n">devp</span><span class="p">,</span> <span class="n">intflthandle_t</span> <span class="n">handle</span><span class="p">,</span> <span class="n">uint_t</span> <span class="n">phyiline</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">//调用内核层中断框架接口函数
+</span><span class="c1"></span>    <span class="n">intserdsc_t</span> <span class="o">*</span><span class="n">sdp</span> <span class="o">=</span> <span class="n">krladd_irqhandle</span><span class="p">(</span><span class="n">devp</span><span class="p">,</span> <span class="n">handle</span><span class="p">,</span> <span class="n">phyiline</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">sdp</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">DFCERRSTUS</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">cpuflg_t</span> <span class="n">cpufg</span><span class="p">;</span>
+    <span class="n">krlspinlock_cli</span><span class="p">(</span><span class="o">&amp;</span><span class="n">devp</span><span class="o">-&gt;</span><span class="n">dev_lock</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">cpufg</span><span class="p">);</span>
+    <span class="c1">//将中断服务描述符结构挂入这个设备结构中
+</span><span class="c1"></span>    <span class="n">list_add</span><span class="p">(</span><span class="o">&amp;</span><span class="n">sdp</span><span class="o">-&gt;</span><span class="n">s_indevlst</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">devp</span><span class="o">-&gt;</span><span class="n">dev_intserlst</span><span class="p">);</span>
+    <span class="n">devp</span><span class="o">-&gt;</span><span class="n">dev_intlnenr</span><span class="o">++</span><span class="p">;</span>
+    <span class="n">krlspinunlock_sti</span><span class="p">(</span><span class="o">&amp;</span><span class="n">devp</span><span class="o">-&gt;</span><span class="n">dev_lock</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">cpufg</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">DFCOKSTUS</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="第三十讲--如何处理内核io">第三十讲  如何处理内核I/O</h1>
+<h2 id="io-包">I/O 包</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">s_OBJNODE</span>
+<span class="p">{</span>
+    <span class="n">spinlock_t</span>  <span class="n">on_lock</span><span class="p">;</span>        <span class="c1">//自旋锁
+</span><span class="c1"></span>    <span class="n">list_h_t</span>    <span class="n">on_list</span><span class="p">;</span>        <span class="c1">//链表
+</span><span class="c1"></span>    <span class="n">sem_t</span>       <span class="n">on_complesem</span><span class="p">;</span>   <span class="c1">//完成信号量
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">on_flgs</span><span class="p">;</span>        <span class="c1">//标志
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">on_stus</span><span class="p">;</span>        <span class="c1">//状态
+</span><span class="c1"></span>    <span class="n">sint_t</span>      <span class="n">on_opercode</span><span class="p">;</span>    <span class="c1">//操作码
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">on_objtype</span><span class="p">;</span>     <span class="c1">//对象类型
+</span><span class="c1"></span>    <span class="kt">void</span><span class="o">*</span>       <span class="n">on_objadr</span><span class="p">;</span>      <span class="c1">//对象地址
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">on_acsflgs</span><span class="p">;</span>     <span class="c1">//访问设备、文件标志
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">on_acsstus</span><span class="p">;</span>     <span class="c1">//访问设备、文件状态
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">on_currops</span><span class="p">;</span>     <span class="c1">//对应于读写数据的当前位置
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">on_len</span><span class="p">;</span>         <span class="c1">//对应于读写数据的长度
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">on_ioctrd</span><span class="p">;</span>      <span class="c1">//IO控制码
+</span><span class="c1"></span>    <span class="n">buf_t</span>       <span class="n">on_buf</span><span class="p">;</span>         <span class="c1">//对应于读写数据的缓冲区
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">on_bufcurops</span><span class="p">;</span>   <span class="c1">//对应于读写数据的缓冲区的当前位置
+</span><span class="c1"></span>    <span class="n">size_t</span>      <span class="n">on_bufsz</span><span class="p">;</span>       <span class="c1">//对应于读写数据的缓冲区的大小
+</span><span class="c1"></span>    <span class="n">uint_t</span>      <span class="n">on_count</span><span class="p">;</span>       <span class="c1">//对应于对象节点的计数
+</span><span class="c1"></span>    <span class="kt">void</span><span class="o">*</span>       <span class="n">on_safedsc</span><span class="p">;</span>     <span class="c1">//对应于对象节点的安全描述符
+</span><span class="c1"></span>    <span class="kt">void</span><span class="o">*</span>       <span class="n">on_fname</span><span class="p">;</span>       <span class="c1">//对应于访问数据文件的名称
+</span><span class="c1"></span>    <span class="kt">void</span><span class="o">*</span>       <span class="n">on_finode</span><span class="p">;</span>      <span class="c1">//对应于访问数据文件的结点
+</span><span class="c1"></span>    <span class="kt">void</span><span class="o">*</span>       <span class="n">on_extp</span><span class="p">;</span>        <span class="c1">//用于扩展
+</span><span class="c1"></span><span class="p">}</span><span class="n">objnode_t</span><span class="p">;</span>
+
+
+<span class="cp">##  创建和删除
+</span><span class="cp"></span>
+<span class="err">```</span><span class="n">C</span>
+<span class="c1">//建立objnode_t结构
+</span><span class="c1"></span><span class="n">objnode_t</span> <span class="o">*</span><span class="n">krlnew_objnode</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">objnode_t</span> <span class="o">*</span><span class="n">ondp</span> <span class="o">=</span> <span class="p">(</span><span class="n">objnode_t</span> <span class="o">*</span><span class="p">)</span><span class="n">krlnew</span><span class="p">((</span><span class="n">size_t</span><span class="p">)</span><span class="k">sizeof</span><span class="p">(</span><span class="n">objnode_t</span><span class="p">));</span><span class="c1">//分配objnode_t结构的内存空间
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">ondp</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">objnode_t_init</span><span class="p">(</span><span class="n">ondp</span><span class="p">);</span><span class="c1">//初始化objnode_t结构
+</span><span class="c1"></span>    <span class="k">return</span> <span class="n">ondp</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">//删除objnode_t结构
+</span><span class="c1"></span><span class="n">bool_t</span> <span class="n">krldel_objnode</span><span class="p">(</span><span class="n">objnode_t</span> <span class="o">*</span><span class="n">onodep</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">krldelete</span><span class="p">((</span><span class="n">adr_t</span><span class="p">)</span><span class="n">onodep</span><span class="p">,</span> <span class="p">(</span><span class="n">size_t</span><span class="p">)</span><span class="k">sizeof</span><span class="p">(</span><span class="n">objnode_t</span><span class="p">))</span> <span class="o">==</span> <span class="n">FALSE</span><span class="p">)</span><span class="c1">//删除objnode_t结构的内存空间
+</span><span class="c1"></span>    <span class="p">{</span>
+        <span class="n">hal_sysdie</span><span class="p">(</span><span class="s">&#34;krldel_objnode err&#34;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">TRUE</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="发送-io-包">发送 I/O 包</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="c1">//发送设备IO
+</span><span class="c1"></span><span class="n">drvstus_t</span> <span class="nf">krldev_io</span><span class="p">(</span><span class="n">objnode_t</span> <span class="o">*</span><span class="n">nodep</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">//获取设备对象 
+</span><span class="c1"></span>    <span class="n">device_t</span> <span class="o">*</span><span class="n">devp</span> <span class="o">=</span> <span class="p">(</span><span class="n">device_t</span> <span class="o">*</span><span class="p">)(</span><span class="n">nodep</span><span class="o">-&gt;</span><span class="n">on_objadr</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">((</span><span class="n">nodep</span><span class="o">-&gt;</span><span class="n">on_objtype</span> <span class="o">!=</span> <span class="n">OBJN_TY_DEV</span> <span class="o">&amp;&amp;</span> <span class="n">nodep</span><span class="o">-&gt;</span><span class="n">on_objtype</span> <span class="o">!=</span> <span class="n">OBJN_TY_FIL</span><span class="p">)</span> <span class="o">||</span> <span class="n">nodep</span><span class="o">-&gt;</span><span class="n">on_objadr</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+    <span class="p">{</span><span class="c1">//检查操作对象类型是不是文件或者设备，对象地址是不是为空
+</span><span class="c1"></span>        <span class="k">return</span> <span class="n">DFCERRSTUS</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">nodep</span><span class="o">-&gt;</span><span class="n">on_opercode</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">nodep</span><span class="o">-&gt;</span><span class="n">on_opercode</span> <span class="o">&gt;=</span> <span class="n">IOIF_CODE_MAX</span><span class="p">)</span>
+    <span class="p">{</span><span class="c1">//检查IO操作码是不是合乎要求
+</span><span class="c1"></span>        <span class="k">return</span> <span class="n">DFCERRSTUS</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">krldev_call_driver</span><span class="p">(</span><span class="n">devp</span><span class="p">,</span> <span class="n">nodep</span><span class="o">-&gt;</span><span class="n">on_opercode</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">nodep</span><span class="p">);</span><span class="c1">//调用设备驱动
+</span><span class="c1"></span><span class="p">}</span>
+<span class="c1">//调用设备驱动
+</span><span class="c1"></span><span class="n">drvstus_t</span> <span class="nf">krldev_call_driver</span><span class="p">(</span><span class="n">device_t</span> <span class="o">*</span><span class="n">devp</span><span class="p">,</span> <span class="n">uint_t</span> <span class="n">iocode</span><span class="p">,</span> <span class="n">uint_t</span> <span class="n">val1</span><span class="p">,</span> <span class="n">uint_t</span> <span class="n">val2</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">p1</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">p2</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">driver_t</span> <span class="o">*</span><span class="n">drvp</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">devp</span> <span class="o">==</span> <span class="nb">NULL</span> <span class="o">||</span> <span class="n">iocode</span> <span class="o">&gt;=</span> <span class="n">IOIF_CODE_MAX</span><span class="p">)</span>
+    <span class="p">{</span><span class="c1">//检查设备和IO操作码
+</span><span class="c1"></span>        <span class="k">return</span> <span class="n">DFCERRSTUS</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">drvp</span> <span class="o">=</span> <span class="n">devp</span><span class="o">-&gt;</span><span class="n">dev_drv</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">drvp</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span><span class="c1">//检查设备是否有驱动程序
+</span><span class="c1"></span>    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">DFCERRSTUS</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">//用IO操作码为索引调用驱动程序功能分派函数数组中的函数
+</span><span class="c1"></span>    <span class="k">return</span> <span class="n">drvp</span><span class="o">-&gt;</span><span class="n">drv_dipfun</span><span class="p">[</span><span class="n">iocode</span><span class="p">](</span><span class="n">devp</span><span class="p">,</span> <span class="n">p2</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="实现systick设备驱动">实现systick设备驱动</h2>
+<p>systick 设备的主要功能是每各1ms产生一个中断，更新当前进程的运行时间</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="n">drvstus_t</span> <span class="nf">systick_handle</span><span class="p">(</span><span class="n">uint_t</span> <span class="n">ift_nr</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">devp</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">sframe</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">krlthd_inc_tick</span><span class="p">(</span><span class="n">krlsched_retn_currthread</span><span class="p">());</span><span class="c1">//更新当前进程的tick
+</span><span class="c1"></span>    <span class="k">return</span> <span class="n">DFCOKSTUS</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="第三十一讲--linux如何获取所有设备信息">第三十一讲  Linux如何获取所有设备信息</h1>
+<h2 id="linux的设备信息">Linux的设备信息</h2>
+<p>可以在 <code>/sys/bus</code> 目录下查看总线下所有设备</p>
+<h1 id="参考">参考</h1>
 <ul>
 <li><a href="https://stackoverflow.com/questions/37146637/why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux">why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux</a></li>
 <li><a href="https://blog.csdn.net/ll15982534415/article/details/118771286">快速建立hdi文件</a></li>
@@ -7921,7 +8725,7 @@ nice 为 0 的进程的虚拟时间和实际时间是相等的<br>
     &copy;
     
       2019 -
-    2021
+    2022
     <span class="heart">
       
       <i class="iconfont">
