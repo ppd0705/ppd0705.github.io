@@ -8023,6 +8023,166 @@ nice 为 0 的进程的虚拟时间和实际时间是相等的&lt;br&gt;
 &lt;/div&gt;&lt;h1 id=&#34;第三十一讲--linux如何获取所有设备信息&#34;&gt;第三十一讲  Linux如何获取所有设备信息&lt;/h1&gt;
 &lt;h2 id=&#34;linux的设备信息&#34;&gt;Linux的设备信息&lt;/h2&gt;
 &lt;p&gt;可以在 &lt;code&gt;/sys/bus&lt;/code&gt; 目录下查看总线下所有设备&lt;/p&gt;
+&lt;h1 id=&#34;第三十二讲--如何组织文件&#34;&gt;第三十二讲  如何组织文件&lt;/h1&gt;
+&lt;h2 id=&#34;文件系统&#34;&gt;文件系统&lt;/h2&gt;
+&lt;h3 id=&#34;文件系统设计&#34;&gt;文件系统设计&lt;/h3&gt;
+&lt;p&gt;因为文件系统有各种格式，所以文件系统组件应该和内核分开，且可以动态加载和删除不同的文件系统组件&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/32_1.wepb&#34; alt=&#34;file_system&#34;&gt;&lt;/p&gt;
+&lt;h3 id=&#34;文件格式和存储块&#34;&gt;文件格式和存储块&lt;/h3&gt;
+&lt;p&gt;逻辑上文件就是一个可以动态增减的线性字节数组，而存储设备都是以块为单位存储数据的，
+不同的存储设的存储卡大小不同，我们先将字节数组整合成文件数据逻辑块，然后将这个逻辑块映射到
+一个或多个物理储存块&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/32_2.wepb&#34; alt=&#34;file_system_chunk&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;组织文件&#34;&gt;组织文件&lt;/h2&gt;
+&lt;p&gt;整个文件层次结构就像一个倒挂的树&lt;/p&gt;
+&lt;h3 id=&#34;文件系统数据结构&#34;&gt;文件系统数据结构&lt;/h3&gt;
+&lt;h4 id=&#34;超级块&#34;&gt;超级块&lt;/h4&gt;
+&lt;p&gt;包含文件系统标识、版本信息、逻辑存储块大小等新的的数据结构叫做文件系统的
+超级块或描述块&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;k&#34;&gt;typedef&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;s_RFSSUBLK&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;spinlock_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;rsb_lock&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//超级块在内存中使用的自旋锁
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;uint_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;rsb_mgic&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//文件系统标识
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;uint_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;rsb_vec&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//文件系统版本
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;uint_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;rsb_flg&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//标志
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;uint_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;rsb_stus&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//状态
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;size_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;rsb_sz&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//该数据结构本身的大小
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;size_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;rsb_sblksz&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//超级块大小
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;size_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;rsb_dblksz&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//文件系统逻辑储存块大小，我们这里用的是4KB
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;uint_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;rsb_bmpbks&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//位图的开始逻辑储存块
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;uint_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;rsb_bmpbknr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//位图占用多少个逻辑储存块
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;uint_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;rsb_fsysallblk&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//文件系统有多少个逻辑储存块
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;rfsdir_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;rsb_rootdir&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//根目录，后面会看到这个数据结构的
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;rfssublk_t&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;超级块存储在设备的第一个逻辑存储块中&lt;/p&gt;
+&lt;h4 id=&#34;位图&#34;&gt;位图&lt;/h4&gt;
+&lt;p&gt;我们使用位图来表示逻辑存储块的分配状态，如果某个位的值是0，那么对应的逻辑块是空闲的。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/32_3.wepb&#34; alt=&#34;file_system_bit_block&#34;&gt;&lt;/p&gt;
+&lt;p&gt;位图并不需要实际的数据结构，将位图块档子一个字节数据就可以&lt;/p&gt;
+&lt;h4 id=&#34;目录&#34;&gt;目录&lt;/h4&gt;
+&lt;p&gt;目录也是一种数据，也包含了目录类型、状态、指向文件数据管理头的块号、名称信息&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;cp&#34;&gt;#define DR_NM_MAX (128-(sizeof(uint_t)*3))
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;#define RDR_NUL_TYPE 0
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;#define RDR_DIR_TYPE 1
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;#define RDR_FIL_TYPE 2
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;#define RDR_DEL_TYPE 5
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;typedef&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;s_RFSDIR&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;uint_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;rdr_stus&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//目录状态
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;uint_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;rdr_type&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//目录类型，可以是空类型、目录类型、文件类型、已删除的类型
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;uint_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;rdr_blknr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//指向文件数据管理头的块号，不像内存可以用指针，只能按块访问
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;char_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;rdr_name&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;DR_NM_MAX&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;];&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//名称数组，大小为DR_NM_MAX
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;rfsdir_t&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/32_4.wepb&#34; alt=&#34;file_system_dir&#34;&gt;&lt;/p&gt;
+&lt;h4 id=&#34;文件管理头&#34;&gt;文件管理头&lt;/h4&gt;
+&lt;p&gt;文件管理头记录了文件信息，如类型、创建时间、大小、占用哪些逻辑存储块等&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;cp&#34;&gt;#define FBLKS_MAX 32
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;#define FMD_NUL_TYPE 0
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;#define FMD_DIR_TYPE 1
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;#define FMD_FIL_TYPE 2
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;#define FMD_DEL_TYPE 5&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//文件管理头也需要表明它管理的是目录文件还是普通文件
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;typedef&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;s_FILBLKS&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;    
+    &lt;span class=&#34;n&#34;&gt;uint_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fb_blkstart&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//开始的逻辑储存块号
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;uint_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fb_blknr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//逻辑储存块的块数，从blkstart开始的连续块数
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;filblks_t&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;typedef&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;s_fimgrhd&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;uint_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fmd_stus&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//文件状态
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;uint_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fmd_type&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//文件类型：可以是目录文件、普通文件、空文件、已删除的文件
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;uint_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fmd_flg&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//文件标志
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;uint_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fmd_sfblk&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//文件管理头自身所在的逻辑储存块
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;uint_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fmd_acss&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//文件访问权限
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;uint_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fmd_newtime&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//文件的创建时间，换算成秒
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;uint_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fmd_acstime&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//文件的访问时间，换算成秒
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;uint_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fmd_fileallbk&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//文件一共占用多少个逻辑储存块
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;uint_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fmd_filesz&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//文件大小
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;uint_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fmd_fileifstbkoff&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//文件数据在第一块逻辑储存块中的偏移
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;uint_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fmd_fileiendbkoff&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//文件数据在最后一块逻辑储存块中的偏移
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;uint_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fmd_curfwritebk&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//文件数据当前将要写入的逻辑储存块
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;uint_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fmd_curfinwbkoff&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//文件数据当前将要写入的逻辑储存块中的偏移
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;filblks_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fmd_fleblk&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;FBLKS_MAX&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;];&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//文件占用逻辑储存块的数组，一共32个filblks_t结构
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;uint_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fmd_linkpblk&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//指向文件的上一个文件管理头的逻辑储存块
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;uint_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fmd_linknblk&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//指向文件的下一个文件管理头的逻辑储存块
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fimgrhd_t&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;fmd_fleblk 数据存放的是逻辑块占用信息，比如一个文件占用 4~8、10~15、30~40 的逻辑存储块时，那么
+fmd_fleblk[0] 保存 4 和 4，fmd_fleblk[1] 保存 10 和 5，fmd_fleblk[2] 保存 30 和 10，&lt;/p&gt;
+&lt;p&gt;如果文件比较大，使用 fmd_linkpblk  和  fmd_linknblk 来扩展&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/32_5.wepb&#34; alt=&#34;file_system_file_head&#34;&gt;&lt;/p&gt;
 &lt;h1 id=&#34;参考&#34;&gt;参考&lt;/h1&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://stackoverflow.com/questions/37146637/why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux&#34;&gt;why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux&lt;/a&gt;&lt;/li&gt;
