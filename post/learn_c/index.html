@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>[笔记]深入C语言和程序运行原理（更新中） - PPD&#39;s blog</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="PPD" />
+  <meta name="description" content="第零讲 课前热身 数据量单位 位（bit）： 是最小存储单位，每个位可以存一个二进制码值得 0 或 1 字节（byte）： 通常是由八个位组成的一个存储单元，" />
+
+  <meta name="keywords" content="PPD, blog" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.86.0-DEV" />
+
+
+<link rel="canonical" href="https://ppd0705.github.io/post/learn_c/" />
+
+
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.b3a8813c06e6d785beba22bf8264e174fa2cb3a396b22f9ba24e2c00c18aaf7f.css" integrity="sha256-s6iBPAbm14W&#43;uiK/gmThdPoss6OWsi&#43;bok4sAMGKr38=" media="screen" crossorigin="anonymous">
+
+
+
+
+
+<meta property="og:title" content="[笔记]深入C语言和程序运行原理（更新中）" />
+<meta property="og:description" content="第零讲 课前热身 数据量单位 位（bit）： 是最小存储单位，每个位可以存一个二进制码值得 0 或 1 字节（byte）： 通常是由八个位组成的一个存储单元，" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ppd0705.github.io/post/learn_c/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-01-31T17:04:50+08:00" />
+<meta property="article:modified_time" content="2022-01-31T17:04:50+08:00" />
+
+<meta itemprop="name" content="[笔记]深入C语言和程序运行原理（更新中）">
+<meta itemprop="description" content="第零讲 课前热身 数据量单位 位（bit）： 是最小存储单位，每个位可以存一个二进制码值得 0 或 1 字节（byte）： 通常是由八个位组成的一个存储单元，"><meta itemprop="datePublished" content="2022-01-31T17:04:50+08:00" />
+<meta itemprop="dateModified" content="2022-01-31T17:04:50+08:00" />
+<meta itemprop="wordCount" content="3191">
+<meta itemprop="keywords" content="C," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="[笔记]深入C语言和程序运行原理（更新中）"/>
+<meta name="twitter:description" content="第零讲 课前热身 数据量单位 位（bit）： 是最小存储单位，每个位可以存一个二进制码值得 0 或 1 字节（byte）： 通常是由八个位组成的一个存储单元，"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">PPD's blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://ppd0705.github.io/">Home</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://ppd0705.github.io/post/">Archives</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://ppd0705.github.io/tags/">Tags</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://ppd0705.github.io/categories/">Categories</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://ppd0705.github.io/about">About</a>
+          
+        
+      </li>
+    
+
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      PPD's blog
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://ppd0705.github.io/">Home</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://ppd0705.github.io/post/">Archives</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://ppd0705.github.io/tags/">Tags</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://ppd0705.github.io/categories/">Categories</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://ppd0705.github.io/about">About</a>
+          
+
+        
+
+      </li>
+    
+
+    
+    
+
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">[笔记]深入C语言和程序运行原理（更新中）</h1>
+      
+      <div class="post-meta">
+        <time datetime="2022-01-31" class="post-time">
+          2022-01-31
+        </time>
+        <div class="post-category">
+            <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
+            
+          </div>
+        <span class="more-meta"> 3191 words </span>
+          <span class="more-meta"> 7 min read </span>
+
+        
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Table of Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#第零讲-课前热身">第零讲 课前热身</a>
+      <ul>
+        <li><a href="#数据量单位">数据量单位</a></li>
+        <li><a href="#汇编语言">汇编语言</a></li>
+        <li><a href="#寄存器">寄存器</a></li>
+      </ul>
+    </li>
+    <li><a href="#第一讲-一个c程序的完整生命周期">第一讲 一个C程序的完整生命周期</a>
+      <ul>
+        <li><a href="#c核心语法">C核心语法</a>
+          <ul>
+            <li><a href="#入口函数">入口函数</a></li>
+            <li><a href="#数组">数组</a></li>
+            <li><a href="#结果体和联合体">结果体和联合体</a></li>
+            <li><a href="#控制语句">控制语句</a></li>
+            <li><a href="#指针">指针</a></li>
+            <li><a href="#宏">宏</a></li>
+            <li><a href="#断言">断言</a></li>
+            <li><a href="#函数内联">函数内联</a></li>
+          </ul>
+        </li>
+        <li><a href="#c-语言编程范式">C 语言编程范式</a></li>
+        <li><a href="#编译和运行">编译和运行</a></li>
+      </ul>
+    </li>
+    <li><a href="#第二讲-数据和量值">第二讲 数据和量值</a>
+      <ul>
+        <li><a href="#量值">量值</a>
+          <ul>
+            <li><a href="#变量">变量</a></li>
+            <li><a href="#常量">常量</a></li>
+          </ul>
+        </li>
+        <li><a href="#数据的存储形式">数据的存储形式</a>
+          <ul>
+            <li><a href="#补码">补码</a></li>
+            <li><a href="#ieee-754">IEEE-754</a></li>
+          </ul>
+        </li>
+        <li><a href="#数据的存储位置">数据的存储位置</a></li>
+      </ul>
+    </li>
+    <li><a href="#第三讲-运算符">第三讲 运算符</a>
+      <ul>
+        <li><a href="#运算符分类">运算符分类</a></li>
+        <li><a href="#算数关系为赋值运算">算数、关系、为、赋值运算</a></li>
+        <li><a href="#逻辑运算符">逻辑运算符</a></li>
+        <li><a href="#成员访问运算符">成员访问运算符</a></li>
+        <li><a href="#其他运算符">其他运算符</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      <h1 id="第零讲-课前热身">第零讲 课前热身</h1>
+<h2 id="数据量单位">数据量单位</h2>
+<p>位（bit）： 是最小存储单位，每个位可以存一个二进制码值得 0 或 1
+字节（byte）： 通常是由八个位组成的一个存储单元，是计算机最小的可寻址单位
+位（word）：是处理器使用的自然数据单位，处理器单个指令可以操作的最大的内存块
+一般为一个字节大小</p>
+<h2 id="汇编语言">汇编语言</h2>
+<p>汇编语言（Assembly Language）是一种低级编程语言，和 CPU 架构相关。</p>
+<p>汇编语言使用助记符（Mnemonic）来表示每个低级的机器指令，不同的汇编指令可以使用不同的参数形式，以 mov 指令举例，有如下三种形式：</p>
+<ul>
+<li>mov r/m, r</li>
+<li>mov r, r/m</li>
+<li>mov r/m, imm</li>
+</ul>
+<p>指令参数中，r 表示 寄存器（register），m 表示内存（memory），imm 表示立即数（immediate）。
+指令<code>mov ebx 1</code>的含义是将立即数 1 存到寄存器 ebx 中。
+在x86指令集中，受限于 CPU 实现的复杂的，不存在将两个内存地址同时作为 src 和 dest 参数的指令。</p>
+<p>指令<code>mov ebx 1</code>对应的机器码为 <code>bb 01 00 00 00</code>
+机器码由 OpCode 和 Immediata Data 两部分组成，OpCode 占用一个字节，mov 对应的指令是 0xb8，寄存器对应阈值为 0x3， 组合在一起即为 0xbb；由于 mov 传送 32 位数，所以立即数单独占用 4 个字节 （使用小端序）</p>
+<h2 id="寄存器">寄存器</h2>
+<p>寄存器可以简单理解为 CPU 提供的一组由位于芯片上的高速存储器硬件，拥有最快的数据访问速度和最低的延迟</p>
+<p>寄存器通常分为如下几类：</p>
+<ul>
+<li>统一寄存器：一般存放程序运行过程中产生的临时数据</li>
+<li>状态寄存器：一般存放之间执行结果相关的状态信息，如指令是否引起进位等</li>
+<li>系统寄存器：一般由操作系统使用，存放中断、CPU模式等信息</li>
+</ul>
+<p>x86-64 架构中定义了 16 个通用寄存器，每个寄存器可以存放4个指令字（每个指令字16字节）</p>
+<p>在汇编代码中，可以使用每个寄存器的不同别名来访问对应的低 8 位，低 16 位，低 32 位，以及完整的 64 位数据</p>
+<p><img src="/image/learn_c/0_1.jpg" alt="register_alias"></p>
+<p>需要注意的是当重写寄存器的低32位数据时，高32位数据会被置零，可以使用如下代码进行对比。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">register</span> <span class="kt">long</span> <span class="n">num</span> <span class="k">asm</span><span class="p">(</span><span class="s">&#34;rax&#34;</span><span class="p">)</span> <span class="o">=</span> <span class="mh">0x100000000</span><span class="p">;</span>
+  <span class="k">asm</span><span class="p">(</span><span class="s">&#34;movl $0x1, %eax&#34;</span><span class="p">);</span>
+  <span class="c1">// asm(&#34;movw $0x1, %ax&#34;);
+</span><span class="c1"></span>  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%ld</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">num</span><span class="p">);</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="第一讲-一个c程序的完整生命周期">第一讲 一个C程序的完整生命周期</h1>
+<h2 id="c核心语法">C核心语法</h2>
+<p>实例程序如下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C">
+<span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt; </span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdint.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;assert.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdbool.h&gt;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="cp">#define BOOL_TRUE 1  </span><span class="c1">// 定义用到的宏常量与宏函数；
+</span><span class="c1"></span><span class="cp">#define BOOL_FALSE 0
+</span><span class="cp">#define typename(x) _Generic((x), \
+</span><span class="cp">  unsigned short: &#34;unsigned short int&#34;, \
+</span><span class="cp">  unsigned long: &#34;unsigned long int&#34;, \
+</span><span class="cp">  default: &#34;unknown&#34;)
+</span><span class="cp"></span>
+<span class="k">typedef</span> <span class="k">enum</span> <span class="p">{</span> <span class="n">Host</span><span class="p">,</span> <span class="n">IP</span> <span class="p">}</span> <span class="n">IP_ADDR_TYPE</span><span class="p">;</span>  <span class="c1">// 定义枚举类型 IP_ADDR_TYPE，用于表示联合中生效的字段；
+</span><span class="c1"></span><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>  <span class="c1">// 定义结构 CONN；
+</span><span class="c1"></span>  <span class="n">size_t</span> <span class="n">id</span><span class="p">;</span>
+  <span class="kt">uint16_t</span> <span class="n">port</span><span class="p">;</span>
+  <span class="kt">bool</span> <span class="n">closed</span><span class="p">;</span>
+  <span class="n">IP_ADDR_TYPE</span> <span class="n">addr_type</span><span class="p">;</span>
+  <span class="k">union</span> <span class="p">{</span>
+    <span class="kt">char</span> <span class="n">host_name</span><span class="p">[</span><span class="mi">256</span><span class="p">];</span>
+    <span class="kt">char</span> <span class="n">ip</span><span class="p">[</span><span class="mi">24</span><span class="p">];</span>
+  <span class="p">};</span>
+<span class="p">}</span> <span class="n">CONN</span><span class="p">;</span>
+
+<span class="kr">inline</span> <span class="k">static</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="nf">findAddr</span><span class="p">(</span><span class="k">const</span> <span class="n">CONN</span><span class="o">*</span> <span class="n">pip</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">// 定义函数 findAddr，用于打印 CONN 对象的信息；
+</span><span class="c1"></span>  <span class="n">assert</span><span class="p">(</span><span class="n">pip</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">);</span>  <span class="c1">// 运行时断言，判断传入的 CONN 指针是否有效；
+</span><span class="c1"></span>  <span class="k">return</span> <span class="n">pip</span><span class="o">-&gt;</span><span class="n">addr_type</span> <span class="o">==</span> <span class="n">Host</span> <span class="o">?</span> <span class="n">pip</span><span class="o">-&gt;</span><span class="nl">host_name</span> <span class="p">:</span> <span class="n">pip</span><span class="o">-&gt;</span><span class="n">ip</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>  <span class="c1">// 入口函数；
+</span><span class="c1"></span>  <span class="n">static_assert</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">CONN</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mh">0x400</span><span class="p">,</span> <span class="s">&#34;the size of CONN object exceeds limit.&#34;</span><span class="p">);</span>  <span class="c1">// 静态断言，判断 CONN 对象的大小是否符合要求；
+</span><span class="c1"></span>  <span class="k">const</span> <span class="n">CONN</span> <span class="n">conns</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>  <span class="c1">// 构造一个数组，包含三个 CONN 对象；
+</span><span class="c1"></span>    <span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="n">BOOL_TRUE</span><span class="p">,</span> <span class="n">IP</span><span class="p">,</span> <span class="p">{</span> <span class="p">.</span><span class="n">ip</span> <span class="o">=</span> <span class="s">&#34;127.0.0.1&#34;</span> <span class="p">}</span> <span class="p">},</span>
+    <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">8080</span><span class="p">,</span> <span class="n">BOOL_FALSE</span><span class="p">,</span> <span class="n">IP</span><span class="p">,</span> <span class="p">{</span> <span class="p">.</span><span class="n">ip</span> <span class="o">=</span> <span class="s">&#34;192.168.1.1&#34;</span> <span class="p">}</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8088</span><span class="p">,</span> <span class="n">BOOL_FALSE</span><span class="p">,</span> <span class="n">Host</span><span class="p">,</span> <span class="p">{</span> <span class="p">.</span><span class="n">host_name</span> <span class="o">=</span> <span class="s">&#34;http://localhost/&#34;</span> <span class="p">}</span> <span class="p">}</span>
+  <span class="p">};</span>
+
+  <span class="k">for</span> <span class="p">(</span><span class="n">size_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">conns</span><span class="p">)</span> <span class="o">/</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">CONN</span><span class="p">));</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">// 遍历上述 CONN 数组，并打印其中的内容；
+</span><span class="c1"></span>    <span class="n">printf</span><span class="p">(</span>
+      <span class="s">&#34;Port: %d</span><span class="se">\n</span><span class="s">&#34;</span>
+      <span class="s">&#34;Host/Addr: %s</span><span class="se">\n</span><span class="s">&#34;</span>
+      <span class="s">&#34;Internal type of `id` is: %s</span><span class="se">\n\n</span><span class="s">&#34;</span><span class="p">,</span>
+      <span class="n">conns</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">port</span><span class="p">,</span>
+      <span class="n">findAddr</span><span class="p">(</span><span class="o">&amp;</span><span class="n">conns</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span>
+      <span class="kr">typename</span><span class="p">(</span><span class="n">conns</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">id</span><span class="p">)</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">EXIT_SUCCESS</span><span class="p">;</span> 
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="入口函数">入口函数</h3>
+<p>使用 main 函数作为入口函数，返回值为 0 表示成功。</p>
+<h3 id="数组">数组</h3>
+<p>conns 即为数组</p>
+<h3 id="结果体和联合体">结果体和联合体</h3>
+<p>结果体中所有定义的字段对应内存连续排列
+联合体中同时只有一个字段生效，分配的内存为最大字段占用内存</p>
+<h3 id="控制语句">控制语句</h3>
+<h3 id="指针">指针</h3>
+<h3 id="宏">宏</h3>
+<p>宏函数 typename 使用了 C11标准引入的 _Generic 关键字</p>
+<h3 id="断言">断言</h3>
+<p>断言分为静态断言和动态断言，静态断言在代码编译时进行检查</p>
+<h3 id="函数内联">函数内联</h3>
+<p>使用 inline 内联关键字，可以建议编译器将该函数的内部逻辑直接替换到函数的
+调用位置处，以减少函数调用开销提升性能</p>
+<h2 id="c-语言编程范式">C 语言编程范式</h2>
+<p>C 语言属于命令式编程（Imperative Programing），这种范式更关注计算机完成任务所执行的具体步骤；与之对的另外一种编程范式为声明式编程（Declararive Programing），这种范式更倾向于表达计算逻辑。区别实例如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"># 命令式
+#define ARR_LEN 5
+int main(void) { 
+  int arr[ARR_LEN] = { 1, 5, 10, 9, 0 };
+  for (int i = 0; i &lt; ARR_LEN; ++i) {
+    if (arr[i] &gt; 7) {
+      // save this element somewhere else.
+    }
+  }
+  return 0;
+}
+
+
+# 声明式
+let arr = [1, 5, 10, 9, 0]
+let result = arr.filter(n =&gt; n &gt; 7)
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="编译和运行">编译和运行</h2>
+<p><img src="/image/learn_c/1_1.webp" alt="compile"></p>
+<ol>
+<li>代码预处理：编译器会移除所有注释信息、处理宏指令。</li>
+<li>编译优化：编译器优化源码，将代码编程成汇编格式。</li>
+<li>汇编：编译器将汇编代码编译成操作系统使用的某种对象格式。</li>
+<li>链接：编译器将依赖的对象文件进行整合，设置好程序中所有调用函数的正确地址，生成二进制执行文件。</li>
+</ol>
+<h1 id="第二讲-数据和量值">第二讲 数据和量值</h1>
+<h2 id="量值">量值</h2>
+<p>量值可以粗略地分为变量（Variable）和常量（constant）</p>
+<h3 id="变量">变量</h3>
+<p>C 语言变量类型占用的具体字节大小与程序运行所在的硬件体系结构紧密相关</p>
+<h3 id="常量">常量</h3>
+<p>在 C 语言中，通过内联方式直接写到源码中的字面量值一般被称为常量。</p>
+<p>使用 const 关键字修饰的变量更接近于只读变量，不具有”常量表达式“属性，因此无法用来表示定长数组大小或使用在 case 语句中。
+常量表达式在编译时被求值，而只读变量在运行时才被确定</p>
+<h2 id="数据的存储形式">数据的存储形式</h2>
+<p>计算机内部使用 补码（Two&rsquo;s-complement）存放有符号整数，使用对应的二进制来存放无符号整数，使用 IEEE-754 标准来存放浮点数。</p>
+<h3 id="补码">补码</h3>
+<p>一个补码所表示的实际数值，由负权重位的值（最高位）和正权重为的值求和。
+如 1101，是及对应的值为 -3（-8 + 5）。
+由此也得出四位补码的最小值为 -8（1000），最大值为 7（0111）。</p>
+<h3 id="ieee-754">IEEE-754</h3>
+<h2 id="数据的存储位置">数据的存储位置</h2>
+<p><img src="/image/learn_c/2_1.webp" alt="data_store_position"></p>
+<p>应用程序被正常加载前，需要将应用程序代码机器相关依赖数据映射到内存的某个位置，这段内存称之为进程的VAS（Virtual Address Space 虚拟地址空间）.</p>
+<p>初始化的全局变量和静态变量和应用程序具有同样的生命周期，其值通常会被存放到进程VAS内的 .data 中。</p>
+<p>局部变量存放于寄存器或者 VAS 的栈中</p>
+<p>通过 malloc 创建的内存存放于 VAS 的堆中</p>
+<p>未初始化的全局变量和静态变量存放于 VAS 的 .bss 中</p>
+<p>常量会按照数据的大小和类型存放于 VAS的 .text （通常存放代码） 或 .rodata （通常存放只读数据） 中</p>
+<p><img src="/image/learn_c/2_2.webp" alt="const_data_store_position"></p>
+<h1 id="第三讲-运算符">第三讲 运算符</h1>
+<p>运算符（operator）、表达式（expression）和语句（statement）是组成 C 语言程序的三个基本的语法结构，且一般依次呈包含关系。</p>
+<h2 id="运算符分类">运算符分类</h2>
+<p><img src="/image/learn_c/3_2.webp" alt="operator_class"></p>
+<h2 id="算数关系为赋值运算">算数、关系、为、赋值运算</h2>
+<p>这四类运算符经过编译后，可以直接对应到由目标平台上相应的机器指令组成的简单计算逻辑。</p>
+<p>拿下图的 foo 函数举例</p>
+<p><img src="/image/learn_c/3_2.webp" alt="foo"></p>
+<p><code>DWORD PRT [rbp-8]</code> 指 将寄存器 rbp 的值减去 8 得到的结果作为起始地址，然后操作一个 大小为 DWORD 的空间。intel体系中 WORD 表示 16 位，DWROD 表示 32 位，QWORD 表示 64 位。</p>
+<p><code>int arithmetic = x + y;</code>对应的汇编代码中，前两行代码为分别从栈内存中将变量 x 和 y 存入 寄存器 edx 和 eax，接着通过 add 指令计算两者之和，最后通过 mov 指令将寄存器 eax 的值移到 局部变量 arithmetic 对应的栈内存中。</p>
+<p>FLAGS 寄存器是一组用于反映程序当前运行状态的标志寄存器，详情如下</p>
+<p><img src="/image/learn_c/3_3.webp" alt="flags_register"></p>
+<p>cmp 指令会在 CPU 内部对两个操作数进行隐式减法运算，然后设置 FLAGS寄存器状态。</p>
+<h2 id="逻辑运算符">逻辑运算符</h2>
+<p>以与运算符 &amp;&amp; 举例，示例代码如下</p>
+<p><img src="/image/learn_c/3_4.webp" alt="and_operator"></p>
+<p>je 指令会判断 ZF 标志位是否为 0， 如果是则跳转到指定地址</p>
+<p>与运算的高级编辑优化，编译器会采用 test、setne、movzx来实现，
+这种方式减少了对栈内存即条件跳转指令的使用，是的程序减少了
+访问内存时产生的延迟，以及由于分支预测失败导致的CPU周期延迟。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-as" data-lang="as"><span class="nx">test</span>    <span class="nx">edi</span><span class="o">,</span> <span class="nx">edi</span>  <span class="o">;</span> <span class="nx">edi</span> <span class="o">&lt;-</span> <span class="nx">x</span><span class="p">.</span>
+<span class="nx">setne</span>   <span class="nx">al</span>
+<span class="nx">test</span>    <span class="nx">esi</span><span class="o">,</span> <span class="nx">esi</span>  <span class="o">;</span> <span class="nx">esi</span> <span class="o">&lt;-</span> <span class="nx">y</span><span class="p">.</span>
+<span class="nx">setne</span>   <span class="nx">sil</span>
+<span class="nx">movzx</span>   <span class="nx">esi</span><span class="o">,</span> <span class="nx">sil</span>
+<span class="nx">and</span>     <span class="nx">esi</span><span class="o">,</span> <span class="nx">eax</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="成员访问运算符">成员访问运算符</h2>
+<p><img src="/image/learn_c/3_5.webp" alt="address_operator"></p>
+<p><code>int* n_ptr = &amp;n;</code>对应的汇编指令中首先 lea 指令将寄存器 rbp 中的值减去 16 后，存放到 rax 寄存器，即将n在站上的地址存放到 rax 寄存器；然后将 rax 寄存器的值存到 变量 n_ptr对应的栈内存的存储位置。</p>
+<p><code>int m = *n_ptr;</code>对应的汇编指令中首先将 n_ptr的值传送到 寄存器 ra；随后将 rax 的值作为地址，将该地址上的值以 DWORD（即 int）形式传送到 eax 寄存器；最后将 eax 寄存器中的结果只传送到 变量 m 在栈内存的存储位置。</p>
+<h2 id="其他运算符">其他运算符</h2>
+<p>这里介绍 <code>sizeof</code> 和 <code>(type)</code>，示例如下：</p>
+<p><img src="/image/learn_c/3_6.webp" alt="other_operator"></p>
+<p><code>size_t n = sizeof(int)</code> 的汇编指令可以看出直接将结果4存到了 n 对应的栈内存。</p>
+<p><code>short f = (short) n;</code>的汇编指令首先将变量 n 的值移到 rax 寄存器，然后将其中低 16位的数据（ax）地道 f 所在的内存趋于</p>
+
+    </div>
+
+    
+    
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="https://ppd0705.github.io/tags/c/">C</a>
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/post/noip_expirence/">
+            <span class="next-text nav-default">非典型 NOIP 经历</span>
+            <span class="prev-text nav-mobile">Next</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "ppd0705/ppd0705.github.io"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+  
+
+  
+
+  
+
+  
+
+    
+
+  
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="icon-links">
+  
+  
+    <a href="ppd0705@icloud.com" rel="me noopener" class="iconfont"
+      title="email"  target="_blank"
+      >
+      <svg class="icon" viewBox="0 0 1451 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M664.781909 681.472759 0 97.881301C0 3.997201 71.046997 0 71.046997 0L474.477909 0 961.649408 0 1361.641813 0C1361.641813 0 1432.688811 3.997201 1432.688811 97.881301L771.345323 681.472759C771.345323 681.472759 764.482731 685.154773 753.594283 688.65053L753.594283 688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858L682.561621 688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759L664.781909 681.472759ZM718.063616 811.603883C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633 0 212.052267 0 212.052267L0 942.809523C0 942.809523 0 1024 83.726336 1024L682.532949 1024 753.579947 1024 1348.948139 1024C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523L1432.688811 212.052267C1432.688811 212.052267 893.138176 701.759633 817.019477 767.734955 777.248 802.205449 742.347691 811.03081 718.063616 811.603883L718.063616 811.603883Z"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://twitter.com/ppd0705" rel="me noopener" class="iconfont"
+      title="twitter"  target="_blank"
+      >
+      <svg class="icon" viewBox="0 0 1264 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M1229.8616 18.043658c0 0-117.852626 63.135335-164.151872 67.344358-105.225559-164.151872-505.082682-92.598492-437.738325 223.078185C278.622548 312.675223 89.216542 47.506814 89.216542 47.506814s-117.852626 189.406006 75.762402 345.139833C127.097743 396.85567 55.544363 371.601535 55.544363 371.601535S26.081207 535.753407 253.368414 615.724832c-21.045112 29.463156-113.643603 8.418045-113.643603 8.418045s25.254134 143.10676 231.496229 180.987961c-143.10676 130.479693-387.230056 92.598492-370.393967 105.225559 206.242095 189.406006 1119.599946 231.496229 1128.01799-643.98042C1179.353331 249.539887 1263.533778 123.269217 1263.533778 123.269217s-130.479693 37.881201-138.897738 33.672179C1225.652577 98.015083 1229.8616 18.043658 1229.8616 18.043658"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://github.com/ppd0705" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+  
+    <a href="https://www.douban.com/people/ppd0705/" rel="me noopener" class="iconfont"
+      title="douban"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M926.917973 37.80608C959.65184 37.80608 986.19392 64.34816 986.19392 97.082027L986.19392 926.917973C986.19392 959.65184 959.65184 986.19392 926.917973 986.19392L97.082027 986.19392C64.34816 986.19392 37.80608 959.65184 37.80608 926.917973L37.80608 97.082027C37.80608 64.34816 64.34816 37.80608 97.082027 37.80608zM176.653653 176.19968 176.653653 252.678827 825.658027 252.678827 825.658027 176.19968zM217.719467 316.146347 217.719467 628.08064 273.524053 628.08064 341.292373 770.39616 157.259093 770.39616 157.259093 845.417813 842.949973 845.417813 842.949973 770.39616 654.226773 770.39616 722.899627 628.08064 783.67744 628.08064 783.67744 316.146347zM684.885333 392.891733 684.885333 553.987413 312.576 553.987413 312.576 392.891733zM570.770773 770.39616 426.653013 770.39616 359.621973 628.08064 639.443627 628.08064z"></path>
+</svg>
+
+    </a>
+
+
+<a href="https://ppd0705.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+   
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+      2019 -
+    2022
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        PPD
+        
+      </span></span>
+
+  
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

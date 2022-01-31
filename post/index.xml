@@ -6,7 +6,16 @@
     <description>Recent content in Posts on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 21 Nov 2021 11:09:55 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 31 Jan 2022 17:04:50 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>[笔记]深入C语言和程序运行原理（更新中）</title>
+      <link>https://ppd0705.github.io/post/learn_c/</link>
+      <pubDate>Mon, 31 Jan 2022 17:04:50 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/learn_c/</guid>
+      <description>第零讲 课前热身 数据量单位 位（bit）： 是最小存储单位，每个位可以存一个二进制码值得 0 或 1 字节（byte）： 通常是由八个位组成的一个存储单元，</description>
+    </item>
+    
     <item>
       <title>非典型 NOIP 经历</title>
       <link>https://ppd0705.github.io/post/noip_expirence/</link>
@@ -176,15 +185,6 @@
       
       <guid>https://ppd0705.github.io/post/uvicorn_note/</guid>
       <description>简介 Unicorn是一个遵守ASGI协议的web服务器，使用asycnio框架，要求python3.6+，支持HTTP1.1和WebSock</description>
-    </item>
-    
-    <item>
-      <title>ASGI摘抄</title>
-      <link>https://ppd0705.github.io/post/asgi_note/</link>
-      <pubDate>Wed, 04 Mar 2020 08:25:38 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/asgi_note/</guid>
-      <description>Asynchronous Server Gateway Interface Onverview two components protocol server: terminates socket and translates them into connections and per-connection event messages application: lives in inside a server, is instantiated once per connection, and handles event messages as they happen difference between two components applications are instant objects that are fed events rather than simple callable, and must run as asyncio-compativle corountines two separate parts of a connection: a connection scope; events</description>
     </item>
     
   </channel>

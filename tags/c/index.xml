@@ -6,7 +6,16 @@
     <description>Recent content in C on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Fri, 30 Jul 2021 08:06:33 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/tags/c/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 31 Jan 2022 17:04:50 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/tags/c/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>[笔记]深入C语言和程序运行原理（更新中）</title>
+      <link>https://ppd0705.github.io/post/learn_c/</link>
+      <pubDate>Mon, 31 Jan 2022 17:04:50 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/learn_c/</guid>
+      <description>第零讲 课前热身 数据量单位 位（bit）： 是最小存储单位，每个位可以存一个二进制码值得 0 或 1 字节（byte）： 通常是由八个位组成的一个存储单元，</description>
+    </item>
+    
     <item>
       <title>[笔记]操作系统实战（更新中）</title>
       <link>https://ppd0705.github.io/post/play_os_in_action/</link>

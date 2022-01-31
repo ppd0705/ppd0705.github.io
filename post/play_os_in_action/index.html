@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]操作系统实战（更新中）">
 <meta itemprop="description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"><meta itemprop="datePublished" content="2021-07-30T08:06:33+08:00" />
 <meta itemprop="dateModified" content="2021-07-30T08:06:33+08:00" />
-<meta itemprop="wordCount" content="43469">
+<meta itemprop="wordCount" content="43468">
 <meta itemprop="keywords" content="C,操作系统," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]操作系统实战（更新中）"/>
 <meta name="twitter:description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"/>
@@ -302,7 +302,7 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 43469 words </span>
+        <span class="more-meta"> 43468 words </span>
           <span class="more-meta"> 87 min read </span>
 
         
@@ -8586,17 +8586,17 @@ nice 为 0 的进程的虚拟时间和实际时间是相等的<br>
 <h2 id="文件系统">文件系统</h2>
 <h3 id="文件系统设计">文件系统设计</h3>
 <p>因为文件系统有各种格式，所以文件系统组件应该和内核分开，且可以动态加载和删除不同的文件系统组件</p>
-<p><img src="/image/play_os_in_action/32_1.wepb" alt="file_system"></p>
+<p><img src="/image/play_os_in_action/32_1.webp" alt="file_system"></p>
 <h3 id="文件格式和存储块">文件格式和存储块</h3>
 <p>逻辑上文件就是一个可以动态增减的线性字节数组，而存储设备都是以块为单位存储数据的，
 不同的存储设的存储卡大小不同，我们先将字节数组整合成文件数据逻辑块，然后将这个逻辑块映射到
 一个或多个物理储存块</p>
-<p><img src="/image/play_os_in_action/32_2.wepb" alt="file_system_chunk"></p>
+<p><img src="/image/play_os_in_action/32_2.webp" alt="file_system_chunk"></p>
 <h2 id="组织文件">组织文件</h2>
 <p>整个文件层次结构就像一个倒挂的树</p>
 <h3 id="文件系统数据结构">文件系统数据结构</h3>
 <h4 id="超级块">超级块</h4>
-<p>包含文件系统标识、版本信息、逻辑存储块大小等新的的数据结构叫做文件系统的
+<p>包含文件系统标识、版本信息、逻辑存储块大小等新的数据结构叫做文件系统的
 超级块或描述块</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -8637,10 +8637,10 @@ nice 为 0 的进程的虚拟时间和实际时间是相等的<br>
 </div><p>超级块存储在设备的第一个逻辑存储块中</p>
 <h4 id="位图">位图</h4>
 <p>我们使用位图来表示逻辑存储块的分配状态，如果某个位的值是0，那么对应的逻辑块是空闲的。</p>
-<p><img src="/image/play_os_in_action/32_3.wepb" alt="file_system_bit_block"></p>
-<p>位图并不需要实际的数据结构，将位图块档子一个字节数据就可以</p>
+<p><img src="/image/play_os_in_action/32_3.webp" alt="file_system_bit_block"></p>
+<p>位图并不需要实际的数据结构，将位图块当做一个字节数组就可以</p>
 <h4 id="目录">目录</h4>
-<p>目录也是一种数据，也包含了目录类型、状态、指向文件数据管理头的块号、名称信息</p>
+<p>目录也是一种数据，也包含了目录类型、状态、指向文件数据管理头的块号、名称等信息</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
@@ -8671,7 +8671,7 @@ nice 为 0 的进程的虚拟时间和实际时间是相等的<br>
 </span><span class="c1"></span><span class="p">}</span><span class="n">rfsdir_t</span><span class="p">;</span>
 </code></pre></td></tr></table>
 </div>
-</div><p><img src="/image/play_os_in_action/32_4.wepb" alt="file_system_dir"></p>
+</div><p><img src="/image/play_os_in_action/32_4.webp" alt="file_system_dir"></p>
 <h4 id="文件管理头">文件管理头</h4>
 <p>文件管理头记录了文件信息，如类型、创建时间、大小、占用哪些逻辑存储块等</p>
 <div class="highlight"><div class="chroma">
@@ -8739,9 +8739,9 @@ nice 为 0 的进程的虚拟时间和实际时间是相等的<br>
 </code></pre></td></tr></table>
 </div>
 </div><p>fmd_fleblk 数据存放的是逻辑块占用信息，比如一个文件占用 4~8、10~15、30~40 的逻辑存储块时，那么
-fmd_fleblk[0] 保存 4 和 4，fmd_fleblk[1] 保存 10 和 5，fmd_fleblk[2] 保存 30 和 10，</p>
+fmd_fleblk[0] 保存 4 和 4，fmd_fleblk[1] 保存 10 和 5，fmd_fleblk[2] 保存 30 和 10 。</p>
 <p>如果文件比较大，使用 fmd_linkpblk  和  fmd_linknblk 来扩展</p>
-<p><img src="/image/play_os_in_action/32_5.wepb" alt="file_system_file_head"></p>
+<p><img src="/image/play_os_in_action/32_5.webp" alt="file_system_file_head"></p>
 <h1 id="参考">参考</h1>
 <ul>
 <li><a href="https://stackoverflow.com/questions/37146637/why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux">why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux</a></li>

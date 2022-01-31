@@ -6,7 +6,16 @@
     <description>Recent content in 计算机 on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 21 Nov 2021 11:09:55 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 31 Jan 2022 17:04:50 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>[笔记]深入C语言和程序运行原理（更新中）</title>
+      <link>https://ppd0705.github.io/post/learn_c/</link>
+      <pubDate>Mon, 31 Jan 2022 17:04:50 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/learn_c/</guid>
+      <description>第零讲 课前热身 数据量单位 位（bit）： 是最小存储单位，每个位可以存一个二进制码值得 0 或 1 字节（byte）： 通常是由八个位组成的一个存储单元，</description>
+    </item>
+    
     <item>
       <title>非典型 NOIP 经历</title>
       <link>https://ppd0705.github.io/post/noip_expirence/</link>
@@ -176,15 +185,6 @@
       
       <guid>https://ppd0705.github.io/post/mysql_transaction_isolation/</guid>
       <description>四种隔离级别 读未提交(read uncommitted)： 事务还未提交时能被其他事务看到 读提交(read committed)： 事务提交后才能被</description>
-    </item>
-    
-    <item>
-      <title>Python标准库io和select</title>
-      <link>https://ppd0705.github.io/post/python_io/</link>
-      <pubDate>Tue, 05 Nov 2019 06:48:57 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/python_io/</guid>
-      <description>三种I/O类型 Binary: expects and produces bytes objects, 不会编解码，不会换行 Text: expects and produces str objects， 自动编解码和换行 Raw(unbuffered): uilding-block for binary and text streams 底层类 抽象基类IOBase: 无read</description>
     </item>
     
   </channel>

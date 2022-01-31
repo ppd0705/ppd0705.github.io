@@ -6,10 +6,321 @@
     <description>Recent content on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 21 Nov 2021 11:09:55 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 31 Jan 2022 17:04:50 +0800</lastBuildDate>
     
         <atom:link href="https://ppd0705.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>[笔记]深入C语言和程序运行原理（更新中）</title>
+      <link>https://ppd0705.github.io/post/learn_c/</link>
+      <pubDate>Mon, 31 Jan 2022 17:04:50 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/learn_c/</guid>
+      
+        <description>&lt;h1 id=&#34;第零讲-课前热身&#34;&gt;第零讲 课前热身&lt;/h1&gt;
+&lt;h2 id=&#34;数据量单位&#34;&gt;数据量单位&lt;/h2&gt;
+&lt;p&gt;位（bit）： 是最小存储单位，每个位可以存一个二进制码值得 0 或 1
+字节（byte）： 通常是由八个位组成的一个存储单元，是计算机最小的可寻址单位
+位（word）：是处理器使用的自然数据单位，处理器单个指令可以操作的最大的内存块
+一般为一个字节大小&lt;/p&gt;
+&lt;h2 id=&#34;汇编语言&#34;&gt;汇编语言&lt;/h2&gt;
+&lt;p&gt;汇编语言（Assembly Language）是一种低级编程语言，和 CPU 架构相关。&lt;/p&gt;
+&lt;p&gt;汇编语言使用助记符（Mnemonic）来表示每个低级的机器指令，不同的汇编指令可以使用不同的参数形式，以 mov 指令举例，有如下三种形式：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;mov r/m, r&lt;/li&gt;
+&lt;li&gt;mov r, r/m&lt;/li&gt;
+&lt;li&gt;mov r/m, imm&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;指令参数中，r 表示 寄存器（register），m 表示内存（memory），imm 表示立即数（immediate）。
+指令&lt;code&gt;mov ebx 1&lt;/code&gt;的含义是将立即数 1 存到寄存器 ebx 中。
+在x86指令集中，受限于 CPU 实现的复杂的，不存在将两个内存地址同时作为 src 和 dest 参数的指令。&lt;/p&gt;
+&lt;p&gt;指令&lt;code&gt;mov ebx 1&lt;/code&gt;对应的机器码为 &lt;code&gt;bb 01 00 00 00&lt;/code&gt;
+机器码由 OpCode 和 Immediata Data 两部分组成，OpCode 占用一个字节，mov 对应的指令是 0xb8，寄存器对应阈值为 0x3， 组合在一起即为 0xbb；由于 mov 传送 32 位数，所以立即数单独占用 4 个字节 （使用小端序）&lt;/p&gt;
+&lt;h2 id=&#34;寄存器&#34;&gt;寄存器&lt;/h2&gt;
+&lt;p&gt;寄存器可以简单理解为 CPU 提供的一组由位于芯片上的高速存储器硬件，拥有最快的数据访问速度和最低的延迟&lt;/p&gt;
+&lt;p&gt;寄存器通常分为如下几类：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;统一寄存器：一般存放程序运行过程中产生的临时数据&lt;/li&gt;
+&lt;li&gt;状态寄存器：一般存放之间执行结果相关的状态信息，如指令是否引起进位等&lt;/li&gt;
+&lt;li&gt;系统寄存器：一般由操作系统使用，存放中断、CPU模式等信息&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;x86-64 架构中定义了 16 个通用寄存器，每个寄存器可以存放4个指令字（每个指令字16字节）&lt;/p&gt;
+&lt;p&gt;在汇编代码中，可以使用每个寄存器的不同别名来访问对应的低 8 位，低 16 位，低 32 位，以及完整的 64 位数据&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/learn_c/0_1.jpg&#34; alt=&#34;register_alias&#34;&gt;&lt;/p&gt;
+&lt;p&gt;需要注意的是当重写寄存器的低32位数据时，高32位数据会被置零，可以使用如下代码进行对比。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;cp&#34;&gt;#include&lt;/span&gt; &lt;span class=&#34;cpf&#34;&gt;&amp;lt;stdio.h&amp;gt;&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;main&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;register&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;long&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;num&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;asm&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;rax&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mh&#34;&gt;0x100000000&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;asm&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;movl $0x1, %eax&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+  &lt;span class=&#34;c1&#34;&gt;// asm(&amp;#34;movw $0x1, %ax&amp;#34;);
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;n&#34;&gt;printf&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;%ld&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;\n&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;num&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h1 id=&#34;第一讲-一个c程序的完整生命周期&#34;&gt;第一讲 一个C程序的完整生命周期&lt;/h1&gt;
+&lt;h2 id=&#34;c核心语法&#34;&gt;C核心语法&lt;/h2&gt;
+&lt;p&gt;实例程序如下&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;31
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;32
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;33
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;34
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;35
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;36
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;37
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;38
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;39
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;40
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;41
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;42
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;43
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;44
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;45
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;46
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;47
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;48
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;49
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;50
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;51
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;
+&lt;span class=&#34;cp&#34;&gt;#include&lt;/span&gt; &lt;span class=&#34;cpf&#34;&gt;&amp;lt;stdlib.h&amp;gt; &lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;#include&lt;/span&gt; &lt;span class=&#34;cpf&#34;&gt;&amp;lt;stdio.h&amp;gt;&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;#include&lt;/span&gt; &lt;span class=&#34;cpf&#34;&gt;&amp;lt;stdint.h&amp;gt;&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;#include&lt;/span&gt; &lt;span class=&#34;cpf&#34;&gt;&amp;lt;assert.h&amp;gt;&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;#include&lt;/span&gt; &lt;span class=&#34;cpf&#34;&gt;&amp;lt;stdbool.h&amp;gt;&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;&lt;/span&gt;
+&lt;span class=&#34;cp&#34;&gt;#define BOOL_TRUE 1  &lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;// 定义用到的宏常量与宏函数；
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;#define BOOL_FALSE 0
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;#define typename(x) _Generic((x), \
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;  unsigned short: &amp;#34;unsigned short int&amp;#34;, \
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;  unsigned long: &amp;#34;unsigned long int&amp;#34;, \
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;  default: &amp;#34;unknown&amp;#34;)
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;typedef&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;enum&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Host&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;IP&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;IP_ADDR_TYPE&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;// 定义枚举类型 IP_ADDR_TYPE，用于表示联合中生效的字段；
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;typedef&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;// 定义结构 CONN；
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;n&#34;&gt;size_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;id&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+  &lt;span class=&#34;kt&#34;&gt;uint16_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;port&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+  &lt;span class=&#34;kt&#34;&gt;bool&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;closed&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;IP_ADDR_TYPE&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;addr_type&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;union&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;kt&#34;&gt;char&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;host_name&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;256&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;];&lt;/span&gt;
+    &lt;span class=&#34;kt&#34;&gt;char&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ip&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;24&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;];&lt;/span&gt;
+  &lt;span class=&#34;p&#34;&gt;};&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;CONN&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+
+&lt;span class=&#34;kr&#34;&gt;inline&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;static&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;const&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;char&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;findAddr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;const&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;CONN&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;pip&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;// 定义函数 findAddr，用于打印 CONN 对象的信息；
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;n&#34;&gt;assert&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;pip&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;!=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;NULL&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;// 运行时断言，判断传入的 CONN 指针是否有效；
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;pip&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;addr_type&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;==&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Host&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;?&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;pip&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&#34;nl&#34;&gt;host_name&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;pip&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ip&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;main&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;argc&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;char&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;argv&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[])&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;// 入口函数；
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;n&#34;&gt;static_assert&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;sizeof&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;CONN&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;=&lt;/span&gt; &lt;span class=&#34;mh&#34;&gt;0x400&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;the size of CONN object exceeds limit.&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;// 静态断言，判断 CONN 对象的大小是否符合要求；
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;k&#34;&gt;const&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;CONN&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;conns&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;// 构造一个数组，包含三个 CONN 对象；
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;80&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;BOOL_TRUE&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;IP&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ip&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;127.0.0.1&amp;#34;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;},&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;8080&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;BOOL_FALSE&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;IP&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ip&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;192.168.1.1&amp;#34;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;},&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;8088&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;BOOL_FALSE&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Host&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;host_name&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;http://localhost/&amp;#34;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+  &lt;span class=&#34;p&#34;&gt;};&lt;/span&gt;
+
+  &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;size_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;sizeof&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;conns&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;/&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;sizeof&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;CONN&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;));&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;++&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;// 遍历上述 CONN 数组，并打印其中的内容；
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;printf&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;
+      &lt;span class=&#34;s&#34;&gt;&amp;#34;Port: %d&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;\n&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;&lt;/span&gt;
+      &lt;span class=&#34;s&#34;&gt;&amp;#34;Host/Addr: %s&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;\n&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;&lt;/span&gt;
+      &lt;span class=&#34;s&#34;&gt;&amp;#34;Internal type of `id` is: %s&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;\n\n&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+      &lt;span class=&#34;n&#34;&gt;conns&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;].&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;port&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+      &lt;span class=&#34;n&#34;&gt;findAddr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;conns&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]),&lt;/span&gt;
+      &lt;span class=&#34;kr&#34;&gt;typename&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;conns&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;].&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;id&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+  &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;EXIT_SUCCESS&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; 
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id=&#34;入口函数&#34;&gt;入口函数&lt;/h3&gt;
+&lt;p&gt;使用 main 函数作为入口函数，返回值为 0 表示成功。&lt;/p&gt;
+&lt;h3 id=&#34;数组&#34;&gt;数组&lt;/h3&gt;
+&lt;p&gt;conns 即为数组&lt;/p&gt;
+&lt;h3 id=&#34;结果体和联合体&#34;&gt;结果体和联合体&lt;/h3&gt;
+&lt;p&gt;结果体中所有定义的字段对应内存连续排列
+联合体中同时只有一个字段生效，分配的内存为最大字段占用内存&lt;/p&gt;
+&lt;h3 id=&#34;控制语句&#34;&gt;控制语句&lt;/h3&gt;
+&lt;h3 id=&#34;指针&#34;&gt;指针&lt;/h3&gt;
+&lt;h3 id=&#34;宏&#34;&gt;宏&lt;/h3&gt;
+&lt;p&gt;宏函数 typename 使用了 C11标准引入的 _Generic 关键字&lt;/p&gt;
+&lt;h3 id=&#34;断言&#34;&gt;断言&lt;/h3&gt;
+&lt;p&gt;断言分为静态断言和动态断言，静态断言在代码编译时进行检查&lt;/p&gt;
+&lt;h3 id=&#34;函数内联&#34;&gt;函数内联&lt;/h3&gt;
+&lt;p&gt;使用 inline 内联关键字，可以建议编译器将该函数的内部逻辑直接替换到函数的
+调用位置处，以减少函数调用开销提升性能&lt;/p&gt;
+&lt;h2 id=&#34;c-语言编程范式&#34;&gt;C 语言编程范式&lt;/h2&gt;
+&lt;p&gt;C 语言属于命令式编程（Imperative Programing），这种范式更关注计算机完成任务所执行的具体步骤；与之对的另外一种编程范式为声明式编程（Declararive Programing），这种范式更倾向于表达计算逻辑。区别实例如下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;# 命令式
+#define ARR_LEN 5
+int main(void) { 
+  int arr[ARR_LEN] = { 1, 5, 10, 9, 0 };
+  for (int i = 0; i &amp;lt; ARR_LEN; ++i) {
+    if (arr[i] &amp;gt; 7) {
+      // save this element somewhere else.
+    }
+  }
+  return 0;
+}
+
+
+# 声明式
+let arr = [1, 5, 10, 9, 0]
+let result = arr.filter(n =&amp;gt; n &amp;gt; 7)
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;编译和运行&#34;&gt;编译和运行&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/learn_c/1_1.webp&#34; alt=&#34;compile&#34;&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;代码预处理：编译器会移除所有注释信息、处理宏指令。&lt;/li&gt;
+&lt;li&gt;编译优化：编译器优化源码，将代码编程成汇编格式。&lt;/li&gt;
+&lt;li&gt;汇编：编译器将汇编代码编译成操作系统使用的某种对象格式。&lt;/li&gt;
+&lt;li&gt;链接：编译器将依赖的对象文件进行整合，设置好程序中所有调用函数的正确地址，生成二进制执行文件。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h1 id=&#34;第二讲-数据和量值&#34;&gt;第二讲 数据和量值&lt;/h1&gt;
+&lt;h2 id=&#34;量值&#34;&gt;量值&lt;/h2&gt;
+&lt;p&gt;量值可以粗略地分为变量（Variable）和常量（constant）&lt;/p&gt;
+&lt;h3 id=&#34;变量&#34;&gt;变量&lt;/h3&gt;
+&lt;p&gt;C 语言变量类型占用的具体字节大小与程序运行所在的硬件体系结构紧密相关&lt;/p&gt;
+&lt;h3 id=&#34;常量&#34;&gt;常量&lt;/h3&gt;
+&lt;p&gt;在 C 语言中，通过内联方式直接写到源码中的字面量值一般被称为常量。&lt;/p&gt;
+&lt;p&gt;使用 const 关键字修饰的变量更接近于只读变量，不具有”常量表达式“属性，因此无法用来表示定长数组大小或使用在 case 语句中。
+常量表达式在编译时被求值，而只读变量在运行时才被确定&lt;/p&gt;
+&lt;h2 id=&#34;数据的存储形式&#34;&gt;数据的存储形式&lt;/h2&gt;
+&lt;p&gt;计算机内部使用 补码（Two&amp;rsquo;s-complement）存放有符号整数，使用对应的二进制来存放无符号整数，使用 IEEE-754 标准来存放浮点数。&lt;/p&gt;
+&lt;h3 id=&#34;补码&#34;&gt;补码&lt;/h3&gt;
+&lt;p&gt;一个补码所表示的实际数值，由负权重位的值（最高位）和正权重为的值求和。
+如 1101，是及对应的值为 -3（-8 + 5）。
+由此也得出四位补码的最小值为 -8（1000），最大值为 7（0111）。&lt;/p&gt;
+&lt;h3 id=&#34;ieee-754&#34;&gt;IEEE-754&lt;/h3&gt;
+&lt;h2 id=&#34;数据的存储位置&#34;&gt;数据的存储位置&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/learn_c/2_1.webp&#34; alt=&#34;data_store_position&#34;&gt;&lt;/p&gt;
+&lt;p&gt;应用程序被正常加载前，需要将应用程序代码机器相关依赖数据映射到内存的某个位置，这段内存称之为进程的VAS（Virtual Address Space 虚拟地址空间）.&lt;/p&gt;
+&lt;p&gt;初始化的全局变量和静态变量和应用程序具有同样的生命周期，其值通常会被存放到进程VAS内的 .data 中。&lt;/p&gt;
+&lt;p&gt;局部变量存放于寄存器或者 VAS 的栈中&lt;/p&gt;
+&lt;p&gt;通过 malloc 创建的内存存放于 VAS 的堆中&lt;/p&gt;
+&lt;p&gt;未初始化的全局变量和静态变量存放于 VAS 的 .bss 中&lt;/p&gt;
+&lt;p&gt;常量会按照数据的大小和类型存放于 VAS的 .text （通常存放代码） 或 .rodata （通常存放只读数据） 中&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/learn_c/2_2.webp&#34; alt=&#34;const_data_store_position&#34;&gt;&lt;/p&gt;
+&lt;h1 id=&#34;第三讲-运算符&#34;&gt;第三讲 运算符&lt;/h1&gt;
+&lt;p&gt;运算符（operator）、表达式（expression）和语句（statement）是组成 C 语言程序的三个基本的语法结构，且一般依次呈包含关系。&lt;/p&gt;
+&lt;h2 id=&#34;运算符分类&#34;&gt;运算符分类&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/learn_c/3_2.webp&#34; alt=&#34;operator_class&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;算数关系为赋值运算&#34;&gt;算数、关系、为、赋值运算&lt;/h2&gt;
+&lt;p&gt;这四类运算符经过编译后，可以直接对应到由目标平台上相应的机器指令组成的简单计算逻辑。&lt;/p&gt;
+&lt;p&gt;拿下图的 foo 函数举例&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/learn_c/3_2.webp&#34; alt=&#34;foo&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;DWORD PRT [rbp-8]&lt;/code&gt; 指 将寄存器 rbp 的值减去 8 得到的结果作为起始地址，然后操作一个 大小为 DWORD 的空间。intel体系中 WORD 表示 16 位，DWROD 表示 32 位，QWORD 表示 64 位。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;int arithmetic = x + y;&lt;/code&gt;对应的汇编代码中，前两行代码为分别从栈内存中将变量 x 和 y 存入 寄存器 edx 和 eax，接着通过 add 指令计算两者之和，最后通过 mov 指令将寄存器 eax 的值移到 局部变量 arithmetic 对应的栈内存中。&lt;/p&gt;
+&lt;p&gt;FLAGS 寄存器是一组用于反映程序当前运行状态的标志寄存器，详情如下&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/learn_c/3_3.webp&#34; alt=&#34;flags_register&#34;&gt;&lt;/p&gt;
+&lt;p&gt;cmp 指令会在 CPU 内部对两个操作数进行隐式减法运算，然后设置 FLAGS寄存器状态。&lt;/p&gt;
+&lt;h2 id=&#34;逻辑运算符&#34;&gt;逻辑运算符&lt;/h2&gt;
+&lt;p&gt;以与运算符 &amp;amp;&amp;amp; 举例，示例代码如下&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/learn_c/3_4.webp&#34; alt=&#34;and_operator&#34;&gt;&lt;/p&gt;
+&lt;p&gt;je 指令会判断 ZF 标志位是否为 0， 如果是则跳转到指定地址&lt;/p&gt;
+&lt;p&gt;与运算的高级编辑优化，编译器会采用 test、setne、movzx来实现，
+这种方式减少了对栈内存即条件跳转指令的使用，是的程序减少了
+访问内存时产生的延迟，以及由于分支预测失败导致的CPU周期延迟。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-as&#34; data-lang=&#34;as&#34;&gt;&lt;span class=&#34;nx&#34;&gt;test&lt;/span&gt;    &lt;span class=&#34;nx&#34;&gt;edi&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;edi&lt;/span&gt;  &lt;span class=&#34;o&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;edi&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;
+&lt;span class=&#34;nx&#34;&gt;setne&lt;/span&gt;   &lt;span class=&#34;nx&#34;&gt;al&lt;/span&gt;
+&lt;span class=&#34;nx&#34;&gt;test&lt;/span&gt;    &lt;span class=&#34;nx&#34;&gt;esi&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;esi&lt;/span&gt;  &lt;span class=&#34;o&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;esi&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;
+&lt;span class=&#34;nx&#34;&gt;setne&lt;/span&gt;   &lt;span class=&#34;nx&#34;&gt;sil&lt;/span&gt;
+&lt;span class=&#34;nx&#34;&gt;movzx&lt;/span&gt;   &lt;span class=&#34;nx&#34;&gt;esi&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;sil&lt;/span&gt;
+&lt;span class=&#34;nx&#34;&gt;and&lt;/span&gt;     &lt;span class=&#34;nx&#34;&gt;esi&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;eax&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;成员访问运算符&#34;&gt;成员访问运算符&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/learn_c/3_5.webp&#34; alt=&#34;address_operator&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;int* n_ptr = &amp;amp;n;&lt;/code&gt;对应的汇编指令中首先 lea 指令将寄存器 rbp 中的值减去 16 后，存放到 rax 寄存器，即将n在站上的地址存放到 rax 寄存器；然后将 rax 寄存器的值存到 变量 n_ptr对应的栈内存的存储位置。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;int m = *n_ptr;&lt;/code&gt;对应的汇编指令中首先将 n_ptr的值传送到 寄存器 ra；随后将 rax 的值作为地址，将该地址上的值以 DWORD（即 int）形式传送到 eax 寄存器；最后将 eax 寄存器中的结果只传送到 变量 m 在栈内存的存储位置。&lt;/p&gt;
+&lt;h2 id=&#34;其他运算符&#34;&gt;其他运算符&lt;/h2&gt;
+&lt;p&gt;这里介绍 &lt;code&gt;sizeof&lt;/code&gt; 和 &lt;code&gt;(type)&lt;/code&gt;，示例如下：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/learn_c/3_6.webp&#34; alt=&#34;other_operator&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;size_t n = sizeof(int)&lt;/code&gt; 的汇编指令可以看出直接将结果4存到了 n 对应的栈内存。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;short f = (short) n;&lt;/code&gt;的汇编指令首先将变量 n 的值移到 rax 寄存器，然后将其中低 16位的数据（ax）地道 f 所在的内存趋于&lt;/p&gt;
+</description>
+      
+    </item>
     
     <item>
       <title>非典型 NOIP 经历</title>
@@ -8027,17 +8338,17 @@ nice 为 0 的进程的虚拟时间和实际时间是相等的&lt;br&gt;
 &lt;h2 id=&#34;文件系统&#34;&gt;文件系统&lt;/h2&gt;
 &lt;h3 id=&#34;文件系统设计&#34;&gt;文件系统设计&lt;/h3&gt;
 &lt;p&gt;因为文件系统有各种格式，所以文件系统组件应该和内核分开，且可以动态加载和删除不同的文件系统组件&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/32_1.wepb&#34; alt=&#34;file_system&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/32_1.webp&#34; alt=&#34;file_system&#34;&gt;&lt;/p&gt;
 &lt;h3 id=&#34;文件格式和存储块&#34;&gt;文件格式和存储块&lt;/h3&gt;
 &lt;p&gt;逻辑上文件就是一个可以动态增减的线性字节数组，而存储设备都是以块为单位存储数据的，
 不同的存储设的存储卡大小不同，我们先将字节数组整合成文件数据逻辑块，然后将这个逻辑块映射到
 一个或多个物理储存块&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/32_2.wepb&#34; alt=&#34;file_system_chunk&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/32_2.webp&#34; alt=&#34;file_system_chunk&#34;&gt;&lt;/p&gt;
 &lt;h2 id=&#34;组织文件&#34;&gt;组织文件&lt;/h2&gt;
 &lt;p&gt;整个文件层次结构就像一个倒挂的树&lt;/p&gt;
 &lt;h3 id=&#34;文件系统数据结构&#34;&gt;文件系统数据结构&lt;/h3&gt;
 &lt;h4 id=&#34;超级块&#34;&gt;超级块&lt;/h4&gt;
-&lt;p&gt;包含文件系统标识、版本信息、逻辑存储块大小等新的的数据结构叫做文件系统的
+&lt;p&gt;包含文件系统标识、版本信息、逻辑存储块大小等新的数据结构叫做文件系统的
 超级块或描述块&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
@@ -8078,10 +8389,10 @@ nice 为 0 的进程的虚拟时间和实际时间是相等的&lt;br&gt;
 &lt;/div&gt;&lt;p&gt;超级块存储在设备的第一个逻辑存储块中&lt;/p&gt;
 &lt;h4 id=&#34;位图&#34;&gt;位图&lt;/h4&gt;
 &lt;p&gt;我们使用位图来表示逻辑存储块的分配状态，如果某个位的值是0，那么对应的逻辑块是空闲的。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/32_3.wepb&#34; alt=&#34;file_system_bit_block&#34;&gt;&lt;/p&gt;
-&lt;p&gt;位图并不需要实际的数据结构，将位图块档子一个字节数据就可以&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/32_3.webp&#34; alt=&#34;file_system_bit_block&#34;&gt;&lt;/p&gt;
+&lt;p&gt;位图并不需要实际的数据结构，将位图块当做一个字节数组就可以&lt;/p&gt;
 &lt;h4 id=&#34;目录&#34;&gt;目录&lt;/h4&gt;
-&lt;p&gt;目录也是一种数据，也包含了目录类型、状态、指向文件数据管理头的块号、名称信息&lt;/p&gt;
+&lt;p&gt;目录也是一种数据，也包含了目录类型、状态、指向文件数据管理头的块号、名称等信息&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
 &lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
@@ -8112,7 +8423,7 @@ nice 为 0 的进程的虚拟时间和实际时间是相等的&lt;br&gt;
 &lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;rfsdir_t&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/32_4.wepb&#34; alt=&#34;file_system_dir&#34;&gt;&lt;/p&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/32_4.webp&#34; alt=&#34;file_system_dir&#34;&gt;&lt;/p&gt;
 &lt;h4 id=&#34;文件管理头&#34;&gt;文件管理头&lt;/h4&gt;
 &lt;p&gt;文件管理头记录了文件信息，如类型、创建时间、大小、占用哪些逻辑存储块等&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
@@ -8180,9 +8491,9 @@ nice 为 0 的进程的虚拟时间和实际时间是相等的&lt;br&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;fmd_fleblk 数据存放的是逻辑块占用信息，比如一个文件占用 4~8、10~15、30~40 的逻辑存储块时，那么
-fmd_fleblk[0] 保存 4 和 4，fmd_fleblk[1] 保存 10 和 5，fmd_fleblk[2] 保存 30 和 10，&lt;/p&gt;
+fmd_fleblk[0] 保存 4 和 4，fmd_fleblk[1] 保存 10 和 5，fmd_fleblk[2] 保存 30 和 10 。&lt;/p&gt;
 &lt;p&gt;如果文件比较大，使用 fmd_linkpblk  和  fmd_linknblk 来扩展&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/32_5.wepb&#34; alt=&#34;file_system_file_head&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/32_5.webp&#34; alt=&#34;file_system_file_head&#34;&gt;&lt;/p&gt;
 &lt;h1 id=&#34;参考&#34;&gt;参考&lt;/h1&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://stackoverflow.com/questions/37146637/why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux&#34;&gt;why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux&lt;/a&gt;&lt;/li&gt;
@@ -19879,91 +20190,6 @@ dotnet run
 &lt;li&gt;&lt;a href=&#34;https://www.uvicorn.org/&#34;&gt;官方文档&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://github.com/python-hyper/h11/issues/9&#34;&gt;h11和https比较&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://readthedocs.org/projects/asgi/downloads/pdf/latest/&#34;&gt;ASGI&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-      
-    </item>
-    
-    <item>
-      <title>ASGI摘抄</title>
-      <link>https://ppd0705.github.io/post/asgi_note/</link>
-      <pubDate>Wed, 04 Mar 2020 08:25:38 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/asgi_note/</guid>
-      
-        <description>&lt;h3 id=&#34;asynchronous-server-gateway-interface&#34;&gt;Asynchronous Server Gateway Interface&lt;/h3&gt;
-&lt;h3 id=&#34;onverview&#34;&gt;Onverview&lt;/h3&gt;
-&lt;h4 id=&#34;two-components&#34;&gt;two components&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;protocol server: terminates socket and translates them into connections and per-connection event messages&lt;/li&gt;
-&lt;li&gt;application: lives in inside a server, is instantiated once per connection, and handles event messages as they happen&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;difference-between-two-components&#34;&gt;difference between two components&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;applications are instant objects that are fed events rather than simple callable, and must run as asyncio-compativle corountines&lt;/li&gt;
-&lt;li&gt;two separate parts of a connection: a connection scope; events&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id=&#34;details&#34;&gt;Details&lt;/h3&gt;
-&lt;h4 id=&#34;connection-scope&#34;&gt;Connection Scope&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;Under HTTP, the connection scope lasts just one request. it contains most of the request data(apart from the request body)&lt;/li&gt;
-&lt;li&gt;Under WebSocket, the connection scope lasts for as long as the socket is connected. the scope contains information like the WebSocket&amp;rsquo;s path, but details like incoming messages come through as events instead.&lt;/li&gt;
-&lt;li&gt;Each protocol definition must contain information about how long its connection scope lasts, and what information you will get inside it&lt;/li&gt;
-&lt;li&gt;Applications cannot communicate with the client when they are initialized and given their connection scope, they must wait until their event loop is entered&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;events&#34;&gt;Events&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;for HTTP, 2 evens in order - &lt;code&gt;http.requst&lt;/code&gt; and &lt;code&gt;http.disconnect&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;for WebSocket, it could more like &lt;code&gt;websocket.connect&lt;/code&gt;, &lt;code&gt;websocket.send&lt;/code&gt;, &lt;code&gt;websocket.receive&lt;/code&gt;, and finally &lt;code&gt;websocket.disconnect&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;each event is a &lt;code&gt;dict&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;applications&#34;&gt;Applications&lt;/h4&gt;
-&lt;p&gt;Applications should be a single async callable:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;n&#34;&gt;coroutine&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;application&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;scope&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;receive&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;send&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;ul&gt;
-&lt;li&gt;scope: The connection scope, a dict that contains as least a &lt;code&gt;type&lt;/code&gt; key specifying the protocol that is incoming&lt;/li&gt;
-&lt;li&gt;receive: an awaitable callable that will yield a new event dict when one is available&lt;/li&gt;
-&lt;li&gt;send: an awaitable callable taking a single event dict as positional argument that will return once the send has been completed or the connection has been closed&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;message-format&#34;&gt;Message Format&lt;/h4&gt;
-&lt;h5 id=&#34;http&#34;&gt;HTTP&lt;/h5&gt;
-&lt;ul&gt;
-&lt;li&gt;Connection Scope: type(&lt;code&gt;http&lt;/code&gt;), asgi, method, path, scheme, query_string, client, server&lt;/li&gt;
-&lt;li&gt;Request： the body message serves as a way to stream incoming HTTP bodies in chunks. keys include type(&lt;code&gt;http.request&lt;/code&gt;), body(bytes), more_body(bool)&lt;/li&gt;
-&lt;li&gt;Response Start: start sending a response. keys include type(&lt;code&gt;http.response.start&lt;/code&gt;), status(int), headers&lt;/li&gt;
-&lt;li&gt;Response Body: continues sending a response to the client. keys include type(&lt;code&gt;http.response,body&lt;/code&gt;), body(bytes), more_body(bool)&lt;/li&gt;
-&lt;li&gt;Disconnect: sent to the application when a connection is closed . keys include type(&lt;code&gt;http.disconnect&lt;/code&gt;)&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h5 id=&#34;websocket&#34;&gt;Websocket&lt;/h5&gt;
-&lt;ul&gt;
-&lt;li&gt;Connection Scope: keys include type(&lt;code&gt;websocket&lt;/code&gt;), asgi, http_version, headers&amp;hellip;&lt;/li&gt;
-&lt;li&gt;Connection: sent when the client initially opens a connection and is about to finish the WebSocket handshake. keys include type(&lt;code&gt;websocket.connect&lt;/code&gt;)&lt;/li&gt;
-&lt;li&gt;Accept: keys include type(&lt;code&gt;websocket.accept&lt;/code&gt;), headers&lt;/li&gt;
-&lt;li&gt;Receive: sent when a message is received from the client. keys include type(&lt;code&gt;websocket.receive&lt;/code&gt;), bytes(bytes), text(str)&lt;/li&gt;
-&lt;li&gt;Send: keys include type(&lt;code&gt;websocket.send&lt;/code&gt;), bytes, text&lt;/li&gt;
-&lt;li&gt;Disconnection: keys include type(&lt;code&gt;websocket.disconnect&lt;/code&gt;), code(int)&lt;/li&gt;
-&lt;li&gt;Close: tell the server to close the connection. keys include type(&lt;code&gt;websocket.close&lt;/code&gt;), code(int)&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h5 id=&#34;lifespan&#34;&gt;Lifespan&lt;/h5&gt;
-&lt;ul&gt;
-&lt;li&gt;Scope: exists for the duration of the event loop. keys include type(&lt;code&gt;lifespan&lt;/code&gt;)&lt;/li&gt;
-&lt;li&gt;Startup: send when the server is ready to startup and receive connections, but before it has started to do so. keys include type(&lt;code&gt;lifespan,startup&lt;/code&gt;)&lt;/li&gt;
-&lt;li&gt;Start Complete: sent by the application when it has completed its startup. a server must wait for this message before it starts processing connections. keys include type(&lt;code&gt;lifespan.startup.complete&lt;/code&gt;)&lt;/li&gt;
-&lt;li&gt;Startup Failed: if a server sees this it should log the message proved and then exit. keys include type(&lt;code&gt;lifespan.startup.failed&lt;/code&gt;), message(str)&lt;/li&gt;
-&lt;li&gt;Shutdown: sent when the server has stopped accepting connections and closed all active connections. keys include type(&lt;code&gt;lifespan.shutdown&lt;/code&gt;)&lt;/li&gt;
-&lt;li&gt;Shutdown Complete: sent by the application when it has completed its cleanup. keys include type(&lt;code&gt;lifespan.shutdown.complete&lt;/code&gt;)&lt;/li&gt;
-&lt;li&gt;Shutdown Failed: sent by the application when it has failed to complete its cleanup. keys include type(&lt;code&gt;life.shutdown.failed&lt;/code&gt;), message&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;参考&#34;&gt;参考&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://readthedocs.org/projects/asgi/downloads/pdf/latest/&#34;&gt;ASGI官方文档&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
       
