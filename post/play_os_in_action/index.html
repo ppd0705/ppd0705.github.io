@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]操作系统实战（更新中）">
 <meta itemprop="description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"><meta itemprop="datePublished" content="2021-07-30T08:06:33+08:00" />
 <meta itemprop="dateModified" content="2021-07-30T08:06:33+08:00" />
-<meta itemprop="wordCount" content="43468">
+<meta itemprop="wordCount" content="45387">
 <meta itemprop="keywords" content="C,操作系统," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]操作系统实战（更新中）"/>
 <meta name="twitter:description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"/>
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 43468 words </span>
-          <span class="more-meta"> 87 min read </span>
+        <span class="more-meta"> 45387 words </span>
+          <span class="more-meta"> 91 min read </span>
 
         
         
@@ -715,6 +715,15 @@
         </li>
       </ul>
     </li>
+    <li><a href="#第三十三讲--文件系统格式化">第三十三讲  文件系统格式化</a>
+      <ul>
+        <li><a href="#文件系统设备">文件系统设备</a></li>
+        <li><a href="#建立超级块">建立超级块</a></li>
+        <li><a href="#建立位图">建立位图</a></li>
+        <li><a href="#建立根目录">建立根目录</a></li>
+      </ul>
+    </li>
+    <li><a href="#第三十四讲--实现文件的六大基本操作">第三十四讲  实现文件的六大基本操作</a></li>
     <li><a href="#参考">参考</a></li>
   </ul>
 </nav>
@@ -8742,6 +8751,419 @@ nice 为 0 的进程的虚拟时间和实际时间是相等的<br>
 fmd_fleblk[0] 保存 4 和 4，fmd_fleblk[1] 保存 10 和 5，fmd_fleblk[2] 保存 30 和 10 。</p>
 <p>如果文件比较大，使用 fmd_linkpblk  和  fmd_linknblk 来扩展</p>
 <p><img src="/image/play_os_in_action/32_5.webp" alt="file_system_file_head"></p>
+<h1 id="第三十三讲--文件系统格式化">第三十三讲  文件系统格式化</h1>
+<h2 id="文件系统设备">文件系统设备</h2>
+<p>文件系统是 一个设备，需要编写相应的驱动程序</p>
+<h2 id="建立超级块">建立超级块</h2>
+<p>建立超级块就是初始化超级块的数据结构，然后谢日存储设备的第一块逻辑存储块</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="kt">void</span> <span class="o">*</span><span class="nf">new_buf</span><span class="p">(</span><span class="n">size_t</span> <span class="n">bufsz</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="p">)</span><span class="n">krlnew</span><span class="p">(</span><span class="n">bufsz</span><span class="p">);</span><span class="c1">//分配缓冲区
+</span><span class="c1"></span><span class="p">}</span>
+<span class="kt">void</span> <span class="nf">del_buf</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">buf</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">bufsz</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">krldelete</span><span class="p">((</span><span class="n">adr_t</span><span class="p">)</span><span class="n">buf</span><span class="p">,</span> <span class="n">bufsz</span><span class="p">)</span><span class="c1">//释放缓冲区
+</span><span class="c1"></span>    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">rfssublk_t_init</span><span class="p">(</span><span class="n">rfssublk_t</span><span class="o">*</span> <span class="n">initp</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">krlspinlock_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">initp</span><span class="o">-&gt;</span><span class="n">rsb_lock</span><span class="p">);</span>
+    <span class="n">initp</span><span class="o">-&gt;</span><span class="n">rsb_mgic</span> <span class="o">=</span> <span class="mh">0x142422</span><span class="p">;</span><span class="c1">//标志就是一个数字而已，无其它意义
+</span><span class="c1"></span>    <span class="n">initp</span><span class="o">-&gt;</span><span class="n">rsb_vec</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span><span class="c1">//文件系统版本为1
+</span><span class="c1"></span>    <span class="n">initp</span><span class="o">-&gt;</span><span class="n">rsb_flg</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">initp</span><span class="o">-&gt;</span><span class="n">rsb_stus</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">initp</span><span class="o">-&gt;</span><span class="n">rsb_sz</span> <span class="o">=</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">rfssublk_t</span><span class="p">);</span><span class="c1">//超级块本身的大小
+</span><span class="c1"></span>    <span class="n">initp</span><span class="o">-&gt;</span><span class="n">rsb_sblksz</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span><span class="c1">//超级块占用多少个逻辑储存块
+</span><span class="c1"></span>    <span class="n">initp</span><span class="o">-&gt;</span><span class="n">rsb_dblksz</span> <span class="o">=</span> <span class="n">FSYS_ALCBLKSZ</span><span class="p">;</span><span class="c1">//逻辑储存块的大小为4KB
+</span><span class="c1"></span>    <span class="c1">//位图块从第1个逻辑储存块开始，超级块占用第0个逻辑储存块
+</span><span class="c1"></span>    <span class="n">initp</span><span class="o">-&gt;</span><span class="n">rsb_bmpbks</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="n">initp</span><span class="o">-&gt;</span><span class="n">rsb_bmpbknr</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">initp</span><span class="o">-&gt;</span><span class="n">rsb_fsysallblk</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">rfsdir_t_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">initp</span><span class="o">-&gt;</span><span class="n">rsb_rootdir</span><span class="p">);</span><span class="c1">//初始化根目录
+</span><span class="c1"></span>    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="n">bool_t</span> <span class="nf">create_superblk</span><span class="p">(</span><span class="n">device_t</span> <span class="o">*</span><span class="n">devp</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">void</span> <span class="o">*</span><span class="n">buf</span> <span class="o">=</span> <span class="n">new_buf</span><span class="p">(</span><span class="n">FSYS_ALCBLKSZ</span><span class="p">);</span><span class="c1">//分配4KB大小的缓冲区，清零
+</span><span class="c1"></span>    <span class="n">hal_memset</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">FSYS_ALCBLKSZ</span><span class="p">);</span>
+    <span class="c1">//使rfssublk_t结构的指针指向缓冲区并进行初始化
+</span><span class="c1"></span>    <span class="n">rfssublk_t</span> <span class="o">*</span><span class="n">sbp</span> <span class="o">=</span> <span class="p">(</span><span class="n">rfssublk_t</span> <span class="o">*</span><span class="p">)</span><span class="n">buf</span><span class="p">;</span>
+    <span class="n">rfssublk_t_init</span><span class="p">(</span><span class="n">sbp</span><span class="p">);</span>
+    <span class="c1">//获取储存设备的逻辑储存块数并保存到超级块中
+</span><span class="c1"></span>    <span class="n">sbp</span><span class="o">-&gt;</span><span class="n">rsb_fsysallblk</span> <span class="o">=</span> <span class="n">ret_rfsdevmaxblknr</span><span class="p">(</span><span class="n">devp</span><span class="p">);</span>
+    <span class="c1">//把缓冲区中超级块的数据写入到储存设备的第0个逻辑储存块中
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">write_rfsdevblk</span><span class="p">(</span><span class="n">devp</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">DFCERRSTUS</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">FALSE</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">del_buf</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">FSYS_ALCBLKSZ</span><span class="p">);</span><span class="c1">//释放缓冲区
+</span><span class="c1"></span>    <span class="k">return</span> <span class="n">TRUE</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="建立位图">建立位图</h2>
+<p>我们使用一个逻辑存储块作为位图块记录所有存储块的状态。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="c1">//把逻辑储存块中的数据，读取到4KB大小的缓冲区中
+</span><span class="c1"></span><span class="n">drvstus_t</span> <span class="nf">read_rfsdevblk</span><span class="p">(</span><span class="n">device_t</span><span class="o">*</span> <span class="n">devp</span><span class="p">,</span><span class="kt">void</span><span class="o">*</span> <span class="n">rdadr</span><span class="p">,</span><span class="n">uint_t</span> <span class="n">blknr</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">//获取逻辑储存块地址
+</span><span class="c1"></span>    <span class="kt">void</span><span class="o">*</span> <span class="n">p</span><span class="o">=</span><span class="n">ret_rfsdevblk</span><span class="p">(</span><span class="n">devp</span><span class="p">,</span><span class="n">blknr</span><span class="p">);</span>
+    <span class="c1">//把逻辑储存块中的数据复制到缓冲区中
+</span><span class="c1"></span>    <span class="n">hal_memcpy</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">rdadr</span><span class="p">,</span><span class="n">FSYS_ALCBLKSZ</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">DFCOKSTUS</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">//获取超级块
+</span><span class="c1"></span><span class="n">rfssublk_t</span><span class="o">*</span> <span class="nf">get_superblk</span><span class="p">(</span><span class="n">device_t</span><span class="o">*</span> <span class="n">devp</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">//分配4KB大小的缓冲区
+</span><span class="c1"></span>    <span class="kt">void</span><span class="o">*</span> <span class="n">buf</span><span class="o">=</span><span class="n">new_buf</span><span class="p">(</span><span class="n">FSYS_ALCBLKSZ</span><span class="p">);</span>
+    <span class="c1">//清零缓冲区
+</span><span class="c1"></span>    <span class="n">hal_memset</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span><span class="n">FSYS_ALCBLKSZ</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+    <span class="c1">//读取第0个逻辑储存块中的数据到缓冲区中，如果读取失败则释放缓冲区
+</span><span class="c1"></span>    <span class="n">read_rfsdevblk</span><span class="p">(</span><span class="n">devp</span><span class="p">,</span><span class="n">buf</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+
+    <span class="c1">//返回超级块数据结构的地址，即缓冲区的首地址
+</span><span class="c1"></span>    <span class="k">return</span> <span class="p">(</span><span class="n">rfssublk_t</span><span class="o">*</span><span class="p">)</span><span class="n">buf</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">//释放超级块
+</span><span class="c1"></span><span class="kt">void</span> <span class="nf">del_superblk</span><span class="p">(</span><span class="n">device_t</span><span class="o">*</span> <span class="n">devp</span><span class="p">,</span><span class="n">rfssublk_t</span><span class="o">*</span> <span class="n">sbp</span><span class="p">)</span> 
+<span class="p">{</span>
+    <span class="c1">//回写超级块，因为超级块中的数据可能已经发生了改变，如果出错则死机
+</span><span class="c1"></span>    <span class="n">write_rfsdevblk</span><span class="p">(</span><span class="n">devp</span><span class="p">,(</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="n">sbp</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span><span class="c1">//释放先前分配的4KB大小的缓冲区
+</span><span class="c1"></span>    <span class="n">del_buf</span><span class="p">((</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="n">sbp</span><span class="p">,</span><span class="n">FSYS_ALCBLKSZ</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">//建立位图
+</span><span class="c1"></span><span class="n">bool_t</span> <span class="nf">create_bitmap</span><span class="p">(</span><span class="n">device_t</span><span class="o">*</span> <span class="n">devp</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">bool_t</span> <span class="n">rets</span><span class="o">=</span><span class="n">FALSE</span><span class="p">;</span>
+    <span class="c1">//获取超级块，失败则返回FALSE
+</span><span class="c1"></span>    <span class="n">rfssublk_t</span><span class="o">*</span> <span class="n">sbp</span> <span class="o">=</span> <span class="n">get_superblk</span><span class="p">(</span><span class="n">devp</span><span class="p">);</span>
+    <span class="c1">//分配4KB大小的缓冲区
+</span><span class="c1"></span>    <span class="kt">void</span><span class="o">*</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">new_buf</span><span class="p">(</span><span class="n">FSYS_ALCBLKSZ</span><span class="p">);</span> 
+      <span class="c1">//获取超级块中位图块的开始块号
+</span><span class="c1"></span>    <span class="n">uint_t</span> <span class="n">bitmapblk</span><span class="o">=</span><span class="n">sbp</span><span class="o">-&gt;</span><span class="n">rsb_bmpbks</span><span class="p">;</span>
+    <span class="c1">//获取超级块中储存介质的逻辑储存块总数
+</span><span class="c1"></span>    <span class="n">uint_t</span> <span class="n">devmaxblk</span><span class="o">=</span><span class="n">sbp</span><span class="o">-&gt;</span><span class="n">rsb_fsysallblk</span><span class="p">;</span>
+    <span class="c1">//如果逻辑储存块总数大于4096，就认为出错了
+</span><span class="c1"></span>    <span class="k">if</span><span class="p">(</span><span class="n">devmaxblk</span><span class="o">&gt;</span><span class="n">FSYS_ALCBLKSZ</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">rets</span><span class="o">=</span><span class="n">FALSE</span><span class="p">;</span>
+        <span class="k">goto</span> <span class="n">errlable</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">//把缓冲区中每个字节都置成1
+</span><span class="c1"></span>    <span class="n">hal_memset</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span><span class="n">FSYS_ALCBLKSZ</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">u8_t</span><span class="o">*</span> <span class="n">bitmap</span><span class="o">=</span><span class="p">(</span><span class="n">u8_t</span><span class="o">*</span><span class="p">)</span><span class="n">buf</span><span class="p">;</span>
+    <span class="c1">//把缓冲区中的第3个字节到第devmaxblk个字节都置成0
+</span><span class="c1"></span>    <span class="c1">//前面两个字节分别代表超级块和位图块
+</span><span class="c1"></span>    <span class="k">for</span><span class="p">(</span><span class="n">uint_t</span> <span class="n">bi</span><span class="o">=</span><span class="mi">2</span><span class="p">;</span><span class="n">bi</span><span class="o">&lt;</span><span class="n">devmaxblk</span><span class="p">;</span><span class="n">bi</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">bitmap</span><span class="p">[</span><span class="n">bi</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">//把缓冲区中的数据写入到储存介质中的第bitmapblk个逻辑储存块中，即位图块中
+</span><span class="c1"></span>    <span class="k">if</span><span class="p">(</span><span class="n">write_rfsdevblk</span><span class="p">(</span><span class="n">devp</span><span class="p">,</span><span class="n">buf</span><span class="p">,</span><span class="n">bitmapblk</span><span class="p">)</span><span class="o">==</span><span class="n">DFCERRSTUS</span><span class="p">){</span>
+        <span class="n">rets</span> <span class="o">=</span> <span class="n">FALSE</span><span class="p">;</span>
+        <span class="k">goto</span> <span class="n">errlable</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">//设置返回状态
+</span><span class="c1"></span>    <span class="n">rets</span><span class="o">=</span><span class="n">TRUE</span><span class="p">;</span>
+<span class="nl">errlable</span><span class="p">:</span>
+<span class="c1">//释放超级块
+</span><span class="c1"></span>    <span class="n">del_superblk</span><span class="p">(</span><span class="n">devp</span><span class="p">,</span><span class="n">sbp</span><span class="p">);</span>
+<span class="c1">//释放缓冲区
+</span><span class="c1"></span>    <span class="n">del_buf</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span><span class="n">FSYS_ALCBLKSZ</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">rets</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="建立根目录">建立根目录</h2>
+<p>一切目录和文件都是存放在根目录下。
+根目录也是一种文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="c1">//分配新的空闲逻辑储存块
+</span><span class="c1"></span><span class="n">uint_t</span> <span class="nf">rfs_new_blk</span><span class="p">(</span><span class="n">device_t</span><span class="o">*</span> <span class="n">devp</span><span class="p">)</span> 
+<span class="p">{</span>
+    <span class="n">uint_t</span> <span class="n">retblk</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+    <span class="c1">//获取位图块
+</span><span class="c1"></span>    <span class="n">u8_t</span><span class="o">*</span> <span class="n">bitmap</span> <span class="o">=</span> <span class="n">get_bitmapblk</span><span class="p">(</span><span class="n">devp</span><span class="p">);</span>        
+    <span class="k">if</span><span class="p">(</span><span class="n">bitmap</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+    <span class="p">{</span>    
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">for</span><span class="p">(</span><span class="n">uint_t</span> <span class="n">blknr</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="n">blknr</span> <span class="o">&lt;</span> <span class="n">FSYS_ALCBLKSZ</span><span class="p">;</span> <span class="n">blknr</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">//找到一个为0的字节就置为1，并返回该字节对应的空闲块号
+</span><span class="c1"></span>        <span class="k">if</span><span class="p">(</span><span class="n">bitmap</span><span class="p">[</span><span class="n">blknr</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">bitmap</span><span class="p">[</span><span class="n">blknr</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="n">retblk</span> <span class="o">=</span> <span class="n">blknr</span><span class="p">;</span>
+            <span class="k">goto</span> <span class="n">retl</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="c1">//如果到这里就说明没有空闲块了，所以返回0
+</span><span class="c1"></span>    <span class="n">retblk</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+<span class="nl">retl</span><span class="p">:</span>
+    <span class="c1">//释放位图块
+</span><span class="c1"></span>    <span class="n">del_bitmapblk</span><span class="p">(</span><span class="n">devp</span><span class="p">,</span><span class="n">bitmap</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">retblk</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">//建立根目录
+</span><span class="c1"></span><span class="n">bool_t</span> <span class="nf">create_rootdir</span><span class="p">(</span><span class="n">device_t</span><span class="o">*</span> <span class="n">devp</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">bool_t</span> <span class="n">rets</span> <span class="o">=</span> <span class="n">FALSE</span><span class="p">;</span>
+    <span class="c1">//获取超级块
+</span><span class="c1"></span>    <span class="n">rfssublk_t</span><span class="o">*</span> <span class="n">sbp</span> <span class="o">=</span> <span class="n">get_superblk</span><span class="p">(</span><span class="n">devp</span><span class="p">);</span>
+    <span class="c1">//分配4KB大小的缓冲区
+</span><span class="c1"></span>    <span class="kt">void</span><span class="o">*</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">new_buf</span><span class="p">(</span><span class="n">FSYS_ALCBLKSZ</span><span class="p">);</span>
+    <span class="c1">//缓冲区清零
+</span><span class="c1"></span>    <span class="n">hal_memset</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span><span class="n">FSYS_ALCBLKSZ</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+    <span class="c1">//分配一个空闲的逻辑储存块
+</span><span class="c1"></span>    <span class="n">uint_t</span> <span class="n">blk</span> <span class="o">=</span> <span class="n">rfs_new_blk</span><span class="p">(</span><span class="n">devp</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">blk</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">rets</span> <span class="o">=</span> <span class="n">FALSE</span><span class="p">;</span>
+        <span class="k">goto</span> <span class="n">errlable</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">//设置超级块中的rfsdir_t结构中的名称为“/”
+</span><span class="c1"></span>    <span class="n">sbp</span><span class="o">-&gt;</span><span class="n">rsb_rootdir</span><span class="p">.</span><span class="n">rdr_name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="sc">&#39;/&#39;</span><span class="p">;</span>
+    <span class="c1">//设置超级块中的rfsdir_t结构中的类型为目录类型
+</span><span class="c1"></span>    <span class="n">sbp</span><span class="o">-&gt;</span><span class="n">rsb_rootdir</span><span class="p">.</span><span class="n">rdr_type</span> <span class="o">=</span> <span class="n">RDR_DIR_TYPE</span><span class="p">;</span>
+    <span class="c1">//设置超级块中的rfsdir_t结构中的块号为新分配的空闲逻辑储存块的块号
+</span><span class="c1"></span>    <span class="n">sbp</span><span class="o">-&gt;</span><span class="n">rsb_rootdir</span><span class="p">.</span><span class="n">rdr_blknr</span> <span class="o">=</span> <span class="n">blk</span><span class="p">;</span>
+    <span class="n">fimgrhd_t</span><span class="o">*</span> <span class="n">fmp</span> <span class="o">=</span> <span class="p">(</span><span class="n">fimgrhd_t</span><span class="o">*</span><span class="p">)</span><span class="n">buf</span><span class="p">;</span>
+    <span class="c1">//初始化fimgrhd_t结构
+</span><span class="c1"></span>    <span class="n">fimgrhd_t_init</span><span class="p">(</span><span class="n">fmp</span><span class="p">);</span>
+    <span class="c1">//因为这是目录文件所以fimgrhd_t结构的类型设置为目录类型
+</span><span class="c1"></span>    <span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_type</span> <span class="o">=</span> <span class="n">FMD_DIR_TYPE</span><span class="p">;</span>
+    <span class="c1">//fimgrhd_t结构自身所在的块设置为新分配的空闲逻辑储存块
+</span><span class="c1"></span>    <span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_sfblk</span> <span class="o">=</span> <span class="n">blk</span><span class="p">;</span>
+    <span class="c1">//fimgrhd_t结构中正在写入的块设置为新分配的空闲逻辑储存块
+</span><span class="c1"></span>    <span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_curfwritebk</span> <span class="o">=</span> <span class="n">blk</span><span class="p">;</span>
+    <span class="c1">//fimgrhd_t结构中正在写入的块的偏移设置为512字节
+</span><span class="c1"></span>    <span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_curfinwbkoff</span> <span class="o">=</span> <span class="mh">0x200</span><span class="p">;</span>
+    <span class="c1">//设置文件数据占有块数组的第0个元素
+</span><span class="c1"></span>    <span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_fleblk</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">fb_blkstart</span> <span class="o">=</span> <span class="n">blk</span><span class="p">;</span>
+    <span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_fleblk</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">fb_blknr</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="c1">//把缓冲区中的数据写入到新分配的空闲逻辑储存块中，其中包含已经设置好的      fimgrhd_t结构
+</span><span class="c1"></span>    <span class="k">if</span><span class="p">(</span><span class="n">write_rfsdevblk</span><span class="p">(</span><span class="n">devp</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="n">blk</span><span class="p">)</span> <span class="o">==</span> <span class="n">DFCERRSTUS</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">rets</span> <span class="o">=</span> <span class="n">FALSE</span><span class="p">;</span>
+        <span class="k">goto</span> <span class="n">errlable</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">rets</span> <span class="o">=</span> <span class="n">TRUE</span><span class="p">;</span>
+<span class="nl">errlable</span><span class="p">:</span>
+    <span class="c1">//释放缓冲区
+</span><span class="c1"></span>    <span class="n">del_buf</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">FSYS_ALCBLKSZ</span><span class="p">);</span>
+<span class="nl">errlable1</span><span class="p">:</span>
+    <span class="c1">//释放超级块
+</span><span class="c1"></span>    <span class="n">del_superblk</span><span class="p">(</span><span class="n">devp</span><span class="p">,</span> <span class="n">sbp</span><span class="p">);</span> 
+    <span class="k">return</span> <span class="n">rets</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="第三十四讲--实现文件的六大基本操作">第三十四讲  实现文件的六大基本操作</h1>
 <h1 id="参考">参考</h1>
 <ul>
 <li><a href="https://stackoverflow.com/questions/37146637/why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux">why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux</a></li>
