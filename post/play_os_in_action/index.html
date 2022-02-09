@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]操作系统实战（更新中）">
 <meta itemprop="description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"><meta itemprop="datePublished" content="2021-07-30T08:06:33+08:00" />
 <meta itemprop="dateModified" content="2021-07-30T08:06:33+08:00" />
-<meta itemprop="wordCount" content="45387">
+<meta itemprop="wordCount" content="49798">
 <meta itemprop="keywords" content="C,操作系统," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]操作系统实战（更新中）"/>
 <meta name="twitter:description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"/>
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 45387 words </span>
-          <span class="more-meta"> 91 min read </span>
+        <span class="more-meta"> 49798 words </span>
+          <span class="more-meta"> 100 min read </span>
 
         
         
@@ -723,7 +723,26 @@
         <li><a href="#建立根目录">建立根目录</a></li>
       </ul>
     </li>
-    <li><a href="#第三十四讲--实现文件的六大基本操作">第三十四讲  实现文件的六大基本操作</a></li>
+    <li><a href="#第三十四讲--实现文件的六大基本操作">第三十四讲  实现文件的六大基本操作</a>
+      <ul>
+        <li><a href="#辅助操作">辅助操作</a>
+          <ul>
+            <li><a href="#操作根目录文件">操作根目录文件</a></li>
+            <li><a href="#获取文件名">获取文件名</a></li>
+            <li><a href="#判断文件是否存在">判断文件是否存在</a></li>
+          </ul>
+        </li>
+        <li><a href="#文件相关操作">文件相关操作</a>
+          <ul>
+            <li><a href="#新建文件">新建文件</a></li>
+            <li><a href="#删除文件">删除文件</a></li>
+            <li><a href="#打开文件">打开文件</a></li>
+            <li><a href="#读写文件">读写文件</a></li>
+            <li><a href="#关闭文件">关闭文件</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
     <li><a href="#参考">参考</a></li>
   </ul>
 </nav>
@@ -8755,7 +8774,7 @@ fmd_fleblk[0] 保存 4 和 4，fmd_fleblk[1] 保存 10 和 5，fmd_fleblk[2] 保
 <h2 id="文件系统设备">文件系统设备</h2>
 <p>文件系统是 一个设备，需要编写相应的驱动程序</p>
 <h2 id="建立超级块">建立超级块</h2>
-<p>建立超级块就是初始化超级块的数据结构，然后谢日存储设备的第一块逻辑存储块</p>
+<p>建立超级块就是初始化超级块的数据结构，然后写入存储设备的第一块逻辑存储块</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
@@ -9164,7 +9183,844 @@ fmd_fleblk[0] 保存 4 和 4，fmd_fleblk[1] 保存 10 和 5，fmd_fleblk[2] 保
 </code></pre></td></tr></table>
 </div>
 </div><h1 id="第三十四讲--实现文件的六大基本操作">第三十四讲  实现文件的六大基本操作</h1>
-<h1 id="参考">参考</h1>
+<h2 id="辅助操作">辅助操作</h2>
+<p>文件操作需要大量辅助函数</p>
+<h3 id="操作根目录文件">操作根目录文件</h3>
+<p>在我们的文件系统中，一个文件的 rfsdir_t 结构存储在根目录文件中，所欲
+首先需要获取和释放根目录文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="c1">//获取根目录文件
+</span><span class="c1"></span><span class="kt">void</span><span class="o">*</span> <span class="nf">get_rootdirfile_blk</span><span class="p">(</span><span class="n">device_t</span><span class="o">*</span> <span class="n">devp</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">void</span><span class="o">*</span> <span class="n">retptr</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>  
+    <span class="n">rfsdir_t</span><span class="o">*</span> <span class="n">rtdir</span> <span class="o">=</span> <span class="n">get_rootdir</span><span class="p">(</span><span class="n">devp</span><span class="p">);</span><span class="c1">//获取根目录文件的rfsdir_t结构
+</span><span class="c1"></span>    <span class="c1">//分配4KB大小的缓冲区并清零
+</span><span class="c1"></span>    <span class="kt">void</span><span class="o">*</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">new_buf</span><span class="p">(</span><span class="n">FSYS_ALCBLKSZ</span><span class="p">);</span>
+    <span class="n">hal_memset</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">FSYS_ALCBLKSZ</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="c1">//读取根目录文件的逻辑储存块到缓冲区中
+</span><span class="c1"></span>    <span class="n">read_rfsdevblk</span><span class="p">(</span><span class="n">devp</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="n">rtdir</span><span class="o">-&gt;</span><span class="n">rdr_blknr</span><span class="p">)</span>
+    <span class="n">retptr</span> <span class="o">=</span> <span class="n">buf</span><span class="p">;</span><span class="c1">//设置缓冲区的首地址为返回值
+</span><span class="c1"></span>    <span class="k">goto</span> <span class="n">errl1</span><span class="p">;</span>
+<span class="nl">errl</span><span class="p">:</span>
+    <span class="n">del_buf</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">FSYS_ALCBLKSZ</span><span class="p">);</span>
+<span class="nl">errl1</span><span class="p">:</span>
+    <span class="n">del_rootdir</span><span class="p">(</span><span class="n">devp</span><span class="p">,</span> <span class="n">rtdir</span><span class="p">);</span><span class="c1">//释放根目录文件的rfsdir_t结构
+</span><span class="c1"></span>    <span class="k">return</span> <span class="n">retptr</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">//释放根目录文件
+</span><span class="c1"></span><span class="kt">void</span> <span class="nf">del_rootdirfile_blk</span><span class="p">(</span><span class="n">device_t</span><span class="o">*</span> <span class="n">devp</span><span class="p">,</span><span class="kt">void</span><span class="o">*</span> <span class="n">blkp</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">//因为逻辑储存块的头512字节的空间中，保存的就是fimgrhd_t结构
+</span><span class="c1"></span>    <span class="n">fimgrhd_t</span><span class="o">*</span> <span class="n">fmp</span> <span class="o">=</span> <span class="p">(</span><span class="n">fimgrhd_t</span><span class="o">*</span><span class="p">)</span><span class="n">blkp</span><span class="p">;</span>
+    <span class="c1">//把根目录文件回写到储存设备中去，块号为fimgrhd_t结构自身所在的块号
+</span><span class="c1"></span>    <span class="n">write_rfsdevblk</span><span class="p">(</span><span class="n">devp</span><span class="p">,</span> <span class="n">blkp</span><span class="p">,</span> <span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_sfblk</span><span class="p">)</span>
+    <span class="c1">//释放缓冲区
+</span><span class="c1"></span>    <span class="n">del_buf</span><span class="p">(</span><span class="n">blkp</span><span class="p">,</span> <span class="n">FSYS_ALCBLKSZ</span><span class="p">);</span> 
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="获取文件名">获取文件名</h3>
+<p>简单起见，我们以 &ldquo;/xxx&rdquo; 格式举例</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="c1">//检查文件路径名
+</span><span class="c1"></span><span class="n">sint_t</span> <span class="nf">rfs_chkfilepath</span><span class="p">(</span><span class="n">char_t</span><span class="o">*</span> <span class="n">fname</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">char_t</span><span class="o">*</span> <span class="n">chp</span> <span class="o">=</span> <span class="n">fname</span><span class="p">;</span>
+    <span class="c1">//检查文件路径名的第一个字符是否为“/”，不是则返回2
+</span><span class="c1"></span>    <span class="k">if</span><span class="p">(</span><span class="n">chp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="sc">&#39;/&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="mi">2</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">for</span><span class="p">(</span><span class="n">uint_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">//检查除第1个字符外其它字符中还有没有为“/”的，有就返回3
+</span><span class="c1"></span>        <span class="k">if</span><span class="p">(</span><span class="n">chp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="sc">&#39;/&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="mi">3</span><span class="p">;</span> <span class="p">}</span>
+        <span class="c1">//如果这里i大于等于文件名称的最大长度，就返回4
+</span><span class="c1"></span>        <span class="k">if</span><span class="p">(</span><span class="n">i</span> <span class="o">&gt;=</span> <span class="n">DR_NM_MAX</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="mi">4</span><span class="p">;</span> <span class="p">}</span>
+        <span class="c1">//到文件路径字符串的末尾就跳出循环
+</span><span class="c1"></span>        <span class="k">if</span><span class="p">(</span><span class="n">chp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span> <span class="k">break</span><span class="p">;</span> <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="c1">//返回0表示正确
+</span><span class="c1"></span>    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">//提取纯文件名
+</span><span class="c1"></span><span class="n">sint_t</span> <span class="nf">rfs_ret_fname</span><span class="p">(</span><span class="n">char_t</span><span class="o">*</span> <span class="n">buf</span><span class="p">,</span><span class="n">char_t</span><span class="o">*</span> <span class="n">fpath</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">//检查文件路径名是不是“/xxxx”的形式
+</span><span class="c1"></span>    <span class="n">sint_t</span> <span class="n">stus</span> <span class="o">=</span> <span class="n">rfs_chkfilepath</span><span class="p">(</span><span class="n">fpath</span><span class="p">);</span>
+    <span class="c1">//如果不为0就直接返回这个状态值表示错误
+</span><span class="c1"></span>    <span class="k">if</span><span class="p">(</span><span class="n">stus</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">stus</span><span class="p">;</span> <span class="p">}</span>
+    <span class="c1">//从路径名字符串的第2个字符开始复制字符到buf中
+</span><span class="c1"></span>    <span class="n">rfs_strcpy</span><span class="p">(</span><span class="o">&amp;</span><span class="n">fpath</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">buf</span><span class="p">);</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="判断文件是否存在">判断文件是否存在</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="n">sint_t</span> <span class="nf">rfs_chkfileisindev</span><span class="p">(</span><span class="n">device_t</span><span class="o">*</span> <span class="n">devp</span><span class="p">,</span><span class="n">char_t</span><span class="o">*</span> <span class="n">fname</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">sint_t</span> <span class="n">rets</span> <span class="o">=</span> <span class="mi">6</span><span class="p">;</span>
+    <span class="n">sint_t</span> <span class="n">ch</span> <span class="o">=</span> <span class="n">rfs_strlen</span><span class="p">(</span><span class="n">fname</span><span class="p">);</span><span class="c1">//获取文件名的长度，注意不是文件路径名
+</span><span class="c1"></span>    <span class="c1">//检查文件名的长度是不是合乎要求
+</span><span class="c1"></span>    <span class="k">if</span><span class="p">(</span><span class="n">ch</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">||</span> <span class="n">ch</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">sint_t</span><span class="p">)</span><span class="n">DR_NM_MAX</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="mi">4</span><span class="p">;</span> <span class="p">}</span>
+    <span class="kt">void</span><span class="o">*</span> <span class="n">rdblkp</span> <span class="o">=</span> <span class="n">get_rootdirfile_blk</span><span class="p">(</span><span class="n">devp</span><span class="p">);</span>
+    <span class="n">fimgrhd_t</span><span class="o">*</span> <span class="n">fmp</span> <span class="o">=</span> <span class="p">(</span><span class="n">fimgrhd_t</span><span class="o">*</span><span class="p">)</span><span class="n">rdblkp</span><span class="p">;</span>
+    <span class="c1">//检查该fimgrhd_t结构的类型是不是FMD_DIR_TYPE，即这个文件是不是目录文件
+</span><span class="c1"></span>    <span class="k">if</span><span class="p">(</span><span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_type</span> <span class="o">!=</span> <span class="n">FMD_DIR_TYPE</span><span class="p">)</span> <span class="p">{</span> <span class="n">rets</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span> <span class="k">goto</span> <span class="n">err</span><span class="p">;</span> <span class="p">}</span>
+    <span class="c1">//检查根目录文件是不是为空，即没有写入任何数据，所以返回0，表示根目录下没有对应的文件
+</span><span class="c1"></span>    <span class="k">if</span><span class="p">(</span><span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_curfwritebk</span> <span class="o">==</span> <span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_fleblk</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">fb_blkstart</span> <span class="o">&amp;&amp;</span>
+ <span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_curfinwbkoff</span> <span class="o">==</span> <span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_fileifstbkoff</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">rets</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="k">goto</span> <span class="n">err</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">rfsdir_t</span><span class="o">*</span> <span class="n">dirp</span> <span class="o">=</span> <span class="p">(</span><span class="n">rfsdir_t</span><span class="o">*</span><span class="p">)((</span><span class="n">uint_t</span><span class="p">)(</span><span class="n">fmp</span><span class="p">)</span> <span class="o">+</span> <span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_fileifstbkoff</span><span class="p">);</span><span class="c1">//指向根目录文件的第一个字节
+</span><span class="c1"></span>    <span class="c1">//指向根目录文件的结束地址
+</span><span class="c1"></span>    <span class="kt">void</span><span class="o">*</span> <span class="n">maxchkp</span> <span class="o">=</span> <span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)((</span><span class="n">uint_t</span><span class="p">)</span><span class="n">rdblkp</span> <span class="o">+</span> <span class="n">FSYS_ALCBLKSZ</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="c1">//当前的rfsdir_t结构的指针比根目录文件的结束地址小，就继续循环    
+</span><span class="c1"></span>    <span class="k">for</span><span class="p">(;(</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="n">dirp</span> <span class="o">&lt;</span> <span class="n">maxchkp</span><span class="p">;)</span> <span class="p">{</span>
+        <span class="c1">//如果这个rfsdir_t结构的类型是RDR_FIL_TYPE，说明它对应的是文件而不是目录，所以下面就继续比较其文件名
+</span><span class="c1"></span>        <span class="k">if</span><span class="p">(</span><span class="n">dirp</span><span class="o">-&gt;</span><span class="n">rdr_type</span> <span class="o">==</span> <span class="n">RDR_FIL_TYPE</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">rfs_strcmp</span><span class="p">(</span><span class="n">dirp</span><span class="o">-&gt;</span><span class="n">rdr_name</span><span class="p">,</span><span class="n">fname</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span><span class="c1">//比较其文件名
+</span><span class="c1"></span>                <span class="n">rets</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="k">goto</span> <span class="n">err</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="n">dirp</span><span class="o">++</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">rets</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">//到了这里说明没有找到相同的文件
+</span><span class="c1"></span><span class="nl">err</span><span class="p">:</span>
+    <span class="n">del_rootdirfile_blk</span><span class="p">(</span><span class="n">devp</span><span class="p">,</span><span class="n">rdblkp</span><span class="p">);</span><span class="c1">//释放根目录文件
+</span><span class="c1"></span>    <span class="k">return</span> <span class="n">rets</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="文件相关操作">文件相关操作</h2>
+<h3 id="新建文件">新建文件</h3>
+<p>新建文件分成4步：</p>
+<ol>
+<li>提取纯文件名，检查文件是否已存在</li>
+<li>分配一个空间的逻辑存储块，并在根目录末尾写入这个文件对应的 rfsdir_t 结构</li>
+<li>在一个新的 4KB 的缓冲区初始化文件对应的 fimgrhd_t 结构</li>
+<li>把第 3 步对应的缓冲区数据写入到第 2 步分配的空间逻辑块中</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="c1">//新建文件的接口函数
+</span><span class="c1"></span><span class="n">drvstus_t</span> <span class="nf">rfs_new_file</span><span class="p">(</span><span class="n">device_t</span><span class="o">*</span> <span class="n">devp</span><span class="p">,</span> <span class="n">char_t</span><span class="o">*</span> <span class="n">fname</span><span class="p">,</span> <span class="n">uint_t</span> <span class="n">flg</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">//在栈中分配一个字符缓冲区并清零
+</span><span class="c1"></span>    <span class="n">char_t</span> <span class="n">fne</span><span class="p">[</span><span class="n">DR_NM_MAX</span><span class="p">];</span>
+    <span class="n">hal_memset</span><span class="p">((</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="n">fne</span><span class="p">,</span> <span class="n">DR_NM_MAX</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="c1">//从文件路径名中提取出纯文件名
+</span><span class="c1"></span>    <span class="k">if</span><span class="p">(</span><span class="n">rfs_ret_fname</span><span class="p">(</span><span class="n">fne</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">DFCERRSTUS</span><span class="p">;</span> <span class="p">}</span>
+    <span class="c1">//检查储存介质上是否已经存在这个新建的文件，如果是则返回错误
+</span><span class="c1"></span>    <span class="k">if</span><span class="p">(</span><span class="n">rfs_chkfileisindev</span><span class="p">(</span><span class="n">devp</span><span class="p">,</span> <span class="n">fne</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span><span class="k">return</span> <span class="n">DFCERRSTUS</span><span class="p">;</span> <span class="p">}</span>
+    <span class="c1">//调用实际建立文件的函数
+</span><span class="c1"></span>    <span class="k">return</span> <span class="n">rfs_new_dirfileblk</span><span class="p">(</span><span class="n">devp</span><span class="p">,</span> <span class="n">fne</span><span class="p">,</span> <span class="n">RDR_FIL_TYPE</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="p">}</span>
+
+
+<span class="n">drvstus_t</span> <span class="nf">rfs_new_dirfileblk</span><span class="p">(</span><span class="n">device_t</span><span class="o">*</span> <span class="n">devp</span><span class="p">,</span><span class="n">char_t</span><span class="o">*</span> <span class="n">fname</span><span class="p">,</span><span class="n">uint_t</span> <span class="n">flgtype</span><span class="p">,</span><span class="n">uint_t</span> <span class="n">val</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">drvstus_t</span> <span class="n">rets</span> <span class="o">=</span> <span class="n">DFCERRSTUS</span><span class="p">;</span>
+    <span class="kt">void</span><span class="o">*</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">new_buf</span><span class="p">(</span><span class="n">FSYS_ALCBLKSZ</span><span class="p">);</span><span class="c1">//分配一个4KB大小的缓冲区    
+</span><span class="c1"></span>    <span class="n">hal_memset</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">FSYS_ALCBLKSZ</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span><span class="c1">//清零该缓冲区
+</span><span class="c1"></span>    <span class="n">uint_t</span> <span class="n">fblk</span> <span class="o">=</span> <span class="n">rfs_new_blk</span><span class="p">(</span><span class="n">devp</span><span class="p">);</span><span class="c1">//分配一个新的空闲逻辑储存块
+</span><span class="c1"></span>    <span class="kt">void</span><span class="o">*</span> <span class="n">rdirblk</span> <span class="o">=</span> <span class="n">get_rootdirfile_blk</span><span class="p">(</span><span class="n">devp</span><span class="p">);</span><span class="c1">//获取根目录文件
+</span><span class="c1"></span>    <span class="n">fimgrhd_t</span><span class="o">*</span> <span class="n">fmp</span> <span class="o">=</span> <span class="p">(</span><span class="n">fimgrhd_t</span><span class="o">*</span><span class="p">)</span><span class="n">rdirblk</span><span class="p">;</span>
+    <span class="c1">//指向文件当前的写入地址，因为根目录文件已经被读取到内存中了
+</span><span class="c1"></span>    <span class="n">rfsdir_t</span><span class="o">*</span> <span class="n">wrdirp</span> <span class="o">=</span> <span class="p">(</span><span class="n">rfsdir_t</span><span class="o">*</span><span class="p">)((</span><span class="n">uint_t</span><span class="p">)</span><span class="n">rdirblk</span> <span class="o">+</span> <span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_curfinwbkoff</span><span class="p">);</span>
+    <span class="c1">//对文件当前的写入地址进行检查
+</span><span class="c1"></span>    <span class="k">if</span><span class="p">(((</span><span class="n">uint_t</span><span class="p">)</span><span class="n">wrdirp</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="p">((</span><span class="n">uint_t</span><span class="p">)</span><span class="n">rdirblk</span> <span class="o">+</span> <span class="n">FSYS_ALCBLKSZ</span><span class="p">))</span> <span class="p">{</span>
+        <span class="n">rets</span><span class="o">=</span><span class="n">DFCERRSTUS</span><span class="p">;</span> <span class="k">goto</span> <span class="n">err</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">wrdirp</span><span class="o">-&gt;</span><span class="n">rdr_stus</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">wrdirp</span><span class="o">-&gt;</span><span class="n">rdr_type</span> <span class="o">=</span> <span class="n">flgtype</span><span class="p">;</span><span class="c1">//设为文件类型
+</span><span class="c1"></span>    <span class="n">wrdirp</span><span class="o">-&gt;</span><span class="n">rdr_blknr</span> <span class="o">=</span> <span class="n">fblk</span><span class="p">;</span><span class="c1">//设为刚刚分配的空闲逻辑储存块
+</span><span class="c1"></span>    <span class="n">rfs_strcpy</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">wrdirp</span><span class="o">-&gt;</span><span class="n">rdr_name</span><span class="p">);</span><span class="c1">//把文件名复制到rfsdir_t结构
+</span><span class="c1"></span>    <span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_filesz</span> <span class="o">+=</span> <span class="p">(</span><span class="n">uint_t</span><span class="p">)(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">rfsdir_t</span><span class="p">));</span><span class="c1">//增加根目录文件的大小
+</span><span class="c1"></span>    <span class="c1">//增加根目录文件当前的写入地址，保证下次不被覆盖
+</span><span class="c1"></span>    <span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_curfinwbkoff</span> <span class="o">+=</span> <span class="p">(</span><span class="n">uint_t</span><span class="p">)(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">rfsdir_t</span><span class="p">));</span>
+    <span class="n">fimgrhd_t</span><span class="o">*</span> <span class="n">ffmp</span> <span class="o">=</span> <span class="p">(</span><span class="n">fimgrhd_t</span><span class="o">*</span><span class="p">)</span><span class="n">buf</span><span class="p">;</span><span class="c1">//指向新分配的缓冲区
+</span><span class="c1"></span>    <span class="n">fimgrhd_t_init</span><span class="p">(</span><span class="n">ffmp</span><span class="p">);</span><span class="c1">//调用fimgrhd_t结构默认的初始化函数
+</span><span class="c1"></span>    <span class="n">ffmp</span><span class="o">-&gt;</span><span class="n">fmd_type</span> <span class="o">=</span> <span class="n">FMD_FIL_TYPE</span><span class="p">;</span><span class="c1">//因为建立的是文件，所以设为文件类型
+</span><span class="c1"></span>    <span class="n">ffmp</span><span class="o">-&gt;</span><span class="n">fmd_sfblk</span> <span class="o">=</span> <span class="n">fblk</span><span class="p">;</span><span class="c1">//把自身所在的块，设为分配的逻辑储存块
+</span><span class="c1"></span>    <span class="n">ffmp</span><span class="o">-&gt;</span><span class="n">fmd_curfwritebk</span> <span class="o">=</span> <span class="n">fblk</span><span class="p">;</span><span class="c1">//把当前写入的块，设为分配的逻辑储存块
+</span><span class="c1"></span>    <span class="n">ffmp</span><span class="o">-&gt;</span><span class="n">fmd_curfinwbkoff</span> <span class="o">=</span> <span class="mh">0x200</span><span class="p">;</span><span class="c1">//把当前写入块的写入偏移量设为512
+</span><span class="c1"></span>    <span class="c1">//把文件储存块数组的第1个元素的开始块，设为刚刚分配的空闲逻辑储存块
+</span><span class="c1"></span>    <span class="n">ffmp</span><span class="o">-&gt;</span><span class="n">fmd_fleblk</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">fb_blkstart</span> <span class="o">=</span> <span class="n">fblk</span><span class="p">;</span>
+    <span class="c1">//因为只分配了一个逻辑储存块，所以设为1
+</span><span class="c1"></span>    <span class="n">ffmp</span><span class="o">-&gt;</span><span class="n">fmd_fleblk</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">fb_blknr</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="c1">//把缓冲区中的数据写入到刚刚分配的空闲逻辑储存块中
+</span><span class="c1"></span>    <span class="k">if</span><span class="p">(</span><span class="n">write_rfsdevblk</span><span class="p">(</span><span class="n">devp</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="n">fblk</span><span class="p">)</span> <span class="o">==</span> <span class="n">DFCERRSTUS</span><span class="p">)</span> <span class="p">{</span>       
+        <span class="n">rets</span> <span class="o">=</span> <span class="n">DFCERRSTUS</span><span class="p">;</span> <span class="k">goto</span> <span class="n">err</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">rets</span> <span class="o">=</span> <span class="n">DFCOKSTUS</span><span class="p">;</span>
+<span class="nl">err</span><span class="p">:</span>
+    <span class="n">del_rootdirfile_blk</span><span class="p">(</span><span class="n">devp</span><span class="p">,</span> <span class="n">rdirblk</span><span class="p">);</span><span class="c1">//释放根目录文件
+</span><span class="c1"></span><span class="nl">err1</span><span class="p">:</span>
+    <span class="n">del_buf</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">FSYS_ALCBLKSZ</span><span class="p">);</span><span class="c1">//释放缓冲区
+</span><span class="c1"></span>    <span class="k">return</span> <span class="n">rets</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="删除文件">删除文件</h3>
+<p>删除文件分成4步：</p>
+<ol>
+<li>提取纯文件名</li>
+<li>获取根目录文件，在根目录文件中查找待删除文件的 rfsdir_t 结构，然后释放该文件占用的逻辑存储块</li>
+<li>将 rfsdir_t结构的类型设置为 RDR_DEL_TYPE</li>
+<li>释放根目录文件</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="c1">//文件删除的接口函数
+</span><span class="c1"></span><span class="n">drvstus_t</span> <span class="nf">rfs_del_file</span><span class="p">(</span><span class="n">device_t</span><span class="o">*</span> <span class="n">devp</span><span class="p">,</span> <span class="n">char_t</span><span class="o">*</span> <span class="n">fname</span><span class="p">,</span> <span class="n">uint_t</span> <span class="n">flg</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">flg</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">DFCERRSTUS</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">rfs_del_dirfileblk</span><span class="p">(</span><span class="n">devp</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">RDR_FIL_TYPE</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">drvstus_t</span> <span class="nf">rfs_del_dirfileblk</span><span class="p">(</span><span class="n">device_t</span><span class="o">*</span> <span class="n">devp</span><span class="p">,</span> <span class="n">char_t</span><span class="o">*</span> <span class="n">fname</span><span class="p">,</span> <span class="n">uint_t</span> <span class="n">flgtype</span><span class="p">,</span> <span class="n">uint_t</span> <span class="n">val</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">flgtype</span> <span class="o">!=</span> <span class="n">RDR_FIL_TYPE</span> <span class="o">||</span> <span class="n">val</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">DFCERRSTUS</span><span class="p">;</span> <span class="p">}</span>
+    <span class="n">char_t</span> <span class="n">fne</span><span class="p">[</span><span class="n">DR_NM_MAX</span><span class="p">];</span>
+    <span class="n">hal_memset</span><span class="p">((</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="n">fne</span><span class="p">,</span> <span class="n">DR_NM_MAX</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="c1">//提取纯文件名
+</span><span class="c1"></span>    <span class="k">if</span><span class="p">(</span><span class="n">rfs_ret_fname</span><span class="p">(</span><span class="n">fne</span><span class="p">,</span><span class="n">fname</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">DFCERRSTUS</span><span class="p">;</span> <span class="p">}</span>
+    <span class="c1">//调用删除文件的核心函数
+</span><span class="c1"></span>    <span class="k">if</span><span class="p">(</span><span class="n">del_dirfileblk_core</span><span class="p">(</span><span class="n">devp</span><span class="p">,</span> <span class="n">fne</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">DFCERRSTUS</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">return</span> <span class="n">DFCOKSTUS</span><span class="p">;</span>
+<span class="p">}</span>
+
+
+<span class="c1">//删除文件的核心函数
+</span><span class="c1"></span><span class="n">sint_t</span> <span class="nf">del_dirfileblk_core</span><span class="p">(</span><span class="n">device_t</span><span class="o">*</span> <span class="n">devp</span><span class="p">,</span> <span class="n">char_t</span><span class="o">*</span> <span class="n">fname</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">sint_t</span> <span class="n">rets</span> <span class="o">=</span> <span class="mi">6</span><span class="p">;</span>
+    <span class="kt">void</span><span class="o">*</span> <span class="n">rblkp</span><span class="o">=</span><span class="n">get_rootdirfile_blk</span><span class="p">(</span><span class="n">devp</span><span class="p">);</span><span class="c1">//获取根目录文件
+</span><span class="c1"></span>    <span class="n">fimgrhd_t</span><span class="o">*</span> <span class="n">fmp</span> <span class="o">=</span> <span class="p">(</span><span class="n">fimgrhd_t</span><span class="o">*</span><span class="p">)</span><span class="n">rblkp</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_type</span><span class="o">!=</span><span class="n">FMD_DIR_TYPE</span><span class="p">)</span> <span class="p">{</span> <span class="c1">//检查根目录文件的类型
+</span><span class="c1"></span>        <span class="n">rets</span><span class="o">=</span><span class="mi">4</span><span class="p">;</span> <span class="k">goto</span> <span class="n">err</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_curfwritebk</span> <span class="o">==</span> <span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_fleblk</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">fb_blkstart</span> <span class="o">&amp;&amp;</span> <span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_curfinwbkoff</span> <span class="o">==</span> <span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_fileifstbkoff</span><span class="p">)</span> <span class="p">{</span> <span class="c1">//检查根目录文件中有没有数据
+</span><span class="c1"></span>        <span class="n">rets</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span> <span class="k">goto</span> <span class="n">err</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">rfsdir_t</span><span class="o">*</span> <span class="n">dirp</span> <span class="o">=</span> <span class="p">(</span><span class="n">rfsdir_t</span><span class="o">*</span><span class="p">)((</span><span class="n">uint_t</span><span class="p">)(</span><span class="n">fmp</span><span class="p">)</span> <span class="o">+</span> <span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_fileifstbkoff</span><span class="p">);</span>
+    <span class="kt">void</span><span class="o">*</span> <span class="n">maxchkp</span> <span class="o">=</span> <span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)((</span><span class="n">uint_t</span><span class="p">)</span><span class="n">rblkp</span> <span class="o">+</span> <span class="n">FSYS_ALCBLKSZ</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+    <span class="k">for</span><span class="p">(;(</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="n">dirp</span> <span class="o">&lt;</span> <span class="n">maxchkp</span><span class="p">;)</span> <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">dirp</span><span class="o">-&gt;</span><span class="n">rdr_type</span> <span class="o">==</span> <span class="n">RDR_FIL_TYPE</span><span class="p">)</span> <span class="p">{</span><span class="c1">//检查其类型是否为文件类型
+</span><span class="c1"></span>            <span class="c1">//如果文件名相同，就执行以下删除动作
+</span><span class="c1"></span>            <span class="k">if</span><span class="p">(</span><span class="n">rfs_strcmp</span><span class="p">(</span><span class="n">dirp</span><span class="o">-&gt;</span><span class="n">rdr_name</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">//释放rfsdir_t结构的rdr_blknr中指向的逻辑储存块
+</span><span class="c1"></span>                <span class="n">rfs_del_blk</span><span class="p">(</span><span class="n">devp</span><span class="p">,</span> <span class="n">dirp</span><span class="o">-&gt;</span><span class="n">rdr_blknr</span><span class="p">);</span>
+                <span class="c1">//初始化rfsdir_t结构，实际上是清除其中的数据
+</span><span class="c1"></span>                <span class="n">rfsdir_t_init</span><span class="p">(</span><span class="n">dirp</span><span class="p">);</span>
+                <span class="c1">//设置rfsdir_t结构的类型为删除类型，表示它已经删除
+</span><span class="c1"></span>                <span class="n">dirp</span><span class="o">-&gt;</span><span class="n">rdr_type</span> <span class="o">=</span> <span class="n">RDR_DEL_TYPE</span><span class="p">;</span>
+                <span class="n">rets</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="k">goto</span> <span class="n">err</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="n">dirp</span><span class="o">++</span><span class="p">;</span><span class="c1">//下一个rfsdir_t
+</span><span class="c1"></span>    <span class="p">}</span>
+    <span class="n">rets</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+<span class="nl">err</span><span class="p">:</span>
+    <span class="n">del_rootdirfile_blk</span><span class="p">(</span><span class="n">devp</span><span class="p">,</span><span class="n">rblkp</span><span class="p">);</span><span class="c1">//释放根目录文件
+</span><span class="c1"></span>    <span class="k">return</span> <span class="n">rets</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="打开文件">打开文件</h3>
+<p>打开的文件会记录到 objnode_t 结构中</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#define OBJN_TY_DEV 1</span><span class="c1">//设备类型
+</span><span class="c1"></span><span class="cp">#define OBJN_TY_FIL 2</span><span class="c1">//文件类型
+</span><span class="c1"></span><span class="cp">#define OBJN_TY_NUL 0</span><span class="c1">//默认类型
+</span><span class="c1"></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">s_OBJNODE</span>
+<span class="p">{</span>
+    <span class="n">spinlock_t</span>  <span class="n">on_lock</span><span class="p">;</span>
+    <span class="n">list_h_t</span>    <span class="n">on_list</span><span class="p">;</span>
+    <span class="n">sem_t</span>       <span class="n">on_complesem</span><span class="p">;</span>
+    <span class="n">uint_t</span>      <span class="n">on_flgs</span><span class="p">;</span>
+    <span class="n">uint_t</span>      <span class="n">on_stus</span><span class="p">;</span>
+    <span class="c1">//……
+</span><span class="c1"></span>    <span class="kt">void</span><span class="o">*</span>       <span class="n">on_fname</span><span class="p">;</span><span class="c1">//文件路径名指针
+</span><span class="c1"></span>    <span class="kt">void</span><span class="o">*</span>       <span class="n">on_finode</span><span class="p">;</span><span class="c1">//文件对应的fimgrhd_t结构指针
+</span><span class="c1"></span>    <span class="kt">void</span><span class="o">*</span>       <span class="n">on_extp</span><span class="p">;</span><span class="c1">//扩展所用
+</span><span class="c1"></span><span class="p">}</span><span class="n">objnode_t</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>打开文件分成4步：</p>
+<ol>
+<li>从 objnode_t 结构的文件路径中提取纯文件名</li>
+<li>获取根目录文件，在根目录文件中查找对应的 rfsdir_t 结构， 看文件是否存在</li>
+<li>分配一个 4KB 缓存区，把该文件对应的 rfsdir_t 结构中指向的逻辑存储块读取到缓存区</li>
+<li>把缓存区中的 fimgrhd_t 结构的地址保存到 objnode_t 结构的 on_finode 属性中</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="c1">//打开文件的接口函数
+</span><span class="c1"></span><span class="n">drvstus_t</span> <span class="nf">rfs_open_file</span><span class="p">(</span><span class="n">device_t</span><span class="o">*</span> <span class="n">devp</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="n">iopack</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">objnode_t</span><span class="o">*</span> <span class="n">obp</span> <span class="o">=</span> <span class="p">(</span><span class="n">objnode_t</span><span class="o">*</span><span class="p">)</span><span class="n">iopack</span><span class="p">;</span>
+    <span class="c1">//检查objnode_t中的文件路径名
+</span><span class="c1"></span>    <span class="k">if</span><span class="p">(</span><span class="n">obp</span><span class="o">-&gt;</span><span class="n">on_fname</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">DFCERRSTUS</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">//调用打开文件的核心函数
+</span><span class="c1"></span>    <span class="kt">void</span><span class="o">*</span> <span class="n">fmdp</span> <span class="o">=</span> <span class="n">rfs_openfileblk</span><span class="p">(</span><span class="n">devp</span><span class="p">,</span> <span class="p">(</span><span class="n">char_t</span><span class="o">*</span><span class="p">)</span><span class="n">obp</span><span class="o">-&gt;</span><span class="n">on_fname</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">fmdp</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">DFCERRSTUS</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">//把返回的fimgrhd_t结构的地址保存到objnode_t中的on_finode字段中
+</span><span class="c1"></span>    <span class="n">obp</span><span class="o">-&gt;</span><span class="n">on_finode</span> <span class="o">=</span> <span class="n">fmdp</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">DFCOKSTUS</span><span class="p">;</span>
+<span class="p">}</span>
+
+
+<span class="c1">//打开文件的核心函数
+</span><span class="c1"></span><span class="kt">void</span><span class="o">*</span> <span class="nf">rfs_openfileblk</span><span class="p">(</span><span class="n">device_t</span> <span class="o">*</span><span class="n">devp</span><span class="p">,</span> <span class="n">char_t</span><span class="o">*</span> <span class="n">fname</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">char_t</span> <span class="n">fne</span><span class="p">[</span><span class="n">DR_NM_MAX</span><span class="p">];</span> <span class="kt">void</span><span class="o">*</span> <span class="n">rets</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">,</span><span class="o">*</span><span class="n">buf</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="n">hal_memset</span><span class="p">((</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="n">fne</span><span class="p">,</span><span class="n">DR_NM_MAX</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">rfs_ret_fname</span><span class="p">(</span><span class="n">fne</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span><span class="c1">//从文件路径名中提取纯文件名
+</span><span class="c1"></span>        <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kt">void</span><span class="o">*</span> <span class="n">rblkp</span> <span class="o">=</span> <span class="n">get_rootdirfile_blk</span><span class="p">(</span><span class="n">devp</span><span class="p">);</span> <span class="c1">//获取根目录文件
+</span><span class="c1"></span>    <span class="n">fimgrhd_t</span><span class="o">*</span> <span class="n">fmp</span> <span class="o">=</span> <span class="p">(</span><span class="n">fimgrhd_t</span><span class="o">*</span><span class="p">)</span><span class="n">rblkp</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_type</span> <span class="o">!=</span> <span class="n">FMD_DIR_TYPE</span><span class="p">)</span> <span class="p">{</span><span class="c1">//判断根目录文件的类型是否合理 
+</span><span class="c1"></span>        <span class="n">rets</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span> <span class="k">goto</span> <span class="n">err</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">//判断根目录文件里有没有数据
+</span><span class="c1"></span>    <span class="k">if</span><span class="p">(</span><span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_curfwritebk</span> <span class="o">==</span> <span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_fleblk</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">fb_blkstart</span> <span class="o">&amp;&amp;</span> 
+<span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_curfinwbkoff</span> <span class="o">==</span> <span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_fileifstbkoff</span><span class="p">)</span> <span class="p">{</span> 
+        <span class="n">rets</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span> <span class="k">goto</span> <span class="n">err</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">rfsdir_t</span><span class="o">*</span> <span class="n">dirp</span> <span class="o">=</span> <span class="p">(</span><span class="n">rfsdir_t</span><span class="o">*</span><span class="p">)((</span><span class="n">uint_t</span><span class="p">)(</span><span class="n">fmp</span><span class="p">)</span> <span class="o">+</span> <span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_fileifstbkoff</span><span class="p">);</span> 
+    <span class="kt">void</span><span class="o">*</span> <span class="n">maxchkp</span> <span class="o">=</span> <span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)((</span><span class="n">uint_t</span><span class="p">)</span><span class="n">rblkp</span> <span class="o">+</span> <span class="n">FSYS_ALCBLKSZ</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="k">for</span><span class="p">(;(</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="n">dirp</span> <span class="o">&lt;</span> <span class="n">maxchkp</span><span class="p">;)</span> <span class="p">{</span><span class="c1">//开始遍历文件对应的rfsdir_t结构
+</span><span class="c1"></span>        <span class="k">if</span><span class="p">(</span><span class="n">dirp</span><span class="o">-&gt;</span><span class="n">rdr_type</span> <span class="o">==</span> <span class="n">RDR_FIL_TYPE</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">//如果文件名相同就跳转到opfblk标号处运行
+</span><span class="c1"></span>            <span class="k">if</span><span class="p">(</span><span class="n">rfs_strcmp</span><span class="p">(</span><span class="n">dirp</span><span class="o">-&gt;</span><span class="n">rdr_name</span><span class="p">,</span> <span class="n">fne</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">goto</span> <span class="n">opfblk</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="n">dirp</span><span class="o">++</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">//如果到这里说明没有找到该文件对应的rfsdir_t结构，所以设置返回值为NULL
+</span><span class="c1"></span>    <span class="n">rets</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span> <span class="k">goto</span> <span class="n">err</span><span class="p">;</span>
+<span class="nl">opfblk</span><span class="p">:</span>
+    <span class="n">buf</span> <span class="o">=</span> <span class="n">new_buf</span><span class="p">(</span><span class="n">FSYS_ALCBLKSZ</span><span class="p">);</span><span class="c1">//分配4KB大小的缓冲区
+</span><span class="c1"></span>    <span class="c1">//读取该文件占用的逻辑储存块
+</span><span class="c1"></span>    <span class="k">if</span><span class="p">(</span><span class="n">read_rfsdevblk</span><span class="p">(</span><span class="n">devp</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="n">dirp</span><span class="o">-&gt;</span><span class="n">rdr_blknr</span><span class="p">)</span> <span class="o">==</span> <span class="n">DFCERRSTUS</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">rets</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span> <span class="k">goto</span> <span class="n">err1</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">fimgrhd_t</span><span class="o">*</span> <span class="n">ffmp</span> <span class="o">=</span> <span class="p">(</span><span class="n">fimgrhd_t</span><span class="o">*</span><span class="p">)</span><span class="n">buf</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">ffmp</span><span class="o">-&gt;</span><span class="n">fmd_type</span> <span class="o">==</span> <span class="n">FMD_NUL_TYPE</span> <span class="o">||</span> <span class="n">ffmp</span><span class="o">-&gt;</span><span class="n">fmd_fileifstbkoff</span> <span class="o">!=</span> <span class="mh">0x200</span><span class="p">)</span> <span class="p">{</span><span class="c1">//判断将要打开的文件是否合法
+</span><span class="c1"></span>        <span class="n">rets</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span> <span class="k">goto</span> <span class="n">err1</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">rets</span> <span class="o">=</span> <span class="n">buf</span><span class="p">;</span> <span class="k">goto</span> <span class="n">err</span><span class="p">;</span><span class="c1">//设置缓冲区首地址为返回值
+</span><span class="c1"></span><span class="nl">err1</span><span class="p">:</span>
+    <span class="n">del_buf</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">FSYS_ALCBLKSZ</span><span class="p">);</span> <span class="c1">//上面的步骤若出现问题就要释放缓冲区
+</span><span class="c1"></span><span class="nl">err</span><span class="p">:</span>
+    <span class="n">del_rootdirfile_blk</span><span class="p">(</span><span class="n">devp</span><span class="p">,</span> <span class="n">rblkp</span><span class="p">);</span> <span class="c1">//释放根目录文件
+</span><span class="c1"></span>    <span class="k">return</span> <span class="n">rets</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="读写文件">读写文件</h3>
+<p>读文件的大致流程如下 ：</p>
+<ol>
+<li>检查 objnode_t 结构中用于存放文件数据的缓冲区及其大小</li>
+<li>检查 imgrhd_t 结构中文件相关信息</li>
+<li>把文件的数据读取到 objnode_t 结构中指向的缓冲区中</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="c1">//读取文件数据的接口函数
+</span><span class="c1"></span><span class="n">drvstus_t</span> <span class="nf">rfs_read_file</span><span class="p">(</span><span class="n">device_t</span><span class="o">*</span> <span class="n">devp</span><span class="p">,</span><span class="kt">void</span><span class="o">*</span> <span class="n">iopack</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">objnode_t</span><span class="o">*</span> <span class="n">obp</span> <span class="o">=</span> <span class="p">(</span><span class="n">objnode_t</span><span class="o">*</span><span class="p">)</span><span class="n">iopack</span><span class="p">;</span>
+    <span class="c1">//检查文件是否已经打开，以及用于存放文件数据的缓冲区和它的大小是否合理
+</span><span class="c1"></span>    <span class="k">if</span><span class="p">(</span><span class="n">obp</span><span class="o">-&gt;</span><span class="n">on_finode</span> <span class="o">==</span> <span class="nb">NULL</span> <span class="o">||</span> <span class="n">obp</span><span class="o">-&gt;</span><span class="n">on_buf</span> <span class="o">==</span> <span class="nb">NULL</span> <span class="o">||</span> <span class="n">obp</span><span class="o">-&gt;</span><span class="n">on_bufsz</span> <span class="o">!=</span> <span class="n">FSYS_ALCBLKSZ</span><span class="p">)</span> <span class="p">{</span> 
+        <span class="k">return</span> <span class="n">DFCERRSTUS</span><span class="p">;</span> 
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">rfs_readfileblk</span><span class="p">(</span><span class="n">devp</span><span class="p">,</span> <span class="p">(</span><span class="n">fimgrhd_t</span><span class="o">*</span><span class="p">)</span><span class="n">obp</span><span class="o">-&gt;</span><span class="n">on_finode</span><span class="p">,</span> <span class="n">obp</span><span class="o">-&gt;</span><span class="n">on_buf</span><span class="p">,</span> <span class="n">obp</span><span class="o">-&gt;</span><span class="n">on_len</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">//实际读取文件数据的函数
+</span><span class="c1"></span><span class="n">drvstus_t</span> <span class="nf">rfs_readfileblk</span><span class="p">(</span><span class="n">device_t</span><span class="o">*</span> <span class="n">devp</span><span class="p">,</span> <span class="n">fimgrhd_t</span><span class="o">*</span> <span class="n">fmp</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="n">buf</span><span class="p">,</span> <span class="n">uint_t</span> <span class="n">len</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">//检查文件的相关信息是否合理
+</span><span class="c1"></span>    <span class="k">if</span><span class="p">(</span><span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_sfblk</span> <span class="o">!=</span> <span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_curfwritebk</span> <span class="o">||</span> <span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_curfwritebk</span> <span class="o">!=</span> <span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_fleblk</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">fb_blkstart</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">DFCERRSTUS</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">//检查读取文件数据的长度是否大于（4096-512）
+</span><span class="c1"></span>    <span class="k">if</span><span class="p">(</span><span class="n">len</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">FSYS_ALCBLKSZ</span> <span class="o">-</span> <span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_fileifstbkoff</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">DFCERRSTUS</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">//指向文件数据的开始地址
+</span><span class="c1"></span>    <span class="kt">void</span><span class="o">*</span> <span class="n">wrp</span> <span class="o">=</span> <span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)((</span><span class="n">uint_t</span><span class="p">)</span><span class="n">fmp</span> <span class="o">+</span> <span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_fileifstbkoff</span><span class="p">);</span>
+    <span class="c1">//把文件开始处的数据复制len个字节到buf指向的缓冲区中
+</span><span class="c1"></span>    <span class="n">hal_memcpy</span><span class="p">(</span><span class="n">wrp</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="n">len</span><span class="p">);</span> 
+    <span class="k">return</span> <span class="n">DFCOKSTUS</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>写文件逻辑</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="c1">//写入文件数据的接口函数
+</span><span class="c1"></span><span class="n">drvstus_t</span> <span class="nf">rfs_write_file</span><span class="p">(</span><span class="n">device_t</span><span class="o">*</span> <span class="n">devp</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="n">iopack</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">objnode_t</span><span class="o">*</span> <span class="n">obp</span> <span class="o">=</span> <span class="p">(</span><span class="n">objnode_t</span><span class="o">*</span><span class="p">)</span><span class="n">iopack</span><span class="p">;</span>
+    <span class="c1">//检查文件是否已经打开，以及用于存放文件数据的缓冲区和它的大小是否合理
+</span><span class="c1"></span>    <span class="k">if</span><span class="p">(</span><span class="n">obp</span><span class="o">-&gt;</span><span class="n">on_finode</span> <span class="o">==</span> <span class="nb">NULL</span> <span class="o">||</span> <span class="n">obp</span><span class="o">-&gt;</span><span class="n">on_buf</span> <span class="o">==</span> <span class="nb">NULL</span> <span class="o">||</span> <span class="n">obp</span><span class="o">-&gt;</span><span class="n">on_bufsz</span> <span class="o">!=</span> <span class="n">FSYS_ALCBLKSZ</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">DFCERRSTUS</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">rfs_writefileblk</span><span class="p">(</span><span class="n">devp</span><span class="p">,</span> <span class="p">(</span><span class="n">fimgrhd_t</span><span class="o">*</span><span class="p">)</span><span class="n">obp</span><span class="o">-&gt;</span><span class="n">on_finode</span><span class="p">,</span> <span class="n">obp</span><span class="o">-&gt;</span><span class="n">on_buf</span><span class="p">,</span> <span class="n">obp</span><span class="o">-&gt;</span><span class="n">on_len</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">//实际写入文件数据的函数
+</span><span class="c1"></span><span class="n">drvstus_t</span> <span class="nf">rfs_writefileblk</span><span class="p">(</span><span class="n">device_t</span><span class="o">*</span> <span class="n">devp</span><span class="p">,</span> <span class="n">fimgrhd_t</span><span class="o">*</span> <span class="n">fmp</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="n">buf</span><span class="p">,</span> <span class="n">uint_t</span> <span class="n">len</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">//检查文件的相关信息是否合理
+</span><span class="c1"></span>    <span class="k">if</span><span class="p">(</span><span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_sfblk</span> <span class="o">!=</span> <span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_curfwritebk</span> <span class="o">||</span> <span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_curfwritebk</span> <span class="o">!=</span> <span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_fleblk</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">fb_blkstart</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">DFCERRSTUS</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">//检查当前将要写入数据的偏移量加上写入数据的长度，是否大于等于4KB
+</span><span class="c1"></span>    <span class="k">if</span><span class="p">((</span><span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_curfinwbkoff</span> <span class="o">+</span> <span class="n">len</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">FSYS_ALCBLKSZ</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">DFCERRSTUS</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">//指向将要写入数据的内存空间
+</span><span class="c1"></span>    <span class="kt">void</span><span class="o">*</span> <span class="n">wrp</span> <span class="o">=</span> <span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)((</span><span class="n">uint_t</span><span class="p">)</span><span class="n">fmp</span> <span class="o">+</span> <span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_curfinwbkoff</span><span class="p">);</span>
+    <span class="c1">//把buf缓冲区中的数据复制len个字节到wrp指向的内存空间中去
+</span><span class="c1"></span>    <span class="n">hal_memcpy</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">wrp</span><span class="p">,</span> <span class="n">len</span><span class="p">);</span>
+    <span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_filesz</span> <span class="o">+=</span> <span class="n">len</span><span class="p">;</span><span class="c1">//增加文件大小
+</span><span class="c1"></span>    <span class="c1">//使fmd_curfinwbkoff指向下一次将要写入数据的位置
+</span><span class="c1"></span>    <span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_curfinwbkoff</span> <span class="o">+=</span> <span class="n">len</span><span class="p">;</span>
+    <span class="c1">//把文件数据写入到相应的逻辑储存块中，完成数据同步
+</span><span class="c1"></span>    <span class="n">write_rfsdevblk</span><span class="p">(</span><span class="n">devp</span><span class="p">,</span> <span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="n">fmp</span><span class="p">,</span> <span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_curfwritebk</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">DFCOKSTUS</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="关闭文件">关闭文件</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C">
+<span class="c1">//关闭文件的接口函数
+</span><span class="c1"></span><span class="n">drvstus_t</span> <span class="nf">rfs_close_file</span><span class="p">(</span><span class="n">device_t</span><span class="o">*</span> <span class="n">devp</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="n">iopack</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">objnode_t</span><span class="o">*</span> <span class="n">obp</span> <span class="o">=</span> <span class="p">(</span><span class="n">objnode_t</span><span class="o">*</span><span class="p">)</span><span class="n">iopack</span><span class="p">;</span>
+    <span class="c1">//检查文件是否已经打开了
+</span><span class="c1"></span>    <span class="k">if</span><span class="p">(</span><span class="n">obp</span><span class="o">-&gt;</span><span class="n">on_finode</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span> 
+        <span class="k">return</span> <span class="n">DFCERRSTUS</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">rfs_closefileblk</span><span class="p">(</span><span class="n">devp</span><span class="p">,</span> <span class="n">obp</span><span class="o">-&gt;</span><span class="n">on_finode</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">//关闭文件的核心函数
+</span><span class="c1"></span><span class="n">drvstus_t</span> <span class="nf">rfs_closefileblk</span><span class="p">(</span><span class="n">device_t</span> <span class="o">*</span><span class="n">devp</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="n">fblkp</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">//指向文件的fimgrhd_t结构
+</span><span class="c1"></span>    <span class="n">fimgrhd_t</span><span class="o">*</span> <span class="n">fmp</span> <span class="o">=</span> <span class="p">(</span><span class="n">fimgrhd_t</span><span class="o">*</span><span class="p">)</span><span class="n">fblkp</span><span class="p">;</span>
+    <span class="c1">//完成文件数据的同步
+</span><span class="c1"></span>    <span class="n">write_rfsdevblk</span><span class="p">(</span><span class="n">devp</span><span class="p">,</span> <span class="n">fblkp</span><span class="p">,</span> <span class="n">fmp</span><span class="o">-&gt;</span><span class="n">fmd_sfblk</span><span class="p">);</span>
+    <span class="c1">//释放缓冲区
+</span><span class="c1"></span>    <span class="n">del_buf</span><span class="p">(</span><span class="n">fblkp</span><span class="p">,</span> <span class="n">FSYS_ALCBLKSZ</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">DFCOKSTUS</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="参考">参考</h1>
 <ul>
 <li><a href="https://stackoverflow.com/questions/37146637/why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux">why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux</a></li>
 <li><a href="https://blog.csdn.net/ll15982534415/article/details/118771286">快速建立hdi文件</a></li>
