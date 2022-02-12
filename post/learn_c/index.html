@@ -64,12 +64,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://ppd0705.github.io/post/learn_c/" /><meta property="article:section" content="post" />
 <meta property="article:published_time" content="2022-01-31T17:04:50+08:00" />
-<meta property="article:modified_time" content="2022-01-31T17:04:50+08:00" />
+<meta property="article:modified_time" content="2022-02-12T16:44:50+08:00" />
 
 <meta itemprop="name" content="[笔记]深入C语言和程序运行原理（更新中）">
 <meta itemprop="description" content="第零讲 课前热身 数据量单位 位（bit）： 是最小存储单位，每个位可以存一个二进制码值得 0 或 1 字节（byte）： 通常是由八个位组成的一个存储单元，"><meta itemprop="datePublished" content="2022-01-31T17:04:50+08:00" />
-<meta itemprop="dateModified" content="2022-01-31T17:04:50+08:00" />
-<meta itemprop="wordCount" content="3191">
+<meta itemprop="dateModified" content="2022-02-12T16:44:50+08:00" />
+<meta itemprop="wordCount" content="3596">
 <meta itemprop="keywords" content="C," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]深入C语言和程序运行原理（更新中）"/>
 <meta name="twitter:description" content="第零讲 课前热身 数据量单位 位（bit）： 是最小存储单位，每个位可以存一个二进制码值得 0 或 1 字节（byte）： 通常是由八个位组成的一个存储单元，"/>
@@ -302,10 +302,14 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 3191 words </span>
-          <span class="more-meta"> 7 min read </span>
+        <span class="more-meta"> 3596 words </span>
+          <span class="more-meta"> 8 min read </span>
 
         
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
         
 
         
@@ -369,6 +373,18 @@
         <li><a href="#逻辑运算符">逻辑运算符</a></li>
         <li><a href="#成员访问运算符">成员访问运算符</a></li>
         <li><a href="#其他运算符">其他运算符</a></li>
+      </ul>
+    </li>
+    <li><a href="#第四讲-控制逻辑">第四讲 控制逻辑</a>
+      <ul>
+        <li><a href="#表达式">表达式</a></li>
+        <li><a href="#语句">语句</a>
+          <ul>
+            <li><a href="#选择语句">选择语句</a></li>
+            <li><a href="#迭代语句">迭代语句</a></li>
+            <li><a href="#跳转语句">跳转语句</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
   </ul>
@@ -678,11 +694,68 @@ let result = arr.filter(n =&gt; n &gt; 7)
 <p><img src="/image/learn_c/3_6.webp" alt="other_operator"></p>
 <p><code>size_t n = sizeof(int)</code> 的汇编指令可以看出直接将结果4存到了 n 对应的栈内存。</p>
 <p><code>short f = (short) n;</code>的汇编指令首先将变量 n 的值移到 rax 寄存器，然后将其中低 16位的数据（ax）地道 f 所在的内存趋于</p>
+<h1 id="第四讲-控制逻辑">第四讲 控制逻辑</h1>
+<h2 id="表达式">表达式</h2>
+<p>表达式（expression）是由一系列运算符和操作数（operand）组成的一种语法结构。</p>
+<p>对表达式的求值过程，实际上就是根据运算符的优先级和结合性，来对表达式和它所包含的子表达式进行递归求值的过程。</p>
+<p>可以使用<code>clang -Xclang -ast-dump -fsyntax-only main.c</code> 命令得到 C 程序对应的 AST 结构</p>
+<h2 id="语句">语句</h2>
+<p>语句（statement）是用来描述程序的基本构建块。</p>
+<p>语句可以包含或者不含表达式；语句在执行时不返回任何结果；语句以分号结尾。</p>
+<p>语句分为复合语句、表达式语句、选择语句、迭代语句、跳转语句。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="kt">int</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">// 复合语句；
+</span><span class="c1"></span> <span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">;</span> <span class="c1">// 表达式语句；
+</span><span class="c1"></span> <span class="k">if</span> <span class="p">(</span><span class="n">sum</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">// 复合语句；
+</span><span class="c1"></span>   <span class="n">sum</span> <span class="o">=</span> <span class="o">-</span><span class="n">sum</span><span class="p">;</span>  <span class="c1">// 表达式语句；
+</span><span class="c1"></span> <span class="p">}</span>
+ <span class="k">return</span> <span class="n">sum</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="选择语句">选择语句</h3>
+<p><code>if...else</code> 语句示例如下：</p>
+<p><img src="/image/learn_c/4_1.webp" alt="if_else_statement"></p>
+<p><code>switch...case</code>语句示例如下：</p>
+<p><img src="/image/learn_c/4_2.webp" alt="switch_case_statement"></p>
+<h3 id="迭代语句">迭代语句</h3>
+<p>迭代语句主要包含 <code>do...while</code>、<code>for</code>、<code>while</code> 三种形式，u示例如下：
+<img src="/image/learn_c/4_3.webp" alt="do_while_statement"></p>
+<h3 id="跳转语句">跳转语句</h3>
+<p>跳转语句主要包含 <code>break</code>、<code>continue</code>、<code>return</code>、<code>goto</code> 四种形式</p>
 
     </div>
 
     
     
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">PPD</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">
+      2022-02-12
+      
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">License</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
 
 
     
@@ -843,6 +916,10 @@ let result = arr.filter(n =&gt; n &gt; 7)
 
   
   
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
 
   
 </div>
@@ -889,6 +966,8 @@ let result = arr.filter(n =&gt; n &gt; 7)
 
 
 
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 

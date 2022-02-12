@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]操作系统实战（更新中）">
 <meta itemprop="description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"><meta itemprop="datePublished" content="2021-07-30T08:06:33+08:00" />
 <meta itemprop="dateModified" content="2021-07-30T08:06:33+08:00" />
-<meta itemprop="wordCount" content="49798">
+<meta itemprop="wordCount" content="49932">
 <meta itemprop="keywords" content="C,操作系统," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]操作系统实战（更新中）"/>
 <meta name="twitter:description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"/>
@@ -302,10 +302,14 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 49798 words </span>
+        <span class="more-meta"> 49932 words </span>
           <span class="more-meta"> 100 min read </span>
 
         
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
         
 
         
@@ -741,6 +745,27 @@
             <li><a href="#关闭文件">关闭文件</a></li>
           </ul>
         </li>
+      </ul>
+    </li>
+    <li><a href="#第三十五讲-linux如何管理文件">第三十五讲 Linux如何管理文件</a>
+      <ul>
+        <li><a href="#vfs-虚拟文件系统">VFS 虚拟文件系统</a></li>
+        <li><a href="#vfs-数据结构">VFS 数据结构</a>
+          <ul>
+            <li><a href="#超级块-1">超级块</a></li>
+            <li><a href="#目录-1">目录</a></li>
+            <li><a href="#文件索引节点">文件索引节点</a></li>
+            <li><a href="#四大对象结构的关系">四大对象结构的关系</a></li>
+          </ul>
+        </li>
+        <li><a href="#文件操作">文件操作</a>
+          <ul>
+            <li><a href="#打开文件-1">打开文件</a></li>
+            <li><a href="#读写文件-1">读写文件</a></li>
+            <li><a href="#关闭文件-1">关闭文件</a></li>
+          </ul>
+        </li>
+        <li><a href="#文件系统实例">文件系统实例</a></li>
       </ul>
     </li>
     <li><a href="#参考">参考</a></li>
@@ -10020,7 +10045,22 @@ fmd_fleblk[0] 保存 4 和 4，fmd_fleblk[1] 保存 10 和 5，fmd_fleblk[2] 保
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><h1 id="参考">参考</h1>
+</div><h1 id="第三十五讲-linux如何管理文件">第三十五讲 Linux如何管理文件</h1>
+<h2 id="vfs-虚拟文件系统">VFS 虚拟文件系统</h2>
+<p>VFS（Virtual Filesystem）可以理解问通用文件系统的抽象层，
+不管存储设备使用什么文件系统，都可以统一使用一套接口</p>
+<p><img src="/image/play_os_in_action/35_1.webp" alt="VFS"></p>
+<h2 id="vfs-数据结构">VFS 数据结构</h2>
+<h3 id="超级块-1">超级块</h3>
+<h3 id="目录-1">目录</h3>
+<h3 id="文件索引节点">文件索引节点</h3>
+<h3 id="四大对象结构的关系">四大对象结构的关系</h3>
+<h2 id="文件操作">文件操作</h2>
+<h3 id="打开文件-1">打开文件</h3>
+<h3 id="读写文件-1">读写文件</h3>
+<h3 id="关闭文件-1">关闭文件</h3>
+<h2 id="文件系统实例">文件系统实例</h2>
+<h1 id="参考">参考</h1>
 <ul>
 <li><a href="https://stackoverflow.com/questions/37146637/why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux">why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux</a></li>
 <li><a href="https://blog.csdn.net/ll15982534415/article/details/118771286">快速建立hdi文件</a></li>
@@ -10204,6 +10244,10 @@ fmd_fleblk[0] 保存 4 和 4，fmd_fleblk[1] 保存 10 和 5，fmd_fleblk[2] 保
 
   
   
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
 
   
 </div>
@@ -10250,6 +10294,8 @@ fmd_fleblk[0] 保存 4 和 4，fmd_fleblk[1] 保存 10 和 5，fmd_fleblk[2] 保
 
 
 
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 

@@ -318,6 +318,45 @@ let result = arr.filter(n =&amp;gt; n &amp;gt; 7)
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/learn_c/3_6.webp&#34; alt=&#34;other_operator&#34;&gt;&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;size_t n = sizeof(int)&lt;/code&gt; 的汇编指令可以看出直接将结果4存到了 n 对应的栈内存。&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;short f = (short) n;&lt;/code&gt;的汇编指令首先将变量 n 的值移到 rax 寄存器，然后将其中低 16位的数据（ax）地道 f 所在的内存趋于&lt;/p&gt;
+&lt;h1 id=&#34;第四讲-控制逻辑&#34;&gt;第四讲 控制逻辑&lt;/h1&gt;
+&lt;h2 id=&#34;表达式&#34;&gt;表达式&lt;/h2&gt;
+&lt;p&gt;表达式（expression）是由一系列运算符和操作数（operand）组成的一种语法结构。&lt;/p&gt;
+&lt;p&gt;对表达式的求值过程，实际上就是根据运算符的优先级和结合性，来对表达式和它所包含的子表达式进行递归求值的过程。&lt;/p&gt;
+&lt;p&gt;可以使用&lt;code&gt;clang -Xclang -ast-dump -fsyntax-only main.c&lt;/code&gt; 命令得到 C 程序对应的 AST 结构&lt;/p&gt;
+&lt;h2 id=&#34;语句&#34;&gt;语句&lt;/h2&gt;
+&lt;p&gt;语句（statement）是用来描述程序的基本构建块。&lt;/p&gt;
+&lt;p&gt;语句可以包含或者不含表达式；语句在执行时不返回任何结果；语句以分号结尾。&lt;/p&gt;
+&lt;p&gt;语句分为复合语句、表达式语句、选择语句、迭代语句、跳转语句。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;foo&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;// 复合语句；
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;sum&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;x&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// 表达式语句；
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;sum&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;// 复合语句；
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;   &lt;span class=&#34;n&#34;&gt;sum&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;sum&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;// 表达式语句；
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+ &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;sum&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id=&#34;选择语句&#34;&gt;选择语句&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;if...else&lt;/code&gt; 语句示例如下：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/learn_c/4_1.webp&#34; alt=&#34;if_else_statement&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;switch...case&lt;/code&gt;语句示例如下：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/learn_c/4_2.webp&#34; alt=&#34;switch_case_statement&#34;&gt;&lt;/p&gt;
+&lt;h3 id=&#34;迭代语句&#34;&gt;迭代语句&lt;/h3&gt;
+&lt;p&gt;迭代语句主要包含 &lt;code&gt;do...while&lt;/code&gt;、&lt;code&gt;for&lt;/code&gt;、&lt;code&gt;while&lt;/code&gt; 三种形式，u示例如下：
+&lt;img src=&#34;https://ppd0705.github.io/image/learn_c/4_3.webp&#34; alt=&#34;do_while_statement&#34;&gt;&lt;/p&gt;
+&lt;h3 id=&#34;跳转语句&#34;&gt;跳转语句&lt;/h3&gt;
+&lt;p&gt;跳转语句主要包含 &lt;code&gt;break&lt;/code&gt;、&lt;code&gt;continue&lt;/code&gt;、&lt;code&gt;return&lt;/code&gt;、&lt;code&gt;goto&lt;/code&gt; 四种形式&lt;/p&gt;
 </description>
       
     </item>
@@ -9744,7 +9783,22 @@ fmd_fleblk[0] 保存 4 和 4，fmd_fleblk[1] 保存 10 和 5，fmd_fleblk[2] 保
 &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h1 id=&#34;参考&#34;&gt;参考&lt;/h1&gt;
+&lt;/div&gt;&lt;h1 id=&#34;第三十五讲-linux如何管理文件&#34;&gt;第三十五讲 Linux如何管理文件&lt;/h1&gt;
+&lt;h2 id=&#34;vfs-虚拟文件系统&#34;&gt;VFS 虚拟文件系统&lt;/h2&gt;
+&lt;p&gt;VFS（Virtual Filesystem）可以理解问通用文件系统的抽象层，
+不管存储设备使用什么文件系统，都可以统一使用一套接口&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/35_1.webp&#34; alt=&#34;VFS&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;vfs-数据结构&#34;&gt;VFS 数据结构&lt;/h2&gt;
+&lt;h3 id=&#34;超级块-1&#34;&gt;超级块&lt;/h3&gt;
+&lt;h3 id=&#34;目录-1&#34;&gt;目录&lt;/h3&gt;
+&lt;h3 id=&#34;文件索引节点&#34;&gt;文件索引节点&lt;/h3&gt;
+&lt;h3 id=&#34;四大对象结构的关系&#34;&gt;四大对象结构的关系&lt;/h3&gt;
+&lt;h2 id=&#34;文件操作&#34;&gt;文件操作&lt;/h2&gt;
+&lt;h3 id=&#34;打开文件-1&#34;&gt;打开文件&lt;/h3&gt;
+&lt;h3 id=&#34;读写文件-1&#34;&gt;读写文件&lt;/h3&gt;
+&lt;h3 id=&#34;关闭文件-1&#34;&gt;关闭文件&lt;/h3&gt;
+&lt;h2 id=&#34;文件系统实例&#34;&gt;文件系统实例&lt;/h2&gt;
+&lt;h1 id=&#34;参考&#34;&gt;参考&lt;/h1&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://stackoverflow.com/questions/37146637/why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux&#34;&gt;why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://blog.csdn.net/ll15982534415/article/details/118771286&#34;&gt;快速建立hdi文件&lt;/a&gt;&lt;/li&gt;
