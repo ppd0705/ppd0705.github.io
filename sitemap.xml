@@ -2,6 +2,55 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://ppd0705.github.io/post/2021_summary/</loc>
+    <lastmod>2022-02-13T21:43:41+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://ppd0705.github.io/categories/</loc>
+    <lastmod>2022-02-13T21:43:41+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://ppd0705.github.io/post/</loc>
+    <lastmod>2022-02-13T21:43:41+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://ppd0705.github.io/</loc>
+    <lastmod>2022-02-13T21:43:41+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://ppd0705.github.io/tags/</loc>
+    <lastmod>2022-02-13T21:43:41+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://ppd0705.github.io/tags/%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/</loc>
+    <lastmod>2022-02-13T21:43:41+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://ppd0705.github.io/categories/%E7%94%9F%E6%B4%BB/</loc>
+    <lastmod>2022-02-13T21:43:41+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>https://ppd0705.github.io/post/learn_c/</loc>
     <lastmod>2022-02-12T16:44:50+08:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -10,34 +59,6 @@
   
   <url>
     <loc>https://ppd0705.github.io/tags/c/</loc>
-    <lastmod>2022-02-12T16:44:50+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://ppd0705.github.io/categories/</loc>
-    <lastmod>2022-02-12T16:44:50+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://ppd0705.github.io/post/</loc>
-    <lastmod>2022-02-12T16:44:50+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://ppd0705.github.io/</loc>
-    <lastmod>2022-02-12T16:44:50+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://ppd0705.github.io/tags/</loc>
     <lastmod>2022-02-12T16:44:50+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
@@ -199,20 +220,6 @@
   
   <url>
     <loc>https://ppd0705.github.io/post/2020_summary/</loc>
-    <lastmod>2021-01-04T22:14:43+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://ppd0705.github.io/tags/%E5%B9%B4%E5%BA%A6%E6%80%BB%E7%BB%93/</loc>
-    <lastmod>2021-01-04T22:14:43+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://ppd0705.github.io/categories/%E7%94%9F%E6%B4%BB/</loc>
     <lastmod>2021-01-04T22:14:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>

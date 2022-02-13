@@ -6,10 +6,58 @@
     <description>Recent content on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 31 Jan 2022 17:04:50 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 13 Feb 2022 11:43:41 +0800</lastBuildDate>
     
         <atom:link href="https://ppd0705.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>2021年终总结</title>
+      <link>https://ppd0705.github.io/post/2021_summary/</link>
+      <pubDate>Sun, 13 Feb 2022 11:43:41 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/2021_summary/</guid>
+      
+        <description>&lt;p&gt;其实从12月开始就在想要写总结了，一直拖延，然后就想农历新年再写，结果就拖到现在。支撑我写总结的原因是看到太多
+真诚开放的年度总结了，向大家看齐，做一个真诚开放的自己。&lt;/p&gt;
+&lt;h1 id=&#34;工作&#34;&gt;工作&lt;/h1&gt;
+&lt;p&gt;我一直以来并没有清晰明了的职业规划，年初选择数字货币行业 offer 的一个很大外部原因是我转行当程序员之前就非常喜欢的
+的程序员大佬在 2018 年就加入了这个行业，她公众号【嘀嗒嘀嗒】写的她自己经历的文章，看似简短，但让人常看常新，尤其是到了某些纠结迷茫的时候。&lt;/p&gt;
+&lt;p&gt;转眼新工作就一年了，一开始对数字货币几乎一无所知。从注册各种交易所账户体验炒币开始，接着跟风推特转发抢空投，然后
+在去中心化交易所交换各种币。区块链技术上也学了极客时间上的一门相关课程，然后找了一个高 star 开源的&lt;a href=&#34;https://github.com/Jeiwan/blockchain_go&#34;&gt;简易区块链实现&lt;/a&gt;
+照着实现了一遍，对区块链原理和运行有了进一步的了解， 做入职分享时&lt;a href=&#34;https://github.com/ppd0705/my_document/blob/master/slide/Conflux.key&#34;&gt;了解了一点 Conflux 公链&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;我所在的小组负责交易所内部做市业务，交易所算我们的上游，而区块链又算交易所的上游。量化做市是为交易所提供流动性，简而言之就是
+使用程序根据一定的策略逻辑调下单接口自动挂买卖单由此产生深度，这样其他用户就可以有对手盘可以交易。在市场行情不可控的前提下如何既提供流动性
+又能保证不亏钱？这是一个难题！目前最主流的方式的通过对冲来控制风险和获取盈利，但是对冲太依赖对冲方了，很多时候找不到对冲方，有时也需要对冲更直接高效的方法。&lt;/p&gt;
+&lt;p&gt;小组从年初的 2 人到年末的 4 人，总算有点组的样子了。不过作为独立的内部小组，也不对外提供服务，我们组在公司有点隐身的感觉。我们
+没有产品、前端、测试等上下游配合，完全是自我在迭代，需求、实现和交付都自己来。 我们的技术栈看起来朴实无华，网站用经典的 flask + jquery + bootstrap 组合，
+策略开发用 Python。 其实我好久没有写过网页了，仍记得学 css 时对自己写的页面深深地不忍直视，好在有框架，也好在是自己用；另外顺道了解了 Vue 和 Nuxt.js，引入了很香的 pyechart 做可视化。
+策略方面，之前一份工作和量化数据和策略相关，但业务偏向于做一个通用的平台给别人来做策略研究。
+直到自己真的来写实盘策略，发现实盘策略和模拟策略差别太大了，真实交易情况下要考虑手续费，下单可能不成交，下单可能超时但实际成交了，交易所可能临时维护等等。
+另外策略属于比较机密的东西，而且不同的策略有不同的使用场景，真正优质的开源作品不多，让我收获最大的是 &lt;a href=&#34;https://space.bilibili.com/479971824/&#34;&gt;aioquant&lt;/a&gt; 和 &lt;a href=&#34;https://github.com/hummingbot/hummingbot&#34;&gt;hummingbot&lt;/a&gt;，感兴趣的同学可以看看。&lt;/p&gt;
+&lt;h1 id=&#34;生活&#34;&gt;生活&lt;/h1&gt;
+&lt;p&gt;处在数字货币 7 * 24 小时交易这样的金钱永不眠的环境下，人难免变得浮躁，尤其是持有了一些资产之后，面对价格的浮动，内心的贪婪和恐惧都赤裸裸地展现出来，
+有一段时间，我会不停地刷手机上的行情软件，整个人变的无比焦虑，后面想清楚了自己是一个长期投资者，于是把行情软件都卸载了。
+直到元旦节计算盈亏，算下来总体应该没有亏，检查个人账户，才发现账户资产几个月前被人盗走了，不知道助记词何时被泄露了！而作为去中心化服务，被盗欲诉无门，只能认栽！&lt;/p&gt;
+&lt;p&gt;跑步仍是我的首选的长期爱好，总里程 400 公里，数字不大，但重要的是能让我养成早起健身的习惯，其中 5月份 又去参加了汶川半马，之前两次都是我一个人参加，
+这次是带着爸爸和姐姐去参加，有家人在终点等我的感觉还是蛮好的，跑完步又带着爸爸和姐姐去了都江堰、青城山逛了逛，这算是我们三个人第一次一同旅行，还是蛮难得的。&lt;/p&gt;
+&lt;p&gt;12 月份和同学延续了一年一见的惯例。不过我周中先去了永宁和泉州 ，体验闽南习俗；周末和同学（及和同学般的前同事）在苏州碰头，一年未见，大家都
+感叹时间飞逝，每个人都在为各自的生活而前行。作为一个成年人，应该都体会到很多时候再见最多就是在朋友圈点赞见了，所以有时我感到自己能作为一个这样的中间的联结者而开心。&lt;/p&gt;
+&lt;p&gt;今年看了20+ 本书，微信读书是在太方便了，纸质书越读越少，最推荐的书是《项塔兰》，看完在心里立了一个小目标：有机会去一次印度。&lt;/p&gt;
+&lt;p&gt;英语学习现在迁移到了开言英语 APP 上，我还蛮喜欢真人英语视频对话这种模式的，每天大概 20 分钟的样子，不会感觉太大压力。&lt;/p&gt;
+&lt;p&gt;尝试了一下画画，但开始体验并不是很好，就放弃了，或许以后有机会吧。&lt;/p&gt;
+&lt;h1 id=&#34;展望&#34;&gt;展望&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;探索个人在区块链领域更多可能性：比如公链、智能合约&lt;/li&gt;
+&lt;li&gt;学习算法、docker和K8S&lt;/li&gt;
+&lt;li&gt;完结在学的C和操作系统课程&lt;/li&gt;
+&lt;li&gt;跑步每周三次，参加一次半马&lt;/li&gt;
+&lt;li&gt;每周英语练习&lt;/li&gt;
+&lt;li&gt;带家人旅行一次（计划去四姑娘山）&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+      
+    </item>
     
     <item>
       <title>[笔记]深入C语言和程序运行原理（更新中）</title>
@@ -16522,7 +16570,7 @@ timerCtx的Donw被Close掉主要有某个事件触发&lt;/p&gt;
     </item>
     
     <item>
-      <title>2020年度总结</title>
+      <title>2020年终总结</title>
       <link>https://ppd0705.github.io/post/2020_summary/</link>
       <pubDate>Sun, 03 Jan 2021 22:14:43 +0800</pubDate>
       
@@ -21434,66 +21482,6 @@ dotnet run
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://www.starlette.io&#34;&gt;官方文档&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Transfer-Encoding&#34;&gt;Transfer-Encoding: chunked&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-      
-    </item>
-    
-    <item>
-      <title>Uvicorn源码笔记</title>
-      <link>https://ppd0705.github.io/post/uvicorn_note/</link>
-      <pubDate>Wed, 04 Mar 2020 08:25:53 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/uvicorn_note/</guid>
-      
-        <description>&lt;h3 id=&#34;简介&#34;&gt;简介&lt;/h3&gt;
-&lt;p&gt;Unicorn是一个遵守ASGI协议的web服务器，使用asycnio框架，要求python3.6+，支持HTTP1.1和WebSockets。&lt;/p&gt;
-&lt;h3 id=&#34;部分模块介绍&#34;&gt;部分模块介绍&lt;/h3&gt;
-&lt;h4 id=&#34;config&#34;&gt;config&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;参数解析设定&lt;/li&gt;
-&lt;li&gt;加载app, 中间件&lt;/li&gt;
-&lt;li&gt;绑定socket&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;middleware&#34;&gt;middleware&lt;/h4&gt;
-&lt;h5 id=&#34;middlewarewsgi&#34;&gt;middleware.wsgi&lt;/h5&gt;
-&lt;ul&gt;
-&lt;li&gt;将同步调用start_response和app方法放到线程池里面执行，通过queue和event来通知sender&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h5 id=&#34;middlewaredegbug&#34;&gt;middleware.degbug&lt;/h5&gt;
-&lt;ul&gt;
-&lt;li&gt;捕捉traceback.format_exc()返回给请求端&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h5 id=&#34;middlewaremessage_logger&#34;&gt;middleware.message_logger&lt;/h5&gt;
-&lt;ul&gt;
-&lt;li&gt;打印详细日志&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h5 id=&#34;middlewareproxy_headers&#34;&gt;middleware.proxy_headers&lt;/h5&gt;
-&lt;ul&gt;
-&lt;li&gt;使用LB时,解析来自client的真正procotol和host&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;protocols&#34;&gt;protocols&lt;/h4&gt;
-&lt;p&gt;ServerState: 在不同protocols之间共享server的信息如连接数，完成请求数据量,当前tasks&lt;/p&gt;
-&lt;h5 id=&#34;http&#34;&gt;http&lt;/h5&gt;
-&lt;ul&gt;
-&lt;li&gt;继承async.Protocol，实现data_received方法处理请求&lt;/li&gt;
-&lt;li&gt;实现了send和revceive方法,&lt;/li&gt;
-&lt;li&gt;需要升级到websocket时替换protocol_class即可&lt;/li&gt;
-&lt;li&gt;http parser可选h11(python 实现)、httptools(C实现，默认先选)&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h5 id=&#34;websocket&#34;&gt;websocket&lt;/h5&gt;
-&lt;ul&gt;
-&lt;li&gt;默认WebSocketProtocol&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;workers&#34;&gt;workers&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;UvicornWorker: gunicorn的Worker子类，官方推荐生产环境使用gunicorn&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id=&#34;参考&#34;&gt;参考&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.uvicorn.org/&#34;&gt;官方文档&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/python-hyper/h11/issues/9&#34;&gt;h11和https比较&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://readthedocs.org/projects/asgi/downloads/pdf/latest/&#34;&gt;ASGI&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
       
