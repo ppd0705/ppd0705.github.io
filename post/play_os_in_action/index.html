@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]操作系统实战（更新中）">
 <meta itemprop="description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"><meta itemprop="datePublished" content="2021-07-30T08:06:33+08:00" />
 <meta itemprop="dateModified" content="2021-07-30T08:06:33+08:00" />
-<meta itemprop="wordCount" content="49932">
+<meta itemprop="wordCount" content="53607">
 <meta itemprop="keywords" content="C,操作系统," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]操作系统实战（更新中）"/>
 <meta name="twitter:description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"/>
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 49932 words </span>
-          <span class="more-meta"> 100 min read </span>
+        <span class="more-meta"> 53607 words </span>
+          <span class="more-meta"> 107 min read </span>
 
         
         
@@ -752,9 +752,10 @@
         <li><a href="#vfs-虚拟文件系统">VFS 虚拟文件系统</a></li>
         <li><a href="#vfs-数据结构">VFS 数据结构</a>
           <ul>
-            <li><a href="#超级块-1">超级块</a></li>
-            <li><a href="#目录-1">目录</a></li>
+            <li><a href="#超级块结构">超级块结构</a></li>
+            <li><a href="#目录结构">目录结构</a></li>
             <li><a href="#文件索引节点">文件索引节点</a></li>
+            <li><a href="#实例结构">实例结构</a></li>
             <li><a href="#四大对象结构的关系">四大对象结构的关系</a></li>
           </ul>
         </li>
@@ -765,7 +766,6 @@
             <li><a href="#关闭文件-1">关闭文件</a></li>
           </ul>
         </li>
-        <li><a href="#文件系统实例">文件系统实例</a></li>
       </ul>
     </li>
     <li><a href="#参考">参考</a></li>
@@ -10051,15 +10051,522 @@ fmd_fleblk[0] 保存 4 和 4，fmd_fleblk[1] 保存 10 和 5，fmd_fleblk[2] 保
 不管存储设备使用什么文件系统，都可以统一使用一套接口</p>
 <p><img src="/image/play_os_in_action/35_1.webp" alt="VFS"></p>
 <h2 id="vfs-数据结构">VFS 数据结构</h2>
-<h3 id="超级块-1">超级块</h3>
-<h3 id="目录-1">目录</h3>
-<h3 id="文件索引节点">文件索引节点</h3>
+<p>VFS为了屏蔽各个文件系统的差异，必须定义一组统一的数据结构，规范
+各个文件系统的实现，每种结构都对应一套回调函数集合。</p>
+<h3 id="超级块结构">超级块结构</h3>
+<p>超级块结构是一个文件系统安装在 VFS 中的标识，其中包含了规定的标准信息，也有具体文件系统的特有信息</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="k">struct</span> <span class="n">super_block</span> <span class="p">{</span>
+    <span class="k">struct</span> <span class="n">list_head</span>    <span class="n">s_list</span><span class="p">;</span> <span class="c1">//超级块链表
+</span><span class="c1"></span>    <span class="n">dev_t</span>           <span class="n">s_dev</span><span class="p">;</span>     <span class="c1">//设备标识
+</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">char</span>       <span class="n">s_blocksize_bits</span><span class="p">;</span><span class="c1">//以位为单位的块大小
+</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">long</span>       <span class="n">s_blocksize</span><span class="p">;</span><span class="c1">//以字节为单位的块大小
+</span><span class="c1"></span>    <span class="n">loff_t</span>          <span class="n">s_maxbytes</span><span class="p">;</span> <span class="c1">//一个文件最大多少字节
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">file_system_type</span> <span class="o">*</span><span class="n">s_type</span><span class="p">;</span> <span class="c1">//文件系统类型
+</span><span class="c1"></span>    <span class="k">const</span> <span class="k">struct</span> <span class="n">super_operations</span>   <span class="o">*</span><span class="n">s_op</span><span class="p">;</span><span class="c1">//超级块函数集合
+</span><span class="c1"></span>    <span class="k">const</span> <span class="k">struct</span> <span class="n">dquot_operations</span>   <span class="o">*</span><span class="n">dq_op</span><span class="p">;</span><span class="c1">//磁盘限额函数集合
+</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">long</span>       <span class="n">s_flags</span><span class="p">;</span><span class="c1">//挂载标志
+</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">long</span>       <span class="n">s_magic</span><span class="p">;</span><span class="c1">//文件系统魔数
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">dentry</span>       <span class="o">*</span><span class="n">s_root</span><span class="p">;</span><span class="c1">//挂载目录
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">rw_semaphore</span> <span class="n">s_umount</span><span class="p">;</span><span class="c1">//卸载信号量
+</span><span class="c1"></span>    <span class="kt">int</span>         <span class="n">s_count</span><span class="p">;</span><span class="c1">//引用计数
+</span><span class="c1"></span>    <span class="n">atomic_t</span>        <span class="n">s_active</span><span class="p">;</span><span class="c1">//活动计数
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">block_device</span> <span class="o">*</span><span class="n">s_bdev</span><span class="p">;</span><span class="c1">//块设备
+</span><span class="c1"></span>    <span class="kt">void</span>            <span class="o">*</span><span class="n">s_fs_info</span><span class="p">;</span><span class="c1">//文件系统信息
+</span><span class="c1"></span>    <span class="n">time64_t</span>           <span class="n">s_time_min</span><span class="p">;</span><span class="c1">//最小时间限制
+</span><span class="c1"></span>    <span class="n">time64_t</span>           <span class="n">s_time_max</span><span class="p">;</span><span class="c1">//最大时间限制
+</span><span class="c1"></span>    <span class="kt">char</span>            <span class="n">s_id</span><span class="p">[</span><span class="mi">32</span><span class="p">];</span>   <span class="c1">//标识名称
+</span><span class="c1"></span>    <span class="n">uuid_t</span>          <span class="n">s_uuid</span><span class="p">;</span>     <span class="c1">//文件系统的UUID
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">list_lru</span>     <span class="n">s_dentry_lru</span><span class="p">;</span><span class="c1">//LRU方式挂载的目录 
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">list_lru</span>     <span class="n">s_inode_lru</span><span class="p">;</span><span class="c1">//LRU方式挂载的索引结点
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">mutex</span>        <span class="n">s_sync_lock</span><span class="p">;</span><span class="c1">//同步锁  
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">list_head</span>    <span class="n">s_inodes</span><span class="p">;</span>   <span class="c1">//所有的索引节点
+</span><span class="c1"></span>    <span class="n">spinlock_t</span>      <span class="n">s_inode_wblist_lock</span><span class="p">;</span><span class="c1">//回写索引节点的锁
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">list_head</span>    <span class="n">s_inodes_wb</span><span class="p">;</span>    <span class="c1">//挂载所有要回写的索引节点
+</span><span class="c1"></span><span class="p">}</span> <span class="n">__randomize_layout</span><span class="p">;</span>
+
+
+<span class="k">struct</span> <span class="n">super_operations</span> <span class="p">{</span>
+    <span class="c1">//分配一个新的索引结点结构
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="n">alloc_inode</span><span class="p">)(</span><span class="k">struct</span> <span class="n">super_block</span> <span class="o">*</span><span class="n">sb</span><span class="p">);</span>
+    <span class="c1">//销毁给定的索引节点
+</span><span class="c1"></span>    <span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">destroy_inode</span><span class="p">)(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">);</span>
+    <span class="c1">//释放给定的索引节点
+</span><span class="c1"></span>    <span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">free_inode</span><span class="p">)(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">);</span>
+    <span class="c1">//VFS在索引节点为脏(改变)时，会调用此函数
+</span><span class="c1"></span>    <span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">dirty_inode</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span> <span class="n">flags</span><span class="p">);</span>
+    <span class="c1">//该函数用于将给定的索引节点写入磁盘
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">write_inode</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">writeback_control</span> <span class="o">*</span><span class="n">wbc</span><span class="p">);</span>
+    <span class="c1">//在最后一个指向索引节点的引用被释放后，VFS会调用该函数
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">drop_inode</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">);</span>
+    <span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">evict_inode</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">);</span>
+    <span class="c1">//减少超级块计数调用
+</span><span class="c1"></span>    <span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">put_super</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">super_block</span> <span class="o">*</span><span class="p">);</span>
+    <span class="c1">//同步文件系统调用
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">sync_fs</span><span class="p">)(</span><span class="k">struct</span> <span class="n">super_block</span> <span class="o">*</span><span class="n">sb</span><span class="p">,</span> <span class="kt">int</span> <span class="n">wait</span><span class="p">);</span>
+    <span class="c1">//释放超级块调用
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">freeze_super</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">super_block</span> <span class="o">*</span><span class="p">);</span>
+    <span class="c1">//释放文件系统调用
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">freeze_fs</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">super_block</span> <span class="o">*</span><span class="p">);</span>
+    <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">thaw_super</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">super_block</span> <span class="o">*</span><span class="p">);</span>
+    <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">unfreeze_fs</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">super_block</span> <span class="o">*</span><span class="p">);</span>
+    <span class="c1">//VFS通过调用该函数，获取文件系统状态
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">statfs</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">kstatfs</span> <span class="o">*</span><span class="p">);</span>
+    <span class="c1">//当指定新的安装选项重新安装文件系统时，VFS会调用此函数
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">remount_fs</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">super_block</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="p">);</span>
+    <span class="c1">//VFS调用该函数中断安装操作。该函数被网络文件系统使用，如NFS
+</span><span class="c1"></span>    <span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">umount_begin</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">super_block</span> <span class="o">*</span><span class="p">);</span>
+<span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="目录结构">目录结构</h3>
+<p><img src="/image/play_os_in_action/35_2.webp" alt="dentry"></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="c1">//快速字符串保存关于字符串的 &#34;元数据&#34;（即长度和哈希值）
+</span><span class="c1"></span><span class="k">struct</span> <span class="n">qstr</span> <span class="p">{</span>
+    <span class="k">union</span> <span class="p">{</span>
+        <span class="k">struct</span> <span class="p">{</span>
+            <span class="n">HASH_LEN_DECLARE</span><span class="p">;</span>
+        <span class="p">};</span>
+        <span class="n">u64</span> <span class="n">hash_len</span><span class="p">;</span>
+    <span class="p">};</span>
+    <span class="k">const</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">;</span><span class="c1">//指向名称字符串
+</span><span class="c1"></span><span class="p">};</span>
+<span class="k">struct</span> <span class="n">dentry</span> <span class="p">{</span>
+    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">d_flags</span><span class="p">;</span>       <span class="c1">//目录标志
+</span><span class="c1"></span>    <span class="n">seqcount_spinlock_t</span> <span class="n">d_seq</span><span class="p">;</span>  <span class="c1">//锁
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">hlist_bl_node</span> <span class="n">d_hash</span><span class="p">;</span><span class="c1">//目录的哈希链表    
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="n">d_parent</span><span class="p">;</span>    <span class="c1">//指向父目录
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">qstr</span> <span class="n">d_name</span><span class="p">;</span>         <span class="c1">//目录名称
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="n">d_inode</span><span class="p">;</span>      <span class="c1">//指向目录文件的索引节点 
+</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">d_iname</span><span class="p">[</span><span class="n">DNAME_INLINE_LEN</span><span class="p">];</span>    <span class="c1">//短目录名
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">lockref</span> <span class="n">d_lockref</span><span class="p">;</span>   <span class="c1">//目录锁与计数
+</span><span class="c1"></span>    <span class="k">const</span> <span class="k">struct</span> <span class="n">dentry_operations</span> <span class="o">*</span><span class="n">d_op</span><span class="p">;</span><span class="c1">//目录的函数集
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">super_block</span> <span class="o">*</span><span class="n">d_sb</span><span class="p">;</span>   <span class="c1">//指向超级块
+</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">d_time</span><span class="p">;</span>       <span class="c1">//时间
+</span><span class="c1"></span>    <span class="kt">void</span> <span class="o">*</span><span class="n">d_fsdata</span><span class="p">;</span>         <span class="c1">//指向具体文件系统的数据
+</span><span class="c1"></span>    <span class="k">union</span> <span class="p">{</span>
+        <span class="k">struct</span> <span class="n">list_head</span> <span class="n">d_lru</span><span class="p">;</span>     <span class="c1">//LRU链表
+</span><span class="c1"></span>        <span class="n">wait_queue_head_t</span> <span class="o">*</span><span class="n">d_wait</span><span class="p">;</span>
+    <span class="p">};</span>
+    <span class="k">struct</span> <span class="n">list_head</span> <span class="n">d_child</span><span class="p">;</span>   <span class="c1">//挂入父目录的链表节点 
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">list_head</span> <span class="n">d_subdirs</span><span class="p">;</span> <span class="c1">//挂载所有子目录的链表
+</span><span class="c1"></span><span class="p">}</span> <span class="n">__randomize_layout</span><span class="p">;</span>
+
+
+<span class="c1">//快速字符串保存关于字符串的 &#34;元数据&#34;（即长度和哈希值）
+</span><span class="c1"></span><span class="k">struct</span> <span class="n">qstr</span> <span class="p">{</span>
+    <span class="k">union</span> <span class="p">{</span>
+        <span class="k">struct</span> <span class="p">{</span>
+            <span class="n">HASH_LEN_DECLARE</span><span class="p">;</span>
+        <span class="p">};</span>
+        <span class="n">u64</span> <span class="n">hash_len</span><span class="p">;</span>
+    <span class="p">};</span>
+    <span class="k">const</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">;</span><span class="c1">//指向名称字符串
+</span><span class="c1"></span><span class="p">};</span>
+<span class="k">struct</span> <span class="n">dentry</span> <span class="p">{</span>
+    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">d_flags</span><span class="p">;</span>       <span class="c1">//目录标志
+</span><span class="c1"></span>    <span class="n">seqcount_spinlock_t</span> <span class="n">d_seq</span><span class="p">;</span>  <span class="c1">//锁
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">hlist_bl_node</span> <span class="n">d_hash</span><span class="p">;</span><span class="c1">//目录的哈希链表    
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="n">d_parent</span><span class="p">;</span>    <span class="c1">//指向父目录
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">qstr</span> <span class="n">d_name</span><span class="p">;</span>         <span class="c1">//目录名称
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="n">d_inode</span><span class="p">;</span>      <span class="c1">//指向目录文件的索引节点 
+</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">d_iname</span><span class="p">[</span><span class="n">DNAME_INLINE_LEN</span><span class="p">];</span>    <span class="c1">//短目录名
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">lockref</span> <span class="n">d_lockref</span><span class="p">;</span>   <span class="c1">//目录锁与计数
+</span><span class="c1"></span>    <span class="k">const</span> <span class="k">struct</span> <span class="n">dentry_operations</span> <span class="o">*</span><span class="n">d_op</span><span class="p">;</span><span class="c1">//目录的函数集
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">super_block</span> <span class="o">*</span><span class="n">d_sb</span><span class="p">;</span>   <span class="c1">//指向超级块
+</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">d_time</span><span class="p">;</span>       <span class="c1">//时间
+</span><span class="c1"></span>    <span class="kt">void</span> <span class="o">*</span><span class="n">d_fsdata</span><span class="p">;</span>         <span class="c1">//指向具体文件系统的数据
+</span><span class="c1"></span>    <span class="k">union</span> <span class="p">{</span>
+        <span class="k">struct</span> <span class="n">list_head</span> <span class="n">d_lru</span><span class="p">;</span>     <span class="c1">//LRU链表
+</span><span class="c1"></span>        <span class="n">wait_queue_head_t</span> <span class="o">*</span><span class="n">d_wait</span><span class="p">;</span>
+    <span class="p">};</span>
+    <span class="k">struct</span> <span class="n">list_head</span> <span class="n">d_child</span><span class="p">;</span>   <span class="c1">//挂入父目录的链表节点 
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">list_head</span> <span class="n">d_subdirs</span><span class="p">;</span> <span class="c1">//挂载所有子目录的链表
+</span><span class="c1"></span><span class="p">}</span> <span class="n">__randomize_layout</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="文件索引节点">文件索引节点</h3>
+<p>inode结构表示一个文件索引节点，里面包含文件权限、文件所属用户、文件访问和修改时间、
+文件数据块号等</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="k">struct</span> <span class="n">inode</span> <span class="p">{</span>
+    <span class="n">umode_t</span>         <span class="n">i_mode</span><span class="p">;</span><span class="c1">//文件访问权限
+</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">short</span>      <span class="n">i_opflags</span><span class="p">;</span><span class="c1">//打开文件时的标志
+</span><span class="c1"></span>    <span class="n">kuid_t</span>          <span class="n">i_uid</span><span class="p">;</span><span class="c1">//文件所属的用户id
+</span><span class="c1"></span>    <span class="n">kgid_t</span>          <span class="n">i_gid</span><span class="p">;</span><span class="c1">//文件所属的用户组id
+</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">int</span>        <span class="n">i_flags</span><span class="p">;</span><span class="c1">//标志
+</span><span class="c1"></span>    <span class="k">const</span> <span class="k">struct</span> <span class="n">inode_operations</span>   <span class="o">*</span><span class="n">i_op</span><span class="p">;</span><span class="c1">//inode函数集
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">super_block</span>  <span class="o">*</span><span class="n">i_sb</span><span class="p">;</span><span class="c1">//指向所属超级块
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">address_space</span>    <span class="o">*</span><span class="n">i_mapping</span><span class="p">;</span><span class="c1">//文件数据在内存中的页缓存
+</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">long</span>       <span class="n">i_ino</span><span class="p">;</span><span class="c1">//inode号
+</span><span class="c1"></span>    <span class="n">dev_t</span>           <span class="n">i_rdev</span><span class="p">;</span><span class="c1">//实际设备标志符
+</span><span class="c1"></span>    <span class="n">loff_t</span>          <span class="n">i_size</span><span class="p">;</span><span class="c1">//文件大小，以字节为单位
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">timespec64</span>   <span class="n">i_atime</span><span class="p">;</span><span class="c1">//文件访问时间
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">timespec64</span>   <span class="n">i_mtime</span><span class="p">;</span><span class="c1">//文件修改时间
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">timespec64</span>   <span class="n">i_ctime</span><span class="p">;</span><span class="c1">//最后修改时间
+</span><span class="c1"></span>    <span class="n">spinlock_t</span>      <span class="n">i_lock</span><span class="p">;</span> <span class="c1">//保护inode的自旋锁
+</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">short</span>          <span class="n">i_bytes</span><span class="p">;</span><span class="c1">//使用的字节数
+</span><span class="c1"></span>    <span class="n">u8</span>          <span class="n">i_blkbits</span><span class="p">;</span><span class="c1">//以位为单位的块大小；
+</span><span class="c1"></span>    <span class="n">u8</span>          <span class="n">i_write_hint</span><span class="p">;</span>
+    <span class="n">blkcnt_t</span>        <span class="n">i_blocks</span><span class="p">;</span>
+    <span class="k">struct</span> <span class="n">list_head</span>    <span class="n">i_io_list</span><span class="p">;</span>  
+    <span class="k">struct</span> <span class="n">list_head</span>    <span class="n">i_lru</span><span class="p">;</span>      <span class="c1">//在缓存LRU中的链表节点
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">list_head</span>    <span class="n">i_sb_list</span><span class="p">;</span><span class="c1">//在超级块中的链表节点
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">list_head</span>    <span class="n">i_wb_list</span><span class="p">;</span>
+    <span class="n">atomic64_t</span>      <span class="n">i_version</span><span class="p">;</span><span class="c1">//版本号
+</span><span class="c1"></span>    <span class="n">atomic64_t</span>      <span class="n">i_sequence</span><span class="p">;</span> 
+    <span class="n">atomic_t</span>        <span class="n">i_count</span><span class="p">;</span><span class="c1">//计数
+</span><span class="c1"></span>    <span class="n">atomic_t</span>        <span class="n">i_dio_count</span><span class="p">;</span><span class="c1">//直接io进程计数
+</span><span class="c1"></span>    <span class="n">atomic_t</span>        <span class="n">i_writecount</span><span class="p">;</span><span class="c1">//写进程计数
+</span><span class="c1"></span>    <span class="k">union</span> <span class="p">{</span>
+        <span class="k">const</span> <span class="k">struct</span> <span class="n">file_operations</span>    <span class="o">*</span><span class="n">i_fop</span><span class="p">;</span><span class="c1">//文件函数集合 
+</span><span class="c1"></span>        <span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">free_inode</span><span class="p">)(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">);</span>
+    <span class="p">};</span>
+    <span class="k">struct</span> <span class="n">file_lock_context</span>    <span class="o">*</span><span class="n">i_flctx</span><span class="p">;</span>
+    <span class="k">struct</span> <span class="n">address_space</span>    <span class="n">i_data</span><span class="p">;</span>
+    <span class="kt">void</span>            <span class="o">*</span><span class="n">i_private</span><span class="p">;</span> <span class="c1">//私有数据指针
+</span><span class="c1"></span><span class="p">}</span> <span class="n">__randomize_layout</span><span class="p">;</span>
+
+
+<span class="k">struct</span> <span class="n">inode_operations</span> <span class="p">{</span>
+    <span class="c1">//VFS通过系统create()和open()接口来调用该函数，从而为dentry对象创建一个新的索引节点
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">create</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="p">,</span><span class="kt">int</span><span class="p">);</span>
+    <span class="c1">//该函数在特定目录中寻找索引节点，该索引节点要对应于dentry中给出的文件名
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span> <span class="p">(</span><span class="o">*</span><span class="n">lookup</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="p">);</span>
+    <span class="c1">//被系统link()接口调用，用来创建硬连接。硬链接名称由dentry参数指定
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">link</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="p">);</span>
+    <span class="c1">//被系统unlink()接口调用，删除由目录项dentry链接的索引节点对象
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">unlink</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="p">);</span>
+    <span class="c1">//被系统symlik()接口调用，创建符号连接，该符号连接名称由symname指定，连接对象是dir目录中的dentry目录项
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">symlink</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="p">);</span>
+    <span class="c1">//被mkdir()接口调用，创建一个新目录。
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">mkdir</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>
+    <span class="c1">//被rmdir()接口调用，删除dentry目录项代表的文件
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">rmdir</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="p">);</span>
+    <span class="c1">//被mknod()接口调用，创建特殊文件(设备文件、命名管道或套接字)。
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">mknod</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="n">dev_t</span><span class="p">);</span>
+    <span class="c1">//VFS调用该函数来移动文件。文件源路径在old_dir目录中，源文件由old_dentry目录项所指定，目标路径在new_dir目录中，目标文件由new_dentry指定
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">rename</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="p">);</span>
+    <span class="c1">//被系统readlink()接口调用，拷贝数据到特定的缓冲buffer中。拷贝的数据来自dentry指定的符号链接
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">readlink</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>
+    <span class="c1">//被VFS调用，从一个符号连接查找他指向的索引节点
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">follow_link</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">nameidata</span> <span class="o">*</span><span class="p">);</span>
+    <span class="c1">//在follow_link()调用之后，该函数由vfs调用进行清除工作
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">put_link</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">nameidata</span> <span class="o">*</span><span class="p">);</span>
+    <span class="c1">//被VFS调用，修改文件的大小，在调用之前，索引节点的i_size项必须被设置成预期的大小
+</span><span class="c1"></span>    <span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">truncate</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">);</span>
+    <span class="c1">//该函数用来检查给定的inode所代表的文件是否允许特定的访问模式，如果允许特定的访问模式，返回0，否则返回负值的错误码
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">permission</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>
+    <span class="c1">//被notify_change接口调用，在修改索引节点之后，通知发生了改变事件
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">setattr</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">iattr</span> <span class="o">*</span><span class="p">);</span>
+    <span class="c1">//在通知索引节点需要从磁盘中更新时，VFS会调用该函数
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">getattr</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">vfsmount</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">kstat</span> <span class="o">*</span><span class="p">);</span>
+    <span class="c1">//被VFS调用，向dentry指定的文件设置扩展属性
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">setxattr</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="p">,</span> <span class="n">size_t</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>
+    <span class="c1">//被VFS调用，拷贝给定文件的扩展属性name对应的数值
+</span><span class="c1"></span>    <span class="n">ssize_t</span> <span class="p">(</span><span class="o">*</span><span class="n">getxattr</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="p">,</span> <span class="n">size_t</span><span class="p">);</span>
+    <span class="c1">//该函数将特定文件所有属性列表拷贝到一个缓冲列表中
+</span><span class="c1"></span>    <span class="n">ssize_t</span> <span class="p">(</span><span class="o">*</span><span class="n">listxattr</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="p">,</span> <span class="n">size_t</span><span class="p">);</span>
+    <span class="c1">//该函数从给定文件中删除指定的属性
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">removexattr</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="p">);</span>      
+<span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="实例结构">实例结构</h3>
+<p>进程打开的文件使用 file 结构表示</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="k">struct</span> <span class="n">file</span> <span class="p">{</span>
+    <span class="k">union</span> <span class="p">{</span>
+        <span class="k">struct</span> <span class="n">llist_node</span>   <span class="n">fu_llist</span><span class="p">;</span>
+        <span class="k">struct</span> <span class="n">rcu_head</span>     <span class="n">fu_rcuhead</span><span class="p">;</span>
+    <span class="p">}</span> <span class="n">f_u</span><span class="p">;</span>
+    <span class="k">struct</span> <span class="n">path</span>     <span class="n">f_path</span><span class="p">;</span> <span class="c1">//文件路径
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">inode</span>        <span class="o">*</span><span class="n">f_inode</span><span class="p">;</span>  <span class="c1">//文件对应的inode
+</span><span class="c1"></span>    <span class="k">const</span> <span class="k">struct</span> <span class="n">file_operations</span>    <span class="o">*</span><span class="n">f_op</span><span class="p">;</span><span class="c1">//文件函数集合
+</span><span class="c1"></span>    <span class="n">spinlock_t</span>      <span class="n">f_lock</span><span class="p">;</span>  <span class="c1">//自旋锁
+</span><span class="c1"></span>    <span class="k">enum</span> <span class="n">rw_hint</span>        <span class="n">f_write_hint</span><span class="p">;</span>
+    <span class="n">atomic_long_t</span>       <span class="n">f_count</span><span class="p">;</span><span class="c1">//文件对象计数据。
+</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">int</span>        <span class="n">f_flags</span><span class="p">;</span><span class="c1">//文件标志
+</span><span class="c1"></span>    <span class="n">fmode_t</span>         <span class="n">f_mode</span><span class="p">;</span><span class="c1">//文件权限
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">mutex</span>        <span class="n">f_pos_lock</span><span class="p">;</span><span class="c1">//文件读写位置锁
+</span><span class="c1"></span>    <span class="n">loff_t</span>          <span class="n">f_pos</span><span class="p">;</span><span class="c1">//进程读写文件的当前位置
+</span><span class="c1"></span>    <span class="n">u64</span>         <span class="n">f_version</span><span class="p">;</span><span class="c1">//文件版本
+</span><span class="c1"></span>    <span class="kt">void</span>            <span class="o">*</span><span class="n">private_data</span><span class="p">;</span><span class="c1">//私有数据
+</span><span class="c1"></span><span class="p">}</span> <span class="n">__randomize_layout</span>
+
+
+<span class="k">struct</span> <span class="n">file_operations</span> <span class="p">{</span>
+    <span class="k">struct</span> <span class="n">module</span> <span class="o">*</span><span class="n">owner</span><span class="p">;</span><span class="c1">//所在的模块
+</span><span class="c1"></span>    <span class="n">loff_t</span> <span class="p">(</span><span class="o">*</span><span class="n">llseek</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="n">loff_t</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span><span class="c1">//调整读写偏移
+</span><span class="c1"></span>    <span class="n">ssize_t</span> <span class="p">(</span><span class="o">*</span><span class="n">read</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">char</span> <span class="n">__user</span> <span class="o">*</span><span class="p">,</span> <span class="n">size_t</span><span class="p">,</span> <span class="n">loff_t</span> <span class="o">*</span><span class="p">);</span><span class="c1">//读
+</span><span class="c1"></span>    <span class="n">ssize_t</span> <span class="p">(</span><span class="o">*</span><span class="n">write</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="n">__user</span> <span class="o">*</span><span class="p">,</span> <span class="n">size_t</span><span class="p">,</span> <span class="n">loff_t</span> <span class="o">*</span><span class="p">);</span><span class="c1">//写
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">mmap</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">vm_area_struct</span> <span class="o">*</span><span class="p">);</span><span class="c1">//映射
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">open</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">);</span><span class="c1">//打开
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">flush</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="n">fl_owner_t</span> <span class="n">id</span><span class="p">);</span><span class="c1">//刷新
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">release</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">);</span><span class="c1">//关闭
+</span><span class="c1"></span><span class="p">}</span> <span class="n">__randomize_layout</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>进程结构中有个文件表，这个表其实就是 file 结构的指针数组，进程每打开一个文件就会建立一个 file 结构实例，并将其地址放入数组中，最后
+返回对应的数组下标，就是调用 open 函数返回的那个整数。</p>
 <h3 id="四大对象结构的关系">四大对象结构的关系</h3>
+<p><img src="/image/play_os_in_action/35_3.jpg" alt="object_relationship"></p>
 <h2 id="文件操作">文件操作</h2>
 <h3 id="打开文件-1">打开文件</h3>
+<p><img src="/image/play_os_in_action/35_4.jpg" alt="open_file"></p>
 <h3 id="读写文件-1">读写文件</h3>
+<p>打开一个文件后，就可以进行读写操作了。读操作是数据从文件经由内核流向进程，
+而写操作是数据从进程经由内核流向文件。读文件的流程如下：</p>
+<p><img src="/image/play_os_in_action/35_5.webp" alt="read_file"></p>
 <h3 id="关闭文件-1">关闭文件</h3>
-<h2 id="文件系统实例">文件系统实例</h2>
+<p><img src="/image/play_os_in_action/35_6.webp" alt="close_file"></p>
 <h1 id="参考">参考</h1>
 <ul>
 <li><a href="https://stackoverflow.com/questions/37146637/why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux">why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux</a></li>
