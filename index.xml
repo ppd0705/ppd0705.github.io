@@ -10353,6 +10353,39 @@ fmd_fleblk[0] 保存 4 和 4，fmd_fleblk[1] 保存 10 和 5，fmd_fleblk[2] 保
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/35_5.webp&#34; alt=&#34;read_file&#34;&gt;&lt;/p&gt;
 &lt;h3 id=&#34;关闭文件-1&#34;&gt;关闭文件&lt;/h3&gt;
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/35_6.webp&#34; alt=&#34;close_file&#34;&gt;&lt;/p&gt;
+&lt;h1 id=&#34;第三十六讲-从-url-到网卡&#34;&gt;第三十六讲 从 URL 到网卡&lt;/h1&gt;
+&lt;h2 id=&#34;前置知识网络分层和网络协议&#34;&gt;前置知识：网络分层和网络协议&lt;/h2&gt;
+&lt;p&gt;当前网络主要遵循 IEEE 802.3标准，基于 OSI 模型。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/36_1.webp&#34; alt=&#34;network_OSI&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;发起请求阶段应用层&#34;&gt;发起请求阶段（应用层）&lt;/h2&gt;
+&lt;h3 id=&#34;用户输入浏览器中输入-url&#34;&gt;用户输入：浏览器中输入 URL&lt;/h3&gt;
+&lt;p&gt;用户输入 baidu.com后，浏览器会进行地址补全： &lt;a href=&#34;https://baidu.com&#34;&gt;https://baidu.com&lt;/a&gt;,
+然后根据 URL 进行解析，生成 HTTP 请求报文。&lt;/p&gt;
+&lt;h3 id=&#34;网络请求前查看浏览器缓存&#34;&gt;网络请求前：查看浏览器缓存&lt;/h3&gt;
+&lt;p&gt;请求发送前，浏览器会检查浏览器缓存和系统缓存，看是否有域名定义的 IP 地址&lt;/p&gt;
+&lt;h3 id=&#34;域名解析dns&#34;&gt;域名解析：DNS&lt;/h3&gt;
+&lt;p&gt;如果没有缓存，则向 DNS 服务器请求域名对应的 IP 信息&lt;/p&gt;
+&lt;h2 id=&#34;操作系统协议栈-传输层和网络层&#34;&gt;操作系统协议栈 （传输层和网络层）&lt;/h2&gt;
+&lt;p&gt;操作系统支持多个协议栈，TCP/IP 协议栈是现在使用最广泛的网络协议栈。&lt;/p&gt;
+&lt;p&gt;协议栈的上半部分通过套接字 Socket 和应用层进行交互，应用层委托协议栈上半部分完成数据收发工作；
+协议栈的下半部分负责将数据发送到指定的 IP 地址，由 IP 协议连接更下层的网卡驱动。&lt;/p&gt;
+&lt;h3 id=&#34;可靠性传输建立-tcp-连接&#34;&gt;可靠性传输：建立 TCP 连接&lt;/h3&gt;
+&lt;p&gt;获得 IP 地址后，随机向对应的 IP 发起 TCP 连接。
+为了确保通信的可靠性，建立 TCP 会首先进行三次握手的操作&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/36_2.webp&#34; alt=&#34;TCP_shake_hands&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/36_3.webp&#34; alt=&#34;TCP_head&#34;&gt;&lt;/p&gt;
+&lt;h3 id=&#34;目的地定位ip-层&#34;&gt;目的地定位：IP 层&lt;/h3&gt;
+&lt;p&gt;IP 协议主要分成三个部分：IP寻址、路由和分包组包&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/36_4.webp&#34; alt=&#34;IP_head&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;点对点传输mac-链路层&#34;&gt;点对点传输：MAC （链路层）&lt;/h2&gt;
+&lt;p&gt;MAC地址是唯一的，固化在网卡中。
+接收方的 MAC 地址可以通过 ARP 协议获取&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/36_5.webp&#34; alt=&#34;MAC_head&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;电信号出口网卡物理层&#34;&gt;电信号出口：网卡（物理层）&lt;/h2&gt;
+&lt;p&gt;MAC 数据包会被网卡驱动程序写入网卡缓冲区，然后网卡会
+在 MAC 数据包的起止位置加入起止帧和校验序列，最后将其转为电信号发送出去&lt;/p&gt;
+&lt;h2 id=&#34;两端数据交换过程&#34;&gt;两端数据交换过程&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/36_6.webp&#34; alt=&#34;client_server_interact&#34;&gt;&lt;/p&gt;
 &lt;h1 id=&#34;参考&#34;&gt;参考&lt;/h1&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://stackoverflow.com/questions/37146637/why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux&#34;&gt;why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux&lt;/a&gt;&lt;/li&gt;
