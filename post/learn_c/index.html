@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]深入C语言和程序运行原理（更新中）">
 <meta itemprop="description" content="第零讲 课前热身 数据量单位 位（bit）： 是最小存储单位，每个位可以存一个二进制码值得 0 或 1 字节（byte）： 通常是由八个位组成的一个存储单元，"><meta itemprop="datePublished" content="2022-01-31T17:04:50+08:00" />
 <meta itemprop="dateModified" content="2022-02-12T16:44:50+08:00" />
-<meta itemprop="wordCount" content="3596">
+<meta itemprop="wordCount" content="6134">
 <meta itemprop="keywords" content="C," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]深入C语言和程序运行原理（更新中）"/>
 <meta name="twitter:description" content="第零讲 课前热身 数据量单位 位（bit）： 是最小存储单位，每个位可以存一个二进制码值得 0 或 1 字节（byte）： 通常是由八个位组成的一个存储单元，"/>
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 3596 words </span>
-          <span class="more-meta"> 8 min read </span>
+        <span class="more-meta"> 6134 words </span>
+          <span class="more-meta"> 13 min read </span>
 
         
         
@@ -385,6 +385,37 @@
             <li><a href="#跳转语句">跳转语句</a></li>
           </ul>
         </li>
+      </ul>
+    </li>
+    <li><a href="#第五讲-函数调用上">第五讲 函数调用（上）</a>
+      <ul>
+        <li><a href="#快速回顾">快速回顾</a></li>
+        <li><a href="#c-函数的调用约定">C 函数的调用约定</a></li>
+        <li><a href="#参数约定">参数约定</a></li>
+        <li><a href="#返回值传递">返回值传递</a></li>
+        <li><a href="#寄存器使用">寄存器使用</a></li>
+        <li><a href="#堆栈清理">堆栈清理</a></li>
+        <li><a href="#其他约定">其他约定</a></li>
+        <li><a href="#保存函数调用信息的栈帧">保存函数调用信息的栈帧</a></li>
+      </ul>
+    </li>
+    <li><a href="#第六讲-函数调用下">第六讲 函数调用（下）</a>
+      <ul>
+        <li><a href="#函数参数求值顺序">函数参数求值顺序</a></li>
+        <li><a href="#尾递归调用优化tail-call-optimization">尾递归调用优化（tail-call optimization）</a></li>
+        <li><a href="#kr-函数声明">K&amp;R 函数声明</a></li>
+      </ul>
+    </li>
+    <li><a href="#第七讲-枚举结构和联合是如何实现的">第七讲 枚举、结构和联合是如何实现的？</a>
+      <ul>
+        <li><a href="#枚举-enumeration">枚举 Enumeration</a></li>
+        <li><a href="#结构-struct">结构 Struct</a>
+          <ul>
+            <li><a href="#内存数据对齐">内存数据对齐</a></li>
+            <li><a href="#填充字节">填充字节</a></li>
+          </ul>
+        </li>
+        <li><a href="#联合-union">联合 Union</a></li>
       </ul>
     </li>
   </ul>
@@ -733,6 +764,219 @@ let result = arr.filter(n =&gt; n &gt; 7)
 <img src="/image/learn_c/4_3.webp" alt="do_while_statement"></p>
 <h3 id="跳转语句">跳转语句</h3>
 <p>跳转语句主要包含 <code>break</code>、<code>continue</code>、<code>return</code>、<code>goto</code> 四种形式</p>
+<h1 id="第五讲-函数调用上">第五讲 函数调用（上）</h1>
+<h2 id="快速回顾">快速回顾</h2>
+<p>借用函数，可以将一个程序的实现过程拆分为多个子步骤，并以结构化的方式来构建程序。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;tgmath.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+<span class="kt">int</span> <span class="n">x</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">y</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">Point</span><span class="p">;</span>
+<span class="kt">int</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">,</span> <span class="n">Point</span><span class="o">*</span> <span class="n">p</span><span class="p">,</span> <span class="kt">int</span><span class="p">(</span><span class="n">handler</span><span class="p">)(</span><span class="kt">int</span><span class="p">))</span> <span class="p">{</span>
+<span class="k">return</span> <span class="n">handler</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="o">+</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">x</span> <span class="o">+</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">y</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">handler</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">return</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+<span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+<span class="n">Point</span> <span class="n">p</span> <span class="o">=</span> <span class="p">{</span> <span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="mi">10</span> <span class="p">};</span>
+<span class="n">printf</span><span class="p">(</span><span class="s">&#34;%d&#34;</span><span class="p">,</span> <span class="n">foo</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">p</span><span class="p">,</span> <span class="n">handler</span><span class="p">));</span>  <span class="c1">// 5.
+</span><span class="c1"></span><span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span> 
+
+</code></pre></td></tr></table>
+</div>
+</div><p>函数类型的参数默认以指针传递，可以省略表明指针类型的<code>*</code>符号</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C">
+<span class="kt">int</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">,</span> <span class="n">Point</span><span class="o">*</span> <span class="n">p</span><span class="p">,</span> <span class="kt">int</span><span class="p">(</span><span class="o">*</span><span class="n">handler</span><span class="p">)(</span><span class="kt">int</span><span class="p">))</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">(</span><span class="o">*</span><span class="n">handler</span><span class="p">)(</span><span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="o">+</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">x</span> <span class="o">+</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">y</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="c-函数的调用约定">C 函数的调用约定</h2>
+<p>我们将编译器实现函数调用所遵循的一系列规则称之为函数的调用约定（Calling Convention）</p>
+<p>调用约定并非 C 语言标准的一部分，不同平台有不同的标准，
+Unix系统使用 System V AMD64 ABI （简称 SysV）的调用约定</p>
+<p>SysV 函数调用示例如下：</p>
+<p><img src="/image/learn_c/5_1.webp" alt="sysv_calling_convention"></p>
+<p>函数调用是通过 call 指令来完成，每个函数执行完毕后通过 ret 指令
+来退出函数的执行，并转移代码执行流程到之前函数调用指令的下一条指令上</p>
+<p><img src="/image/learn_c/5_2.webp" alt="call_and_ret"></p>
+<h2 id="参数约定">参数约定</h2>
+<p>对于整形和指针类型的实参，需要分别使用寄存器 rdi、rsi、rdx、rcx、r8、r9，按函数定义是参数从左到右的顺序进行传值。如果参数超过 6 个，
+则余下参数通过栈内存进行传送，多出来的参数从右到左入栈</p>
+<p>对于浮点数，使用 xmm0 到 xmm7 共 8 个寄存器进行存储。
+对于更宽的值，也可能使用 ymm 与 zmm 寄存器来代替 xmm 寄存器。</p>
+<h2 id="返回值传递">返回值传递</h2>
+<p>整数类型返回值，小于 64 位，使用 rax 寄存器（32 位的别名为 eax ），小于 128 位，使用 rax和 rdx 分别返回低 64 位和高 64 位</p>
+<p>浮点数会使用 xmm、ymm、zmm 寄存器。</p>
+<h2 id="寄存器使用">寄存器使用</h2>
+<p>对于 rbx、rbp、rsp 和 r12 ~ r15 寄存器，若函数需要使用它们，
+需要使用前暂存，退出前恢复。</p>
+<h2 id="堆栈清理">堆栈清理</h2>
+<p>每个函数在结束前，需要清理自身的堆栈，可以通过 leave 指令完成</p>
+<h2 id="其他约定">其他约定</h2>
+<ul>
+<li>函数在 call 调用前， 需要保证栈顶地址值 16 字节对齐</li>
+<li>从栈顶向上保留128 字节作为 “Red Zone”</li>
+<li>系统调用使用寄存器 rdi、rsi、rdx、r10、r8 和 r9 传递参数</li>
+</ul>
+<p>Red Zone 是位于栈顶向上的一段固定长度的内存段，这块区域可以被调用函数栈中的 “叶子” 函数（即不再调取其他函数的函数）使用，这样在需要额外栈内存时，就能省去调整栈内存大小的过程。</p>
+<h2 id="保存函数调用信息的栈帧">保存函数调用信息的栈帧</h2>
+<p>我们将栈内存数据块称之为帧栈，帧栈存放有返回地址、实参
+局部地址、返回值和暂存的寄存器值。</p>
+<p>在进程内存中，栈内存是从高向低增长的，即栈底位于高地址处，栈顶位于
+低地址处。</p>
+<p>rsp 寄存器又称之为 Stack Pointer，其存放着栈顶地址，即其决定了
+栈内存大小，通过减小其存储的值，就能扩大栈内存。</p>
+<p><img src="/image/learn_c/5_3.webp" alt="stack_memory"></p>
+<p>bar 函数第一行指令 <code>push rbp</code> 会将当前 rbp 寄存器的值存到栈中，
+rbp 寄存器 又称为 Frame Pointer， 通常来存储调用前的栈高度，即
+rsp的旧值，以便进行帧栈寻址，并在退出前将栈中数据恢复到调用前的状态；
+第二行指令<code>mov rbp, rsp</code>便是将 rsp 的值保存到 rbp 中；
+第三行指令<code>mov eax, 10</code> 将结果存入 eax 寄存器;
+第四行指令<code>pop rbp</code> 恢复 rbp 寄存器的值；
+第五行指令<code>ret</code> 将程序的执行转移到函数调用前。</p>
+<p>main 函数第 29 行指令<code>sub rsp, 16</code>减小 rsp 的值，将栈空间扩大 16 字节；
+第 30、31 行指令分别将 1 和 2 存入 rbp-4 和 rbp-8 的位置；
+第 34、35 行指令，借助 push， 将 8 和 7 存入 rbp-12 、 rbp-16的位置。</p>
+<p>leave 指令会恢复 rsp的值来“清理”栈数据，并恢复 rbp的值。
+等效于: <code>mov rsp, rbp; pop rbp</code>; 与之对应的 enter 指令等效于 <code>push rbp; mov rpb, rsp</code></p>
+<p><img src="/image/learn_c/5_4.webp" alt="main_func_memory"></p>
+<h1 id="第六讲-函数调用下">第六讲 函数调用（下）</h1>
+<h2 id="函数参数求值顺序">函数参数求值顺序</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+<span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="n">printf</span><span class="p">(</span><span class="s">&#34;%d %d %d&#34;</span><span class="p">,</span> <span class="n">n</span><span class="o">++</span><span class="p">,</span> <span class="n">n</span><span class="o">++</span><span class="p">,</span> <span class="n">n</span><span class="o">++</span><span class="p">);</span>
+<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span> 
+</code></pre></td></tr></table>
+</div>
+</div><p>如上示例程序，C 函数参数的求值顺序并没有被明确规定，有的编译器按从左到右计算，有的从左到右计算。</p>
+<p>为了程序健壮性，不要编写需要依赖特定函数参数求值顺序的代码。</p>
+<h2 id="尾递归调用优化tail-call-optimization">尾递归调用优化（tail-call optimization）</h2>
+<p><img src="/image/learn_c/6_1.webp" alt="factorial_function"></p>
+<p>函数调用过程所需数据是以帧栈的形式存到到进程的栈内存中，而栈内存的清理工作是在函数准备ret 返回前，通过 leave指令进行。
+对于正常的递归函数，由于函数不断调用自己，产生的帧栈越来越多，可能导致内存溢出；另外函数调用会创建和销毁帧栈，这也是消耗性能的。</p>
+<p>尾递归调用优化是指在一定条件下，编译器直接利用跳转指令代替函数调用指令，来模拟函数调用过程，这样便可省去函数调用帧栈的不断创建和销毁，
+而且也只使用了有限的栈内存。</p>
+<p>尾递归调用优化一个前提条件是：递归语句必须是在函数返回前的最后一条语句。在这种情况下，编译器才能确定函数的返回值没有被上一个帧栈所使用。</p>
+<p><img src="/image/learn_c/6_2.webp" alt="factorial_function2"></p>
+<p>上面的函数开启最高编译优化等级”-O3“后，会使用尾递归优化，
+在执行 ret 前，会判断寄存器 edi 的值是否为0 （ZF=1），来决定调转</p>
+<h2 id="kr-函数声明">K&amp;R 函数声明</h2>
+<p>K&amp;R 函数声明可能不知道函数的参数列表，如下所示：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">add</span><span class="p">();</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+<span class="n">printf</span><span class="p">(</span><span class="s">&#34;%d&#34;</span><span class="p">,</span> <span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>  <span class="c1">// ?
+</span><span class="c1"></span><span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">add</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这样导致参数是一个随机值，不建议使用。</p>
+<h1 id="第七讲-枚举结构和联合是如何实现的">第七讲 枚举、结构和联合是如何实现的？</h1>
+<h2 id="枚举-enumeration">枚举 Enumeration</h2>
+<p><img src="/image/learn_c/7_1.webp" alt="enum"></p>
+<p>从汇编代码可以看出自定义枚举类型都是以 int 类型存储的，枚举值 Mon 在底层是由 0 表示。</p>
+<p>C 标准直接将枚举值当做整数进行处理，这样导致foo 函数在调用时，实际上允许传入任何可以被隐式转换为 int 类型的值。</p>
+<h2 id="结构-struct">结构 Struct</h2>
+<p>结构和数组类型，都是使用连续的内存存放数据，不过结构可以存放不同的类型的数据。</p>
+<p><img src="/image/learn_c/7_2.webp" alt="struct"></p>
+<p>本质上，结构只是对内部所包含的各类数据的一个封装，因此只需要它分装的这些数据放在连续的内存装即可。</p>
+<p><img src="/image/learn_c/7_3.webp" alt="struct_stack_memory"></p>
+<p>如上图的栈内存所示，字符转指针 p 位于 [rbp-32] 处，占用 8 个字节，字符 c 位于 [rbp-24] 处，占用 1 个字节，长整形 x 位于 [rbp-16]处，占用 8 个字节。</p>
+<h3 id="内存数据对齐">内存数据对齐</h3>
+<p>自然对齐是指被操作数据所在的地址为该数据大小的整数倍，当内存中的数据
+满足自然对齐时，CPU通常能够以最高的效率进行数据操作。</p>
+<h3 id="填充字节">填充字节</h3>
+<p>某些情况即使结果对象各个数据成员都满足自然对齐的要求，额外的填充字节也会被添加，如下示例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="k">struct</span> <span class="n">Foo</span> <span class="p">{</span>
+<span class="kt">char</span> <span class="o">*</span><span class="n">p</span><span class="p">;</span>  <span class="c1">// 8 bytes.
+</span><span class="c1"></span><span class="kt">char</span> <span class="n">c</span><span class="p">;</span>  <span class="c1">// 1 bytes.
+</span><span class="c1">// (padding): 7 bytes.
+</span><span class="c1"></span><span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>之所以会这样，因为编译器想保证：当结构体被连续存放时，前一个对象结束的位置正好可以满足后一个对象的起始位置时自然对齐的要求。
+这样也就要求结构对象本身的大小必须是内部最大成员大小的整数倍。</p>
+<h2 id="联合-union">联合 Union</h2>
+<p>联合和结构语法类型，只要把 关键字从 struct 改为 union。
+顾名思义，联合就是所有字段共同使用一个内存区域。</p>
+<p>联合对象的大小与内部定义最大成员的大小相同。</p>
+<p>对一个单独的联合对象来说，哪个字段在生效我们无从得知，所以需要一个标签字段来配合指明正在生效的字段，这样模式叫做“Tagged Union”.</p>
+<p><img src="/image/learn_c/7_4.webp" alt="union"></p>
 
     </div>
 

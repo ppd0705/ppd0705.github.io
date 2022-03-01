@@ -405,6 +405,219 @@ let result = arr.filter(n =&amp;gt; n &amp;gt; 7)
 &lt;img src=&#34;https://ppd0705.github.io/image/learn_c/4_3.webp&#34; alt=&#34;do_while_statement&#34;&gt;&lt;/p&gt;
 &lt;h3 id=&#34;跳转语句&#34;&gt;跳转语句&lt;/h3&gt;
 &lt;p&gt;跳转语句主要包含 &lt;code&gt;break&lt;/code&gt;、&lt;code&gt;continue&lt;/code&gt;、&lt;code&gt;return&lt;/code&gt;、&lt;code&gt;goto&lt;/code&gt; 四种形式&lt;/p&gt;
+&lt;h1 id=&#34;第五讲-函数调用上&#34;&gt;第五讲 函数调用（上）&lt;/h1&gt;
+&lt;h2 id=&#34;快速回顾&#34;&gt;快速回顾&lt;/h2&gt;
+&lt;p&gt;借用函数，可以将一个程序的实现过程拆分为多个子步骤，并以结构化的方式来构建程序。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;cp&#34;&gt;#include&lt;/span&gt; &lt;span class=&#34;cpf&#34;&gt;&amp;lt;stdio.h&amp;gt;&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;#include&lt;/span&gt; &lt;span class=&#34;cpf&#34;&gt;&amp;lt;tgmath.h&amp;gt;&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;typedef&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Point&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;foo&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Point&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;p&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;handler&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;))&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;handler&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;p&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;p&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;handler&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;sqrt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;main&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;x&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;Point&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;p&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;y&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;10&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;};&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;printf&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;%d&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;foo&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;p&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;handler&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;));&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;// 5.
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt; 
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;函数类型的参数默认以指针传递，可以省略表明指针类型的&lt;code&gt;*&lt;/code&gt;符号&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;
+&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;foo&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Point&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;p&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;handler&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;))&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;handler&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;p&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;p&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;c-函数的调用约定&#34;&gt;C 函数的调用约定&lt;/h2&gt;
+&lt;p&gt;我们将编译器实现函数调用所遵循的一系列规则称之为函数的调用约定（Calling Convention）&lt;/p&gt;
+&lt;p&gt;调用约定并非 C 语言标准的一部分，不同平台有不同的标准，
+Unix系统使用 System V AMD64 ABI （简称 SysV）的调用约定&lt;/p&gt;
+&lt;p&gt;SysV 函数调用示例如下：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/learn_c/5_1.webp&#34; alt=&#34;sysv_calling_convention&#34;&gt;&lt;/p&gt;
+&lt;p&gt;函数调用是通过 call 指令来完成，每个函数执行完毕后通过 ret 指令
+来退出函数的执行，并转移代码执行流程到之前函数调用指令的下一条指令上&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/learn_c/5_2.webp&#34; alt=&#34;call_and_ret&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;参数约定&#34;&gt;参数约定&lt;/h2&gt;
+&lt;p&gt;对于整形和指针类型的实参，需要分别使用寄存器 rdi、rsi、rdx、rcx、r8、r9，按函数定义是参数从左到右的顺序进行传值。如果参数超过 6 个，
+则余下参数通过栈内存进行传送，多出来的参数从右到左入栈&lt;/p&gt;
+&lt;p&gt;对于浮点数，使用 xmm0 到 xmm7 共 8 个寄存器进行存储。
+对于更宽的值，也可能使用 ymm 与 zmm 寄存器来代替 xmm 寄存器。&lt;/p&gt;
+&lt;h2 id=&#34;返回值传递&#34;&gt;返回值传递&lt;/h2&gt;
+&lt;p&gt;整数类型返回值，小于 64 位，使用 rax 寄存器（32 位的别名为 eax ），小于 128 位，使用 rax和 rdx 分别返回低 64 位和高 64 位&lt;/p&gt;
+&lt;p&gt;浮点数会使用 xmm、ymm、zmm 寄存器。&lt;/p&gt;
+&lt;h2 id=&#34;寄存器使用&#34;&gt;寄存器使用&lt;/h2&gt;
+&lt;p&gt;对于 rbx、rbp、rsp 和 r12 ~ r15 寄存器，若函数需要使用它们，
+需要使用前暂存，退出前恢复。&lt;/p&gt;
+&lt;h2 id=&#34;堆栈清理&#34;&gt;堆栈清理&lt;/h2&gt;
+&lt;p&gt;每个函数在结束前，需要清理自身的堆栈，可以通过 leave 指令完成&lt;/p&gt;
+&lt;h2 id=&#34;其他约定&#34;&gt;其他约定&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;函数在 call 调用前， 需要保证栈顶地址值 16 字节对齐&lt;/li&gt;
+&lt;li&gt;从栈顶向上保留128 字节作为 “Red Zone”&lt;/li&gt;
+&lt;li&gt;系统调用使用寄存器 rdi、rsi、rdx、r10、r8 和 r9 传递参数&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Red Zone 是位于栈顶向上的一段固定长度的内存段，这块区域可以被调用函数栈中的 “叶子” 函数（即不再调取其他函数的函数）使用，这样在需要额外栈内存时，就能省去调整栈内存大小的过程。&lt;/p&gt;
+&lt;h2 id=&#34;保存函数调用信息的栈帧&#34;&gt;保存函数调用信息的栈帧&lt;/h2&gt;
+&lt;p&gt;我们将栈内存数据块称之为帧栈，帧栈存放有返回地址、实参
+局部地址、返回值和暂存的寄存器值。&lt;/p&gt;
+&lt;p&gt;在进程内存中，栈内存是从高向低增长的，即栈底位于高地址处，栈顶位于
+低地址处。&lt;/p&gt;
+&lt;p&gt;rsp 寄存器又称之为 Stack Pointer，其存放着栈顶地址，即其决定了
+栈内存大小，通过减小其存储的值，就能扩大栈内存。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/learn_c/5_3.webp&#34; alt=&#34;stack_memory&#34;&gt;&lt;/p&gt;
+&lt;p&gt;bar 函数第一行指令 &lt;code&gt;push rbp&lt;/code&gt; 会将当前 rbp 寄存器的值存到栈中，
+rbp 寄存器 又称为 Frame Pointer， 通常来存储调用前的栈高度，即
+rsp的旧值，以便进行帧栈寻址，并在退出前将栈中数据恢复到调用前的状态；
+第二行指令&lt;code&gt;mov rbp, rsp&lt;/code&gt;便是将 rsp 的值保存到 rbp 中；
+第三行指令&lt;code&gt;mov eax, 10&lt;/code&gt; 将结果存入 eax 寄存器;
+第四行指令&lt;code&gt;pop rbp&lt;/code&gt; 恢复 rbp 寄存器的值；
+第五行指令&lt;code&gt;ret&lt;/code&gt; 将程序的执行转移到函数调用前。&lt;/p&gt;
+&lt;p&gt;main 函数第 29 行指令&lt;code&gt;sub rsp, 16&lt;/code&gt;减小 rsp 的值，将栈空间扩大 16 字节；
+第 30、31 行指令分别将 1 和 2 存入 rbp-4 和 rbp-8 的位置；
+第 34、35 行指令，借助 push， 将 8 和 7 存入 rbp-12 、 rbp-16的位置。&lt;/p&gt;
+&lt;p&gt;leave 指令会恢复 rsp的值来“清理”栈数据，并恢复 rbp的值。
+等效于: &lt;code&gt;mov rsp, rbp; pop rbp&lt;/code&gt;; 与之对应的 enter 指令等效于 &lt;code&gt;push rbp; mov rpb, rsp&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/learn_c/5_4.webp&#34; alt=&#34;main_func_memory&#34;&gt;&lt;/p&gt;
+&lt;h1 id=&#34;第六讲-函数调用下&#34;&gt;第六讲 函数调用（下）&lt;/h1&gt;
+&lt;h2 id=&#34;函数参数求值顺序&#34;&gt;函数参数求值顺序&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;cp&#34;&gt;#include&lt;/span&gt; &lt;span class=&#34;cpf&#34;&gt;&amp;lt;stdio.h&amp;gt;&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;main&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;n&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;printf&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;%d %d %d&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;++&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;++&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;++&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt; 
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;如上示例程序，C 函数参数的求值顺序并没有被明确规定，有的编译器按从左到右计算，有的从左到右计算。&lt;/p&gt;
+&lt;p&gt;为了程序健壮性，不要编写需要依赖特定函数参数求值顺序的代码。&lt;/p&gt;
+&lt;h2 id=&#34;尾递归调用优化tail-call-optimization&#34;&gt;尾递归调用优化（tail-call optimization）&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/learn_c/6_1.webp&#34; alt=&#34;factorial_function&#34;&gt;&lt;/p&gt;
+&lt;p&gt;函数调用过程所需数据是以帧栈的形式存到到进程的栈内存中，而栈内存的清理工作是在函数准备ret 返回前，通过 leave指令进行。
+对于正常的递归函数，由于函数不断调用自己，产生的帧栈越来越多，可能导致内存溢出；另外函数调用会创建和销毁帧栈，这也是消耗性能的。&lt;/p&gt;
+&lt;p&gt;尾递归调用优化是指在一定条件下，编译器直接利用跳转指令代替函数调用指令，来模拟函数调用过程，这样便可省去函数调用帧栈的不断创建和销毁，
+而且也只使用了有限的栈内存。&lt;/p&gt;
+&lt;p&gt;尾递归调用优化一个前提条件是：递归语句必须是在函数返回前的最后一条语句。在这种情况下，编译器才能确定函数的返回值没有被上一个帧栈所使用。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/learn_c/6_2.webp&#34; alt=&#34;factorial_function2&#34;&gt;&lt;/p&gt;
+&lt;p&gt;上面的函数开启最高编译优化等级”-O3“后，会使用尾递归优化，
+在执行 ret 前，会判断寄存器 edi 的值是否为0 （ZF=1），来决定调转&lt;/p&gt;
+&lt;h2 id=&#34;kr-函数声明&#34;&gt;K&amp;amp;R 函数声明&lt;/h2&gt;
+&lt;p&gt;K&amp;amp;R 函数声明可能不知道函数的参数列表，如下所示：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;cp&#34;&gt;#include&lt;/span&gt; &lt;span class=&#34;cpf&#34;&gt;&amp;lt;stdio.h&amp;gt;&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;add&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;();&lt;/span&gt;
+&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;main&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;printf&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;%d&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;add&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;));&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;// ?
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;add&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;x&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这样导致参数是一个随机值，不建议使用。&lt;/p&gt;
+&lt;h1 id=&#34;第七讲-枚举结构和联合是如何实现的&#34;&gt;第七讲 枚举、结构和联合是如何实现的？&lt;/h1&gt;
+&lt;h2 id=&#34;枚举-enumeration&#34;&gt;枚举 Enumeration&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/learn_c/7_1.webp&#34; alt=&#34;enum&#34;&gt;&lt;/p&gt;
+&lt;p&gt;从汇编代码可以看出自定义枚举类型都是以 int 类型存储的，枚举值 Mon 在底层是由 0 表示。&lt;/p&gt;
+&lt;p&gt;C 标准直接将枚举值当做整数进行处理，这样导致foo 函数在调用时，实际上允许传入任何可以被隐式转换为 int 类型的值。&lt;/p&gt;
+&lt;h2 id=&#34;结构-struct&#34;&gt;结构 Struct&lt;/h2&gt;
+&lt;p&gt;结构和数组类型，都是使用连续的内存存放数据，不过结构可以存放不同的类型的数据。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/learn_c/7_2.webp&#34; alt=&#34;struct&#34;&gt;&lt;/p&gt;
+&lt;p&gt;本质上，结构只是对内部所包含的各类数据的一个封装，因此只需要它分装的这些数据放在连续的内存装即可。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/learn_c/7_3.webp&#34; alt=&#34;struct_stack_memory&#34;&gt;&lt;/p&gt;
+&lt;p&gt;如上图的栈内存所示，字符转指针 p 位于 [rbp-32] 处，占用 8 个字节，字符 c 位于 [rbp-24] 处，占用 1 个字节，长整形 x 位于 [rbp-16]处，占用 8 个字节。&lt;/p&gt;
+&lt;h3 id=&#34;内存数据对齐&#34;&gt;内存数据对齐&lt;/h3&gt;
+&lt;p&gt;自然对齐是指被操作数据所在的地址为该数据大小的整数倍，当内存中的数据
+满足自然对齐时，CPU通常能够以最高的效率进行数据操作。&lt;/p&gt;
+&lt;h3 id=&#34;填充字节&#34;&gt;填充字节&lt;/h3&gt;
+&lt;p&gt;某些情况即使结果对象各个数据成员都满足自然对齐的要求，额外的填充字节也会被添加，如下示例：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Foo&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;span class=&#34;kt&#34;&gt;char&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;p&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;// 8 bytes.
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;char&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;c&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;// 1 bytes.
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;// (padding): 7 bytes.
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;};&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;之所以会这样，因为编译器想保证：当结构体被连续存放时，前一个对象结束的位置正好可以满足后一个对象的起始位置时自然对齐的要求。
+这样也就要求结构对象本身的大小必须是内部最大成员大小的整数倍。&lt;/p&gt;
+&lt;h2 id=&#34;联合-union&#34;&gt;联合 Union&lt;/h2&gt;
+&lt;p&gt;联合和结构语法类型，只要把 关键字从 struct 改为 union。
+顾名思义，联合就是所有字段共同使用一个内存区域。&lt;/p&gt;
+&lt;p&gt;联合对象的大小与内部定义最大成员的大小相同。&lt;/p&gt;
+&lt;p&gt;对一个单独的联合对象来说，哪个字段在生效我们无从得知，所以需要一个标签字段来配合指明正在生效的字段，这样模式叫做“Tagged Union”.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/learn_c/7_4.webp&#34; alt=&#34;union&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -10386,6 +10599,28 @@ fmd_fleblk[0] 保存 4 和 4，fmd_fleblk[1] 保存 10 和 5，fmd_fleblk[2] 保
 在 MAC 数据包的起止位置加入起止帧和校验序列，最后将其转为电信号发送出去&lt;/p&gt;
 &lt;h2 id=&#34;两端数据交换过程&#34;&gt;两端数据交换过程&lt;/h2&gt;
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/36_6.webp&#34; alt=&#34;client_server_interact&#34;&gt;&lt;/p&gt;
+&lt;h1 id=&#34;第三十七讲-网络数据如何在内核中流转&#34;&gt;第三十七讲 网络数据如何在内核中流转&lt;/h1&gt;
+&lt;h2 id=&#34;网络收发过程&#34;&gt;网络收发过程&lt;/h2&gt;
+&lt;h3 id=&#34;发送&#34;&gt;发送&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/37_1.webp&#34; alt=&#34;send&#34;&gt;&lt;/p&gt;
+&lt;p&gt;应用程序调用系统API进入内核态&lt;/p&gt;
+&lt;p&gt;在内核态，复制数据到内核内存空间，然后将数据移交给网络协议栈，
+在网络协议栈中将数据层层打包，最后将包装好的数据发送给网卡&lt;/p&gt;
+&lt;h3 id=&#34;接收&#34;&gt;接收&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/37_2.webp&#34; alt=&#34;receive&#34;&gt;&lt;/p&gt;
+&lt;p&gt;网卡接受到数据，通过 DMA 复制到指定内存，接着发送中断，一遍
+通知网卡驱动，由网卡驱动处理中断复制数据。&lt;/p&gt;
+&lt;p&gt;然后网络协议收到驱动传过来的数据，层层解包，将有效数据发送给应用进程&lt;/p&gt;
+&lt;h2 id=&#34;iwip&#34;&gt;IwIP&lt;/h2&gt;
+&lt;p&gt;IwIP 是一个轻量级的开源的TCP/IP网络协议项目&lt;/p&gt;
+&lt;h1 id=&#34;第三十八讲-详解操作系统宏观网络架构&#34;&gt;第三十八讲 详解操作系统宏观网络架构&lt;/h1&gt;
+&lt;h2 id=&#34;传统网络架构&#34;&gt;传统网络架构&lt;/h2&gt;
+&lt;p&gt;传统网络架构分为三层：核心层、汇聚层和接入层&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/38_1.webp&#34; alt=&#34;hierarchical inter-networking model&#34;&gt;&lt;/p&gt;
+&lt;p&gt;核心层：交换机为进出数据中心的数据包提供高速转发的功能，为多个
+汇聚层提供连通性，同时也为整个网络提供灵活的 L3 路由网络。&lt;/p&gt;
+&lt;p&gt;汇聚层：提供防火墙、SSL卸载、入侵检测、网络分析等功能&lt;/p&gt;
+&lt;p&gt;接入层：与服务器物理连接&lt;/p&gt;
 &lt;h1 id=&#34;参考&#34;&gt;参考&lt;/h1&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://stackoverflow.com/questions/37146637/why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux&#34;&gt;why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux&lt;/a&gt;&lt;/li&gt;

@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]操作系统实战（更新中）">
 <meta itemprop="description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"><meta itemprop="datePublished" content="2021-07-30T08:06:33+08:00" />
 <meta itemprop="dateModified" content="2022-03-01T07:50:33+08:00" />
-<meta itemprop="wordCount" content="54152">
+<meta itemprop="wordCount" content="54506">
 <meta itemprop="keywords" content="C,操作系统," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]操作系统实战（更新中）"/>
 <meta name="twitter:description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"/>
@@ -302,7 +302,7 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 54152 words </span>
+        <span class="more-meta"> 54506 words </span>
           <span class="more-meta"> 109 min read </span>
 
         
@@ -787,6 +787,22 @@
         <li><a href="#点对点传输mac-链路层">点对点传输：MAC （链路层）</a></li>
         <li><a href="#电信号出口网卡物理层">电信号出口：网卡（物理层）</a></li>
         <li><a href="#两端数据交换过程">两端数据交换过程</a></li>
+      </ul>
+    </li>
+    <li><a href="#第三十七讲-网络数据如何在内核中流转">第三十七讲 网络数据如何在内核中流转</a>
+      <ul>
+        <li><a href="#网络收发过程">网络收发过程</a>
+          <ul>
+            <li><a href="#发送">发送</a></li>
+            <li><a href="#接收">接收</a></li>
+          </ul>
+        </li>
+        <li><a href="#iwip">IwIP</a></li>
+      </ul>
+    </li>
+    <li><a href="#第三十八讲-详解操作系统宏观网络架构">第三十八讲 详解操作系统宏观网络架构</a>
+      <ul>
+        <li><a href="#传统网络架构">传统网络架构</a></li>
       </ul>
     </li>
     <li><a href="#参考">参考</a></li>
@@ -10621,6 +10637,28 @@ fmd_fleblk[0] 保存 4 和 4，fmd_fleblk[1] 保存 10 和 5，fmd_fleblk[2] 保
 在 MAC 数据包的起止位置加入起止帧和校验序列，最后将其转为电信号发送出去</p>
 <h2 id="两端数据交换过程">两端数据交换过程</h2>
 <p><img src="/image/play_os_in_action/36_6.webp" alt="client_server_interact"></p>
+<h1 id="第三十七讲-网络数据如何在内核中流转">第三十七讲 网络数据如何在内核中流转</h1>
+<h2 id="网络收发过程">网络收发过程</h2>
+<h3 id="发送">发送</h3>
+<p><img src="/image/play_os_in_action/37_1.webp" alt="send"></p>
+<p>应用程序调用系统API进入内核态</p>
+<p>在内核态，复制数据到内核内存空间，然后将数据移交给网络协议栈，
+在网络协议栈中将数据层层打包，最后将包装好的数据发送给网卡</p>
+<h3 id="接收">接收</h3>
+<p><img src="/image/play_os_in_action/37_2.webp" alt="receive"></p>
+<p>网卡接受到数据，通过 DMA 复制到指定内存，接着发送中断，一遍
+通知网卡驱动，由网卡驱动处理中断复制数据。</p>
+<p>然后网络协议收到驱动传过来的数据，层层解包，将有效数据发送给应用进程</p>
+<h2 id="iwip">IwIP</h2>
+<p>IwIP 是一个轻量级的开源的TCP/IP网络协议项目</p>
+<h1 id="第三十八讲-详解操作系统宏观网络架构">第三十八讲 详解操作系统宏观网络架构</h1>
+<h2 id="传统网络架构">传统网络架构</h2>
+<p>传统网络架构分为三层：核心层、汇聚层和接入层</p>
+<p><img src="/image/play_os_in_action/38_1.webp" alt="hierarchical inter-networking model"></p>
+<p>核心层：交换机为进出数据中心的数据包提供高速转发的功能，为多个
+汇聚层提供连通性，同时也为整个网络提供灵活的 L3 路由网络。</p>
+<p>汇聚层：提供防火墙、SSL卸载、入侵检测、网络分析等功能</p>
+<p>接入层：与服务器物理连接</p>
 <h1 id="参考">参考</h1>
 <ul>
 <li><a href="https://stackoverflow.com/questions/37146637/why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux">why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux</a></li>
