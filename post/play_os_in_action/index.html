@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]操作系统实战（更新中）">
 <meta itemprop="description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"><meta itemprop="datePublished" content="2021-07-30T08:06:33+08:00" />
 <meta itemprop="dateModified" content="2022-03-01T07:50:33+08:00" />
-<meta itemprop="wordCount" content="54506">
+<meta itemprop="wordCount" content="59174">
 <meta itemprop="keywords" content="C,操作系统," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]操作系统实战（更新中）"/>
 <meta name="twitter:description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"/>
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 54506 words </span>
-          <span class="more-meta"> 109 min read </span>
+        <span class="more-meta"> 59174 words </span>
+          <span class="more-meta"> 119 min read </span>
 
         
         
@@ -803,6 +803,54 @@
     <li><a href="#第三十八讲-详解操作系统宏观网络架构">第三十八讲 详解操作系统宏观网络架构</a>
       <ul>
         <li><a href="#传统网络架构">传统网络架构</a></li>
+        <li><a href="#多协议标签交换-mpls">多协议标签交换 MPLS</a></li>
+        <li><a href="#google--b4">Google  B4</a></li>
+        <li><a href="#sdn">SDN</a></li>
+        <li><a href="#onos">ONOS</a></li>
+        <li><a href="#总结">总结</a></li>
+      </ul>
+    </li>
+    <li><a href="#第三十九讲-linux-socket-接口">第三十九讲 Linux socket 接口</a>
+      <ul>
+        <li><a href="#套接字">套接字</a></li>
+        <li><a href="#套接字的数据结构">套接字的数据结构</a>
+          <ul>
+            <li><a href="#struct-socket">struct socket</a></li>
+            <li><a href="#struct-sock">struct sock</a></li>
+          </ul>
+        </li>
+        <li><a href="#套接字与文件">套接字与文件</a></li>
+        <li><a href="#套接字与缓存-socket--buffer">套接字与缓存 Socket  Buffer</a></li>
+        <li><a href="#套接字初始化">套接字初始化</a>
+          <ul>
+            <li><a href="#地址族的值和协议交换表">地址族的值和协议交换表</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#第四十讲-socket-接口实现">第四十讲 socket 接口实现</a>
+      <ul>
+        <li><a href="#套接字创建">套接字创建</a></li>
+        <li><a href="#套接字的绑定">套接字的绑定</a></li>
+        <li><a href="#主动连接">主动连接</a></li>
+        <li><a href="#监听套接字">监听套接字</a></li>
+        <li><a href="#被动接收连接">被动接收连接</a></li>
+        <li><a href="#发送数据">发送数据</a></li>
+        <li><a href="#接收数据">接收数据</a></li>
+        <li><a href="#关闭连接">关闭连接</a></li>
+      </ul>
+    </li>
+    <li><a href="#第四十一讲-服务接口">第四十一讲 服务接口</a>
+      <ul>
+        <li><a href="#系统服务函数的执行过程">系统服务函数的执行过程</a></li>
+      </ul>
+    </li>
+    <li><a href="#第四十二讲-linux-如何实现系统-api">第四十二讲 Linux 如何实现系统 API</a>
+      <ul>
+        <li><a href="#内核api接口架构">内核API接口架构</a></li>
+        <li><a href="#api接口">API接口</a></li>
+        <li><a href="#系统调用表">系统调用表</a></li>
+        <li><a href="#添加系统调用">添加系统调用</a></li>
       </ul>
     </li>
     <li><a href="#参考">参考</a></li>
@@ -10646,7 +10694,7 @@ fmd_fleblk[0] 保存 4 和 4，fmd_fleblk[1] 保存 10 和 5，fmd_fleblk[2] 保
 在网络协议栈中将数据层层打包，最后将包装好的数据发送给网卡</p>
 <h3 id="接收">接收</h3>
 <p><img src="/image/play_os_in_action/37_2.webp" alt="receive"></p>
-<p>网卡接受到数据，通过 DMA 复制到指定内存，接着发送中断，一遍
+<p>网卡接收到数据，通过 DMA 复制到指定内存，接着发送中断，以便
 通知网卡驱动，由网卡驱动处理中断复制数据。</p>
 <p>然后网络协议收到驱动传过来的数据，层层解包，将有效数据发送给应用进程</p>
 <h2 id="iwip">IwIP</h2>
@@ -10659,7 +10707,1186 @@ fmd_fleblk[0] 保存 4 和 4，fmd_fleblk[1] 保存 10 和 5，fmd_fleblk[2] 保
 汇聚层提供连通性，同时也为整个网络提供灵活的 L3 路由网络。</p>
 <p>汇聚层：提供防火墙、SSL卸载、入侵检测、网络分析等功能</p>
 <p>接入层：与服务器物理连接</p>
-<h1 id="参考">参考</h1>
+<h2 id="多协议标签交换-mpls">多协议标签交换 MPLS</h2>
+<p><img src="/image/play_os_in_action/38_2.webp" alt="multi-protocol-label-switching"></p>
+<p>MPLS 通过 LDP 标签分发协议，相当于给快递贴了标签，后续只需只要读标签而不用打开快递来确认目的地</p>
+<h2 id="google--b4">Google  B4</h2>
+<h2 id="sdn">SDN</h2>
+<h2 id="onos">ONOS</h2>
+<h2 id="总结">总结</h2>
+<p><img src="/image/play_os_in_action/38_3.webp" alt="summary"></p>
+<h1 id="第三十九讲-linux-socket-接口">第三十九讲 Linux socket 接口</h1>
+<h2 id="套接字">套接字</h2>
+<p>网络套接字是 TCP/IP 协议栈中传输层协议的接口，也是 传输层以上所有协议的实现。
+同时，套接字接口在网络程序功能中是内核与应用层之间的接口。</p>
+<h2 id="套接字的数据结构">套接字的数据结构</h2>
+<h3 id="struct-socket">struct socket</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="k">struct</span> <span class="n">socket</span> <span class="p">{</span> 
+    <span class="n">socket_state</span>            <span class="n">state</span><span class="p">;</span>  <span class="c1">// 套接字的状态
+</span><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">long</span>           <span class="n">flags</span><span class="p">;</span>  <span class="c1">// 套接字的设置标志。存放套接字等待缓冲区的状态信息，其值的形式如SOCK_ASYNC_NOSPACE等
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">fasync_struct</span>    <span class="o">*</span><span class="n">fasync_list</span><span class="p">;</span>  <span class="c1">// 等待被唤醒的套接字列表，该链表用于异步文件调用
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">file</span>             <span class="o">*</span><span class="n">file</span><span class="p">;</span>  <span class="c1">// 套接字所属的文件描述符
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">sock</span>             <span class="o">*</span><span class="n">sk</span><span class="p">;</span>  <span class="c1">// 指向存放套接字属性的结构指针
+</span><span class="c1"></span>    <span class="n">wait_queue_head_t</span>       <span class="n">wait</span><span class="p">;</span>  <span class="c1">//套接字的等待队列
+</span><span class="c1"></span>    <span class="kt">short</span>                   <span class="n">type</span><span class="p">;</span>  <span class="c1">// 套接字的类型。其取值为SOCK_XXXX形式
+</span><span class="c1"></span>    <span class="k">const</span> <span class="k">struct</span> <span class="n">proto_ops</span> <span class="o">*</span><span class="n">ops</span><span class="p">;</span>  <span class="c1">// 套接字层的操作函数块
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="struct-sock">struct sock</h3>
+<p>struct sock 数据结构包含了大量内核管理套接字的信息，内核把最重要的成员存放在 struct sock_common 数据结构中。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="k">struct</span> <span class="n">sock_common</span> <span class="p">{</span>
+    <span class="kt">unsigned</span> <span class="kt">short</span>      <span class="n">skc_family</span><span class="p">;</span>         <span class="cm">/*地址族*/</span>
+    <span class="k">volatile</span> <span class="kt">unsigned</span> <span class="kt">char</span>  <span class="n">skc_state</span><span class="p">;</span>      <span class="cm">/*连接状态*/</span>
+    <span class="kt">unsigned</span> <span class="kt">char</span>       <span class="n">skc_reuse</span><span class="p">;</span>          <span class="cm">/*SO_REUSEADDR设置*/</span>
+    <span class="kt">int</span>         <span class="n">skc_bound_dev_if</span><span class="p">;</span>
+    <span class="k">struct</span> <span class="n">hlist_node</span>   <span class="n">skc_node</span><span class="p">;</span>
+    <span class="k">struct</span> <span class="n">hlist_node</span>   <span class="n">skc_bind_node</span><span class="p">;</span>      <span class="cm">/*哈希表相关*/</span>
+    <span class="n">atomic_t</span>        <span class="n">skc_refcnt</span><span class="p">;</span>             <span class="cm">/*引用计数*/</span>
+<span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="套接字与文件">套接字与文件</h2>
+<p>每个套接字都分配了一个 VFS inode，通过 inode 可以用文件操作来访问套接字</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="k">struct</span> <span class="n">inode</span><span class="p">{</span>
+    <span class="k">struct</span> <span class="n">file_operation</span> <span class="o">*</span><span class="n">i_fop</span> <span class="c1">// 指向默认文件操作函数块
+</span><span class="c1"></span><span class="p">}</span>
+
+<span class="k">struct</span> <span class="n">socket_slloc</span> <span class="p">{</span>
+  <span class="k">struct</span> <span class="n">socket</span> <span class="n">socket</span><span class="p">;</span>
+  <span class="k">struct</span> <span class="n">inode</span> <span class="n">vfs_inode</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="套接字与缓存-socket--buffer">套接字与缓存 Socket  Buffer</h2>
+<p>套接字缓存代表了一个要发送或者处理的报文，是网络数据包在内核中的对象实例。</p>
+<p>缓存主要包含两部分：</p>
+<ul>
+<li>数据包：存放网络中实际流通的数据</li>
+<li>管理数据结构 struct sk_buff: 包含协议交换信息、数据状态等</li>
+</ul>
+<h2 id="套接字初始化">套接字初始化</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="k">static</span> <span class="kt">int</span> <span class="n">__init</span> <span class="nf">sock_init</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+<span class="kt">int</span> <span class="n">err</span><span class="p">;</span>       
+ <span class="cm">/*      
+</span><span class="cm">  *      初始化.sock缓存       
+</span><span class="cm">  */</span>        
+ <span class="n">sk_init</span><span class="p">();</span>       
+  <span class="cm">/*     
+</span><span class="cm">  *      初始化sk_buff缓存       
+</span><span class="cm">        skb_init();           
+</span><span class="cm">  /*      初始化协议模块缓存      
+</span><span class="cm">        
+</span><span class="cm">  init_inodecache();           
+</span><span class="cm">  /* 注册文件系统类型   */</span>
+<span class="n">err</span> <span class="o">=</span> <span class="n">register_filesystem</span><span class="p">(</span><span class="o">&amp;</span><span class="n">sock_fs_type</span><span class="p">);</span>       
+<span class="k">if</span> <span class="p">(</span><span class="n">err</span><span class="p">)</span>           <span class="k">goto</span> <span class="n">out_fs</span><span class="p">;</span>       
+<span class="n">sock_mnt</span> <span class="o">=</span> <span class="n">kern_mount</span><span class="p">(</span><span class="o">&amp;</span><span class="n">sock_fs_type</span><span class="p">);</span>       
+<span class="k">if</span> <span class="p">(</span><span class="n">IS_ERR</span><span class="p">(</span><span class="n">sock_mnt</span><span class="p">))</span> <span class="p">{</span>        
+  <span class="n">err</span> <span class="o">=</span> <span class="n">PTR_ERR</span><span class="p">(</span><span class="n">sock_mnt</span><span class="p">);</span>         
+   <span class="k">goto</span> <span class="n">out_mount</span><span class="p">;</span>      
+  <span class="p">}</span>
+ <span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="地址族的值和协议交换表">地址族的值和协议交换表</h3>
+<p>套接字是一个通用接口，可以与多个协议组建立接口。</p>
+<p>struct inet_protosw 实现了协议交换表，将应用程序通过 socketcall 系统
+调用的指定套接字操作转换成对某个协议实现的套接字操作函数的调用</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="k">struct</span> <span class="n">inet_protosw</span> <span class="p">{</span>
+  <span class="k">struct</span> <span class="n">list_head</span> <span class="n">list</span><span class="p">;</span>
+  <span class="kt">unsigned</span> <span class="kt">short</span>   <span class="n">type</span><span class="p">;</span>     <span class="cm">/* AF_INET协议族套接字的类型,如TCP为SOCK_STREAM*/</span>
+  <span class="kt">unsigned</span> <span class="kt">short</span>   <span class="n">protocol</span><span class="p">;</span> <span class="cm">/* 协议族中某个协议实例的编号。如TCP协议的编码为IPPROTO_TCP  */</span>
+ 
+  <span class="k">struct</span> <span class="n">proto</span>   <span class="o">*</span><span class="n">prot</span><span class="p">;</span>
+  <span class="k">const</span> <span class="k">struct</span> <span class="n">proto_ops</span> <span class="o">*</span><span class="n">ops</span><span class="p">;</span>
+  
+  <span class="kt">unsigned</span> <span class="kt">char</span>   <span class="n">flags</span><span class="p">;</span>      <span class="cm">/* 该套接字属性的相关标志  */</span>
+
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="第四十讲-socket-接口实现">第四十讲 socket 接口实现</h1>
+<h2 id="套接字创建">套接字创建</h2>
+<p><img src="/image/play_os_in_action/40_1.webp" alt="socket_create"></p>
+<p>一个新的 struct socket 数据结构起始由 sock_create 函数创建，该函数直接调用 __sock_create 函数，__sock_create 函数的任务是为套接字预留需要的内存空间，由 sock_alloc 函数完成这项功能。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="k">static</span> <span class="kt">int</span> <span class="nf">__sock_create</span><span class="p">(</span><span class="k">struct</span> <span class="n">net</span> <span class="o">*</span><span class="n">net</span><span class="p">,</span> <span class="kt">int</span> <span class="n">family</span><span class="p">,</span> <span class="kt">int</span> <span class="n">type</span><span class="p">,</span> <span class="kt">int</span> <span class="n">protocol</span><span class="p">,</span>
+ <span class="k">struct</span> <span class="n">socket</span> <span class="o">**</span><span class="n">res</span><span class="p">,</span> <span class="kt">int</span> <span class="n">kern</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="kt">int</span> <span class="n">err</span><span class="p">;</span>
+<span class="k">struct</span> <span class="n">socket</span> <span class="o">*</span><span class="n">sock</span><span class="p">;</span>
+<span class="k">const</span> <span class="k">struct</span> <span class="n">net_proto_family</span> <span class="o">*</span><span class="n">pf</span><span class="p">;</span>
+<span class="c1">// 首先检验是否支持协议族
+</span><span class="c1"></span><span class="cm">/*
+</span><span class="cm">* 检查是否在内核支持的socket范围内
+</span><span class="cm">*/</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">family</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">family</span> <span class="o">&gt;=</span> <span class="n">NPROTO</span><span class="p">)</span>
+<span class="k">return</span> <span class="o">-</span><span class="n">EAFNOSUPPORT</span><span class="p">;</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">type</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">type</span> <span class="o">&gt;=</span> <span class="n">SOCK_MAX</span><span class="p">)</span>
+<span class="k">return</span> <span class="o">-</span><span class="n">EINVAL</span><span class="p">;</span>
+<span class="cm">/*
+</span><span class="cm">* 为新的套接字分配内存空间，分配成功后返回新的指针
+</span><span class="cm">*/</span>
+
+<span class="n">sock</span> <span class="o">=</span> <span class="n">sock_alloc</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="k">static</span> <span class="k">struct</span> <span class="n">socket</span> <span class="o">*</span><span class="nf">sock_alloc</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="n">inode</span><span class="p">;</span>
+<span class="k">struct</span> <span class="n">socket</span> <span class="o">*</span><span class="n">sock</span><span class="p">;</span>
+    <span class="c1">// 初始化一个可用的inode节点， 在fs/inode.c中
+</span><span class="c1"></span>    <span class="n">inode</span> <span class="o">=</span> <span class="n">new_inode</span><span class="p">(</span><span class="n">sock_mnt</span><span class="o">-&gt;</span><span class="n">mnt_sb</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">inode</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="c1">// 实际创建的是socket_alloc复合对象，因此要使用SOCKET_I宏从inode中取出关联的socket对象用于返回
+</span><span class="c1"></span>    <span class="n">sock</span> <span class="o">=</span> <span class="n">SOCKET_I</span><span class="p">(</span><span class="n">inode</span><span class="p">);</span>
+
+    <span class="n">kmemcheck_annotate_bitfield</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span> <span class="n">type</span><span class="p">);</span>
+    <span class="c1">// 文件类型为套接字
+</span><span class="c1"></span>    <span class="n">inode</span><span class="o">-&gt;</span><span class="n">i_mode</span> <span class="o">=</span> <span class="n">S_IFSOCK</span> <span class="o">|</span> <span class="n">S_IRWXUGO</span><span class="p">;</span>
+    <span class="n">inode</span><span class="o">-&gt;</span><span class="n">i_uid</span> <span class="o">=</span> <span class="n">current_fsuid</span><span class="p">();</span>
+    <span class="n">inode</span><span class="o">-&gt;</span><span class="n">i_gid</span> <span class="o">=</span> <span class="n">current_fsgid</span><span class="p">();</span>
+
+    <span class="n">percpu_add</span><span class="p">(</span><span class="n">sockets_in_use</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="k">return</span> <span class="n">sock</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="套接字的绑定">套接字的绑定</h2>
+<p>创建完套接字后，需要将套接字和地址绑定起来</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="n">asmlinkage</span> <span class="kt">long</span> <span class="nf">sysbind</span> <span class="p">(</span><span class="n">bind</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="n">fd</span><span class="p">,</span> <span class="k">struct</span> <span class="n">sockaddr</span> <span class="n">__user</span> <span class="o">*</span><span class="p">,</span> <span class="n">umyaddr</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="n">addrlen</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">struct</span> <span class="n">socket</span> <span class="o">*</span><span class="n">sock</span><span class="p">;</span>
+  <span class="k">struct</span> <span class="n">sockaddr_storage</span> <span class="n">address</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">err</span><span class="p">,</span> <span class="n">fput_needed</span><span class="p">;</span>
+ 
+  <span class="cm">/*
+</span><span class="cm">   * 获取socket实例。
+</span><span class="cm">   */</span>
+  <span class="n">sock</span> <span class="o">=</span> <span class="n">sockfd_lookup_light</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">err</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">fput_needed</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">sock</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="n">move_addr_to_kernel</span><span class="p">(</span><span class="n">umyaddr</span><span class="p">,</span> <span class="n">addrlen</span><span class="p">,</span> <span class="p">(</span><span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">address</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">err</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">err</span> <span class="o">=</span> <span class="n">security_socket_bind</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span>
+               <span class="p">(</span><span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">address</span><span class="p">,</span>
+               <span class="n">addrlen</span><span class="p">);</span>
+      <span class="cm">/*
+</span><span class="cm">       * 如果是TCP套接字，sock-&gt;ops指向的是inet_stream_ops，
+</span><span class="cm">       * sock-&gt;ops是在inet_create()函数中初始化，所以bind接口
+</span><span class="cm">       * 调用的是inet_bind()函数。
+</span><span class="cm">       */</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">err</span><span class="p">)</span>
+        <span class="n">err</span> <span class="o">=</span> <span class="n">sock</span><span class="o">-&gt;</span><span class="n">ops</span><span class="o">-&gt;</span><span class="n">bind</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span>
+                  <span class="p">(</span><span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="p">)</span>
+                  <span class="o">&amp;</span><span class="n">address</span><span class="p">,</span> <span class="n">addrlen</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">fput_light</span><span class="p">(</span><span class="n">sock</span><span class="o">-&gt;</span><span class="n">file</span><span class="p">,</span> <span class="n">fput_needed</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">err</span><span class="p">;</span>
+<span class="p">}</span>
+
+
+<span class="kt">int</span> <span class="nf">inet_bind</span><span class="p">(</span><span class="k">struct</span> <span class="n">socket</span> <span class="o">*</span><span class="n">sock</span><span class="p">,</span> <span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="n">uaddr</span><span class="p">,</span> <span class="kt">int</span> <span class="n">addr_len</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">struct</span> <span class="n">sockaddr_in</span> <span class="o">*</span><span class="n">addr</span> <span class="o">=</span> <span class="p">(</span><span class="k">struct</span> <span class="n">sockaddr_in</span> <span class="o">*</span><span class="p">)</span><span class="n">uaddr</span><span class="p">;</span>
+    <span class="k">struct</span> <span class="n">sock</span> <span class="o">*</span><span class="n">sk</span> <span class="o">=</span> <span class="n">sock</span><span class="o">-&gt;</span><span class="n">sk</span><span class="p">;</span>  
+    <span class="k">struct</span> <span class="n">inet_sock</span> <span class="o">*</span><span class="n">inet</span> <span class="o">=</span> <span class="n">inet_sk</span><span class="p">(</span><span class="n">sk</span><span class="p">);</span>
+    <span class="kt">unsigned</span> <span class="kt">short</span> <span class="n">snum</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">chk_addr_ret</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">err</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">sk</span><span class="o">-&gt;</span><span class="n">sk_prot</span><span class="o">-&gt;</span><span class="n">bind</span><span class="p">)</span> <span class="p">{</span><span class="cm">/* 如果传输层接口上实现了bind调用，则回调它。目前只有SOCK_RAW类型的传输层实现了该接口raw_bind */</span>
+        <span class="n">err</span> <span class="o">=</span> <span class="n">sk</span><span class="o">-&gt;</span><span class="n">sk_prot</span><span class="o">-&gt;</span><span class="n">bind</span><span class="p">(</span><span class="n">sk</span><span class="p">,</span> <span class="n">uaddr</span><span class="p">,</span> <span class="n">addr_len</span><span class="p">);</span>
+        <span class="k">goto</span> <span class="n">out</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="o">-</span><span class="n">EINVAL</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">addr_len</span> <span class="o">&lt;</span> <span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="n">sockaddr_in</span><span class="p">))</span>
+        <span class="k">goto</span> <span class="n">out</span><span class="p">;</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="o">-</span><span class="n">EADDRNOTAVAIL</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">sysctl_ip_nonlocal_bind</span> <span class="o">&amp;&amp;</span><span class="cm">/* 必须绑定到本地接口的地址 */</span>
+        <span class="o">!</span><span class="n">inet</span><span class="o">-&gt;</span><span class="n">freebind</span> <span class="o">&amp;&amp;</span>
+        <span class="n">addr</span><span class="o">-&gt;</span><span class="n">sin_addr</span><span class="p">.</span><span class="n">s_addr</span> <span class="o">!=</span> <span class="n">INADDR_ANY</span> <span class="o">&amp;&amp;</span><span class="cm">/* 绑定地址不合法 */</span>
+        <span class="n">chk_addr_ret</span> <span class="o">!=</span> <span class="n">RTN_LOCAL</span> <span class="o">&amp;&amp;</span>
+        <span class="n">chk_addr_ret</span> <span class="o">!=</span> <span class="n">RTN_MULTICAST</span> <span class="o">&amp;&amp;</span>
+        <span class="n">chk_addr_ret</span> <span class="o">!=</span> <span class="n">RTN_BROADCAST</span><span class="p">)</span>
+        <span class="k">goto</span> <span class="n">out</span><span class="p">;</span>
+
+    <span class="n">snum</span> <span class="o">=</span> <span class="n">ntohs</span><span class="p">(</span><span class="n">addr</span><span class="o">-&gt;</span><span class="n">sin_port</span><span class="p">);</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="o">-</span><span class="n">EACCES</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">snum</span> <span class="o">&amp;&amp;</span> <span class="n">snum</span> <span class="o">&lt;</span> <span class="n">PROT_SOCK</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">capable</span><span class="p">(</span><span class="n">CAP_NET_BIND_SERVICE</span><span class="p">))</span>
+        <span class="k">goto</span> <span class="n">out</span><span class="p">;</span>
+
+    <span class="n">lock_sock</span><span class="p">(</span><span class="n">sk</span><span class="p">);</span><span class="cm">/* 对套接口进行加锁，因为后面要对其状态进行判断 */</span>
+
+    <span class="cm">/* Check these errors (active socket, double bind). */</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="o">-</span><span class="n">EINVAL</span><span class="p">;</span>
+    <span class="cm">/**
+</span><span class="cm">     * 如果状态不为CLOSE，表示套接口已经处于活动状态，不能再绑定
+</span><span class="cm">     * 或者已经指定了本地端口号，也不能再绑定
+</span><span class="cm">     */</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">sk</span><span class="o">-&gt;</span><span class="n">sk_state</span> <span class="o">!=</span> <span class="n">TCP_CLOSE</span> <span class="o">||</span> <span class="n">inet</span><span class="o">-&gt;</span><span class="n">num</span><span class="p">)</span>
+        <span class="k">goto</span> <span class="n">out_release_sock</span><span class="p">;</span>
+
+    <span class="cm">/* 设置地址到传输控制块中 */</span>
+    <span class="n">inet</span><span class="o">-&gt;</span><span class="n">rcv_saddr</span> <span class="o">=</span> <span class="n">inet</span><span class="o">-&gt;</span><span class="n">saddr</span> <span class="o">=</span> <span class="n">addr</span><span class="o">-&gt;</span><span class="n">sin_addr</span><span class="p">.</span><span class="n">s_addr</span><span class="p">;</span>
+    <span class="cm">/* 如果是广播或者多播地址，则源地址使用设备地址。 */</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">chk_addr_ret</span> <span class="o">==</span> <span class="n">RTN_MULTICAST</span> <span class="o">||</span> <span class="n">chk_addr_ret</span> <span class="o">==</span> <span class="n">RTN_BROADCAST</span><span class="p">)</span>
+        <span class="n">inet</span><span class="o">-&gt;</span><span class="n">saddr</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>  <span class="cm">/* Use device */</span>
+
+    <span class="cm">/* 调用传输层的get_port来进行地址绑定。如tcp_v4_get_port或udp_v4_get_port */</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">sk</span><span class="o">-&gt;</span><span class="n">sk_prot</span><span class="o">-&gt;</span><span class="n">get_port</span><span class="p">(</span><span class="n">sk</span><span class="p">,</span> <span class="n">snum</span><span class="p">))</span> <span class="p">{</span>
+        <span class="err">…</span>
+    <span class="p">}</span>
+
+    <span class="cm">/* 设置标志，表示已经绑定了本地地址和端口 */</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">inet</span><span class="o">-&gt;</span><span class="n">rcv_saddr</span><span class="p">)</span>
+        <span class="n">sk</span><span class="o">-&gt;</span><span class="n">sk_userlocks</span> <span class="o">|=</span> <span class="n">SOCK_BINDADDR_LOCK</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">snum</span><span class="p">)</span>
+        <span class="n">sk</span><span class="o">-&gt;</span><span class="n">sk_userlocks</span> <span class="o">|=</span> <span class="n">SOCK_BINDPORT_LOCK</span><span class="p">;</span>
+    <span class="n">inet</span><span class="o">-&gt;</span><span class="n">sport</span> <span class="o">=</span> <span class="n">htons</span><span class="p">(</span><span class="n">inet</span><span class="o">-&gt;</span><span class="n">num</span><span class="p">);</span>
+    <span class="cm">/* 还没有连接到对方，清除远端地址和端口 */</span>
+    <span class="n">inet</span><span class="o">-&gt;</span><span class="n">daddr</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">inet</span><span class="o">-&gt;</span><span class="n">dport</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="cm">/* 清除路由缓存 */</span>
+    <span class="n">sk_dst_reset</span><span class="p">(</span><span class="n">sk</span><span class="p">);</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="nl">out_release_sock</span><span class="p">:</span>
+    <span class="n">release_sock</span><span class="p">(</span><span class="n">sk</span><span class="p">);</span>
+<span class="nl">out</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">err</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="主动连接">主动连接</h2>
+<p>当应用程序调用 connect 函数发出连接请求时，内核会启动 函数 sys_connect</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C">
+<span class="kt">int</span> <span class="nf">__sys_connect</span><span class="p">(</span><span class="kt">int</span> <span class="n">fd</span><span class="p">,</span> <span class="k">struct</span> <span class="n">sockaddr</span> <span class="n">__user</span> <span class="o">*</span><span class="n">uservaddr</span><span class="p">,</span> <span class="kt">int</span> <span class="n">addrlen</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">int</span> <span class="n">ret</span> <span class="o">=</span> <span class="o">-</span><span class="n">EBADF</span><span class="p">;</span>
+  <span class="k">struct</span> <span class="n">fd</span> <span class="n">f</span><span class="p">;</span>
+  <span class="n">f</span> <span class="o">=</span> <span class="n">fdget</span><span class="p">(</span><span class="n">fd</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">f</span><span class="p">.</span><span class="n">file</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">struct</span> <span class="n">sockaddr_storage</span> <span class="n">address</span><span class="p">;</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">move_addr_to_kernel</span><span class="p">(</span><span class="n">uservaddr</span><span class="p">,</span> <span class="n">addrlen</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">address</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">ret</span><span class="p">)</span>
+            <span class="c1">// 调用__sys_connect_file
+</span><span class="c1"></span>      <span class="n">ret</span> <span class="o">=</span> <span class="n">__sys_connect_file</span><span class="p">(</span><span class="n">f</span><span class="p">.</span><span class="n">file</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">address</span><span class="p">,</span> <span class="n">addrlen</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="n">fdput</span><span class="p">(</span><span class="n">f</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">ret</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="监听套接字">监听套接字</h2>
+<p>调用 listen 函数后，对应的套接字设为监听模式</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="kt">int</span> <span class="nf">__sys_listen</span><span class="p">(</span><span class="kt">int</span> <span class="n">fd</span><span class="p">,</span> <span class="kt">int</span> <span class="n">backlog</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">struct</span> <span class="n">socket</span> <span class="o">*</span><span class="n">sock</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">err</span><span class="p">,</span> <span class="n">fput_needed</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">somaxconn</span><span class="p">;</span>
+    <span class="c1">// 通过套接字描述符找到struct socket
+</span><span class="c1"></span>  <span class="n">sock</span> <span class="o">=</span> <span class="n">sockfd_lookup_light</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">err</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">fput_needed</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">sock</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">somaxconn</span> <span class="o">=</span> <span class="n">sock_net</span><span class="p">(</span><span class="n">sock</span><span class="o">-&gt;</span><span class="n">sk</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">core</span><span class="p">.</span><span class="n">sysctl_somaxconn</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">((</span><span class="kt">unsigned</span> <span class="kt">int</span><span class="p">)</span><span class="n">backlog</span> <span class="o">&gt;</span> <span class="n">somaxconn</span><span class="p">)</span>
+      <span class="n">backlog</span> <span class="o">=</span> <span class="n">somaxconn</span><span class="p">;</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="n">security_socket_listen</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span> <span class="n">backlog</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">err</span><span class="p">)</span>
+            <span class="c1">// 根据套接字类型调用监听函数
+</span><span class="c1"></span>      <span class="n">err</span> <span class="o">=</span> <span class="n">sock</span><span class="o">-&gt;</span><span class="n">ops</span><span class="o">-&gt;</span><span class="n">listen</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span> <span class="n">backlog</span><span class="p">);</span>
+    <span class="n">fput_light</span><span class="p">(</span><span class="n">sock</span><span class="o">-&gt;</span><span class="n">file</span><span class="p">,</span> <span class="n">fput_needed</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">err</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="被动接收连接">被动接收连接</h2>
+<p>调用 accept 函数后，会触发内核函数 sys_accept，等待接受连接请求，如果允许连接，
+则重新创建一个代表该连接的套接字。
+新的套接字和原套接字使用的类型、协议一样，原套接字不与连接关联，继续监听接收新的连接请求。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="kt">int</span> <span class="nf">__sys_accept4_file</span><span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="n">file</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="n">file_flags</span><span class="p">,</span>
+           <span class="k">struct</span> <span class="n">sockaddr</span> <span class="n">__user</span> <span class="o">*</span><span class="n">upeer_sockaddr</span><span class="p">,</span>
+           <span class="kt">int</span> <span class="n">__user</span> <span class="o">*</span><span class="n">upeer_addrlen</span><span class="p">,</span> <span class="kt">int</span> <span class="n">flags</span><span class="p">,</span>
+           <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">nofile</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">struct</span> <span class="n">socket</span> <span class="o">*</span><span class="n">sock</span><span class="p">,</span> <span class="o">*</span><span class="n">newsock</span><span class="p">;</span>
+  <span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="n">newfile</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">err</span><span class="p">,</span> <span class="n">len</span><span class="p">,</span> <span class="n">newfd</span><span class="p">;</span>
+  <span class="k">struct</span> <span class="n">sockaddr_storage</span> <span class="n">address</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">flags</span> <span class="o">&amp;</span> <span class="o">~</span><span class="p">(</span><span class="n">SOCK_CLOEXEC</span> <span class="o">|</span> <span class="n">SOCK_NONBLOCK</span><span class="p">))</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">EINVAL</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">SOCK_NONBLOCK</span> <span class="o">!=</span> <span class="n">O_NONBLOCK</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">flags</span> <span class="o">&amp;</span> <span class="n">SOCK_NONBLOCK</span><span class="p">))</span>
+    <span class="n">flags</span> <span class="o">=</span> <span class="p">(</span><span class="n">flags</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">SOCK_NONBLOCK</span><span class="p">)</span> <span class="o">|</span> <span class="n">O_NONBLOCK</span><span class="p">;</span>
+  <span class="n">sock</span> <span class="o">=</span> <span class="n">sock_from_file</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">err</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">sock</span><span class="p">)</span>
+    <span class="k">goto</span> <span class="n">out</span><span class="p">;</span>
+  <span class="n">err</span> <span class="o">=</span> <span class="o">-</span><span class="n">ENFILE</span><span class="p">;</span>
+    <span class="c1">// 创建一个新套接字
+</span><span class="c1"></span>  <span class="n">newsock</span> <span class="o">=</span> <span class="n">sock_alloc</span><span class="p">();</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">newsock</span><span class="p">)</span>
+    <span class="k">goto</span> <span class="n">out</span><span class="p">;</span>
+  <span class="n">newsock</span><span class="o">-&gt;</span><span class="n">type</span> <span class="o">=</span> <span class="n">sock</span><span class="o">-&gt;</span><span class="n">type</span><span class="p">;</span>
+  <span class="n">newsock</span><span class="o">-&gt;</span><span class="n">ops</span> <span class="o">=</span> <span class="n">sock</span><span class="o">-&gt;</span><span class="n">ops</span><span class="p">;</span>
+  <span class="n">__module_get</span><span class="p">(</span><span class="n">newsock</span><span class="o">-&gt;</span><span class="n">ops</span><span class="o">-&gt;</span><span class="n">owner</span><span class="p">);</span>
+  <span class="n">newfd</span> <span class="o">=</span> <span class="n">__get_unused_fd_flags</span><span class="p">(</span><span class="n">flags</span><span class="p">,</span> <span class="n">nofile</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">unlikely</span><span class="p">(</span><span class="n">newfd</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">))</span> <span class="p">{</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="n">newfd</span><span class="p">;</span>
+    <span class="n">sock_release</span><span class="p">(</span><span class="n">newsock</span><span class="p">);</span>
+    <span class="k">goto</span> <span class="n">out</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="n">newfile</span> <span class="o">=</span> <span class="n">sock_alloc_file</span><span class="p">(</span><span class="n">newsock</span><span class="p">,</span> <span class="n">flags</span><span class="p">,</span> <span class="n">sock</span><span class="o">-&gt;</span><span class="n">sk</span><span class="o">-&gt;</span><span class="n">sk_prot_creator</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">IS_ERR</span><span class="p">(</span><span class="n">newfile</span><span class="p">))</span> <span class="p">{</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="n">PTR_ERR</span><span class="p">(</span><span class="n">newfile</span><span class="p">);</span>
+    <span class="n">put_unused_fd</span><span class="p">(</span><span class="n">newfd</span><span class="p">);</span>
+    <span class="k">goto</span> <span class="n">out</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="n">err</span> <span class="o">=</span> <span class="n">security_socket_accept</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span> <span class="n">newsock</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">err</span><span class="p">)</span>
+    <span class="k">goto</span> <span class="n">out_fd</span><span class="p">;</span>
+    <span class="c1">// 根据套接字类型调用不同的函数inet_accept
+</span><span class="c1"></span>  <span class="n">err</span> <span class="o">=</span> <span class="n">sock</span><span class="o">-&gt;</span><span class="n">ops</span><span class="o">-&gt;</span><span class="n">accept</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span> <span class="n">newsock</span><span class="p">,</span> <span class="n">sock</span><span class="o">-&gt;</span><span class="n">file</span><span class="o">-&gt;</span><span class="n">f_flags</span> <span class="o">|</span> <span class="n">file_flags</span><span class="p">,</span>
+          <span class="nb">false</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">err</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">goto</span> <span class="n">out_fd</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">upeer_sockaddr</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">len</span> <span class="o">=</span> <span class="n">newsock</span><span class="o">-&gt;</span><span class="n">ops</span><span class="o">-&gt;</span><span class="n">getname</span><span class="p">(</span><span class="n">newsock</span><span class="p">,</span>
+          <span class="p">(</span><span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">address</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">len</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">err</span> <span class="o">=</span> <span class="o">-</span><span class="n">ECONNABORTED</span><span class="p">;</span>
+      <span class="k">goto</span> <span class="n">out_fd</span><span class="p">;</span>
+    <span class="p">}</span>
+        <span class="c1">// 从内核复制到用户空间
+</span><span class="c1"></span>    <span class="n">err</span> <span class="o">=</span> <span class="n">move_addr_to_user</span><span class="p">(</span><span class="o">&amp;</span><span class="n">address</span><span class="p">,</span>
+          <span class="n">len</span><span class="p">,</span> <span class="n">upeer_sockaddr</span><span class="p">,</span> <span class="n">upeer_addrlen</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">err</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
+      <span class="k">goto</span> <span class="n">out_fd</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="cm">/* File flags are not inherited via accept() unlike another OSes. */</span>
+  <span class="n">fd_install</span><span class="p">(</span><span class="n">newfd</span><span class="p">,</span> <span class="n">newfile</span><span class="p">);</span>
+  <span class="n">err</span> <span class="o">=</span> <span class="n">newfd</span><span class="p">;</span>
+<span class="nl">out</span><span class="p">:</span>
+  <span class="k">return</span> <span class="n">err</span><span class="p">;</span>
+<span class="nl">out_fd</span><span class="p">:</span>
+  <span class="n">fput</span><span class="p">(</span><span class="n">newfile</span><span class="p">);</span>
+  <span class="n">put_unused_fd</span><span class="p">(</span><span class="n">newfd</span><span class="p">);</span>
+  <span class="k">goto</span> <span class="n">out</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="发送数据">发送数据</h2>
+<p>调用 send 函数时，会触发内核的 sys_send 函数，sys_send 函数调用流程如下：</p>
+<ol>
+<li>应用程序的数据被复制到内核后，sys_send 函数调用 sock_sendmsg，依据协议族类型来执行发送操作</li>
+<li>如采用 TCP 协议，将调用 tcp_sendmsg， 按照 TCP 协议发送数据包到网卡</li>
+</ol>
+<h2 id="接收数据">接收数据</h2>
+<p>调用 recv 函数时，会触发内核的 sys_recv 函数，为把内核的网络数据转入到应用程序的接收缓冲区，
+sys_recv 函数会依次调用 sys_recvfrom、sock_recvfrom 和 __sock_recvmsg，
+并依据协议族类型来执行具体的接收操作。</p>
+<h2 id="关闭连接">关闭连接</h2>
+<p>调用 shutdown 函数时，内核器 启动 sys_shutdown 函数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="kt">int</span> <span class="nf">__sys_shutdown</span><span class="p">(</span><span class="kt">int</span> <span class="n">fd</span><span class="p">,</span> <span class="kt">int</span> <span class="n">how</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">int</span> <span class="n">err</span><span class="p">,</span> <span class="n">fput_needed</span><span class="p">;</span>
+  <span class="k">struct</span> <span class="n">socket</span> <span class="o">*</span><span class="n">sock</span><span class="p">;</span>
+  <span class="n">sock</span> <span class="o">=</span> <span class="n">sockfd_lookup_light</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">err</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">fput_needed</span><span class="p">);</span><span class="cm">/* 通过套接字，描述符找到对应的结构*/</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">sock</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="n">security_socket_shutdown</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span> <span class="n">how</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">err</span><span class="p">)</span>
+             <span class="cm">/* 根据套接字协议族调用关闭函数*/</span>
+      <span class="n">err</span> <span class="o">=</span> <span class="n">sock</span><span class="o">-&gt;</span><span class="n">ops</span><span class="o">-&gt;</span><span class="n">shutdown</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span> <span class="n">how</span><span class="p">);</span>
+        <span class="n">fput_light</span><span class="p">(</span><span class="n">sock</span><span class="o">-&gt;</span><span class="n">file</span><span class="p">,</span> <span class="n">fput_needed</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">err</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="第四十一讲-服务接口">第四十一讲 服务接口</h1>
+<h2 id="系统服务函数的执行过程">系统服务函数的执行过程</h2>
+<p><img src="/image/play_os_in_action/41_1.webp" alt="sys_call"></p>
+<h1 id="第四十二讲-linux-如何实现系统-api">第四十二讲 Linux 如何实现系统 API</h1>
+<h2 id="内核api接口架构">内核API接口架构</h2>
+<p><img src="/image/play_os_in_action/42_1.webp" alt="linux_sys_call"></p>
+<p>应用程序调用库函数，在库函数中调用 API 入口函数，触发中断进入内核执行系统调用。</p>
+<p>linux 最广泛使用的 C 库是 glibc，其中 open 函数实现如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="c1">//glibc/intl/loadmsgcat.c
+</span><span class="c1"></span><span class="cp">#ifdef _LIBC
+</span><span class="cp"># define open(name, flags)  __open_nocancel (name, flags)
+</span><span class="cp"># define close(fd)      __close_nocancel_nostatus (fd)
+</span><span class="cp">#endif
+</span><span class="cp"></span><span class="c1">//glibc/sysdeps/unix/sysv/linux/open_nocancel.c
+</span><span class="c1"></span><span class="kt">int</span> <span class="nf">__open_nocancel</span> <span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">file</span><span class="p">,</span> <span class="kt">int</span> <span class="n">oflag</span><span class="p">,</span> <span class="p">...)</span>
+<span class="p">{</span>
+  <span class="kt">int</span> <span class="n">mode</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">__OPEN_NEEDS_MODE</span> <span class="p">(</span><span class="n">oflag</span><span class="p">))</span>
+    <span class="p">{</span>
+      <span class="n">va_list</span> <span class="n">arg</span><span class="p">;</span>
+      <span class="n">va_start</span> <span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">oflag</span><span class="p">);</span><span class="c1">//解决可变参数
+</span><span class="c1"></span>      <span class="n">mode</span> <span class="o">=</span> <span class="n">va_arg</span> <span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>
+      <span class="n">va_end</span> <span class="p">(</span><span class="n">arg</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="k">return</span> <span class="n">INLINE_SYSCALL_CALL</span> <span class="p">(</span><span class="n">openat</span><span class="p">,</span> <span class="n">AT_FDCWD</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">oflag</span><span class="p">,</span> <span class="n">mode</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">//glibc/sysdeps/unix/sysdep.h
+</span><span class="c1">//这是为了解决不同参数数量的问题
+</span><span class="c1"></span><span class="cp">#define __INLINE_SYSCALL0(name) \
+</span><span class="cp">  INLINE_SYSCALL (name, 0)
+</span><span class="cp">#define __INLINE_SYSCALL1(name, a1) \
+</span><span class="cp">  INLINE_SYSCALL (name, 1, a1)
+</span><span class="cp">#define __INLINE_SYSCALL2(name, a1, a2) \
+</span><span class="cp">  INLINE_SYSCALL (name, 2, a1, a2)
+</span><span class="cp">#define __INLINE_SYSCALL3(name, a1, a2, a3) \
+</span><span class="cp">  INLINE_SYSCALL (name, 3, a1, a2, a3)
+</span><span class="cp">#define __INLINE_SYSCALL_NARGS_X(a,b,c,d,e,f,g,h,n,...) n
+</span><span class="cp">#define __INLINE_SYSCALL_NARGS(...) \
+</span><span class="cp">  __INLINE_SYSCALL_NARGS_X (__VA_ARGS__,7,6,5,4,3,2,1,0,)
+</span><span class="cp">#define __INLINE_SYSCALL_DISP(b,...) \
+</span><span class="cp">  __SYSCALL_CONCAT (b,__INLINE_SYSCALL_NARGS(__VA_ARGS__))(__VA_ARGS__)
+</span><span class="cp">#define INLINE_SYSCALL_CALL(...) \
+</span><span class="cp">  __INLINE_SYSCALL_DISP (__INLINE_SYSCALL, __VA_ARGS__)
+</span><span class="cp"></span><span class="c1">//glibc/sysdeps/unix/sysv/linux/sysdep.h
+</span><span class="c1">//关键是这个宏
+</span><span class="c1"></span><span class="cp">#define INLINE_SYSCALL(name, nr, args...)       \
+</span><span class="cp">  ({                  \
+</span><span class="cp">    long int sc_ret = INTERNAL_SYSCALL (name, nr, args);    \
+</span><span class="cp">    __glibc_unlikely (INTERNAL_SYSCALL_ERROR_P (sc_ret))    \
+</span><span class="cp">    ? SYSCALL_ERROR_LABEL (INTERNAL_SYSCALL_ERRNO (sc_ret))   \
+</span><span class="cp">    : sc_ret;               \
+</span><span class="cp">  })
+</span><span class="cp">#define INTERNAL_SYSCALL(name, nr, args...)       \
+</span><span class="cp">  internal_syscall##nr (SYS_ify (name), args)
+</span><span class="cp">#define INTERNAL_SYSCALL_NCS(number, nr, args...)     \
+</span><span class="cp">  internal_syscall##nr (number, args)
+</span><span class="cp"></span><span class="c1">//这是需要6个参数的宏
+</span><span class="c1"></span><span class="cp">#define internal_syscall6(number, arg1, arg2, arg3, arg4, arg5, arg6) \
+</span><span class="cp">({                  \
+</span><span class="cp">    unsigned long int resultvar;          \
+</span><span class="cp">    TYPEFY (arg6, __arg6) = ARGIFY (arg6);        \
+</span><span class="cp">    TYPEFY (arg5, __arg5) = ARGIFY (arg5);        \
+</span><span class="cp">    TYPEFY (arg4, __arg4) = ARGIFY (arg4);        \
+</span><span class="cp">    TYPEFY (arg3, __arg3) = ARGIFY (arg3);        \
+</span><span class="cp">    TYPEFY (arg2, __arg2) = ARGIFY (arg2);        \
+</span><span class="cp">    TYPEFY (arg1, __arg1) = ARGIFY (arg1);        \
+</span><span class="cp">    register TYPEFY (arg6, _a6) asm (&#34;r9&#34;) = __arg6;      \
+</span><span class="cp">    register TYPEFY (arg5, _a5) asm (&#34;r8&#34;) = __arg5;      \
+</span><span class="cp">    register TYPEFY (arg4, _a4) asm (&#34;r10&#34;) = __arg4;     \
+</span><span class="cp">    register TYPEFY (arg3, _a3) asm (&#34;rdx&#34;) = __arg3;     \
+</span><span class="cp">    register TYPEFY (arg2, _a2) asm (&#34;rsi&#34;) = __arg2;     \
+</span><span class="cp">    register TYPEFY (arg1, _a1) asm (&#34;rdi&#34;) = __arg1;     \
+</span><span class="cp">    asm volatile (              \
+</span><span class="cp">    &#34;syscall\n\t&#34;             \
+</span><span class="cp">    : &#34;=a&#34; (resultvar)              \
+</span><span class="cp">    : &#34;0&#34; (number), &#34;r&#34; (_a1), &#34;r&#34; (_a2), &#34;r&#34; (_a3), &#34;r&#34; (_a4),   \
+</span><span class="cp">      &#34;r&#34; (_a5), &#34;r&#34; (_a6)            \
+</span><span class="cp">    : &#34;memory&#34;, REGISTERS_CLOBBERED_BY_SYSCALL);      \
+</span><span class="cp">    (long int) resultvar;           \
+</span><span class="cp">})
+</span></code></pre></td></tr></table>
+</div>
+</div><h2 id="api接口">API接口</h2>
+<p>在 syscalls_64.h 文件我们可以看到 Linux API 的系统调用号</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C">
+<span class="c1">//linux/arch/x86/include/generated/asm/syscalls_64.h
+</span><span class="c1"></span><span class="n">__SYSCALL_COMMON</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">sys_read</span><span class="p">)</span>
+<span class="n">__SYSCALL_COMMON</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">sys_write</span><span class="p">)</span>
+<span class="n">__SYSCALL_COMMON</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">sys_open</span><span class="p">)</span>
+<span class="n">__SYSCALL_COMMON</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">sys_close</span><span class="p">)</span>
+<span class="n">__SYSCALL_COMMON</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">sys_newstat</span><span class="p">)</span>
+<span class="n">__SYSCALL_COMMON</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">sys_newfstat</span><span class="p">)</span>
+<span class="n">__SYSCALL_COMMON</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="n">sys_newlstat</span><span class="p">)</span>
+<span class="n">__SYSCALL_COMMON</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="n">sys_poll</span><span class="p">)</span>
+<span class="n">__SYSCALL_COMMON</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="n">sys_lseek</span><span class="p">)</span>
+<span class="c1">//……
+</span><span class="c1"></span><span class="n">__SYSCALL_COMMON</span><span class="p">(</span><span class="mi">435</span><span class="p">,</span> <span class="n">sys_clone3</span><span class="p">)</span>
+<span class="n">__SYSCALL_COMMON</span><span class="p">(</span><span class="mi">436</span><span class="p">,</span> <span class="n">sys_close_range</span><span class="p">)</span>
+<span class="n">__SYSCALL_COMMON</span><span class="p">(</span><span class="mi">437</span><span class="p">,</span> <span class="n">sys_openat2</span><span class="p">)</span>
+<span class="n">__SYSCALL_COMMON</span><span class="p">(</span><span class="mi">438</span><span class="p">,</span> <span class="n">sys_pidfd_getfd</span><span class="p">)</span>
+<span class="n">__SYSCALL_COMMON</span><span class="p">(</span><span class="mi">439</span><span class="p">,</span> <span class="n">sys_faccessat2</span><span class="p">)</span>
+<span class="n">__SYSCALL_COMMON</span><span class="p">(</span><span class="mi">440</span><span class="p">,</span> <span class="n">sys_process_madvise</span><span class="p">)</span>
+<span class="c1">//linux/arch/x86/include/generated/uapi/asm/unistd_64.h
+</span><span class="c1"></span><span class="cp">#define __NR_read 0
+</span><span class="cp">#define __NR_write 1
+</span><span class="cp">#define __NR_open 2
+</span><span class="cp">#define __NR_close 3
+</span><span class="cp">#define __NR_stat 4
+</span><span class="cp">#define __NR_fstat 5
+</span><span class="cp">#define __NR_lstat 6
+</span><span class="cp">#define __NR_poll 7
+</span><span class="cp">#define __NR_lseek 8
+</span><span class="cp"></span><span class="c1">//……
+</span><span class="c1"></span><span class="cp">#define __NR_clone3 435
+</span><span class="cp">#define __NR_close_range 436
+</span><span class="cp">#define __NR_openat2 437
+</span><span class="cp">#define __NR_pidfd_getfd 438
+</span><span class="cp">#define __NR_faccessat2 439
+</span><span class="cp">#define __NR_process_madvise 440
+</span><span class="cp">#ifdef __KERNEL__
+</span><span class="cp">#define __NR_syscall_max 440
+</span><span class="cp">#endif
+</span></code></pre></td></tr></table>
+</div>
+</div><h2 id="系统调用表">系统调用表</h2>
+<p>使用 sys_call_table 函数指针数组，存放所有的系统调用函数的地址，
+通过数组下标就能索引到响应的系统调用</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#define __SYSCALL_COMMON(nr, sym) __SYSCALL_64(nr, sym)
+</span><span class="cp"></span><span class="c1">//第一次定义__SYSCALL_64
+</span><span class="c1"></span><span class="cp">#define __SYSCALL_64(nr, sym) extern asmlinkage long sym(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long) ;
+</span><span class="cp">#include</span> <span class="cpf">&lt;asm/syscalls_64.h&gt;//第一次包含syscalls_64.h文件，其中的宏会被展开一次，例如__SYSCALL_COMMON(2, sys_open)会被展开成：</span><span class="cp">
+</span><span class="cp"></span><span class="k">extern</span> <span class="n">asmlinkage</span> <span class="kt">long</span> <span class="nf">sys_open</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">)</span> <span class="p">;</span>
+<span class="err">这表示申明</span>
+<span class="c1">//取消__SYSCALL_64定义
+</span><span class="c1"></span><span class="cp">#undef __SYSCALL_64
+</span><span class="cp"></span><span class="c1">//第二次重新定义__SYSCALL_64
+</span><span class="c1"></span><span class="cp">#define __SYSCALL_64(nr, sym) [ nr ] = sym,
+</span><span class="cp"></span>
+<span class="k">extern</span> <span class="n">asmlinkage</span> <span class="kt">long</span> <span class="n">sys_ni_syscall</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">);</span>
+<span class="k">const</span> <span class="n">sys_call_ptr_t</span> <span class="n">sys_call_table</span><span class="p">[]</span> <span class="n">____cacheline_aligned</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">[</span><span class="mi">0</span> <span class="p">...</span> <span class="n">__NR_syscall_max</span><span class="p">]</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">sys_ni_syscall</span><span class="p">,</span><span class="c1">//默认系统调用函数，什么都不干
+</span><span class="c1"></span>
+
+<span class="cp">#include</span> <span class="cpf">&lt;asm/syscalls_64.h&gt;//包含前面生成文件</span><span class="cp">
+</span><span class="cp"></span><span class="c1">//第二次包含syscalls_64.h文件，其中的宏会被再展开一次，例如__SYSCALL_COMMON(2, sys_open)会被展开成：
+</span><span class="c1"></span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">sys_open</span><span class="p">,</span> <span class="err">用于初始化这个数组，即表示数组的第二个元素填入</span><span class="n">sys_open</span>
+<span class="p">};</span>
+
+<span class="kt">int</span> <span class="n">syscall_table_size</span> <span class="o">=</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">sys_call_table</span><span class="p">);</span><span class="c1">//系统调用表的大小
+</span></code></pre></td></tr></table>
+</div>
+</div><h2 id="添加系统调用">添加系统调用</h2>
+<p>我们以添加一个返回CPU数量的函数来说明如何添加系统调用。</p>
+<ol>
+<li>下载内核源码</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">git clone git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git/
+</code></pre></td></tr></table>
+</div>
+</div><ol start="2">
+<li>申明系统调用</li>
+</ol>
+<p>在 <code>syscall_64.tbl</code> 文件末尾添加 441 号指令，这个文件格式是四列，分别是
+系统调用号、架构、服务名和服务入口函数。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C">
+<span class="c1">//linux-5.10.13/arch/x86/entry/syscalls/syscall_64.tbl
+</span><span class="c1"></span><span class="mi">0</span>  <span class="n">common</span>  <span class="n">read</span>      <span class="n">sys_read</span>
+<span class="mi">1</span>  <span class="n">common</span>  <span class="n">write</span>      <span class="n">sys_write</span>
+<span class="mi">2</span>  <span class="n">common</span>  <span class="n">open</span>      <span class="n">sys_open</span>
+<span class="c1">//……
+</span><span class="c1"></span><span class="mi">440</span>  <span class="n">common</span>  <span class="n">process_madvise</span>    <span class="n">sys_process_madvise</span>
+<span class="mi">441</span>  <span class="n">common</span>  <span class="n">get_cpus</span>    <span class="n">sys_get_cpus</span>
+</code></pre></td></tr></table>
+</div>
+</div><ol start="3">
+<li>定义系统调用</li>
+</ol>
+<p>在 <code>syscall.h</code> 文件中使用 <code>SYSCALL_DEFINE0</code> 来定义</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="c1">//linux-5.10.13/include/linux/syscalls.h
+</span><span class="c1"></span><span class="cp">#ifndef SYSCALL_DEFINE0
+</span><span class="cp">#define SYSCALL_DEFINE0(sname)                  \
+</span><span class="cp">    SYSCALL_METADATA(_##sname, 0);              \
+</span><span class="cp">    asmlinkage long sys_##sname(void);          \
+</span><span class="cp">    ALLOW_ERROR_INJECTION(sys_##sname, ERRNO);      \
+</span><span class="cp">    asmlinkage long sys_##sname(void)
+</span><span class="cp">#endif </span><span class="cm">/* SYSCALL_DEFINE0 */</span><span class="cp">
+</span><span class="cp"></span><span class="c1">//linux-5.10.13/kernel/sys.c
+</span><span class="c1"></span><span class="n">SYSCALL_DEFINE0</span><span class="p">(</span><span class="n">get_cpus</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="n">num_present_cpus</span><span class="p">();</span><span class="c1">//获取系统中有多少CPU
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><ol start="4">
+<li>编译系统内核</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 配置内核</span>
+make menuconfig
+
+<span class="c1"># 先编译内核，再编译内核模块</span>
+make -j8 bzImage <span class="o">&amp;&amp;</span> make -j8 modules
+
+<span class="c1"># 先安装内核模块，再安装内核</span>
+sudo make modules_install <span class="o">&amp;&amp;</span> sudo make install
+</code></pre></td></tr></table>
+</div>
+</div><ol start="5">
+<li>编写应用测试</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;sys/syscall.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="k">const</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
+<span class="p">{</span>
+    <span class="c1">//syscall就是根据系统调用号调用相应的系统调用
+</span><span class="c1"></span>    <span class="kt">long</span> <span class="n">cpus</span> <span class="o">=</span> <span class="n">syscall</span><span class="p">(</span><span class="mi">441</span><span class="p">);</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;cpu num is:%d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">cpus</span><span class="p">);</span><span class="c1">//输出结果
+</span><span class="c1"></span>    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="参考">参考</h1>
 <ul>
 <li><a href="https://stackoverflow.com/questions/37146637/why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux">why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux</a></li>
 <li><a href="https://blog.csdn.net/ll15982534415/article/details/118771286">快速建立hdi文件</a></li>
