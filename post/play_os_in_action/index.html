@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]操作系统实战（更新中）">
 <meta itemprop="description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"><meta itemprop="datePublished" content="2021-07-30T08:06:33+08:00" />
 <meta itemprop="dateModified" content="2022-03-01T07:50:33+08:00" />
-<meta itemprop="wordCount" content="59174">
+<meta itemprop="wordCount" content="59823">
 <meta itemprop="keywords" content="C,操作系统," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]操作系统实战（更新中）"/>
 <meta name="twitter:description" content="第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇"/>
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 59174 words </span>
-          <span class="more-meta"> 119 min read </span>
+        <span class="more-meta"> 59823 words </span>
+          <span class="more-meta"> 120 min read </span>
 
         
         
@@ -851,6 +851,24 @@
         <li><a href="#api接口">API接口</a></li>
         <li><a href="#系统调用表">系统调用表</a></li>
         <li><a href="#添加系统调用">添加系统调用</a></li>
+      </ul>
+    </li>
+    <li><a href="#第四十三讲-虚拟机内核">第四十三讲 虚拟机内核</a>
+      <ul>
+        <li><a href="#虚拟化">虚拟化</a>
+          <ul>
+            <li><a href="#定义">定义</a></li>
+            <li><a href="#核心思想">核心思想</a></li>
+          </ul>
+        </li>
+        <li><a href="#kvm核心原理">KVM核心原理</a>
+          <ul>
+            <li><a href="#cpu-虚拟化">CPU 虚拟化</a></li>
+            <li><a href="#内存虚拟化">内存虚拟化</a></li>
+            <li><a href="#io-虚拟化">I/O 虚拟化</a></li>
+          </ul>
+        </li>
+        <li><a href="#总结-1">总结</a></li>
       </ul>
     </li>
     <li><a href="#参考">参考</a></li>
@@ -11886,7 +11904,38 @@ sudo make modules_install <span class="o">&amp;&amp;</span> sudo make install
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><h1 id="参考">参考</h1>
+</div><h1 id="第四十三讲-虚拟机内核">第四十三讲 虚拟机内核</h1>
+<h2 id="虚拟化">虚拟化</h2>
+<h3 id="定义">定义</h3>
+<p>虚拟化的本质是一个资源管理的技术，把计算机的实体资源（如 CPU、内存、网络等 ）进行
+转换和抽象，让这些资源重新分割、排列与组合，实现最大化使用物理资源的目的。</p>
+<h3 id="核心思想">核心思想</h3>
+<p>在OS和硬件之间引入了一个叫 Hypervisor/Virtual Machine Monitor的层</p>
+<p><img src="/image/play_os_in_action/43_1.webp" alt="kvm"></p>
+<h2 id="kvm核心原理">KVM核心原理</h2>
+<p>要实现成功的虚拟化，核心是要对 CPU、内存 、I/O 进行虚拟化</p>
+<h3 id="cpu-虚拟化">CPU 虚拟化</h3>
+<p>Intel 定义了 Virtual Machine Extension （VMX）这个处理器特性，也就是传说中的
+VT-x 指令集，开启这个特性之后 ，就会存在两种操作模式，分别是：跟操作（VMX root operation）和非根操作（VMX non-root operation）</p>
+<p>前面说到的 Hypervisor/VMM，就是 运行在根操作模式下，对处理器和平台硬件有完全控制权限。</p>
+<p>而虚拟机、应用程序等客户软件（Guest software）则运行在非根操作模式下，需要执行一些
+特殊指令时会触发 VM-Exit 指令切回根操作模式。</p>
+<p><img src="/image/play_os_in_action/43_2.webp" alt="VM-Exit"></p>
+<h3 id="内存虚拟化">内存虚拟化</h3>
+<p>内存虚拟化也借鉴了虚拟内存的思想，这样就又多了两种内存地址，共四种地址：</p>
+<ul>
+<li>客户机虚拟地址 GVA （Guest Virtual Address）</li>
+<li>客户机物理地址 GPA （Guest Physical Address）</li>
+<li>宿主机虚拟地址 HVA （Host Virtual Address）</li>
+<li>宿主机物理地址 HPA （Host Physical Address）</li>
+</ul>
+<p>地址转换主要基于影子页表（Shadow Page Table），Intel 在硬件上设计了 EPT（Extended Page Tables），来提升内存地址转换效率。</p>
+<h3 id="io-虚拟化">I/O 虚拟化</h3>
+<p>I/O 虚拟化基于 Intel 的 VT-d 指令集来实现，这是一种基于北桥芯片的硬件辅助虚拟技术。
+通过 VT-d 技术 ，虚拟机不用通过中间通道 ，使用基于直接 I/O 设备分配方式。</p>
+<h2 id="总结-1">总结</h2>
+<p><img src="/image/play_os_in_action/43_3.webp" alt="summary"></p>
+<h1 id="参考">参考</h1>
 <ul>
 <li><a href="https://stackoverflow.com/questions/37146637/why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux">why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux</a></li>
 <li><a href="https://blog.csdn.net/ll15982534415/article/details/118771286">快速建立hdi文件</a></li>

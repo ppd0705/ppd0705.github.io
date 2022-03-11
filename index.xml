@@ -11800,7 +11800,38 @@ sudo make modules_install &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/s
 &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h1 id=&#34;参考&#34;&gt;参考&lt;/h1&gt;
+&lt;/div&gt;&lt;h1 id=&#34;第四十三讲-虚拟机内核&#34;&gt;第四十三讲 虚拟机内核&lt;/h1&gt;
+&lt;h2 id=&#34;虚拟化&#34;&gt;虚拟化&lt;/h2&gt;
+&lt;h3 id=&#34;定义&#34;&gt;定义&lt;/h3&gt;
+&lt;p&gt;虚拟化的本质是一个资源管理的技术，把计算机的实体资源（如 CPU、内存、网络等 ）进行
+转换和抽象，让这些资源重新分割、排列与组合，实现最大化使用物理资源的目的。&lt;/p&gt;
+&lt;h3 id=&#34;核心思想&#34;&gt;核心思想&lt;/h3&gt;
+&lt;p&gt;在OS和硬件之间引入了一个叫 Hypervisor/Virtual Machine Monitor的层&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/43_1.webp&#34; alt=&#34;kvm&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;kvm核心原理&#34;&gt;KVM核心原理&lt;/h2&gt;
+&lt;p&gt;要实现成功的虚拟化，核心是要对 CPU、内存 、I/O 进行虚拟化&lt;/p&gt;
+&lt;h3 id=&#34;cpu-虚拟化&#34;&gt;CPU 虚拟化&lt;/h3&gt;
+&lt;p&gt;Intel 定义了 Virtual Machine Extension （VMX）这个处理器特性，也就是传说中的
+VT-x 指令集，开启这个特性之后 ，就会存在两种操作模式，分别是：跟操作（VMX root operation）和非根操作（VMX non-root operation）&lt;/p&gt;
+&lt;p&gt;前面说到的 Hypervisor/VMM，就是 运行在根操作模式下，对处理器和平台硬件有完全控制权限。&lt;/p&gt;
+&lt;p&gt;而虚拟机、应用程序等客户软件（Guest software）则运行在非根操作模式下，需要执行一些
+特殊指令时会触发 VM-Exit 指令切回根操作模式。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/43_2.webp&#34; alt=&#34;VM-Exit&#34;&gt;&lt;/p&gt;
+&lt;h3 id=&#34;内存虚拟化&#34;&gt;内存虚拟化&lt;/h3&gt;
+&lt;p&gt;内存虚拟化也借鉴了虚拟内存的思想，这样就又多了两种内存地址，共四种地址：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;客户机虚拟地址 GVA （Guest Virtual Address）&lt;/li&gt;
+&lt;li&gt;客户机物理地址 GPA （Guest Physical Address）&lt;/li&gt;
+&lt;li&gt;宿主机虚拟地址 HVA （Host Virtual Address）&lt;/li&gt;
+&lt;li&gt;宿主机物理地址 HPA （Host Physical Address）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;地址转换主要基于影子页表（Shadow Page Table），Intel 在硬件上设计了 EPT（Extended Page Tables），来提升内存地址转换效率。&lt;/p&gt;
+&lt;h3 id=&#34;io-虚拟化&#34;&gt;I/O 虚拟化&lt;/h3&gt;
+&lt;p&gt;I/O 虚拟化基于 Intel 的 VT-d 指令集来实现，这是一种基于北桥芯片的硬件辅助虚拟技术。
+通过 VT-d 技术 ，虚拟机不用通过中间通道 ，使用基于直接 I/O 设备分配方式。&lt;/p&gt;
+&lt;h2 id=&#34;总结-1&#34;&gt;总结&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/43_3.webp&#34; alt=&#34;summary&#34;&gt;&lt;/p&gt;
+&lt;h1 id=&#34;参考&#34;&gt;参考&lt;/h1&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://stackoverflow.com/questions/37146637/why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux&#34;&gt;why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://blog.csdn.net/ll15982534415/article/details/118771286&#34;&gt;快速建立hdi文件&lt;/a&gt;&lt;/li&gt;
