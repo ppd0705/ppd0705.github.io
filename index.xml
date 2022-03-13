@@ -769,7 +769,7 @@ rsp的旧值，以便进行帧栈寻址，并在退出前将栈中数据恢复�
     </item>
     
     <item>
-      <title>[笔记]操作系统实战（更新中）</title>
+      <title>[笔记]操作系统实战</title>
       <link>https://ppd0705.github.io/post/play_os_in_action/</link>
       <pubDate>Fri, 30 Jul 2021 08:06:33 +0800</pubDate>
       
@@ -11831,10 +11831,217 @@ VT-x 指令集，开启这个特性之后 ，就会存在两种操作模式，�
 通过 VT-d 技术 ，虚拟机不用通过中间通道 ，使用基于直接 I/O 设备分配方式。&lt;/p&gt;
 &lt;h2 id=&#34;总结-1&#34;&gt;总结&lt;/h2&gt;
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/43_3.webp&#34; alt=&#34;summary&#34;&gt;&lt;/p&gt;
+&lt;h1 id=&#34;第四十四讲-容器实现机制&#34;&gt;第四十四讲 容器实现机制&lt;/h1&gt;
+&lt;h2 id=&#34;docker-容器基础架构&#34;&gt;Docker 容器基础架构&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/44_1.webp&#34; alt=&#34;docker_architecture&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Docker 是最经典的容器技术，Docker应用是一种 C/S 架构，包括 3 个核心部分。&lt;/p&gt;
+&lt;h3 id=&#34;客户端-client&#34;&gt;客户端 Client&lt;/h3&gt;
+&lt;p&gt;客户端主要任务就是解析用户的操作指令和参数，通过 HTTP API 和 Docker 守护进程
+交互，并将结果返回给用户。&lt;/p&gt;
+&lt;h3 id=&#34;镜像仓库-registry&#34;&gt;镜像仓库 Registry&lt;/h3&gt;
+&lt;p&gt;守护进程通过网络和 镜像仓库进行通信，如查询、下载、推送镜像等操作&lt;/p&gt;
+&lt;p&gt;镜像仓库可以部署在公网环境，也可以私有化部署到内网&lt;/p&gt;
+&lt;h3 id=&#34;管理引擎进程-host&#34;&gt;管理引擎进程 Host&lt;/h3&gt;
+&lt;p&gt;引擎进程是 Docker 架构的核心，包括运行 Docker Daemon（守护进程）、Image（镜像）、Driver（驱动）、Libcontainer （容器管理）等&lt;/p&gt;
+&lt;h4 id=&#34;daemon&#34;&gt;Daemon&lt;/h4&gt;
+&lt;p&gt;Daemon 负责监听客户端请求，然后执行后续的对应逻辑；还管理 Docker 对象（容器、镜像 、网络、磁盘）。&lt;/p&gt;
+&lt;p&gt;Daemon 分为三大部分：Server、Job、Engine。&lt;/p&gt;
+&lt;p&gt;Server 负责接收客户端请求，然后分发给相应 Handler 执行请求，最后将结果返回给客户端。&lt;/p&gt;
+&lt;p&gt;Engine 是运行引擎，执行的每一项工作，都可以拆分成多个最小动作 &amp;mdash; Job。&lt;/p&gt;
+&lt;p&gt;Job 负责执行各项操作。&lt;/p&gt;
+&lt;h4 id=&#34;driver&#34;&gt;Driver&lt;/h4&gt;
+&lt;p&gt;Driver 的作用是解耦，将镜像管理、网络和隔离执行逻辑从 Daemon 中剥离&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;graphdriver 负责镜像管理&lt;/li&gt;
+&lt;li&gt;networkdriver 负责网络环境配置&lt;/li&gt;
+&lt;li&gt;execdriver 负责执行，通过操作 Lxc 或 libcontainer 实现资源隔离&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;libcontainer 提供了访问内核和容器相关的 API，负责对容器进行具体操作。&lt;/p&gt;
+&lt;h2 id=&#34;容器基础技术&#34;&gt;容器基础技术&lt;/h2&gt;
+&lt;h3 id=&#34;namespace&#34;&gt;Namespace&lt;/h3&gt;
+&lt;p&gt;Namespace 实现了各种资源的隔离功能，具体如下表&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/44_2.webp&#34; alt=&#34;namespace&#34;&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;PID Namespace: 用于进程隔离，每个容器都以 PID=1 的 init 进程来启动&lt;/li&gt;
+&lt;li&gt;User Namespace: 用于隔离容器中 UID、GID、根目录等。在当前 Namespace下 ，用户是 root 权限的，但是在宿主机上，他还是那个用户。&lt;/li&gt;
+&lt;li&gt;UTS Namespace: 用于主机名或域名隔离，每个容器有独立的主机名&lt;/li&gt;
+&lt;li&gt;Mount Namespace: 用于隔离挂载路径。&lt;/li&gt;
+&lt;li&gt;Net Namespace: 用于隔离网络资源，每个容器都已独立的网络设备&lt;/li&gt;
+&lt;li&gt;IPC Namespace: 用于隔离 IPC 通信，只用在相同 IPC 命名空间的容器进程之间才可以共享内存、信号量&lt;/li&gt;
+&lt;li&gt;Cgroup Namespace: 用于隔离 cgroup 视图&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Namespace 主要用到 3 个系统调用函数&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;clone: 用户创建新进程，根据传入的不同 Namespace 类型, 来创建不同的 NameSpace 来进行隔离，其子进程也会被包含到这些 Namespace  中&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;c1&#34;&gt;//flags就是标志用来描述你需要从父进程继承哪些资源，
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//这里flags参数为将要创建的NameSpace类型，可以为一个或多个
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;clone&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;child_func&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;),&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;child_stac&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;flags&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;arg&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;unshare: 将进程 移出指定类型的 Namespace，并加入到新创建的 Namespace 中&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;unshare&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;flags&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;setns: 将进程加入到 Namespace 中&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;c1&#34;&gt;//fd： 加入的NameSpace，指向/proc/[pid]/ns/目录里相应NameSpace对应的文件，
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//nstype：NameSpace类型
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;setns&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fd&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;nstype&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Namespace 的主旨就是隔离容器的运行环境&lt;/p&gt;
+&lt;h3 id=&#34;cgroups&#34;&gt;Cgroups&lt;/h3&gt;
+&lt;p&gt;Cgroups (Control Groups) 主要负责对指定的一组进程做资源限制，具体包括 CPU、内存、存储、I/O、网络等资源。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/44_3.webp&#34; alt=&#34;cgroups&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Task: 任务, 是 Cgroup 中的一个进程
+hierarchy: Cgroups 层级树，将 Cgroup 通过 树状结构串起来，通过虚拟文件系统的方式暴露给用户。
+subsystem: 子系统，是一组资源控制模块，控制资源占用。常用的子系统有 cpu group 、memory group 等。&lt;/p&gt;
+&lt;h1 id=&#34;第四十五讲-苹果-m1-芯片因何而快&#34;&gt;第四十五讲 苹果 M1 芯片因何而快&lt;/h1&gt;
+&lt;h2 id=&#34;cpu-原理初探&#34;&gt;CPU 原理初探&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/45_1.webp&#34; alt=&#34;cpu_architecture&#34;&gt;&lt;/p&gt;
+&lt;p&gt;CPU 的运行过程可以抽象成这样 6 步：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;首先从存储器中取出指令，这里把寄存器、RAM 统一抽象成了存储器&lt;/li&gt;
+&lt;li&gt;指令解码器解码指令&lt;/li&gt;
+&lt;li&gt;根据指令需要决定是否继续从存储器取数据&lt;/li&gt;
+&lt;li&gt;控制单元（CU）根据解指令决定要进行哪些计算，计算工作由算术逻辑单元（ALU）完成&lt;/li&gt;
+&lt;li&gt;控制单元（CU）根据解指令决定是否要将计算结果存入存储器&lt;/li&gt;
+&lt;li&gt;修改程序计算器（PC）的指针，为下一次取指令而做准备。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;以上整体执行过程是由控制单元（CU）在时钟信号的驱动下，周而复始的有序运行。&lt;/p&gt;
+&lt;h2 id=&#34;alu-的需求梳理和方案设计&#34;&gt;ALU 的需求梳理和方案设计&lt;/h2&gt;
+&lt;p&gt;我们可以使用 Verilog 语言来实现一个运行简单计算 ALU， 模块简图如下：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/45_2.webp&#34; alt=&#34;alu_architecture&#34;&gt;&lt;/p&gt;
+&lt;p&gt;输入侧抽象出了五根引脚，作用分别是：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;ena: 使用信号，取值 0 和 1 分别代表 ALU 的关和开。&lt;/li&gt;
+&lt;li&gt;clk: 时钟信号，时钟信号是 0 1 交替运行的方波。&lt;/li&gt;
+&lt;li&gt;opcode: 操作码，取值 00、01、10 分别代表加、减、比较运算&lt;/li&gt;
+&lt;li&gt;data1/2: 参与运算的两个数据&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;ALU 实现代码&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;31
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;32
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;33
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;34
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;/*----------------------------------------------------------------
+Filename: alu.v
+Function: 设计一个N位的ALU(实现两个N位有符号整数加 减 比较运算)
+-----------------------------------------------------------------*/
+module alu(ena, clk, opcode, data1, data2, y);
+    //定义alu位宽
+    parameter N = 32; //输入范围[-128, 127]
+    
+    //定义输入输出端口
+    input ena, clk;
+    input [1 : 0] opcode;
+    input signed [N - 1 : 0] data1, data2; //输入有符号整数范围为[-128, 127] 
+    output signed [N : 0] y; //输出范围有符号整数范围为[-255, 255]
+    
+    //内部寄存器定义
+    reg signed [N : 0] y;
+    
+    //状态编码
+    parameter ADD = 2&amp;#39;b00, SUB = 2&amp;#39;b01, COMPARE = 2&amp;#39;b10;
+    
+    //逻辑实现
+    always@(posedge clk)
+    begin
+        if(ena)
+        begin
+            casex(opcode)
+                ADD: y &amp;lt;= data1 + data2; //实现有符号整数加运算
+                SUB: y &amp;lt;= data1 - data2; //实现有符号数减运算
+                COMPARE: y &amp;lt;= (data1 &amp;gt; data2) ? 1 : ((data1 == data2) ? 0 : 2); //data1 = data2 输出0; data1 &amp;gt; data2 输出1; data1 &amp;lt; data2 输出2;
+                default: y &amp;lt;= 0;
+            endcase
+        end
+    end
+endmodule
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;现代-cpu-加速套路&#34;&gt;现代 CPU 加速套路&lt;/h2&gt;
+&lt;h3 id=&#34;更多硬件指令&#34;&gt;更多硬件指令&lt;/h3&gt;
+&lt;p&gt;现代 CPU 会实现更多硬件指令，这样能在一个时钟周期内实现更多的功能，从而提高效率。&lt;/p&gt;
+&lt;h3 id=&#34;缓存&#34;&gt;缓存&lt;/h3&gt;
+&lt;p&gt;现代 CPU 会在内部设计多级缓存，来提高指令读写速度&lt;/p&gt;
+&lt;h3 id=&#34;流水行乱序执行和分支预测&#34;&gt;流水行乱序执行和分支预测&lt;/h3&gt;
+&lt;h3 id=&#34;多核&#34;&gt;多核&lt;/h3&gt;
+&lt;h3 id=&#34;超线程&#34;&gt;超线程&lt;/h3&gt;
+&lt;h2 id=&#34;指令集相关&#34;&gt;指令集相关&lt;/h2&gt;
+&lt;h3 id=&#34;cisc&#34;&gt;CISC&lt;/h3&gt;
+&lt;p&gt;Complex Instruction Set Computer 复杂指令集&lt;/p&gt;
+&lt;h3 id=&#34;risc&#34;&gt;RISC&lt;/h3&gt;
+&lt;p&gt;Reduced Instruction Set Computer 精简指令集&lt;/p&gt;
+&lt;h3 id=&#34;arm-和-m1-芯片&#34;&gt;ARM 和 M1 芯片&lt;/h3&gt;
+&lt;p&gt;ARM 是 Advanced RISC Machine 的缩写。 ARM 公司制作指令集和 CPU 的设计，授权给厂商生产&lt;/p&gt;
+&lt;p&gt;M1 是 基于 ARM 架构的，并在其做优化&lt;/p&gt;
+&lt;p&gt;M1 中的解码器由 4 个增加到了 8 个，指令缓冲空间比常见 CPU 大了 3 倍。严格讲 M1 芯片
+并不是 CPU，它集成了 CPU、GPU、IPU、DSP、NPU、IO控制器、网络模块、视频编解码器等&lt;/p&gt;
+&lt;h2 id=&#34;总结-2&#34;&gt;总结&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/play_os_in_action/45_3.webp&#34; alt=&#34;summary&#34;&gt;&lt;/p&gt;
 &lt;h1 id=&#34;参考&#34;&gt;参考&lt;/h1&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://stackoverflow.com/questions/37146637/why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux&#34;&gt;why-is-interrupt-disabled-between-spin-lock-and-spin-unlock-in-linux&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://blog.csdn.net/ll15982534415/article/details/118771286&#34;&gt;快速建立hdi文件&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/p8952/bocker/blob/master/bocker&#34;&gt;基于shell的docker实现&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
       
