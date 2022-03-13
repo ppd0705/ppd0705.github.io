@@ -64,12 +64,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://ppd0705.github.io/post/learn_c/" /><meta property="article:section" content="post" />
 <meta property="article:published_time" content="2022-01-31T17:04:50+08:00" />
-<meta property="article:modified_time" content="2022-02-12T16:44:50+08:00" />
+<meta property="article:modified_time" content="2022-03-13T21:24:50+08:00" />
 
 <meta itemprop="name" content="[笔记]深入C语言和程序运行原理（更新中）">
 <meta itemprop="description" content="第零讲 课前热身 数据量单位 位（bit）： 是最小存储单位，每个位可以存一个二进制码值得 0 或 1 字节（byte）： 通常是由八个位组成的一个存储单元，"><meta itemprop="datePublished" content="2022-01-31T17:04:50+08:00" />
-<meta itemprop="dateModified" content="2022-02-12T16:44:50+08:00" />
-<meta itemprop="wordCount" content="6134">
+<meta itemprop="dateModified" content="2022-03-13T21:24:50+08:00" />
+<meta itemprop="wordCount" content="7794">
 <meta itemprop="keywords" content="C," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]深入C语言和程序运行原理（更新中）"/>
 <meta name="twitter:description" content="第零讲 课前热身 数据量单位 位（bit）： 是最小存储单位，每个位可以存一个二进制码值得 0 或 1 字节（byte）： 通常是由八个位组成的一个存储单元，"/>
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 6134 words </span>
-          <span class="more-meta"> 13 min read </span>
+        <span class="more-meta"> 7794 words </span>
+          <span class="more-meta"> 16 min read </span>
 
         
         
@@ -416,6 +416,52 @@
           </ul>
         </li>
         <li><a href="#联合-union">联合 Union</a></li>
+      </ul>
+    </li>
+    <li><a href="#第八讲-指针是如何灵活使用内存的">第八讲 指针是如何灵活使用内存的</a>
+      <ul>
+        <li><a href="#指针的基本使用">指针的基本使用</a></li>
+        <li><a href="#指针和数组">指针和数组</a></li>
+        <li><a href="#指针的其他运算">指针的其他运算</a>
+          <ul>
+            <li><a href="#算术运算">算术运算</a></li>
+            <li><a href="#关系运算">关系运算</a></li>
+          </ul>
+        </li>
+        <li><a href="#堆内存指针">堆内存指针</a></li>
+      </ul>
+    </li>
+    <li><a href="#第九讲-预处理器">第九讲 预处理器</a>
+      <ul>
+        <li><a href="#预处理流程">预处理流程</a></li>
+        <li><a href="#宏函数常用技巧">宏函数常用技巧</a>
+          <ul>
+            <li><a href="#为返回值添加括号">为返回值添加括号</a></li>
+            <li><a href="#为参数添加括号">为参数添加括号</a></li>
+            <li><a href="#警惕多次副作用">警惕多次副作用</a></li>
+            <li><a href="#定义完备的多语句宏函数">定义完备的多语句宏函数</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#第十讲-字符字符串与数学计算">第十讲 字符、字符串与数学计算</a>
+      <ul>
+        <li><a href="#字符和字符串">字符和字符串</a>
+          <ul>
+            <li><a href="#字符">字符</a></li>
+            <li><a href="#字符串">字符串</a></li>
+          </ul>
+        </li>
+        <li><a href="#字符库函数">字符库函数</a>
+          <ul>
+            <li><a href="#统计字符串长度">统计字符串长度</a></li>
+            <li><a href="#拼接字符串">拼接字符串</a></li>
+            <li><a href="#拷贝字符串">拷贝字符串</a></li>
+            <li><a href="#格式化字符串">格式化字符串</a></li>
+            <li><a href="#字符的判断和转换">字符的判断和转换</a></li>
+          </ul>
+        </li>
+        <li><a href="#数学运算库函数">数学运算库函数</a></li>
       </ul>
     </li>
   </ul>
@@ -977,6 +1023,409 @@ rsp的旧值，以便进行帧栈寻址，并在退出前将栈中数据恢复�
 <p>联合对象的大小与内部定义最大成员的大小相同。</p>
 <p>对一个单独的联合对象来说，哪个字段在生效我们无从得知，所以需要一个标签字段来配合指明正在生效的字段，这样模式叫做“Tagged Union”.</p>
 <p><img src="/image/learn_c/7_4.webp" alt="union"></p>
+<h1 id="第八讲-指针是如何灵活使用内存的">第八讲 指针是如何灵活使用内存的</h1>
+<h2 id="指针的基本使用">指针的基本使用</h2>
+<p>通过 类型说明符加 * 符号可以定义一个指向该数据类型的指针。
+通过 const 关键字可以限制指针变量的行为</p>
+<p><img src="/image/learn_c/8_1.webp" alt="pointer_basic_usage"></p>
+<h2 id="指针和数组">指针和数组</h2>
+<p><img src="/image/learn_c/8_2.webp" alt="pointer_and_array"></p>
+<p>从上图看出，数据中的元素被分配在连续的栈内存中。</p>
+<p>当 arr 作为实参传入函数 sum 后，实际传入的是一个指向 int 类型的指针，有关 arr 的大小和类型都全部丢失，这种情况称之为”数组的退化“。</p>
+<h2 id="指针的其他运算">指针的其他运算</h2>
+<h3 id="算术运算">算术运算</h3>
+<p><img src="/image/learn_c/8_3.webp" alt="pointer_math_operation"></p>
+<p>当我们对指针进行加减运算时，编译器是以当前指针所指向值对应的某个固定
+长度为单位，对指针中存放的地址值进行相应调整的。</p>
+<h3 id="关系运算">关系运算</h3>
+<p>大多数情况，编译器会使用 cmp 和 setg 等指令来判断关系运算两侧操作数的大小</p>
+<h2 id="堆内存指针">堆内存指针</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
+</span><span class="cp">#define N 5
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">arr</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span> <span class="p">};</span>  
+  <span class="c1">// 分配用于存放 N 个整数的堆内存；
+</span><span class="c1"></span>  <span class="kt">int</span><span class="o">*</span> <span class="n">p</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="o">*</span><span class="p">)</span> <span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="o">*</span> <span class="n">N</span><span class="p">);</span>
+  <span class="c1">// 将数组 arr 中的元素复制到分配的堆内存中；
+</span><span class="c1"></span>  <span class="n">memcpy</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="o">*</span> <span class="n">N</span><span class="p">);</span>  
+  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// 通过指针遍历堆空间中的数据；
+</span><span class="c1"></span>    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="o">*</span><span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="n">i</span><span class="p">));</span>
+  <span class="p">}</span>
+  <span class="c1">// 释放先前分配的堆空间，让操作系统可以回收内存；
+</span><span class="c1"></span>  <span class="n">free</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>  
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在 VAS 中，堆内存位于栈内存的下方，堆内存是从低地址向高地址逐渐增长</p>
+<p><img src="/image/learn_c/8_4.webp" alt="heap_memory"></p>
+<p>堆内存可以动态创建，可以保持和程序相同的生命周期。
+另外和全局变量、静态变量这种将值完全暴露给所有程序代码相比，
+使用堆内存可以将数据的使用限制在所需的最小范围内，加强了程序对内存的精细化管理程度。</p>
+<h1 id="第九讲-预处理器">第九讲 预处理器</h1>
+<h2 id="预处理流程">预处理流程</h2>
+<p>预处理流程如下：</p>
+<ol>
+<li>删除代码注释</li>
+<li>处理宏定义 #define，进行展开和替换</li>
+<li>处理条件预编译 #if、#elif，仅保留符合条件的代码</li>
+<li>处理文件包含预编译指令 #include，将被包含的文件内容插入到指令所在位置</li>
+<li>处理其他可识别的预处理指令如 #program</li>
+<li>添加其他具有辅助性功能的注释信息</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#pragma GCC warning &#34;Just FYI!&#34;
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdbool.h&gt;</span><span class="cp">
+</span><span class="cp">#define PI 3.14
+</span><span class="cp">#define SQUARE(x) (x * x)
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+<span class="cp">#if defined PI
+</span><span class="cp"></span>  <span class="c1">// Some specific calculations.
+</span><span class="c1"></span>  <span class="k">const</span> <span class="kt">double</span> <span class="n">area</span> <span class="o">=</span> <span class="n">SQUARE</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="o">*</span> <span class="n">PI</span><span class="p">;</span>
+  <span class="k">const</span> <span class="kt">bool</span> <span class="n">isAreaGT100</span> <span class="o">=</span> <span class="n">area</span> <span class="o">&gt;</span> <span class="mf">100.0</span><span class="p">;</span>
+<span class="cp">#endif
+</span><span class="cp"></span>  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>使用<code>gcc -O0 -Wall -E exmaple.c -o example.I</code> 得到预处理后的代码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp"># 1 &#34;macro.c&#34;
+</span><span class="cp"># 1 &#34;&lt;built-in&gt;&#34;
+</span><span class="cp"># 1 &#34;&lt;command-line&gt;&#34;
+</span><span class="cp"># 31 &#34;&lt;command-line&gt;&#34;
+</span><span class="cp"># 1 &#34;/usr/include</span><span class="cpf">/stdc-predef.h&#34; 1 3 4</span><span class="cp">
+</span><span class="cp"># 32 &#34;&lt;command-line&gt;&#34; 2
+</span><span class="cp"># 1 &#34;macro.c&#34;
+</span><span class="cp"></span>
+<span class="cp"># 1 &#34;/usr/lib/gcc/x86_64-redhat-linux/8/include</span><span class="cpf">/stdbool.h&#34; 1 3 4</span><span class="cp">
+</span><span class="cp"># 3 &#34;macro.c&#34; 2
+</span><span class="cp"></span>
+
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+
+  <span class="k">const</span> <span class="kt">double</span> <span class="n">area</span> <span class="o">=</span> <span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="mi">5</span><span class="p">)</span> <span class="o">*</span> <span class="mf">3.14</span><span class="p">;</span>
+  <span class="k">const</span>
+<span class="cp"># 8 &#34;macro.c&#34; 3 4
+</span><span class="cp"></span>       <span class="n">_Bool</span>
+<span class="cp"># 8 &#34;macro.c&#34;
+</span><span class="cp"></span>            <span class="n">isAreaGT100</span> <span class="o">=</span> <span class="n">area</span> <span class="o">&gt;</span> <span class="mf">100.0</span><span class="p">;</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="宏函数常用技巧">宏函数常用技巧</h2>
+<h3 id="为返回值添加括号">为返回值添加括号</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="c1">// #define FOO(x) 1 + x * x
+</span><span class="c1"></span><span class="n">define</span> <span class="nf">FOO</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span>
+<span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%d&#34;</span><span class="p">,</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">FOO</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="为参数添加括号">为参数添加括号</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="c1">// #define FOO(x) (1 + x * x)
+</span><span class="c1"></span><span class="n">define</span> <span class="nf">FOO</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%d&#34;</span><span class="p">,</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">FOO</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="警惕多次副作用">警惕多次副作用</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#define FOO(x) (1 + (x) * (x))
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%d&#34;</span><span class="p">,</span> <span class="n">FOO</span><span class="p">(</span><span class="o">++</span><span class="n">i</span><span class="p">));</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="定义完备的多语句宏函数">定义完备的多语句宏函数</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C">
+<span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="c1">// #define SAY() printf(&#34;Hello, &#34;); printf(&#34;world!&#34;)
+</span><span class="c1"></span>
+<span class="cp">#define SAY() do { printf(&#34;Hello, &#34;); printf(&#34;world!&#34;)} while (0)
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">input</span><span class="p">;</span>
+  <span class="n">scanf</span><span class="p">(</span><span class="s">&#34;%d&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">input</span><span class="p">);</span>  
+  <span class="k">if</span> <span class="p">(</span><span class="n">input</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">SAY</span><span class="p">();</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="第十讲-字符字符串与数学计算">第十讲 字符、字符串与数学计算</h1>
+<p><img src="/image/learn_c/10_1.webp" alt="c_std_library"></p>
+<h2 id="字符和字符串">字符和字符串</h2>
+<p>在 C 语言中，字符用单引号表示，字符串用双引号表示</p>
+<h3 id="字符">字符</h3>
+<p>C 语言保证 char 类型只占用一个字节大小。</p>
+<p>大多数情况编译器会选择 char 类型视为有符号整数类型。</p>
+<h3 id="字符串">字符串</h3>
+<p>字符串可以使用指针或者数组形式表示。</p>
+<p>连续出现的字符串之间如果仅有空格分隔，则会将它们视为一个整体。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="c1">// read-only string.
+</span><span class="c1"></span><span class="k">const</span> <span class="kt">char</span> <span class="n">strA</span><span class="p">[]</span> <span class="o">=</span> <span class="s">&#34;Hello, geek!&#34;</span><span class="p">;</span>  
+<span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">strB</span> <span class="o">=</span> <span class="s">&#34;Hello&#34;</span> <span class="s">&#34;, geek!&#34;</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上述字符串在内存的布局如下：</p>
+<p><img src="/image/learn_c/10_2.webp" alt="string_memory_layout"></p>
+<p>字符串被存放在连续的内存段上，且每个字符串最后都以一个空字符作为终止符。</p>
+<p>使用数组和指针形式定义的字符串，其底层的数据引用方式会有所区别。
+其中数组方式会将字符串从 .rodata 中拷贝到其他位置（比如栈内存），因此修改这些这些数据不会改变原始的 .rodata 中的副本；而使用指针形式时指针会直接引用位于 .rodata 中的字符串数据，因此通过指针修改字符串的值会影响相同指向的指针字符串。</p>
+<h2 id="字符库函数">字符库函数</h2>
+<h3 id="统计字符串长度">统计字符串长度</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">const</span> <span class="kt">char</span> <span class="n">str</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#34;Hi&#34;</span><span class="p">;</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%zu</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">strlen</span><span class="p">(</span><span class="n">str</span><span class="p">));</span>  <span class="c1">// 2.
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>strlen 函数不会计入字符串多余的终止符。</p>
+<h3 id="拼接字符串">拼接字符串</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#define STRLEN 14
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kt">char</span> <span class="n">strA</span><span class="p">[</span><span class="n">STRLEN</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#34;Hello,&#34;</span><span class="p">;</span>
+  <span class="kt">char</span> <span class="n">strB</span><span class="p">[]</span> <span class="o">=</span> <span class="s">&#34; world!&#34;</span><span class="p">;</span>
+  <span class="n">strncat</span><span class="p">(</span><span class="n">strA</span><span class="p">,</span> <span class="n">strB</span><span class="p">,</span> <span class="n">STRLEN</span> <span class="o">-</span> <span class="n">strlen</span><span class="p">(</span><span class="n">strA</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">strA</span><span class="p">);</span> 
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>strncat 可控制被拼接字符串的长度</p>
+<h3 id="拷贝字符串">拷贝字符串</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kt">char</span> <span class="n">strA</span><span class="p">[]</span> <span class="o">=</span> <span class="s">&#34;aaaaaa&#34;</span><span class="p">;</span>
+  <span class="kt">char</span> <span class="n">strB</span><span class="p">[]</span> <span class="o">=</span> <span class="s">&#34;bbbbbbb&#34;</span><span class="p">;</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">strncpy</span><span class="p">(</span><span class="n">strA</span><span class="p">,</span> <span class="n">strB</span><span class="p">,</span> <span class="n">strlen</span><span class="p">(</span><span class="n">strA</span><span class="p">)));</span>  <span class="c1">// &#34;bbbbbb&#34;.
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="格式化字符串">格式化字符串</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#define LEN 128
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kt">char</span> <span class="n">dest</span><span class="p">[</span><span class="n">LEN</span><span class="p">];</span>
+  <span class="k">const</span> <span class="kt">char</span> <span class="n">strA</span><span class="p">[]</span> <span class="o">=</span> <span class="s">&#34;Hello, &#34;</span><span class="p">;</span>
+  <span class="n">sprintf</span><span class="p">(</span><span class="n">dest</span><span class="p">,</span> <span class="s">&#34;%sworld!&#34;</span><span class="p">,</span> <span class="n">strA</span><span class="p">);</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">dest</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>sprintf 会将格式化后的字符串保存到第一个参数传入的数组中</p>
+<h3 id="字符的判断和转换">字符的判断和转换</h3>
+<p>ctype.h 中包含众多用于字符的函数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;ctype.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kt">char</span> <span class="n">c</span> <span class="o">=</span> <span class="sc">&#39;a&#39;</span><span class="p">;</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">isalnum</span><span class="p">(</span><span class="n">c</span><span class="p">));</span>  <span class="c1">// 1.
+</span><span class="c1"></span>  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">isalpha</span><span class="p">(</span><span class="n">c</span><span class="p">));</span>  <span class="c1">// 1.
+</span><span class="c1"></span>  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">isblank</span><span class="p">(</span><span class="n">c</span><span class="p">));</span>  <span class="c1">// 0.
+</span><span class="c1"></span>  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">isdigit</span><span class="p">(</span><span class="n">c</span><span class="p">));</span>  <span class="c1">// 0.
+</span><span class="c1"></span>  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%c</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">toupper</span><span class="p">(</span><span class="n">c</span><span class="p">));</span>  <span class="c1">// &#39;A&#39;.
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="数学运算库函数">数学运算库函数</h2>
+<p>math.h 和 stdlib.h 包含了众多数学运算函数</p>
+<p>thmath.h 里面提供了泛型办的数学运算函数</p>
 
     </div>
 
@@ -990,7 +1439,7 @@ rsp的旧值，以便进行帧栈寻址，并在退出前将栈中数据恢复�
   <p class="copyright-item">
     <span class="item-title">LastMod</span>
     <span class="item-content">
-      2022-02-12
+      2022-03-13
       
     </span>
   </p>
