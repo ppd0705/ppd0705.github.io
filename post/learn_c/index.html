@@ -64,12 +64,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://ppd0705.github.io/post/learn_c/" /><meta property="article:section" content="post" />
 <meta property="article:published_time" content="2022-01-31T17:04:50+08:00" />
-<meta property="article:modified_time" content="2022-03-13T21:24:50+08:00" />
+<meta property="article:modified_time" content="2022-03-19T17:54:50+08:00" />
 
 <meta itemprop="name" content="[笔记]深入C语言和程序运行原理（更新中）">
 <meta itemprop="description" content="第零讲 课前热身 数据量单位 位（bit）： 是最小存储单位，每个位可以存一个二进制码值得 0 或 1 字节（byte）： 通常是由八个位组成的一个存储单元，"><meta itemprop="datePublished" content="2022-01-31T17:04:50+08:00" />
-<meta itemprop="dateModified" content="2022-03-13T21:24:50+08:00" />
-<meta itemprop="wordCount" content="7794">
+<meta itemprop="dateModified" content="2022-03-19T17:54:50+08:00" />
+<meta itemprop="wordCount" content="9804">
 <meta itemprop="keywords" content="C," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]深入C语言和程序运行原理（更新中）"/>
 <meta name="twitter:description" content="第零讲 课前热身 数据量单位 位（bit）： 是最小存储单位，每个位可以存一个二进制码值得 0 或 1 字节（byte）： 通常是由八个位组成的一个存储单元，"/>
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 7794 words </span>
-          <span class="more-meta"> 16 min read </span>
+        <span class="more-meta"> 9804 words </span>
+          <span class="more-meta"> 20 min read </span>
 
         
         
@@ -462,6 +462,30 @@
           </ul>
         </li>
         <li><a href="#数学运算库函数">数学运算库函数</a></li>
+      </ul>
+    </li>
+    <li><a href="#第十一讲-io-标准库">第十一讲 IO 标准库</a>
+      <ul>
+        <li><a href="#基本使用">基本使用</a></li>
+        <li><a href="#接口级别">接口级别</a></li>
+        <li><a href="#低级-io-背后的系统调用">低级 IO 背后的系统调用</a></li>
+      </ul>
+    </li>
+    <li><a href="#第十二讲-非本地跳转和可变参数实现原理">第十二讲 非本地跳转和可变参数实现原理</a>
+      <ul>
+        <li><a href="#本地跳转">本地跳转</a></li>
+        <li><a href="#setjmp-和-longjmp-函数">setjmp 和 longjmp 函数</a>
+          <ul>
+            <li><a href="#运作原理">运作原理</a></li>
+            <li><a href="#自定义实现">自定义实现</a></li>
+          </ul>
+        </li>
+        <li><a href="#可变参数">可变参数</a>
+          <ul>
+            <li><a href="#基本使用-1">基本使用</a></li>
+            <li><a href="#运作原理-1">运作原理</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
   </ul>
@@ -1425,7 +1449,402 @@ rsp的旧值，以便进行帧栈寻址，并在退出前将栈中数据恢复�
 </div>
 </div><h2 id="数学运算库函数">数学运算库函数</h2>
 <p>math.h 和 stdlib.h 包含了众多数学运算函数</p>
-<p>thmath.h 里面提供了泛型办的数学运算函数</p>
+<p>thmath.h 里面提供了泛型办的数学运算函数，大体思路是通过宏来判断参数类型进而转换到正确类型的底层函数去，详情参考<a href="https://git.musl-libc.org/cgit/musl/tree/include/tgmath.h">实现</a></p>
+<h1 id="第十一讲-io-标准库">第十一讲 IO 标准库</h1>
+<p>C 语言采用标准库 stdio 的方式，提供对 I/O 相关接口的支持</p>
+<h2 id="基本使用">基本使用</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Enter some characters:</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+  <span class="n">FILE</span><span class="o">*</span> <span class="n">fp</span> <span class="o">=</span> <span class="n">fopen</span><span class="p">(</span><span class="s">&#34;./temp.txt&#34;</span><span class="p">,</span> <span class="s">&#34;w+&#34;</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">fp</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">char</span> <span class="n">ch</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">scanf</span><span class="p">(</span><span class="s">&#34;%c&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ch</span><span class="p">))</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">ch</span> <span class="o">==</span> <span class="sc">&#39;z&#39;</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
+      <span class="n">putc</span><span class="p">(</span><span class="n">ch</span><span class="p">,</span> <span class="n">fp</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="n">perror</span><span class="p">(</span><span class="s">&#34;File open failed.&#34;</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="n">fclose</span><span class="p">(</span><span class="n">fp</span><span class="p">);</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>通过 printf 将指定文本传送到标准输出流 stdout</li>
+<li>通过 fopen 打开指定的文件，并将其与一个特定的文件 IO 流关联</li>
+<li>通过 perror 将指定错误信息传送到标准错误流 stderr</li>
+<li>通过 scanf 从 标准输入流 stdin 读取输入的信息</li>
+<li>通过 putc 将 字符写入指定文件</li>
+</ul>
+<h2 id="接口级别">接口级别</h2>
+<p>IO 接口一般分为两个级别：</p>
+<ul>
+<li>标准 IO：ISO C 标准定义的一些列接口，实现与具体操作系统无关</li>
+<li>低级 IO：使用具体操作系统相关的一系列底层接口来提供相应的 IO 能力</li>
+</ul>
+<p>上面的代码使用低级 IO 接口实现如下:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;fcntl.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">const</span> <span class="kt">char</span> <span class="n">str</span><span class="p">[]</span> <span class="o">=</span> <span class="s">&#34;Enter some characters:</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">;</span>
+  <span class="n">write</span><span class="p">(</span><span class="n">STDOUT_FILENO</span><span class="p">,</span> <span class="n">str</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">str</span><span class="p">));</span>
+  <span class="k">const</span> <span class="kt">int</span> <span class="n">fd</span> <span class="o">=</span> <span class="n">open</span><span class="p">(</span><span class="s">&#34;./temp.txt&#34;</span><span class="p">,</span> <span class="n">O_RDWR</span> <span class="o">|</span> <span class="n">O_CREAT</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">fd</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">char</span> <span class="n">ch</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">read</span><span class="p">(</span><span class="n">STDIN_FILENO</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ch</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">ch</span> <span class="o">==</span> <span class="sc">&#39;z&#39;</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
+      <span class="n">write</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ch</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">ch</span><span class="p">));</span>    
+    <span class="p">}</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="k">const</span> <span class="kt">char</span> <span class="n">errMsg</span><span class="p">[]</span> <span class="o">=</span> <span class="s">&#34;File open failed.&#34;</span><span class="p">;</span>
+    <span class="n">write</span><span class="p">(</span><span class="n">STDERR_FILENO</span><span class="p">,</span> <span class="n">errMsg</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">errMsg</span><span class="p">));</span>
+  <span class="p">}</span>
+  <span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">);</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>和低级 IO 相比，标准 IO 会为我们提供带缓冲的输入和输出操作。</p>
+<h2 id="低级-io-背后的系统调用">低级 IO 背后的系统调用</h2>
+<p>低级 IO 接口通过系统调用来完成相应的 IO 操作，与调用用户函数不同使用 call 指令 不同，在 x86-64 平台，通过 syscall 指令来执行一个系统调用函数。</p>
+<p>每个系统调用函数有一个唯一整形 ID, open 函数的 ID 为 2。
+SyxV 调用约定使用寄存器 rdi、rsi、rdx、r10、r8、r9 来进行实参的传递，寄存器 rax 用于存放系统调用对应的 ID，并接收系统调用的结果。</p>
+<p>上面的代码使用汇编改造如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;fcntl.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">const</span> <span class="kt">char</span> <span class="n">str</span><span class="p">[]</span> <span class="o">=</span> <span class="s">&#34;Enter some characters:</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">;</span>
+  <span class="n">write</span><span class="p">(</span><span class="n">STDOUT_FILENO</span><span class="p">,</span> <span class="n">str</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">str</span><span class="p">));</span>
+  <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">fileName</span> <span class="o">=</span> <span class="s">&#34;./temp.txt&#34;</span><span class="p">;</span>
+  <span class="c1">// Call to `open` starts:
+</span><span class="c1"></span>  <span class="c1">// const int fd = open(&#34;./temp.txt&#34;, O_RDWR | O_CREAT);
+</span><span class="c1"></span>  <span class="k">volatile</span> <span class="kt">int</span> <span class="n">fd</span><span class="p">;</span>
+  <span class="k">asm</span><span class="p">(</span><span class="s">&#34;mov $2, %%rax</span><span class="se">\n\t</span><span class="s">&#34;</span>
+      <span class="s">&#34;mov %0, %%rdi</span><span class="se">\n\t</span><span class="s">&#34;</span>
+      <span class="s">&#34;mov $66, %%rsi</span><span class="se">\n\t</span><span class="s">&#34;</span>  <span class="c1">// 2 | 64 -&gt; 66;
+</span><span class="c1"></span>      <span class="s">&#34;syscall</span><span class="se">\n\t</span><span class="s">&#34;</span>
+      <span class="s">&#34;mov %%rax, %1</span><span class="se">\n\t</span><span class="s">&#34;</span>
+       <span class="o">:</span> <span class="s">&#34;=m&#34;</span> <span class="p">(</span><span class="n">fileName</span><span class="p">)</span>
+       <span class="o">:</span> <span class="s">&#34;m&#34;</span> <span class="p">(</span><span class="n">fd</span><span class="p">));</span>
+  <span class="c1">// Call ended.
+</span><span class="c1"></span>  <span class="k">if</span> <span class="p">(</span><span class="n">fd</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">char</span> <span class="n">ch</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">read</span><span class="p">(</span><span class="n">STDIN_FILENO</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ch</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">ch</span> <span class="o">==</span> <span class="sc">&#39;z&#39;</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
+      <span class="n">write</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ch</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">ch</span><span class="p">));</span>
+    <span class="p">}</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="k">const</span> <span class="kt">char</span> <span class="n">errMsg</span><span class="p">[]</span> <span class="o">=</span> <span class="s">&#34;File open failed.&#34;</span><span class="p">;</span>
+    <span class="n">write</span><span class="p">(</span><span class="n">STDERR_FILENO</span><span class="p">,</span> <span class="n">errMsg</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">errMsg</span><span class="p">));</span>
+  <span class="p">}</span>
+  <span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">);</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面的代码中，将 ID 2 存入 寄存器 rax, 将 fileName 首地址存入寄存器
+rdi，将 文件操作模式 66 存入寄存器 rsi，调用结果 从 寄存器 rax 存入 局部变量 fd。</p>
+<h1 id="第十二讲-非本地跳转和可变参数实现原理">第十二讲 非本地跳转和可变参数实现原理</h1>
+<h2 id="本地跳转">本地跳转</h2>
+<p><img src="/image/learn_c/12_1.webp" alt="local_jump"></p>
+<p>本地跳转一般指由 goto 语句完成的程序执行流的转移过程</p>
+<h2 id="setjmp-和-longjmp-函数">setjmp 和 longjmp 函数</h2>
+<p><img src="/image/learn_c/12_2.webp" alt="long_jump"></p>
+<p>如上图所示，在调用 longjmp 之后，程序会调到 call setjmp 下一条指令，
+这种跳转为我们提供了一种可以暂存函数调用状态并在未来某个时刻再恢复的能力。</p>
+<h3 id="运作原理">运作原理</h3>
+<p>setjmp 函数在执行时，会将程序此刻的调用环境信息存储在由其第一个参数指定的 jmp_buf 类型的对象中，并同时将 0 作为结果返回，后续当程序执行到 longjmp 时，
+该函数便回从同一个 jmp_buf 对象中再次恢复之前保存的函数调用上下文，通过这种方式，程序的执行流程得到了重置。</p>
+<p>SysV 调用约定，属于 Callee-saved 类型的寄存器信息需要在 call 指令调用时，由被调用函数 caller 负责保存和恢复。</p>
+<h3 id="自定义实现">自定义实现</h3>
+<p>setjmp 汇编如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="na">.global</span> <span class="no">setjmp</span>  <span class="c"># 将 setjmp 暴露给链接器
+</span><span class="c"></span><span class="no">.intel_syntax</span> <span class="no">noprefix</span>  <span class="c"># 使用汇编语法
+</span><span class="c"></span><span class="no">setjmp</span><span class="p">:</span>
+  <span class="nf">mov</span>  <span class="no">QWORD</span> <span class="no">PTR</span> <span class="p">[</span><span class="no">rdi</span><span class="p">],</span> <span class="no">rbx</span>
+  <span class="nf">mov</span>  <span class="no">QWORD</span> <span class="no">PTR</span> <span class="p">[</span><span class="no">rdi</span><span class="err">+</span><span class="mi">0x8</span><span class="p">],</span> <span class="no">rbp</span>
+  <span class="nf">mov</span>  <span class="no">QWORD</span> <span class="no">PTR</span> <span class="p">[</span><span class="no">rdi</span><span class="err">+</span><span class="mi">0x10</span><span class="p">],</span> <span class="no">r12</span>
+  <span class="nf">mov</span>  <span class="no">QWORD</span> <span class="no">PTR</span> <span class="p">[</span><span class="no">rdi</span><span class="err">+</span><span class="mi">0x18</span><span class="p">],</span> <span class="no">r13</span>
+  <span class="nf">mov</span>  <span class="no">QWORD</span> <span class="no">PTR</span> <span class="p">[</span><span class="no">rdi</span><span class="err">+</span><span class="mi">0x20</span><span class="p">],</span> <span class="no">r14</span>
+  <span class="nf">mov</span>  <span class="no">QWORD</span> <span class="no">PTR</span> <span class="p">[</span><span class="no">rdi</span><span class="err">+</span><span class="mi">0x28</span><span class="p">],</span> <span class="no">r15</span>
+  <span class="nf">lea</span>  <span class="no">rdx</span><span class="p">,</span> <span class="p">[</span><span class="no">rsp</span><span class="err">+</span><span class="mi">0x8</span><span class="p">]</span>
+  <span class="nf">mov</span>  <span class="no">QWORD</span> <span class="no">PTR</span> <span class="p">[</span><span class="no">rdi</span><span class="err">+</span><span class="mi">0x30</span><span class="p">],</span> <span class="no">rdx</span>
+  <span class="nf">mov</span>  <span class="no">rdx</span><span class="p">,</span> <span class="no">QWORD</span> <span class="no">PTR</span> <span class="p">[</span><span class="no">rsp</span><span class="p">]</span>
+  <span class="nf">mov</span>  <span class="no">QWORD</span> <span class="no">PTR</span> <span class="p">[</span><span class="no">rdi</span><span class="err">+</span><span class="mi">0x38</span><span class="p">],</span> <span class="no">rdx</span>
+  <span class="nf">xor</span>  <span class="no">eax</span><span class="p">,</span> <span class="no">eax</span>
+  <span class="nf">ret</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>由 SysV 规定，寄存器 rdi 接收第一个实参，所以 rdi 保存着
+jmp_buf 的首地址， jmp_buf 可以看做是一个具有足够大小的字节数组。</p>
+<p>在 4~9 行我们将寄存器 rdx、rbp、r12、r13、r14、r15 的值进行保存，
+在 10~11 行我们将 setjmp 调用之前的 rsp 寄存器进行了暂存，
+在 12~13 行我们将 setjmp 调用后的地址进行暂存，这个地址将由 longjmp 使用</p>
+<p>longjmp 汇编如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="na">.global</span> <span class="no">longjmp</span>
+<span class="na">.intel_syntax</span> <span class="no">noprefix</span>
+<span class="nl">longjmp:</span>
+  <span class="nf">xor</span>  <span class="no">eax</span><span class="p">,</span> <span class="no">eax</span>
+  <span class="nf">cmp</span>  <span class="no">esi</span><span class="p">,</span> <span class="mi">0x1</span>
+  <span class="nf">adc</span>  <span class="no">eax</span><span class="p">,</span> <span class="no">esi</span>
+  <span class="nf">mov</span>  <span class="no">rbx</span><span class="p">,</span> <span class="no">QWORD</span> <span class="no">PTR</span> <span class="p">[</span><span class="no">rdi</span><span class="p">]</span>
+  <span class="nf">mov</span>  <span class="no">rbp</span><span class="p">,</span> <span class="no">QWORD</span> <span class="no">PTR</span> <span class="p">[</span><span class="no">rdi</span><span class="err">+</span><span class="mi">0x8</span><span class="p">]</span>
+  <span class="nf">mov</span>  <span class="no">r12</span><span class="p">,</span> <span class="no">QWORD</span> <span class="no">PTR</span> <span class="p">[</span><span class="no">rdi</span><span class="err">+</span><span class="mi">0x10</span><span class="p">]</span>
+  <span class="nf">mov</span>  <span class="no">r13</span><span class="p">,</span> <span class="no">QWORD</span> <span class="no">PTR</span> <span class="p">[</span><span class="no">rdi</span><span class="err">+</span><span class="mi">0x18</span><span class="p">]</span>
+  <span class="nf">mov</span>  <span class="no">r14</span><span class="p">,</span> <span class="no">QWORD</span> <span class="no">PTR</span> <span class="p">[</span><span class="no">rdi</span><span class="err">+</span><span class="mi">0x20</span><span class="p">]</span>
+  <span class="nf">mov</span>  <span class="no">r15</span><span class="p">,</span> <span class="no">QWORD</span> <span class="no">PTR</span> <span class="p">[</span><span class="no">rdi</span><span class="err">+</span><span class="mi">0x28</span><span class="p">]</span>
+  <span class="nf">mov</span>  <span class="no">rsp</span><span class="p">,</span> <span class="no">QWORD</span> <span class="no">PTR</span> <span class="p">[</span><span class="no">rdi</span><span class="err">+</span><span class="mi">0x30</span><span class="p">]</span>
+  <span class="nf">jmp</span>  <span class="no">QWORD</span> <span class="no">PTR</span> <span class="p">[</span><span class="no">rdi</span><span class="err">+</span><span class="mi">0x38</span><span class="p">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在 4~5 行我们将对 long_jmp 的第二个参数做处理，如果实参为 0，将其改为 1，这样做是为了能够通过寄存器 rax 中的值区分当前代码是在 setjmp 函数调用后首次执行的，还是 long_jmp 恢复后执行的</p>
+<p>将汇编代码编译成对象文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">gcc -c setjmp.s -o setjmp.o
+gcc -c longjmp.s -o longjmp.o
+</code></pre></td></tr></table>
+</div>
+</div><p>完整代码</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdnoreturn.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="c1">// 定义 jmp_buf 类型；
+</span><span class="c1"></span><span class="k">typedef</span> <span class="kt">long</span> <span class="n">jmp_buf</span><span class="p">[</span><span class="mi">8</span><span class="p">];</span>
+<span class="c1">// 提供函数原型；
+</span><span class="c1"></span><span class="kt">int</span> <span class="nf">setjmp</span><span class="p">(</span><span class="n">jmp_buf</span><span class="p">);</span>
+<span class="n">noreturn</span> <span class="kt">void</span> <span class="nf">longjmp</span><span class="p">(</span><span class="n">jmp_buf</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>
+<span class="c1">// 原始 C 示例程序代码；
+</span><span class="c1"></span><span class="n">jmp_buf</span> <span class="n">jb</span><span class="p">;</span>
+<span class="n">noreturn</span> <span class="kt">void</span> <span class="nf">inspect</span><span class="p">(</span><span class="kt">char</span> <span class="n">val</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">putchar</span><span class="p">(</span><span class="n">val</span><span class="p">);</span>
+  <span class="n">longjmp</span><span class="p">(</span><span class="n">jb</span><span class="p">,</span> <span class="n">val</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">volatile</span> <span class="kt">char</span> <span class="n">count</span> <span class="o">=</span> <span class="sc">&#39;A&#39;</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">setjmp</span><span class="p">(</span><span class="n">jb</span><span class="p">)</span> <span class="o">&lt;</span> <span class="sc">&#39;J&#39;</span><span class="p">)</span>
+    <span class="n">inspect</span><span class="p">(</span><span class="n">count</span><span class="o">++</span><span class="p">);</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>编译、测试</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">gcc main.c setjmp.o longjmp.o -o main <span class="o">&amp;&amp;</span> ./main
+</code></pre></td></tr></table>
+</div>
+</div><p>通常非本地跳转主要用来实现异常处理、协程等功能</p>
+<p>使用非本地调整实现的 try &hellip; catch 可以参考<a href="http://groups.di.unipi.it/~nids/docs/longjump_try_trow_catch.html">longjump_try_trow_catch</a></p>
+<h2 id="可变参数">可变参数</h2>
+<h3 id="基本使用-1">基本使用</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdarg.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">void</span> <span class="nf">print_sum</span><span class="p">(</span><span class="kt">int</span> <span class="n">count</span><span class="p">,</span> <span class="p">...)</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="n">va_list</span> <span class="n">ap</span><span class="p">;</span>
+  <span class="n">va_start</span><span class="p">(</span><span class="n">ap</span><span class="p">,</span> <span class="n">count</span><span class="p">);</span> 
+  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">count</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">sum</span> <span class="o">+=</span> <span class="n">va_arg</span><span class="p">(</span><span class="n">ap</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>
+  <span class="n">va_end</span><span class="p">(</span><span class="n">ap</span><span class="p">);</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">sum</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">print_sum</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="运作原理-1">运作原理</h3>
+<p><a href="https://raw.githubusercontent.com/wiki/hjl-tools/x86-psABI/x86-64-psABI-1.0.pdf">SysV ABI</a> 规定了可变参数列表的实现要求</p>
+<p>首先实参将会按类型按顺序依次存入寄存器，
+接着一块名为 Register Save Area 的 栈内存被构建，每个通过寄存器传入的实参值都会按照 rdi、rsi、rdx、rcx、r8、r9、xmm0~15 的寄存器先后顺序拷贝到 RSA 中，
+接下来创建 结构体 va_list</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+  <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">gp_offset</span><span class="p">;</span>  <span class="c1">// 下一个整型数据相较于 RSA 的偏移；
+</span><span class="c1"></span>  <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">fp_offset</span><span class="p">;</span>  <span class="c1">// 下一个浮点数据相较于 RSA 的偏移；
+</span><span class="c1"></span>  <span class="kt">void</span> <span class="o">*</span><span class="n">overflow_arg_area</span><span class="p">;</span>  <span class="c1">// 指向使用栈进行传递的数据；
+</span><span class="c1"></span>  <span class="kt">void</span> <span class="o">*</span><span class="n">reg_save_area</span><span class="p">;</span>  <span class="c1">//  指向 RSA 的指针；
+</span><span class="c1"></span><span class="p">}</span> <span class="n">va_list</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><code>va_start(ap, count)</code> 语句对 ap 进行了初始化，reg_save_area 指向了 RSA 起始位置，gp_offset 设置为 从 RSA 中读整数实参相对 reg_save_area 的偏移</p>
+<p><code>va_arg(ap, int)</code> 语句根据 va_list 及提取参数的类型从 RSA 中取出相应的数据值</p>
+<p><code>va_end(ap)</code> 释放了 ap</p>
 
     </div>
 
@@ -1439,7 +1858,7 @@ rsp的旧值，以便进行帧栈寻址，并在退出前将栈中数据恢复�
   <p class="copyright-item">
     <span class="item-title">LastMod</span>
     <span class="item-content">
-      2022-03-13
+      2022-03-19
       
     </span>
   </p>
