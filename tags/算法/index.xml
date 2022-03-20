@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>算法 on PPD&#39;s blog</title>
+    <link>https://ppd0705.github.io/tags/%E7%AE%97%E6%B3%95/</link>
+    <description>Recent content in 算法 on PPD&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Mon, 14 Mar 2022 08:36:33 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/tags/%E7%AE%97%E6%B3%95/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>[笔记]算法实战高手课</title>
+      <link>https://ppd0705.github.io/post/algo_in_action/</link>
+      <pubDate>Mon, 14 Mar 2022 08:36:33 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/algo_in_action/</guid>
+      <description>第零讲 git diff 文本差分算法 定义 git diff 内置了多种算法 ，这里介绍的是其默认算法 Myers 差分算法。 An edit script for A and B is a set of insertion and deletion commands that transform A into B. 文本差分算法可以定义</description>
+    </item>
+    
+  </channel>
+</rss>

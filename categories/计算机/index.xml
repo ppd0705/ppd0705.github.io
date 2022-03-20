@@ -6,7 +6,16 @@
     <description>Recent content in 计算机 on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 31 Jan 2022 17:04:50 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 14 Mar 2022 08:36:33 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>[笔记]算法实战高手课</title>
+      <link>https://ppd0705.github.io/post/algo_in_action/</link>
+      <pubDate>Mon, 14 Mar 2022 08:36:33 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/algo_in_action/</guid>
+      <description>第零讲 git diff 文本差分算法 定义 git diff 内置了多种算法 ，这里介绍的是其默认算法 Myers 差分算法。 An edit script for A and B is a set of insertion and deletion commands that transform A into B. 文本差分算法可以定义</description>
+    </item>
+    
     <item>
       <title>[笔记]深入C语言和程序运行原理（更新中）</title>
       <link>https://ppd0705.github.io/post/learn_c/</link>
@@ -176,15 +185,6 @@
       
       <guid>https://ppd0705.github.io/post/go_basic/</guid>
       <description>基本组成结构 1 2 3 4 5 6 7 packge main // 包名 import &amp;#34;fmt&amp;#34; /* 导入依赖包 */ fun main() { /* 主函数 */ fmt.Println(&amp;#34;Hello, World!&amp;#34;) } 数据类型 基本类型 布尔型： ture or false 数字类型： int, float32, float64 字符串类型 string 派生类</description>
-    </item>
-    
-    <item>
-      <title>MySQL事务隔离</title>
-      <link>https://ppd0705.github.io/post/mysql_transaction_isolation/</link>
-      <pubDate>Mon, 02 Dec 2019 22:00:57 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/mysql_transaction_isolation/</guid>
-      <description>四种隔离级别 读未提交(read uncommitted)： 事务还未提交时能被其他事务看到 读提交(read committed)： 事务提交后才能被</description>
     </item>
     
   </channel>
