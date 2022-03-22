@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]算法实战高手课">
 <meta itemprop="description" content="第零讲 git diff 文本差分算法 定义 git diff 内置了多种算法 ，这里介绍的是其默认算法 Myers 差分算法。 An edit script for A and B is a set of insertion and deletion commands that transform A into B. 文本差分算法可以定义"><meta itemprop="datePublished" content="2022-03-14T08:36:33+08:00" />
 <meta itemprop="dateModified" content="2022-03-20T12:16:33+08:00" />
-<meta itemprop="wordCount" content="1793">
+<meta itemprop="wordCount" content="2539">
 <meta itemprop="keywords" content="算法," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]算法实战高手课"/>
 <meta name="twitter:description" content="第零讲 git diff 文本差分算法 定义 git diff 内置了多种算法 ，这里介绍的是其默认算法 Myers 差分算法。 An edit script for A and B is a set of insertion and deletion commands that transform A into B. 文本差分算法可以定义"/>
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 1793 words </span>
-          <span class="more-meta"> 4 min read </span>
+        <span class="more-meta"> 2539 words </span>
+          <span class="more-meta"> 6 min read </span>
 
         
         
@@ -340,6 +340,16 @@
           </ul>
         </li>
         <li><a href="#代码实现">代码实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#第一讲-动态数组-vector">第一讲 动态数组 vector</a>
+      <ul>
+        <li><a href="#数组与内存">数组与内存</a></li>
+        <li><a href="#动态数组">动态数组</a>
+          <ul>
+            <li><a href="#vector-源码分析">Vector 源码分析</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
   </ul>
@@ -417,8 +427,8 @@ T = CBABAC  length n = 6
 我们先插入 CB，然后删除 AB，再插入 AB，最后删除 C。</p>
 <p>这样文本差分问题就转化成了如何在这样的网格中找到仅允许向下和向右移动的一个从
 (0, 0) 到 (m, n) 的路径，路径的长度就代表了总共需要的操作数。</p>
-<p>对于源序列和目标序列字符相等的坐标，如 (2, 0) 和 (3, 1)、(0, 2) 和 (2， 4) 等，
-这种斜线路劲不耗费任何操作数。如下图为一条最短路径的例子：</p>
+<p>对于源序列和目标序列字符相等的坐标，如 (2, 0) 和 (3, 1)、(0, 2) 和 (2，4) 等，
+这种斜线路径不耗费任何操作数。如下图为一条最短路径的例子：</p>
 <p><img src="/image/algo_in_action/0_3.webp" alt="graph_search3"></p>
 <h3 id="如何解决图搜索">如何解决图搜索</h3>
 <p><img src="/image/algo_in_action/0_4.webp" alt="graph_search4"></p>
@@ -433,12 +443,12 @@ T = CBABAC  length n = 6
 <p>这样我们求解最短编辑脚本的目标就可以定义为找最短到达 (m, n) 的 D-path。</p>
 <p>所有的 D-path 都是 (D-1)-path 加一条 snake 构成，这样我们可以从 1-path 出发，
 去搜索所有 2-path 最远能走到哪，然后一直递推到 D-path，第一次遇到终点时，就找到最短路径了。</p>
-<p>当有多条 D-path 时，我们如何选可读性最好的路径呢，
+<p>当有多条 D-path 时，我们如何选可读性最好的路径呢？
 基于先看到删除再看到插入的原则，在考虑 D-path时，会从多条 (D-1)-path 中选出横坐标更大的路径。</p>
 <h2 id="代码实现">代码实现</h2>
 <p>我们使用一个二维数组 dp 来记录图上的搜索状态</p>
 <ul>
-<li>dp 第一个维度代表操作数，最大操作范围是我们最短编辑叫上的长度 m + n - 2 * LC</li>
+<li>dp 第一个维度代表操作数，最大操作范围是我们最短编辑脚本的长度 m + n - 2 * LC</li>
 <li>dp 第二个维度代表 k-line 的行号，在 操作数为 d 时， 其取值范围是 [-d, d]</li>
 <li>dp 的值代表对应的 x 坐标 （相应可以推算出 y 坐标）</li>
 </ul>
@@ -486,7 +496,7 @@ T = CBABAC  length n = 6
 </div>
 </div><p>操作数为 d，行号为 k 的状态只能从相邻的两行 k-1 横线过来（x+1）或者 k+1 竖线过来（x不变）。</p>
 <p>因为整个数的结构是二叉的 ，奇数步数时必然处于奇数行号，偶数步数时必然处于偶数行号，
-这个因为每进行一步 snake 时，只会有一次删除或插入操作，所以 k 的遍历步长是 2 。</p>
+这是因为每进行一步 snake 时，只会有一次删除或插入操作，所以 k 的遍历步长是 2 。</p>
 <p>状态转移方程就是 dp[d][k] = max(dp[d-1][k-1]+1, dp[d-1][k+1])，即多个路径状选横坐标 x 最大的。</p>
 <p>由于操作数 d 的状态计算只依赖 d-1 的状态数组，所以可以压缩一下空间使用一维数组记录即可。</p>
 <p>伪代码</p>
@@ -589,7 +599,153 @@ For D ← 0 to MAX Do
     <span class="k">return</span> <span class="n">d</span>
 </code></pre></td></tr></table>
 </div>
+</div><h1 id="第一讲-动态数组-vector">第一讲 动态数组 vector</h1>
+<h2 id="数组与内存">数组与内存</h2>
+<p>静态数组是由相同类型的元素线性排列的数据结构，在计算机上会分配一段连续的内存，
+对元素进行顺序存储。</p>
+<p><img src="/image/algo_in_action/1_1.webp" alt="static_array"></p>
+<p>静态数组的插入和 删除的平均复杂度是 O(N)</p>
+<p><img src="/image/algo_in_action/1_2.webp" alt="array_insert"></p>
+<p>静态数组的元素个数是事先确定的</p>
+<h2 id="动态数组">动态数组</h2>
+<p>动态数组将扩容的逻辑分装起来，方便用户使用</p>
+<h3 id="vector-源码分析">Vector 源码分析</h3>
+<p>vector 中有三个关指针</p>
+<ul>
+<li>_start: 指向 vector 第一个元素</li>
+<li>_finish: 指向 vector 最后一个元素</li>
+<li>_end: 指向 vector 预留容量的边界</li>
+</ul>
+<p><img src="/image/algo_in_action/1_3.webp" alt="vector_pointers"></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">_Tp</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Alloc</span> <span class="o">=</span> <span class="n">__STL_DEFAULT_ALLOCATOR</span><span class="p">(</span><span class="n">_Tp</span><span class="p">)</span> <span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">vector</span> <span class="o">:</span> <span class="k">protected</span> <span class="n">_Vector_base</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="p">,</span> <span class="n">_Alloc</span><span class="o">&gt;</span> 
+<span class="p">{</span>
+       <span class="p">...</span>
+<span class="k">protected</span><span class="o">:</span>
+  <span class="n">_Tp</span><span class="o">*</span> <span class="n">_M_start</span><span class="p">;</span> <span class="c1">//表示目前使用空间的头
+</span><span class="c1"></span>  <span class="n">_Tp</span><span class="o">*</span> <span class="n">_M_finish</span><span class="p">;</span> <span class="c1">//表示目前使用空间的尾
+</span><span class="c1"></span>  <span class="n">_Tp</span><span class="o">*</span> <span class="n">_M_end_of_storage</span><span class="p">;</span> <span class="c1">//表示目前可用空间的尾  
+</span><span class="c1"></span>    <span class="p">...</span>
+<span class="p">};</span>
+</code></pre></td></tr></table>
 </div>
+</div><p>扩容实现源码</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp">  <span class="kt">void</span> <span class="nf">push_back</span><span class="p">(</span><span class="k">const</span> <span class="n">_Tp</span><span class="o">&amp;</span> <span class="n">__x</span><span class="p">)</span> <span class="p">{</span><span class="c1">//在最尾端插入元素
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">_M_finish</span> <span class="o">!=</span> <span class="n">_M_end_of_storage</span><span class="p">)</span> <span class="p">{</span><span class="c1">//若有可用的内存空间
+</span><span class="c1"></span>      <span class="n">construct</span><span class="p">(</span><span class="n">_M_finish</span><span class="p">,</span> <span class="n">__x</span><span class="p">);</span><span class="c1">//构造对象
+</span><span class="c1"></span>      <span class="o">++</span><span class="n">_M_finish</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">else</span><span class="c1">//若没有可用的内存空间,调用以下函数，把x插入到指定位置
+</span><span class="c1"></span>      <span class="n">_M_insert_aux</span><span class="p">(</span><span class="n">end</span><span class="p">(),</span> <span class="n">__x</span><span class="p">);</span>
+  <span class="p">}</span>
+  
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">_Tp</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Alloc</span><span class="o">&gt;</span>
+  <span class="kt">void</span> 
+  <span class="n">vector</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="p">,</span> <span class="n">_Alloc</span><span class="o">&gt;::</span><span class="n">_M_insert_aux</span><span class="p">(</span><span class="n">iterator</span> <span class="n">__position</span><span class="p">,</span> <span class="k">const</span> <span class="n">_Tp</span><span class="o">&amp;</span> <span class="n">__x</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">_M_finish</span> <span class="o">!=</span> <span class="n">_M_end_of_storage</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">construct</span><span class="p">(</span><span class="n">_M_finish</span><span class="p">,</span> <span class="o">*</span><span class="p">(</span><span class="n">_M_finish</span> <span class="o">-</span> <span class="mi">1</span><span class="p">));</span>
+      <span class="o">++</span><span class="n">_M_finish</span><span class="p">;</span>
+      <span class="n">_Tp</span> <span class="n">__x_copy</span> <span class="o">=</span> <span class="n">__x</span><span class="p">;</span>
+      <span class="n">copy_backward</span><span class="p">(</span><span class="n">__position</span><span class="p">,</span> <span class="n">_M_finish</span> <span class="o">-</span> <span class="mi">2</span><span class="p">,</span> <span class="n">_M_finish</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+      <span class="o">*</span><span class="n">__position</span> <span class="o">=</span> <span class="n">__x_copy</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="p">{</span>
+      <span class="k">const</span> <span class="n">size_type</span> <span class="n">__old_size</span> <span class="o">=</span> <span class="n">size</span><span class="p">();</span>
+      <span class="k">const</span> <span class="n">size_type</span> <span class="n">__len</span> <span class="o">=</span> <span class="n">__old_size</span> <span class="o">!=</span> <span class="mi">0</span> <span class="o">?</span> <span class="mi">2</span> <span class="o">*</span> <span class="nl">__old_size</span> <span class="p">:</span> <span class="mi">1</span><span class="p">;</span>
+      <span class="n">iterator</span> <span class="n">__new_start</span> <span class="o">=</span> <span class="n">_M_allocate</span><span class="p">(</span><span class="n">__len</span><span class="p">);</span>
+      <span class="n">iterator</span> <span class="n">__new_finish</span> <span class="o">=</span> <span class="n">__new_start</span><span class="p">;</span>
+      <span class="n">__STL_TRY</span> <span class="p">{</span>
+        <span class="n">__new_finish</span> <span class="o">=</span> <span class="n">uninitialized_copy</span><span class="p">(</span><span class="n">_M_start</span><span class="p">,</span> <span class="n">__position</span><span class="p">,</span> <span class="n">__new_start</span><span class="p">);</span>
+        <span class="n">construct</span><span class="p">(</span><span class="n">__new_finish</span><span class="p">,</span> <span class="n">__x</span><span class="p">);</span>
+        <span class="o">++</span><span class="n">__new_finish</span><span class="p">;</span>
+        <span class="n">__new_finish</span> <span class="o">=</span> <span class="n">uninitialized_copy</span><span class="p">(</span><span class="n">__position</span><span class="p">,</span> <span class="n">_M_finish</span><span class="p">,</span> <span class="n">__new_finish</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="n">__STL_UNWIND</span><span class="p">((</span><span class="n">destroy</span><span class="p">(</span><span class="n">__new_start</span><span class="p">,</span><span class="n">__new_finish</span><span class="p">),</span> 
+                    <span class="n">_M_deallocate</span><span class="p">(</span><span class="n">__new_start</span><span class="p">,</span><span class="n">__len</span><span class="p">)));</span>
+      <span class="n">destroy</span><span class="p">(</span><span class="n">begin</span><span class="p">(),</span> <span class="n">end</span><span class="p">());</span>
+      <span class="n">_M_deallocate</span><span class="p">(</span><span class="n">_M_start</span><span class="p">,</span> <span class="n">_M_end_of_storage</span> <span class="o">-</span> <span class="n">_M_start</span><span class="p">);</span>
+      <span class="n">_M_start</span> <span class="o">=</span> <span class="n">__new_start</span><span class="p">;</span>
+      <span class="n">_M_finish</span> <span class="o">=</span> <span class="n">__new_finish</span><span class="p">;</span>
+      <span class="n">_M_end_of_storage</span> <span class="o">=</span> <span class="n">__new_start</span> <span class="o">+</span> <span class="n">__len</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>22-25 行，主要做的事情就是读取原有的 vector 大小 old_size，再从内存里申请一段新的空间，大小为 2*old_size，创建新的首尾指针并指向新的空间。</li>
+<li>26-31 行，将老空间里的数据逐一搬到新的空间里，并在最后添加新的元素。这样就完成了扩容的主要目的，这是一个 O(n) 复杂度的操作，因为你需要对原数组进行逐一的深拷贝。</li>
+<li>最后，在 32-38 行，我们需要做一些清理和收尾工作，释放掉老的数组空间和指针，将容器的首尾及容量指针都更新到对应的位置。</li>
+</ul>
+<p>假设插入 N 次， 那么总拷贝次数就是 1 加到 2 x 次方， x 是 logn x向上取整</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">1 + 2 + 4 + 8 + … + 2 ** x = 2 ** (x+1) − 1
+</code></pre></td></tr></table>
+</div>
+</div><p>这样插入 N 次的复杂度为 O(N), 平均每次插入操作复杂度为 O(1).</p>
+
     </div>
 
     
