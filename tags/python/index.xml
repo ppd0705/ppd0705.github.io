@@ -6,7 +6,16 @@
     <description>Recent content in Python on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 23 Jul 2020 08:06:35 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 27 Mar 2022 21:21:20 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>supervisor 源码解读</title>
+      <link>https://ppd0705.github.io/post/learn_supervisor/</link>
+      <pubDate>Sun, 27 Mar 2022 21:21:20 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/learn_supervisor/</guid>
+      <description>简介 Supervisor is a client/server system that allows its users to control a number of processes on UNIX-like operating systems. 当前最新版本为 4.2.4，发布于 2021-12-30 第一个发布版本为 1.0.3，发布于 2004-05-26 主要模块 supervisorctl supervisorctl 是个命令行客户端</description>
+    </item>
+    
     <item>
       <title>[笔记]Pydantic</title>
       <link>https://ppd0705.github.io/post/pydantic_note/</link>
