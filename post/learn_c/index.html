@@ -64,12 +64,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://ppd0705.github.io/post/learn_c/" /><meta property="article:section" content="post" />
 <meta property="article:published_time" content="2022-01-31T17:04:50+08:00" />
-<meta property="article:modified_time" content="2022-03-19T17:54:50+08:00" />
+<meta property="article:modified_time" content="2022-04-17T10:48:50+08:00" />
 
 <meta itemprop="name" content="[笔记]深入C语言和程序运行原理（更新中）">
 <meta itemprop="description" content="第零讲 课前热身 数据量单位 位（bit）： 是最小存储单位，每个位可以存一个二进制码值得 0 或 1 字节（byte）： 通常是由八个位组成的一个存储单元，"><meta itemprop="datePublished" content="2022-01-31T17:04:50+08:00" />
-<meta itemprop="dateModified" content="2022-03-19T17:54:50+08:00" />
-<meta itemprop="wordCount" content="9804">
+<meta itemprop="dateModified" content="2022-04-17T10:48:50+08:00" />
+<meta itemprop="wordCount" content="14075">
 <meta itemprop="keywords" content="C," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]深入C语言和程序运行原理（更新中）"/>
 <meta name="twitter:description" content="第零讲 课前热身 数据量单位 位（bit）： 是最小存储单位，每个位可以存一个二进制码值得 0 或 1 字节（byte）： 通常是由八个位组成的一个存储单元，"/>
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 9804 words </span>
-          <span class="more-meta"> 20 min read </span>
+        <span class="more-meta"> 14075 words </span>
+          <span class="more-meta"> 29 min read </span>
 
         
         
@@ -486,6 +486,61 @@
             <li><a href="#运作原理-1">运作原理</a></li>
           </ul>
         </li>
+      </ul>
+    </li>
+    <li><a href="#第十三讲-c-并发编程">第十三讲 C 并发编程</a>
+      <ul>
+        <li><a href="#进程-vs-线程">进程 vs 线程</a></li>
+        <li><a href="#线程的基本控制">线程的基本控制</a></li>
+        <li><a href="#数据竞争">数据竞争</a></li>
+        <li><a href="#竞态条件">竞态条件</a></li>
+        <li><a href="#指令重排">指令重排</a></li>
+      </ul>
+    </li>
+    <li><a href="#第十四讲-如何协调线程">第十四讲 如何协调线程</a>
+      <ul>
+        <li><a href="#互斥量">互斥量</a></li>
+        <li><a href="#原子操作">原子操作</a></li>
+        <li><a href="#条件变量">条件变量</a></li>
+        <li><a href="#本地变量">本地变量</a></li>
+      </ul>
+    </li>
+    <li><a href="#第十五讲-信号">第十五讲 信号</a>
+      <ul>
+        <li><a href="#什么是信号">什么是信号</a></li>
+        <li><a href="#信号与软中断">信号与软中断</a></li>
+        <li><a href="#c-代码样例">C 代码样例</a></li>
+        <li><a href="#可重入函数">可重入函数</a></li>
+        <li><a href="#多线程信号处理">多线程信号处理</a></li>
+      </ul>
+    </li>
+    <li><a href="#第十六讲-日期时间与实用函数">第十六讲 日期、时间与实用函数</a>
+      <ul>
+        <li><a href="#日期与时间">日期与时间</a>
+          <ul>
+            <li><a href="#日历时间">日历时间</a></li>
+            <li><a href="#处理器时间">处理器时间</a></li>
+            <li><a href="#字符串到数值的转换">字符串到数值的转换</a></li>
+            <li><a href="#生成随机数">生成随机数</a></li>
+            <li><a href="#动态内存管理">动态内存管理</a></li>
+            <li><a href="#进程控制">进程控制</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#第十七讲-断言错误处理和对齐">第十七讲 断言、错误处理和对齐</a>
+      <ul>
+        <li><a href="#断言-1">断言</a></li>
+        <li><a href="#错误处理">错误处理</a></li>
+        <li><a href="#对齐">对齐</a></li>
+      </ul>
+    </li>
+    <li><a href="#第十八讲-极致优化上">第十八讲 极致优化（上）</a>
+      <ul>
+        <li><a href="#高速缓存">高速缓存</a></li>
+        <li><a href="#内联">内联</a></li>
+        <li><a href="#restrict关键字">restrict关键字</a></li>
+        <li><a href="#消除不需要的内存引用">消除不需要的内存引用</a></li>
       </ul>
     </li>
   </ul>
@@ -1845,6 +1900,1045 @@ gcc -c longjmp.s -o longjmp.o
 </div><p><code>va_start(ap, count)</code> 语句对 ap 进行了初始化，reg_save_area 指向了 RSA 起始位置，gp_offset 设置为 从 RSA 中读整数实参相对 reg_save_area 的偏移</p>
 <p><code>va_arg(ap, int)</code> 语句根据 va_list 及提取参数的类型从 RSA 中取出相应的数据值</p>
 <p><code>va_end(ap)</code> 释放了 ap</p>
+<h1 id="第十三讲-c-并发编程">第十三讲 C 并发编程</h1>
+<p>C11 标准加入了 thread.h 和 stdatomic.h 标准库，提供了一套通用的并发编程接口</p>
+<h2 id="进程-vs-线程">进程 vs 线程</h2>
+<p>默认情况，操作系统会为每一个运行的程序创建一个相应的进程，作为程序的运行实例。
+进程中包含一系列运行时信息，比如 VAS、PID、 处理器上下文（如通用寄存器和指令寄存器的值），进程状态分配调度相关资源。这些信息被放在 <code>进程控制块 PCB</code> 数据结构中。</p>
+<p>相比进程，线程提供了更细粒度的运行单元，线程在共享程序运行资源的情况下，负责程序某个子任务的具体执行过程。线程的状态信息被放在 <code>线程控制块 TCB</code> 数据结构中</p>
+<p><img src="/image/learn_c/13_1.webp" alt="thread1"></p>
+<h2 id="线程的基本控制">线程的基本控制</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;threads.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">run</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">arg</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">thrd_t</span> <span class="n">id</span> <span class="o">=</span> <span class="n">thrd_current</span><span class="p">();</span>  <span class="c1">// 返回该函数运行所在线程的标识符；
+</span><span class="c1"></span>  <span class="n">printf</span><span class="p">((</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span><span class="p">)</span> <span class="n">arg</span><span class="p">,</span> <span class="n">id</span><span class="p">);</span>
+  <span class="k">return</span> <span class="n">thrd_success</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+<span class="cp">#ifndef __STDC_NO_THREADS__
+</span><span class="cp"></span>  <span class="n">thrd_t</span> <span class="kr">thread</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">result</span><span class="p">;</span>
+  <span class="c1">// 创建一个线程；
+</span><span class="c1"></span>  <span class="n">thrd_create</span><span class="p">(</span><span class="o">&amp;</span><span class="kr">thread</span><span class="p">,</span> <span class="n">run</span><span class="p">,</span> <span class="s">&#34;Hello C11 thread with id: %lu.</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">thrd_join</span><span class="p">(</span><span class="kr">thread</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">result</span><span class="p">)</span> <span class="o">==</span> <span class="n">thrd_success</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// 等待其他线程退出；
+</span><span class="c1"></span>    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Thread returns %d at the end.</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">result</span><span class="p">);</span>  
+  <span class="p">}</span>  
+<span class="cp">#endif
+</span><span class="cp"></span>  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>其他线程控制函数如下表：</p>
+<p><img src="/image/learn_c/13_2.webp" alt="thread2"></p>
+<h2 id="数据竞争">数据竞争</h2>
+<p>数据竞争 Data Race 是指在一个多线程的环境中，有两个及以上的线程同一时间对同一块内存的数据进行了非原子操作，示例如下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;threads.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#define THREAD_COUNT 20
+</span><span class="cp">#define THREAD_LOOP 100000000
+</span><span class="cp"></span><span class="kt">long</span> <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>  <span class="c1">// 全局变量，用来记录线程的累加值；
+</span><span class="c1"></span><span class="kt">int</span> <span class="nf">run</span><span class="p">(</span><span class="kt">void</span><span class="o">*</span> <span class="n">data</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">THREAD_LOOP</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="n">counter</span><span class="o">++</span><span class="p">;</span>  <span class="c1">// 在线程中递增全局变量的值；
+</span><span class="c1"></span>  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Thread %d terminates.</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="o">*</span><span class="p">((</span><span class="kt">int</span><span class="o">*</span><span class="p">)</span> <span class="n">data</span><span class="p">));</span>
+  <span class="k">return</span> <span class="n">thrd_success</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+<span class="cp">#ifndef __STDC_NO_THREADS__
+</span><span class="cp"></span>  <span class="kt">int</span> <span class="n">ids</span><span class="p">[</span><span class="n">THREAD_COUNT</span><span class="p">];</span>  <span class="c1">// 用于存放线程序号的数组；
+</span><span class="c1"></span>  <span class="n">thrd_t</span> <span class="n">threads</span><span class="p">[</span><span class="n">THREAD_COUNT</span><span class="p">];</span>  
+  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">THREAD_COUNT</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">ids</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="n">thrd_create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">threads</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">run</span><span class="p">,</span> <span class="n">ids</span> <span class="o">+</span> <span class="n">i</span><span class="p">);</span>  <span class="c1">// 创建 THREAD_COUNT 个线程；
+</span><span class="c1"></span>  <span class="p">}</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">THREAD_COUNT</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="n">thrd_join</span><span class="p">(</span><span class="n">threads</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="nb">NULL</span><span class="p">);</span>  <span class="c1">// 让当前线程等待其他线程执行完毕；
+</span><span class="c1"></span>  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Counter value is: %ld.</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">counter</span><span class="p">);</span>  <span class="c1">// 输出 counter 变量最终结果；
+</span><span class="c1"></span><span class="cp">#endif
+</span><span class="cp"></span>  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span> 
+<span class="p">}</span>  
+</code></pre></td></tr></table>
+</div>
+</div><p><code>counter++</code> 语句可能会编译为如下几条机器指令</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="nf">mov</span> <span class="no">eax</span><span class="p">,</span> <span class="no">DWORD</span> <span class="no">PTR</span> <span class="no">counter</span><span class="p">[</span><span class="no">rip</span><span class="p">]</span>
+<span class="nf">add</span> <span class="no">eax</span><span class="p">,</span> <span class="mi">1</span>
+<span class="nf">mov</span> <span class="no">DWORD</span> <span class="no">PTR</span> <span class="no">counter</span><span class="p">[</span><span class="no">rip</span><span class="p">],</span> <span class="no">eax</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="竞态条件">竞态条件</h2>
+<p>竞态条件 Race Condition 是指由于程序中某些事件的发生时机和顺序不一致，从而影响正确性的一种缺陷</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;threads.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdatomic.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;time.h&gt;</span><span class="cp">
+</span><span class="cp">#define THREAD_COUNT 10
+</span><span class="cp"></span><span class="n">atomic_int</span> <span class="n">accountA</span> <span class="o">=</span> <span class="mi">100000000</span><span class="p">;</span>  <span class="c1">// 转出账户初始金额；
+</span><span class="c1"></span><span class="n">atomic_int</span> <span class="n">accountB</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>  <span class="c1">// 转入账户初始金额；
+</span><span class="c1"></span><span class="kt">int</span> <span class="nf">run</span><span class="p">(</span><span class="kt">void</span><span class="o">*</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">_amount</span> <span class="o">=</span> <span class="o">*</span><span class="p">((</span><span class="kt">int</span><span class="o">*</span><span class="p">)</span> <span class="n">v</span><span class="p">);</span>  <span class="c1">// 获得当前线程的转移金额；
+</span><span class="c1"></span>  <span class="k">for</span><span class="p">(;;)</span> <span class="p">{</span>
+    <span class="c1">// 首先判断转出账户金额是否足够，不够则直接退出；
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">accountA</span> <span class="o">&lt;</span> <span class="n">_amount</span><span class="p">)</span> <span class="k">return</span> <span class="n">thrd_error</span><span class="p">;</span>  
+    <span class="n">atomic_fetch_add</span><span class="p">(</span><span class="o">&amp;</span><span class="n">accountB</span><span class="p">,</span> <span class="n">_amount</span><span class="p">);</span>  <span class="c1">// 将金额累加到转入账户；
+</span><span class="c1"></span>    <span class="n">atomic_fetch_sub</span><span class="p">(</span><span class="o">&amp;</span><span class="n">accountA</span><span class="p">,</span> <span class="n">_amount</span><span class="p">);</span>  <span class="c1">// 将金额从转出账户中扣除；
+</span><span class="c1"></span>  <span class="p">}</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+<span class="cp">#if !defined(__STDC_NO_THREADS__) &amp;&amp; !defined(__STDC_NO_ATOMICS__)
+</span><span class="cp"></span>  <span class="n">thrd_t</span> <span class="n">threads</span><span class="p">[</span><span class="n">THREAD_COUNT</span><span class="p">];</span>  
+  <span class="n">srand</span><span class="p">(</span><span class="n">time</span><span class="p">(</span><span class="nb">NULL</span><span class="p">));</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">THREAD_COUNT</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">amount</span> <span class="o">=</span> <span class="n">rand</span><span class="p">()</span> <span class="o">%</span> <span class="mi">50</span><span class="p">;</span>  <span class="c1">// 为每一个线程生成一个随机转移金额；
+</span><span class="c1"></span>    <span class="n">thrd_create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">threads</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">run</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">amount</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">THREAD_COUNT</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="n">thrd_join</span><span class="p">(</span><span class="n">threads</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="nb">NULL</span><span class="p">);</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;A: %d</span><span class="se">\n</span><span class="s">B: %d&#34;</span><span class="p">,</span> <span class="n">accountA</span><span class="p">,</span> <span class="n">accountB</span><span class="p">);</span>
+<span class="cp">#endif
+</span><span class="cp"></span>  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span> 
+<span class="p">}</span> 
+</code></pre></td></tr></table>
+</div>
+</div><p>由于加钱和减钱的操作是分开的，可能导致错误的结果</p>
+<h2 id="指令重排">指令重排</h2>
+<p>现代编译器和处理器会采用指令重排来进一步提升程序的运行效率。
+这种技术会在不影响程序可观测执行结果的情况下，对生成的机器指令或实际执行顺序进行适当的重排。</p>
+<p>对于编译器来说，其表象是源码中的语句出现顺序和汇编代码实现的顺序不一致。</p>
+<p>对于处理器来说，则是程序在真正执行时产生副作用的顺序（如变量赋值），与汇编代码指令出现顺序不一致</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;threads.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdatomic.h&gt;</span><span class="cp">
+</span><span class="cp">#if !defined(__STDC_NO_ATOMICS__)
+</span><span class="cp"></span><span class="n">atomic_int</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="cp">#endif
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">run</span><span class="p">(</span><span class="kt">void</span><span class="o">*</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">x</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+  <span class="n">y</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>  <span class="c1">// ！变量 y 的值可能被优先更新！
+</span><span class="c1"></span><span class="p">}</span>
+<span class="kt">int</span> <span class="nf">observe</span><span class="p">(</span><span class="kt">void</span><span class="o">*</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">while</span><span class="p">(</span><span class="n">y</span> <span class="o">!=</span> <span class="mi">20</span><span class="p">)</span> <span class="p">;</span>  <span class="c1">// 忙等待；
+</span><span class="c1"></span>  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%d&#34;</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>  <span class="c1">// 只在 x 被更新后打印；
+</span><span class="c1"></span><span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+<span class="cp">#if !defined(__STDC_NO_THREADS__)
+</span><span class="cp"></span>  <span class="n">thrd_t</span> <span class="n">threadA</span><span class="p">,</span> <span class="n">threadB</span><span class="p">;</span>  
+  <span class="n">thrd_create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">threadA</span><span class="p">,</span> <span class="n">run</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+  <span class="n">thrd_create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">threadB</span><span class="p">,</span> <span class="n">observe</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+  <span class="n">thrd_join</span><span class="p">(</span><span class="n">threadA</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+  <span class="n">thrd_join</span><span class="p">(</span><span class="n">threadB</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+<span class="cp">#endif
+</span><span class="cp"></span>  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span> 
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="第十四讲-如何协调线程">第十四讲 如何协调线程</h1>
+<h2 id="互斥量">互斥量</h2>
+<p>互斥量 mtx_t_init 初始化有三种模式</p>
+<ul>
+<li>mtx_plain: 普通模式</li>
+<li>mtx_recursive： 可重入模式</li>
+<li>mtx_timed：有超时限制，超过后互斥失效</li>
+</ul>
+<p>另外两个互斥相关函数</p>
+<ul>
+<li>mtx_trylock: 加锁或者直接返回</li>
+<li>call_once：仅调用一次</li>
+</ul>
+<h2 id="原子操作">原子操作</h2>
+<p>stdaotmic.h 文件中 提供了一些原子操作</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;threads.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdatomic.h&gt;</span><span class="cp">
+</span><span class="cp">#define THREAD_COUNT 10
+</span><span class="cp">#define THREAD_LOOP 100000000
+</span><span class="cp">#if !defined(__STDC_NO_ATOMICS__)
+</span><span class="cp"></span><span class="n">_Atomic</span> <span class="kt">long</span> <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>  <span class="c1">// 定义一个原子类型全局变量，用来记录线程的累加值；
+</span><span class="c1"></span><span class="cp">#endif
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">run</span><span class="p">(</span><span class="kt">void</span><span class="o">*</span> <span class="n">data</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">THREAD_LOOP</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="n">atomic_fetch_add_explicit</span><span class="p">(</span><span class="o">&amp;</span><span class="n">counter</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">memory_order_relaxed</span><span class="p">);</span>  <span class="c1">// 使用原子加法操作；
+</span><span class="c1"></span>  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Thread %d terminates.</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="o">*</span><span class="p">((</span><span class="kt">int</span><span class="o">*</span><span class="p">)</span> <span class="n">data</span><span class="p">));</span>
+  <span class="k">return</span> <span class="n">thrd_success</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+<span class="cp">#if !defined(__STDC_NO_THREADS__) || !defined(__STDC_NO_ATOMICS__)
+</span><span class="cp"></span>  <span class="kt">int</span> <span class="n">ids</span><span class="p">[</span><span class="n">THREAD_COUNT</span><span class="p">];</span>
+  <span class="n">thrd_t</span> <span class="n">threads</span><span class="p">[</span><span class="n">THREAD_COUNT</span><span class="p">];</span>  
+  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">THREAD_COUNT</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">ids</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="n">thrd_create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">threads</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">run</span><span class="p">,</span> <span class="n">ids</span> <span class="o">+</span> <span class="n">i</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">THREAD_COUNT</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="n">thrd_join</span><span class="p">(</span><span class="n">threads</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="nb">NULL</span><span class="p">);</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Counter value is: %ld.</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">counter</span><span class="p">);</span>
+<span class="cp">#endif
+</span><span class="cp"></span>  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span> 
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>通过 <code>_Atomic</code> 声明一个院子类型变量，使用 atomic_fetch_add_explicit 来进行原子变量的加法操作，内存顺序有三种：</p>
+<p><img src="/image/learn_c/14_1.webp" alt="memory_order"></p>
+<p>更多原子操作相关函数如下：</p>
+<p><img src="/image/learn_c/14_2.webp" alt="atomic_functions"></p>
+<h2 id="条件变量">条件变量</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;threads.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="n">mtx_t</span> <span class="n">mutex</span><span class="p">;</span>
+<span class="n">cnd_t</span> <span class="n">cond</span><span class="p">;</span>  <span class="c1">// 定义一个条件变量；
+</span><span class="c1"></span><span class="kt">int</span> <span class="n">done</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="kt">int</span> <span class="nf">run</span><span class="p">(</span><span class="kt">void</span><span class="o">*</span> <span class="n">data</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">mtx_lock</span><span class="p">(</span><span class="o">&amp;</span><span class="n">mutex</span><span class="p">);</span> 
+  <span class="n">done</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="n">cnd_signal</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cond</span><span class="p">);</span>  <span class="c1">// 通知等待中的线程；
+</span><span class="c1"></span>  <span class="n">mtx_unlock</span><span class="p">(</span><span class="o">&amp;</span><span class="n">mutex</span><span class="p">);</span> 
+  <span class="k">return</span> <span class="n">thrd_success</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+<span class="cp">#ifndef __STDC_NO_THREADS__
+</span><span class="cp"></span>  <span class="n">mtx_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">mutex</span><span class="p">,</span> <span class="n">mtx_plain</span><span class="p">);</span> 
+  <span class="n">cnd_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cond</span><span class="p">);</span>  <span class="c1">// 初始化条件变量；
+</span><span class="c1"></span>  <span class="n">thrd_t</span> <span class="kr">thread</span><span class="p">;</span>  
+  <span class="n">thrd_create</span><span class="p">(</span><span class="o">&amp;</span><span class="kr">thread</span><span class="p">,</span> <span class="n">run</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+  <span class="n">mtx_lock</span><span class="p">(</span><span class="o">&amp;</span><span class="n">mutex</span><span class="p">);</span> 
+  <span class="k">while</span> <span class="p">(</span><span class="n">done</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">cnd_wait</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cond</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">mutex</span><span class="p">);</span>  <span class="c1">// 让当前线程进入等待队列；
+</span><span class="c1"></span>  <span class="p">}</span>
+  <span class="n">mtx_unlock</span><span class="p">(</span><span class="o">&amp;</span><span class="n">mutex</span><span class="p">);</span> 
+  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;The value of done is: %d&#34;</span><span class="p">,</span> <span class="n">done</span><span class="p">);</span>
+  <span class="n">mtx_destroy</span><span class="p">(</span><span class="o">&amp;</span><span class="n">mutex</span><span class="p">);</span>
+  <span class="n">cnd_destroy</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cond</span><span class="p">);</span>  <span class="c1">// 销毁条件变量；
+</span><span class="c1"></span><span class="cp">#endif
+</span><span class="cp"></span>  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span> 
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>条件变量提供了线程间通知能力，某个线程可以在完成了某件事后，通知并唤醒等待线程。</p>
+<h2 id="本地变量">本地变量</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;threads.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdatomic.h&gt;</span><span class="cp">
+</span><span class="cp">#define THREAD_COUNT 10
+</span><span class="cp">#define THREAD_LOOP 10000
+</span><span class="cp"></span><span class="n">_Thread_local</span> <span class="kt">int</span> <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>  <span class="c1">// 定义线程本地变量；
+</span><span class="c1"></span><span class="kt">int</span> <span class="nf">run</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">data</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">THREAD_LOOP</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>  <span class="c1">// 更新当前线程所属的 counter 变量值；
+</span><span class="c1"></span>  <span class="k">return</span> <span class="n">counter</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="k">const</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
+  <span class="n">thrd_t</span> <span class="n">threads</span><span class="p">[</span><span class="n">THREAD_COUNT</span><span class="p">];</span>
+  <span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">result</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">THREAD_COUNT</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">thrd_create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">threads</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">run</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">THREAD_COUNT</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">thrd_join</span><span class="p">(</span><span class="n">threads</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="o">&amp;</span><span class="n">result</span><span class="p">);</span>
+    <span class="n">sum</span> <span class="o">+=</span> <span class="n">result</span><span class="p">;</span>  <span class="c1">// 累加每个线程的计算值；
+</span><span class="c1"></span>  <span class="p">}</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;The value of count is %d.</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">sum</span><span class="p">);</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>线程本地变量的值仅能够在某个线程的生存期内可用，变量的实际存储空间会在线程开始时分配，线程结束时回收。</p>
+<p><img src="/image/learn_c/14_3.webp" alt="thread_local_variable"></p>
+<h1 id="第十五讲-信号">第十五讲 信号</h1>
+<h2 id="什么是信号">什么是信号</h2>
+<p>信号实际上是一种可以用来传递特定消息的机制，操作系统将程序运行过程中发生的各类特殊情况转发给程序，并按照其指定的逻辑进行处理。</p>
+<p>信号的产生是一个随机的过程，所以程序需要提前”告诉“操作系统，信号到来时，应该如何处理。这就是一种典型的异步事件处理方式。</p>
+<h2 id="信号与软中断">信号与软中断</h2>
+<p>信号是一种软中断，当特定事件发生时，操作系统会将对应的信号值发送给相关程序，通常情况下，如果对应程序并未设置自定义的信号处理程序，则操作系统会执行默认信号处理程序。整个程序处理过程中，存在着 CPU 从用户态到信号处理程序的执行流程转移。</p>
+<h2 id="c-代码样例">C 代码样例</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;signal.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">void</span> <span class="nf">sigHandler</span><span class="p">(</span><span class="kt">int</span> <span class="n">sig</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Signal %d catched!</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">sig</span><span class="p">);</span>
+  <span class="n">exit</span><span class="p">(</span><span class="n">sig</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">signal</span><span class="p">(</span><span class="n">SIGFPE</span><span class="p">,</span> <span class="n">sigHandler</span><span class="p">);</span>
+  <span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%d&#34;</span><span class="p">,</span> <span class="n">x</span> <span class="o">/</span> <span class="n">y</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>C 标准库提供了 6 种不同类型的信号</p>
+<p><img src="/image/learn_c/15_1.webp" alt="signal_num"></p>
+<p>信号处理函数的原型为 <code>void (*handler) (int)</code>，即接受一个整形的信号值，不返回任何内容。</p>
+<p>除零异常的信号交互逻辑如下：</p>
+<ol>
+<li>CPU 执行触发指令 idiv</li>
+<li>发现除零异常，CPU 暂停当前程序运行，并将控制权转交给操作系统</li>
+<li>操作系统将信号 SIGFPE 发送给出错的程序</li>
+<li>操作系统根据情况执行相应的信号处理程序</li>
+<li>信号处理程序执行完毕后，如果程序未退出，则将程序执行恢复到之前的中断点，即 CPU 会重新执行 idiv 指令</li>
+</ol>
+<h2 id="可重入函数">可重入函数</h2>
+<p>当程序在执行函数 A 时收到了某个信号，信号处理函数中也对函数 A 发起了调用，这样可能会影响之前还未完成调用的函数 A 执行状态。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;signal.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
+</span><span class="cp">#define BUF_SIZE 16  </span><span class="c1">// 全局静态数组大小；
+</span><span class="c1"></span><span class="cp">#define FORMAT_NUM_(N) &#34; $&#34;#N
+</span><span class="cp">#define FORMAT_NUM(N) FORMAT_NUM_(N)
+</span><span class="cp">#define RAISE_EXP_false_ASM()
+</span><span class="cp"></span><span class="c1">// 调用 raise 函数向当前程序发送信号；
+</span><span class="c1"></span><span class="cp">#define RAISE_EXP_true_ASM() \
+</span><span class="cp">  &#34;movl    $4, %%edi\n\t&#34; \
+</span><span class="cp">  &#34;call    raise\n\t&#34;
+</span><span class="cp"></span><span class="c1">// 内联汇编实现；
+</span><span class="c1"></span><span class="cp">#define INLINE_ASM(ID, HAS_EXP) \
+</span><span class="cp">  &#34;mov     %0, %%r8\n\t&#34; </span><span class="cm">/* 复制传入的字符串数据到全局静态数组 */</span><span class="cp"> \
+</span><span class="cp">  &#34;testq   %%rsi, %%rsi\n\t&#34; \
+</span><span class="cp">  &#34;je      .L1&#34; #ID &#34;\n\t&#34; \
+</span><span class="cp">  &#34;xorl    %%eax, %%eax\n\t&#34; \
+</span><span class="cp">  &#34;.L3&#34; #ID &#34;:\n\t&#34; \
+</span><span class="cp">  &#34;movzbl  (%%rdi,%%rax), %%ecx\n\t&#34; \
+</span><span class="cp">  &#34;movb    %%cl, (%%r8,%%rax)\n\t&#34; \
+</span><span class="cp">  &#34;addq    $1, %%rax\n\t&#34; \
+</span><span class="cp">  &#34;cmpq    %%rsi, %%rax\n\t&#34; \
+</span><span class="cp">  &#34;jne     .L3&#34; #ID &#34;\n\t&#34; \
+</span><span class="cp">  &#34;.L1&#34; #ID &#34;:\n\t&#34; \
+</span><span class="cp">  RAISE_EXP_##HAS_EXP##_ASM() </span><span class="cm">/* 选择性调用 raise 函数 */</span><span class="cp"> \
+</span><span class="cp">  &#34;mov     $1, %%rax\n\t&#34; \
+</span><span class="cp">  &#34;mov     $1, %%rdi\n\t&#34; \
+</span><span class="cp">  &#34;mov     %0, %%rsi\n\t&#34; \
+</span><span class="cp">  &#34;mov&#34; FORMAT_NUM(BUF_SIZE) &#34;, %%rdx\n\t&#34; \
+</span><span class="cp">  &#34;syscall\n\t&#34;  </span><span class="cm">/* 触发系统调用，打印内容 */</span><span class="cp">
+</span><span class="cp"></span>  
+<span class="k">static</span> <span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="n">BUF_SIZE</span><span class="p">];</span>  <span class="c1">// 用于保存字符的全局静态数组；
+</span><span class="c1"></span><span class="kt">void</span> <span class="nf">print_with_exp</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">str</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">len</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">// 会引起信号中断的版本；
+</span><span class="c1"></span>  <span class="k">asm</span><span class="p">(</span><span class="n">INLINE_ASM</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="nb">true</span><span class="p">)</span> <span class="o">::</span> <span class="s">&#34;g&#34;</span> <span class="p">(</span><span class="n">buf</span><span class="p">));</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">print_normal</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">str</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">len</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">// 正常的版本；
+</span><span class="c1"></span>  <span class="k">asm</span><span class="p">(</span><span class="n">INLINE_ASM</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="nb">false</span><span class="p">)</span> <span class="o">::</span> <span class="s">&#34;g&#34;</span> <span class="p">(</span><span class="n">buf</span><span class="p">));</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">sigHandler</span><span class="p">(</span><span class="kt">int</span> <span class="n">sig</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">str</span> <span class="o">=</span> <span class="s">&#34;Hello&#34;</span><span class="p">;</span>
+  <span class="n">print_normal</span><span class="p">(</span><span class="n">str</span><span class="p">,</span> <span class="n">strlen</span><span class="p">(</span><span class="n">str</span><span class="p">));</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">signal</span><span class="p">(</span><span class="n">SIGILL</span><span class="p">,</span> <span class="n">sigHandler</span><span class="p">);</span>
+  <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">str</span> <span class="o">=</span> <span class="s">&#34;, world!&#34;</span><span class="p">;</span>
+  <span class="n">print_with_exp</span><span class="p">(</span><span class="n">str</span><span class="p">,</span> <span class="n">strlen</span><span class="p">(</span><span class="n">str</span><span class="p">));</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><img src="/image/learn_c/15_2.webp" alt="reentrant_function"></p>
+<p>不受中断和重新调用影响的函数称之为可重入函数</p>
+<h2 id="多线程信号处理">多线程信号处理</h2>
+<p>C 语言没有对并发编程的信号处理做规范，所以多线程应用中使用 signal 和 raise 函数会产生未定义的行为</p>
+<h1 id="第十六讲-日期时间与实用函数">第十六讲 日期、时间与实用函数</h1>
+<h2 id="日期与时间">日期与时间</h2>
+<h3 id="日历时间">日历时间</h3>
+<p>使用 time_t 类型表示，其代表从 1970-01-01: 00:00:00 到当前时间秒数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;time.h&gt;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">time_t</span> <span class="n">currTime</span> <span class="o">=</span> <span class="n">time</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">currTime</span> <span class="o">!=</span> <span class="p">(</span><span class="n">time_t</span><span class="p">)</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;the current timestamp is: %ld(s)</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">currTime</span><span class="p">);</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;local time is: %s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">asctime</span><span class="p">(</span><span class="n">localtime</span><span class="p">(</span><span class="o">&amp;</span><span class="n">currTime</span><span class="p">)));</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;UTC time is: %s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">asctime</span><span class="p">(</span><span class="n">gmtime</span><span class="p">(</span><span class="o">&amp;</span><span class="n">currTime</span><span class="p">)));</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="处理器时间">处理器时间</h3>
+<p>处理器时间即 CPU 资源被调度以支持程序在某段时间内正常运作所花费的时间。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;time.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">clock_t</span> <span class="n">startTime</span> <span class="o">=</span> <span class="n">clock</span><span class="p">();</span>    
+  <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">10000000</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{}</span>
+  <span class="n">clock_t</span> <span class="n">endTime</span> <span class="o">=</span> <span class="n">clock</span><span class="p">();</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Consumed CPU time is：%fs</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> 
+   <span class="p">(</span><span class="kt">double</span><span class="p">)(</span><span class="n">endTime</span> <span class="o">-</span> <span class="n">startTime</span><span class="p">)</span> <span class="o">/</span> <span class="n">CLOCKS_PER_SEC</span><span class="p">);</span> 
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span> 
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="字符串到数值的转换">字符串到数值的转换</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;errno.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// 一次性字符串到数值转换；
+</span><span class="c1"></span>  <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">strA</span> <span class="o">=</span> <span class="s">&#34;1.0&#34;</span><span class="p">;</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%f</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">atof</span><span class="p">(</span><span class="n">strA</span><span class="p">));</span>
+  <span class="c1">// 带溢出检查的转换函数，执行后会保存不能被转换部分的地址；
+</span><span class="c1"></span>  <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">strB</span> <span class="o">=</span> <span class="s">&#34;200000000000000000000000000000.0&#34;</span><span class="p">;</span>
+  <span class="kt">char</span><span class="o">*</span> <span class="n">end</span><span class="p">;</span>
+  <span class="kt">double</span> <span class="n">num</span> <span class="o">=</span> <span class="n">strtol</span><span class="p">(</span><span class="n">strB</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">end</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">errno</span> <span class="o">==</span> <span class="n">ERANGE</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">// 判断转换结果是否发生溢出；
+</span><span class="c1"></span>    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Range error, got: &#34;</span><span class="p">);</span>
+    <span class="n">errno</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%f</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">num</span><span class="p">);</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="生成随机数">生成随机数</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt; </span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt; </span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;time.h&gt; </span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">main</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">srand</span><span class="p">(</span><span class="n">time</span><span class="p">(</span><span class="nb">NULL</span><span class="p">));</span>  <span class="c1">// 初始化随机数种子；
+</span><span class="c1"></span>  <span class="k">while</span> <span class="p">(</span><span class="n">getchar</span><span class="p">()</span> <span class="o">==</span> <span class="sc">&#39;\n&#39;</span><span class="p">)</span> 
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%d&#34;</span><span class="p">,</span> <span class="n">rand</span><span class="p">()</span> <span class="o">%</span> <span class="mi">10</span><span class="p">);</span>  <span class="c1">// 生成并打印 0-9 的随机数；
+</span><span class="c1"></span>  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span> 
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="动态内存管理">动态内存管理</h3>
+<p>除了 malloc 和 free 函数之外，C 标准库也提供了另外的一些函数</p>
+<p><img src="/image/learn_c/16_1.webp" alt="alloc_function"></p>
+<h3 id="进程控制">进程控制</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">void</span> <span class="nf">exitHandler</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">getenv</span><span class="p">(</span><span class="s">&#34;PATH&#34;</span><span class="p">));</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">atexit</span><span class="p">(</span><span class="n">exitHandler</span><span class="p">))</span> <span class="p">{</span>
+    <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_SUCCESS</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><img src="/image/learn_c/16_2.webp" alt="process_control"></p>
+<h1 id="第十七讲-断言错误处理和对齐">第十七讲 断言、错误处理和对齐</h1>
+<h2 id="断言-1">断言</h2>
+<p>断言分为静态断言和动态断言</p>
+<p>一般我们在程序运行前使用静态断言，来检查它所需要满足的一系列要求</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;assert.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">double</span> <span class="nf">sqrt</span><span class="p">(</span><span class="kt">double</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// 检查函数使用时传入的参数；
+</span><span class="c1"></span>  <span class="n">assert</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">);</span>
+  <span class="c1">// ...
+</span><span class="c1"></span><span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// 检查程序的编译要求；
+</span><span class="c1"></span>  <span class="n">static_assert</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">,</span> 
+    <span class="s">&#34;Integer should have at least 4 bytes length.&#34;</span><span class="p">);</span>
+  <span class="c1">// ...
+</span><span class="c1"></span>  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>定义 <code>NDEBUG</code> 宏可关闭断言功能</p>
+<h2 id="错误处理">错误处理</h2>
+<p>在 C 语言中，名为 errno 的预处理宏会被展开为一个 init 类型的可修改全局左值</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;tgmath.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;errno.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">sqrt</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+  <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&#34;%s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">strerror</span><span class="p">(</span><span class="n">errno</span><span class="p">));</span>  <span class="c1">// &#34;Numerical argument out of domain&#34;.
+</span><span class="c1"></span>  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>可以通过 strerror 函数获取当前 errno 对应的可读文本</p>
+<h2 id="对齐">对齐</h2>
+<p>可以使用 _Alignas 来根据自身需要为数据指定特殊的对齐要求，stdalign.h 有
+对应的宏 alignas</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdalign.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+<span class="cp">#if __alignas_is_defined == 1 &amp;&amp; __alignof_is_defined == 1
+</span><span class="cp"></span>  <span class="n">alignas</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span> <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;The alignment of n is %zu</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">alignof</span><span class="p">(</span><span class="n">n</span><span class="p">));</span>  <span class="c1">// &#34;The alignment of n is 1024&#34;.
+</span><span class="c1"></span>  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;The address of n is: %p</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">n</span><span class="p">);</span>  <span class="c1">// &#34;The address of n is: 0x7ffe80658c00&#34;.
+</span><span class="c1"></span><span class="cp">#endif
+</span><span class="cp"></span>  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span> 
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="第十八讲-极致优化上">第十八讲 极致优化（上）</h1>
+<h2 id="高速缓存">高速缓存</h2>
+<p>CPU 芯片上有 L1、L2、L3 三个不同级别的高速缓存</p>
+<p>高速缓存之所以能提升性能，一个重要的前提在于局部性原理</p>
+<ul>
+<li>时间局部性：被引用过一次的内存位置接下来可能会被再次引用</li>
+<li>空间局部性：如果一个内存位置被引用了，那附近的内存也可能会被引用</li>
+</ul>
+<h2 id="内联">内联</h2>
+<p>通过内联关键字 inline ，可以建议编译器，将某个方法的实现内联到它的实际调用处。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="k">static</span> <span class="kr">inline</span> <span class="kt">int</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="mi">10</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">v</span> <span class="o">=</span> <span class="n">foo</span><span class="p">();</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Output is: %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">v</span><span class="p">);</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上述代码对应的汇编代码如下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="nl">.LC0:</span>
+        <span class="na">.string</span> <span class="s">&#34;Output is: %d\n&#34;</span>
+<span class="nl">main:</span>
+        <span class="nf">sub</span>     <span class="no">rsp</span><span class="p">,</span> <span class="mi">8</span>
+        <span class="nf">mov</span>     <span class="no">esi</span><span class="p">,</span> <span class="mi">10</span>
+        <span class="nf">mov</span>     <span class="no">edi</span><span class="p">,</span> <span class="no">OFFSET</span> <span class="no">FLAT</span><span class="p">:.</span><span class="no">LC0</span>
+        <span class="nf">xor</span>     <span class="no">eax</span><span class="p">,</span> <span class="no">eax</span>
+        <span class="nf">call</span>    <span class="no">printf</span>
+        <span class="nf">xor</span>     <span class="no">eax</span><span class="p">,</span> <span class="no">eax</span>
+        <span class="nf">add</span>     <span class="no">rsp</span><span class="p">,</span> <span class="mi">8</span>
+        <span class="nf">ret</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>通过内联，程序不再需要使用 call 指令来调用 foo 函数，好处在于节省 call 指令执行时需要进行的函数帧栈创建和销毁过程。坏处是导致可执行二进制文件增大</p>
+<h2 id="restrict关键字">restrict关键字</h2>
+<p>restrict 关键字用于指针，表明该指针是访问对应数据的唯一方式</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span><span class="o">*</span> <span class="n">y</span><span class="p">,</span> <span class="kt">int</span><span class="o">*</span> <span class="kr">restrict</span> <span class="n">z</span><span class="p">)</span> <span class="p">{</span>
+  <span class="o">*</span><span class="n">x</span> <span class="o">+=</span> <span class="o">*</span><span class="n">z</span><span class="p">;</span>
+  <span class="o">*</span><span class="n">y</span> <span class="o">+=</span> <span class="o">*</span><span class="n">z</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="mi">30</span><span class="p">;</span>
+  <span class="n">foo</span><span class="p">(</span><span class="o">&amp;</span><span class="n">x</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">y</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">z</span><span class="p">);</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%d %d %d&#34;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">);</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>对应的汇编代码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="nl">foo:</span>
+        <span class="nf">mov</span>     <span class="no">eax</span><span class="p">,</span> <span class="no">DWORD</span> <span class="no">PTR</span> <span class="p">[</span><span class="no">rdx</span><span class="p">]</span>
+        <span class="nf">add</span>     <span class="no">DWORD</span> <span class="no">PTR</span> <span class="p">[</span><span class="no">rdi</span><span class="p">],</span> <span class="no">eax</span>
+        <span class="nf">add</span>     <span class="no">DWORD</span> <span class="no">PTR</span> <span class="p">[</span><span class="no">rsi</span><span class="p">],</span> <span class="no">eax</span>
+        <span class="nf">ret</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>使用restrict 关键字后，在为指针 y 进行 值累加前，编译器不会再重复性地从内存中读取指针 z 对应的值</p>
+<h2 id="消除不需要的内存引用">消除不需要的内存引用</h2>
+<p>原代码</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#define LEN 1024
+</span><span class="cp"></span><span class="kt">int</span> <span class="n">data</span><span class="p">[</span><span class="n">LEN</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="p">...</span> <span class="p">};</span>
+<span class="kt">int</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span> <span class="n">dest</span><span class="p">)</span> <span class="p">{</span>
+  <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">LEN</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="o">*</span><span class="n">dest</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>优化代码</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#define LEN 3
+</span><span class="cp"></span><span class="kt">int</span> <span class="n">data</span><span class="p">[</span><span class="n">LEN</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span> <span class="p">};</span>
+<span class="kt">int</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span> <span class="n">dest</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">register</span> <span class="kt">int</span> <span class="n">acc</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">LEN</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">acc</span> <span class="o">=</span> <span class="n">acc</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+  <span class="p">}</span>
+  <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="n">acc</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>优化代码主要做了两件事情：</p>
+<ol>
+<li>将用于存放临时积累值的 <code>*dest</code> 替换为局部变量</li>
+<li>为局部变量添加 register 关键字，建议编译器将该值存放在寄存器中</li>
+</ol>
 
     </div>
 
@@ -1858,7 +2952,7 @@ gcc -c longjmp.s -o longjmp.o
   <p class="copyright-item">
     <span class="item-title">LastMod</span>
     <span class="item-content">
-      2022-03-19
+      2022-04-17
       
     </span>
   </p>
