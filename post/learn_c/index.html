@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]深入C语言和程序运行原理（更新中）">
 <meta itemprop="description" content="第零讲 课前热身 数据量单位 位（bit）： 是最小存储单位，每个位可以存一个二进制码值得 0 或 1 字节（byte）： 通常是由八个位组成的一个存储单元，"><meta itemprop="datePublished" content="2022-01-31T17:04:50+08:00" />
 <meta itemprop="dateModified" content="2022-04-17T10:48:50+08:00" />
-<meta itemprop="wordCount" content="14075">
+<meta itemprop="wordCount" content="17598">
 <meta itemprop="keywords" content="C," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]深入C语言和程序运行原理（更新中）"/>
 <meta name="twitter:description" content="第零讲 课前热身 数据量单位 位（bit）： 是最小存储单位，每个位可以存一个二进制码值得 0 或 1 字节（byte）： 通常是由八个位组成的一个存储单元，"/>
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 14075 words </span>
-          <span class="more-meta"> 29 min read </span>
+        <span class="more-meta"> 17598 words </span>
+          <span class="more-meta"> 36 min read </span>
 
         
         
@@ -541,6 +541,63 @@
         <li><a href="#内联">内联</a></li>
         <li><a href="#restrict关键字">restrict关键字</a></li>
         <li><a href="#消除不需要的内存引用">消除不需要的内存引用</a></li>
+      </ul>
+    </li>
+    <li><a href="#第十九讲-极致优化下">第十九讲 极致优化（下）</a>
+      <ul>
+        <li><a href="#循环展开loop-unrolling">循环展开（Loop Unrolling）</a></li>
+        <li><a href="#优先使用条件传送指令">优先使用条件传送指令</a></li>
+        <li><a href="#使用更高的编译优化等级">使用更高的编译优化等级</a></li>
+        <li><a href="#尾递归优化">尾递归优化</a></li>
+      </ul>
+    </li>
+    <li><a href="#第二十讲-编码规范">第二十讲 编码规范</a>
+      <ul>
+        <li><a href="#格式">格式</a></li>
+        <li><a href="#注释">注释</a></li>
+        <li><a href="#语法约定">语法约定</a></li>
+        <li><a href="#命名">命名</a></li>
+        <li><a href="#国际化">国际化</a></li>
+      </ul>
+    </li>
+    <li><a href="#第二十一讲-自动化测试">第二十一讲 自动化测试</a>
+      <ul>
+        <li><a href="#单元测试">单元测试</a></li>
+        <li><a href="#集成测试">集成测试</a></li>
+        <li><a href="#功能测试">功能测试</a></li>
+        <li><a href="#性能测试">性能测试</a></li>
+      </ul>
+    </li>
+    <li><a href="#第二十二讲-结构化编译">第二十二讲 结构化编译</a>
+      <ul>
+        <li><a href="#如何组织代码结构">如何组织代码结构</a></li>
+        <li><a href="#如何组织编译流程">如何组织编译流程</a></li>
+        <li><a href="#使用-makefile-进行结构化编译">使用 Makefile 进行结构化编译</a></li>
+        <li><a href="#使用-cmake-进行跨平台自动化构建">使用 CMake 进行跨平台自动化构建</a></li>
+      </ul>
+    </li>
+    <li><a href="#第二十三讲-高性能-http-server-实战上">第二十三讲 高性能 HTTP Server 实战（上）</a></li>
+    <li><a href="#第二十四讲-高性能-http-server-实战下">第二十四讲 高性能 HTTP Server 实战（下）</a>
+      <ul>
+        <li><a href="#项目基本结构">项目基本结构</a></li>
+        <li><a href="#处理用户参数">处理用户参数</a></li>
+        <li><a href="#tcp-server">TCP Server</a>
+          <ul>
+            <li><a href="#监听请求">监听请求</a></li>
+          </ul>
+        </li>
+        <li><a href="#解析请求">解析请求</a></li>
+        <li><a href="#计算斐波那契数列">计算斐波那契数列</a></li>
+      </ul>
+    </li>
+    <li><a href="#第二十五讲-可执行二进制文件">第二十五讲 可执行二进制文件</a>
+      <ul>
+        <li><a href="#elf-文件格式">ELF 文件格式</a></li>
+        <li><a href="#elf-头">ELF 头</a></li>
+        <li><a href="#section-头">Section 头</a></li>
+        <li><a href="#program-头">Program 头</a></li>
+        <li><a href="#elf-编程">ELF 编程</a></li>
+        <li><a href="#elf-文件类型">ELF 文件类型</a></li>
       </ul>
     </li>
   </ul>
@@ -2939,6 +2996,653 @@ gcc -c longjmp.s -o longjmp.o
 <li>将用于存放临时积累值的 <code>*dest</code> 替换为局部变量</li>
 <li>为局部变量添加 register 关键字，建议编译器将该值存放在寄存器中</li>
 </ol>
+<h1 id="第十九讲-极致优化下">第十九讲 极致优化（下）</h1>
+<h2 id="循环展开loop-unrolling">循环展开（Loop Unrolling）</h2>
+<p>现在 CPU 为了进一步提升指令的执行效率，通常会将单一的机器指令再进行拆分，以达到并行的目的。对于一个基本的五级 RISC 流水线来说， CPU 会将指令的执行细分为指令提取 （IF）、指令译码（ID）、指令执行（EX）、内存访问（MEM）和寄存器写回（WB）。</p>
+<p>在第一条机器指令经过了指令提取后，即使该指令没有完全执行完毕，CPU 也可以立即开始处理下一条机器指令。因此从宏观上来看，机器指令的执行由串行变成了并行。
+当五个节点全部执行完毕后，CPU 会更新指令指针（PC）</p>
+<p><img src="/image/learn_c/19_1.webp" alt="instructions"></p>
+<p>示例代码如下:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp"># 原代码
+</span><span class="cp">#define LEN 4096
+</span><span class="cp"></span><span class="kt">int</span> <span class="n">data</span><span class="p">[</span><span class="n">LEN</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="p">...</span> <span class="p">};</span>
+<span class="kt">int</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">acc</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">LEN</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">acc</span> <span class="o">=</span> <span class="n">acc</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">acc</span><span class="p">;</span>
+<span class="p">}</span>
+
+
+<span class="cp"># 展开后的代码
+</span><span class="cp">#define LEN 4096
+</span><span class="cp"></span><span class="kt">int</span> <span class="n">data</span><span class="p">[</span><span class="n">LEN</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="p">...</span> <span class="p">};</span>
+<span class="kt">int</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">limit</span> <span class="o">=</span> <span class="n">LEN</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">acc0</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">acc1</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">limit</span><span class="p">;</span> <span class="n">i</span> <span class="o">+=</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">// 2x2 loop unrolling.
+</span><span class="c1"></span>    <span class="n">acc0</span> <span class="o">=</span> <span class="n">acc0</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="n">acc1</span> <span class="o">=</span> <span class="n">acc1</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">];</span>
+  <span class="p">}</span>
+  <span class="k">for</span> <span class="p">(;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">LEN</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">// Finish any remaining elements.
+</span><span class="c1"></span>    <span class="n">acc0</span> <span class="o">=</span> <span class="n">acc0</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">acc0</span> <span class="o">*</span> <span class="n">acc1</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>我们将 循环结果应用了 2 * 2 （步长为2，2个独立累积值变量）循环展开。</p>
+<p>不过这样导致代码量增加和可读性下降，大部分情况下我们不需要手动改变代码来做循环展开。</p>
+<h2 id="优先使用条件传送指令">优先使用条件传送指令</h2>
+<p>CPU 中存在着条件传送指令、条件分支指令等，CPU 执行条件分支指令会对分支进行预测，并提现执行分支指令，如果预测的跳转位置发生错误，就会将状态重置为发生跳转前分支所处的状态，并取出正确方向上的指令，开始重新处理。
+条件传送指令没有分支预测，所以没有这部分损失。</p>
+<p>示例代码如下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#define LEN 1024
+</span><span class="cp"></span><span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span><span class="o">*</span> <span class="n">y</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">LEN</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="p">{</span>
+      <span class="kt">int</span> <span class="n">t</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+      <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+      <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+
+<span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#define LEN 16
+</span><span class="cp"></span><span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span><span class="o">*</span> <span class="n">y</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">LEN</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">min</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">?</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">:</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="kt">int</span> <span class="n">max</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">?</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">:</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">min</span><span class="p">;</span>
+    <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">max</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面示例通过增加几次比较和复制操作，来避免分支预测失败代码的惩罚。</p>
+<h2 id="使用更高的编译优化等级">使用更高的编译优化等级</h2>
+<p>gcc 可以指定更高的优化等级来优化</p>
+<p><img src="/image/learn_c/19_2.webp" alt="gcc_options"></p>
+<h2 id="尾递归优化">尾递归优化</h2>
+<p>尾递归优化通过将函数的递归调用优化为循环结构，减少了 call 指令的调用次数，进而减少了帧栈的创建和销毁过程，提升了程序的执行性能。</p>
+<h1 id="第二十讲-编码规范">第二十讲 编码规范</h1>
+<p>我们以 GNU 编码规范为基准</p>
+<h2 id="格式">格式</h2>
+<ul>
+<li>每行字符数量保持在79个以内</li>
+<li>函数定义是开始花括号“{”位于行首</li>
+<li>函数命中位于行首</li>
+<li>参数过多时，将超过限制的参数放到函数名下一行，并与第一个参数开头对齐</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="kt">int</span>
+<span class="nf">lots_of_args</span> <span class="p">(</span><span class="kt">int</span> <span class="n">an_integer</span><span class="p">,</span> <span class="kt">long</span> <span class="n">a_long</span><span class="p">,</span> <span class="kt">short</span> <span class="n">a_short</span><span class="p">,</span>
+              <span class="kt">double</span> <span class="n">a_double</span><span class="p">,</span> <span class="kt">float</span> <span class="n">a_float</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="c1">// ...
+</span><span class="c1"></span><span class="p">}</span>
+<span class="k">struct</span> <span class="n">foo</span> 
+<span class="p">{</span>
+  <span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">struct</span> <span class="n">bar</span> <span class="p">{</span> <span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">;</span> <span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>更多规范参考 GNU 旗下的格式化工具 indent</p>
+<h2 id="注释">注释</h2>
+<p>文件层面，main 函数所在文件应以描述程序的基本用途的注释作为开头，而其他源文件应以文件名和描述该源文件基本功能的注释作为开头</p>
+<p>函数层面，需要添加用于描述函数基本功能、参数类型、参数用途、参数可能取值和返回值含义等内容注释信息</p>
+<h2 id="语法约定">语法约定</h2>
+<ul>
+<li>显示地为所有使用到的值标注类型，尤其是直接使用在表达式中的数字字面量值</li>
+<li>外部函数和后续才会使函数的声明，应该被放置在当前源文件处开头统一的地方，或放到单独的文件中</li>
+<li>将同类型的多个变量放在同一行声明</li>
+<li>使用嵌套的流程控制语句（如 if 语句）时，总是将内部嵌套的逻辑包裹在大括号中。</li>
+<li>尽量避免在 if 语句 条件判断处做赋值操作（while 可以这样做）</li>
+</ul>
+<h2 id="命名">命名</h2>
+<p>变量名一般采用下划线命名法</p>
+<p>尽量使用小写字母、下划线和数字来组成变量名，把大写字母留给宏常量和枚举常量。</p>
+<h2 id="国际化">国际化</h2>
+<p>可以使用 GNU gettext 库，将消息翻译成各种语言</p>
+<h1 id="第二十一讲-自动化测试">第二十一讲 自动化测试</h1>
+<h2 id="单元测试">单元测试</h2>
+<p>单元测试就是对组成程序的基本单元（也可称为模块）进行功能正确性验证，它的目标是
+隔离程序的每个部分，并单独验证这些部分能够按照预期正常工作。</p>
+<p>对于 C 程序来说，这里的单元通常为函数</p>
+<p>通常使用 Cunit 进行单元测试</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="c1">// ...
+</span><span class="c1"></span><span class="kt">int</span> <span class="nf">maxi</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">// 被测试函数；
+</span><span class="c1"></span>  <span class="k">return</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="n">y</span><span class="p">)</span> <span class="o">?</span> <span class="nl">x</span> <span class="p">:</span> <span class="n">y</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">test_maxi</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">// 测试用例；
+</span><span class="c1"></span>  <span class="n">CU_ASSERT</span><span class="p">(</span><span class="n">maxi</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">);</span>
+  <span class="n">CU_ASSERT</span><span class="p">(</span><span class="n">maxi</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">);</span>
+  <span class="n">CU_ASSERT</span><span class="p">(</span><span class="n">maxi</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// ...
+</span></code></pre></td></tr></table>
+</div>
+</div><h2 id="集成测试">集成测试</h2>
+<p>检测不同单元或模块整合在一起时，他们是否也可以很好地协同工作，这类测试称之为集成测试 Integration Testing，这类测试通常需要使用数据库，网络连接等真实的外部资源。</p>
+<h2 id="功能测试">功能测试</h2>
+<p>功能测试 Functional Testing 的目的和集成测试十分类似，但功能测试对测试结果的正确性要求可能会更加严格，需要满足业务需求中的相应规定。</p>
+<h2 id="性能测试">性能测试</h2>
+<p>通常可以使用运行时间和内存使用率这两个指标来作为程序运行性能的度量单位</p>
+<p>可以使用 perf 命令行工具来进行性能测试</p>
+<h1 id="第二十二讲-结构化编译">第二十二讲 结构化编译</h1>
+<h2 id="如何组织代码结构">如何组织代码结构</h2>
+<p>对于小型项目，可以简单地将 .h 文件和 .c文件分别放在 include 目录 和 src 目录，当项目变大时，可以将源文件按功能进行更细分的划分。</p>
+<p>两种参考目录结构如下图</p>
+<p><img src="/image/learn_c/22_1.webp" alt="project_layouts"></p>
+<h2 id="如何组织编译流程">如何组织编译流程</h2>
+<p>一个 简单的 C 项目如下图
+<img src="/image/learn_c/22_2.webp" alt="project_example"></p>
+<p>可以用如下命令进行编译, 使用<code>-I</code>选项指定查找头文件需要搜索的目录，使用<code>-l</code>指定
+链接运行时依赖的库</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">gcc src/main.c src/mod.c -I./include -lm -o bin/main
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="使用-makefile-进行结构化编译">使用 Makefile 进行结构化编译</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"># 用于控制编译细节的自定义宏；
+CC = gcc
+CFLAGS = -I./include
+LDFLAGS = -lm
+TARGET_FILE = bin/main
+
+# 描述各个目标的详细编译步骤；
+$(TARGET_FILE): $(patsubst src/%.c,src/%.o,$(wildcard src/*.c))
+  $(CC) $^ $(LDFLAGS) -o $@
+
+src/%.o: src/%.c include/%.h
+  $(CC) $&lt; $(CFLAGS) -c -o $@
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="使用-cmake-进行跨平台自动化构建">使用 CMake 进行跨平台自动化构建</h2>
+<p>CMake（Cross-platform Make）会根据所在的平台，生成相应的“平台本地构建项目”，比如在 Unix 系统上，会生成相应的 Makefie 文件，在 Windows 会生成对应的 Visula Studio 工程文件。</p>
+<p>CMake 的配置信息存在 CMakeLists.txt 文件中。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-cmake" data-lang="cmake"><span class="nb">cmake_minimum_required</span><span class="p">(</span><span class="s">VERSION</span> <span class="s">3.10</span><span class="p">)</span><span class="err">
+</span><span class="err"></span><span class="c"># 设置项目名称；
+</span><span class="c"></span><span class="nb">project</span><span class="p">(</span><span class="s">Test</span><span class="p">)</span><span class="err">
+</span><span class="err"></span><span class="c"># 设置二进制目标文件名称；
+</span><span class="c"></span><span class="nb">set</span><span class="p">(</span><span class="s">TARGET_FILE</span> <span class="s2">&#34;main&#34;</span><span class="p">)</span><span class="err">
+</span><span class="err"></span><span class="c"># 添加源文件目录；
+</span><span class="c"></span><span class="nb">aux_source_directory</span><span class="p">(</span><span class="s">./src</span> <span class="s">DIR_SRCS</span><span class="p">)</span><span class="err">
+</span><span class="err"></span><span class="c"># 设置二进制目标文件的依赖；
+</span><span class="c"></span><span class="nb">add_executable</span><span class="p">(</span><span class="o">${</span><span class="nv">TARGET_FILE</span><span class="o">}</span> <span class="o">${</span><span class="nv">DIR_SRCS</span><span class="o">}</span><span class="p">)</span><span class="err">
+</span><span class="err"></span><span class="c"># 设置头文件查找目录；
+</span><span class="c"></span><span class="nb">target_include_directories</span><span class="p">(</span><span class="o">${</span><span class="nv">TARGET_FILE</span><span class="o">}</span> <span class="s">PUBLIC</span> <span class="s2">&#34;${PROJECT_SOURCE_DIR}/include&#34;</span><span class="p">)</span><span class="err">
+</span><span class="err"></span><span class="c"># 设置需要链接的库；
+</span><span class="c"></span><span class="nb">target_link_libraries</span><span class="p">(</span><span class="o">${</span><span class="nv">TARGET_FILE</span><span class="o">}</span> <span class="s">PUBLIC</span> <span class="s">m</span><span class="p">)</span><span class="err">
+</span></code></pre></td></tr></table>
+</div>
+</div><h1 id="第二十三讲-高性能-http-server-实战上">第二十三讲 高性能 HTTP Server 实战（上）</h1>
+<p>我们将会创建一个叫 FivSev 的服务，接收路径 “/?num={pos}”的 GET 请求，返回斐波那契数列对应位置的数值。</p>
+<p>大体流程如下图</p>
+<p><img src="/image/learn_c/23_1.webp" alt="tcp_server"></p>
+<p>部分优化措施</p>
+<ul>
+<li>使用线程池利用多核CPU</li>
+<li>使用尾递归调用优化</li>
+<li>使用条件变量避免忙等待</li>
+</ul>
+<h1 id="第二十四讲-高性能-http-server-实战下">第二十四讲 高性能 HTTP Server 实战（下）</h1>
+<h2 id="项目基本结构">项目基本结构</h2>
+<p>项目仓库地址: <a href="https://github.com/Becavalier/tiny-http-echo-server/tree/geektime">https://github.com/Becavalier/tiny-http-echo-server/tree/geektime</a></p>
+<p><img src="/image/learn_c/24_1.webp" alt="project_layout"></p>
+<h2 id="处理用户参数">处理用户参数</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="c1">// libs/structs.h#L9-L11
+</span><span class="c1"></span><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">threadCount</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">serverSettings</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="c1">// libs/helpers.h#L67-L86
+</span><span class="c1"></span><span class="kt">void</span> <span class="nf">setupServerSettings</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span><span class="p">,</span> <span class="n">serverSettings</span><span class="o">*</span> <span class="n">ss</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">while</span> <span class="p">(</span><span class="n">argc</span><span class="o">--</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// process key.
+</span><span class="c1"></span>    <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">keyHead</span> <span class="o">=</span> <span class="n">argv</span><span class="p">[</span><span class="n">argc</span><span class="p">];</span>
+    <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">keyPos</span> <span class="o">=</span> <span class="n">strchr</span><span class="p">(</span><span class="n">keyHead</span><span class="p">,</span> <span class="sc">&#39;=&#39;</span><span class="p">);</span>
+    <span class="k">const</span> <span class="n">size_t</span> <span class="n">keyLen</span> <span class="o">=</span> <span class="n">keyPos</span> <span class="o">-</span> <span class="n">keyHead</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="n">key</span><span class="p">[</span><span class="n">keyLen</span><span class="p">];</span>
+    <span class="n">wrapStrFromPTR</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">keyLen</span><span class="p">,</span> <span class="n">keyHead</span><span class="p">,</span> <span class="n">keyPos</span><span class="p">);</span>
+    <span class="c1">// process value.
+</span><span class="c1"></span>    <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">valHead</span> <span class="o">=</span> <span class="n">keyHead</span> <span class="o">+</span> <span class="n">keyLen</span><span class="p">;</span>
+    <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">valPos</span> <span class="o">=</span> <span class="n">strchr</span><span class="p">(</span><span class="n">valHead</span><span class="p">,</span> <span class="sc">&#39;\0&#39;</span><span class="p">);</span>
+    <span class="k">const</span> <span class="n">size_t</span> <span class="n">valLen</span> <span class="o">=</span> <span class="n">valPos</span> <span class="o">-</span> <span class="n">valHead</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="n">val</span><span class="p">[</span><span class="n">valLen</span><span class="p">];</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">size_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">valHead</span> <span class="o">&lt;=</span> <span class="n">valPos</span><span class="p">;</span> <span class="n">valHead</span><span class="o">++</span><span class="p">)</span>
+      <span class="n">val</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="o">*</span><span class="n">valHead</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">strcmp</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s">&#34;thread_count&#34;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">ss</span><span class="o">-&gt;</span><span class="n">threadCount</span> <span class="o">=</span> <span class="n">atoi</span><span class="p">(</span><span class="n">val</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="tcp-server">TCP Server</h2>
+<h3 id="监听请求">监听请求</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="c1">// src/main.c#L70-95
+</span><span class="c1"></span><span class="kt">int</span> <span class="n">serverFd</span><span class="p">;</span> 
+<span class="n">sockaddr_in</span> <span class="n">address</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">addrLen</span> <span class="o">=</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">address</span><span class="p">);</span>
+
+<span class="c1">// establish a socket.
+</span><span class="c1"></span><span class="k">if</span> <span class="p">((</span><span class="n">serverFd</span> <span class="o">=</span> <span class="n">socket</span><span class="p">(</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">SOCK_STREAM</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+
+<span class="n">bzero</span><span class="p">(</span><span class="o">&amp;</span><span class="n">address</span><span class="p">,</span> <span class="n">addrLen</span><span class="p">);</span> 
+<span class="n">address</span><span class="p">.</span><span class="n">sin_family</span> <span class="o">=</span> <span class="n">AF_INET</span><span class="p">;</span>
+<span class="n">address</span><span class="p">.</span><span class="n">sin_addr</span><span class="p">.</span><span class="n">s_addr</span> <span class="o">=</span> <span class="n">INADDR_ANY</span><span class="p">;</span>  <span class="c1">// -&gt; 0.0.0.0.
+</span><span class="c1"></span><span class="n">address</span><span class="p">.</span><span class="n">sin_port</span> <span class="o">=</span> <span class="n">htons</span><span class="p">(</span><span class="n">PORT</span><span class="p">);</span>
+  
+<span class="c1">// assigns specified address to the socket.
+</span><span class="c1"></span><span class="k">if</span> <span class="p">(</span><span class="n">bind</span><span class="p">(</span><span class="n">serverFd</span><span class="p">,</span> <span class="p">(</span><span class="n">sockaddr</span><span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">address</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">address</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+
+<span class="c1">// mark the socket as a passive socket.
+</span><span class="c1"></span><span class="k">if</span> <span class="p">(</span><span class="n">listen</span><span class="p">(</span><span class="n">serverFd</span><span class="p">,</span> <span class="n">MAX_LISTEN_CONN</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="解析请求">解析请求</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="c1">// libs/helpers.c#L37-L65
+</span><span class="c1"></span><span class="kt">int</span> <span class="nf">retrieveGETQueryIntValByKey</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span> <span class="n">req</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">key</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">result</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+  <span class="c1">// extract uri;
+</span><span class="c1"></span>  <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">uriHead</span> <span class="o">=</span> <span class="n">strchr</span><span class="p">(</span><span class="n">req</span><span class="p">,</span> <span class="sc">&#39; &#39;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">uriTail</span> <span class="o">=</span> <span class="n">strchr</span><span class="p">(</span><span class="n">uriHead</span><span class="p">,</span> <span class="sc">&#39; &#39;</span><span class="p">);</span>
+  <span class="n">size_t</span> <span class="n">uriLen</span> <span class="o">=</span> <span class="n">uriTail</span> <span class="o">-</span> <span class="n">uriHead</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="kt">char</span> <span class="n">strUri</span><span class="p">[</span><span class="n">uriLen</span><span class="p">];</span>
+  <span class="n">wrapStrFromPTR</span><span class="p">(</span><span class="n">strUri</span><span class="p">,</span> <span class="n">uriLen</span><span class="p">,</span> <span class="n">uriHead</span><span class="p">,</span> <span class="n">uriTail</span><span class="p">);</span>
+
+  <span class="c1">// parse uri;
+</span><span class="c1"></span>  <span class="n">UriUriA</span> <span class="n">uri</span><span class="p">;</span>
+  <span class="n">UriQueryListA</span><span class="o">*</span> <span class="n">queryList</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">itemCount</span><span class="p">;</span>
+  <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">errorPos</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">uriParseSingleUriA</span><span class="p">(</span><span class="o">&amp;</span><span class="n">uri</span><span class="p">,</span> <span class="n">strUri</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">errorPos</span><span class="p">)</span> <span class="o">==</span> <span class="n">URI_SUCCESS</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">uriDissectQueryMallocA</span><span class="p">(</span><span class="o">&amp;</span><span class="n">queryList</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">itemCount</span><span class="p">,</span> <span class="n">uri</span><span class="p">.</span><span class="n">query</span><span class="p">.</span><span class="n">first</span><span class="p">,</span> <span class="n">uri</span><span class="p">.</span><span class="n">query</span><span class="p">.</span><span class="n">afterLast</span><span class="p">)</span> <span class="o">==</span> <span class="n">URI_SUCCESS</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">while</span> <span class="p">(</span><span class="n">itemCount</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">strcmp</span><span class="p">(</span><span class="n">queryList</span><span class="o">-&gt;</span><span class="n">key</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+          <span class="n">result</span> <span class="o">=</span> <span class="n">atoi</span><span class="p">(</span><span class="n">queryList</span><span class="o">-&gt;</span><span class="n">value</span><span class="p">);</span>
+          <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="n">queryList</span> <span class="o">=</span> <span class="n">queryList</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="n">uriFreeQueryListA</span><span class="p">(</span><span class="n">queryList</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="计算斐波那契数列">计算斐波那契数列</h2>
+<p>有递归和尾递归优化版本</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="c1">// libs/helpers.c#L8-L20
+</span><span class="c1"></span><span class="kt">int</span> <span class="nf">__calcFibTCO</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">y</span><span class="p">;</span>
+  <span class="k">return</span> <span class="n">__calcFibTCO</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">__calcFibRecursion</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">n</span><span class="p">;</span>
+  <span class="k">return</span> <span class="n">__calcFibRecursion</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">__calcFibRecursion</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">calcFibonacci</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// return __calcFibTCO(n, 0, 1);  // TCO version. 
+</span><span class="c1"></span>  <span class="k">return</span> <span class="n">__calcFibRecursion</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>  <span class="c1">// recursion version.
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="第二十五讲-可执行二进制文件">第二十五讲 可执行二进制文件</h1>
+<h2 id="elf-文件格式">ELF 文件格式</h2>
+<p>Unix 最常使用的是ELF（executabke and linkable format）文件格式</p>
+<p>通常可执行文件的组织方式分为3部分：header、section、segment</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="c1">// elf.c
+</span><span class="c1"></span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">main</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">str</span> <span class="o">=</span> <span class="s">&#34;Hello, world!&#34;</span><span class="p">;</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%s&#34;</span><span class="p">,</span> <span class="n">str</span><span class="p">);</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>通过 file 命令查看文件格式信息</p>
+<p><img src="/image/learn_c/25_1.webp" alt="file_info"></p>
+<h2 id="elf-头">ELF 头</h2>
+<p>通过<code>readelf -h</code>可以查看文件头部内容</p>
+<p><img src="/image/learn_c/25_2.webp" alt="elf_head"></p>
+<h2 id="section-头">Section 头</h2>
+<p>Section 用于存放可执行文件中按照功能分类好的数据，各个 Section 相关信息存放在对应的 Section 头部中，众多连续的 Section 头便组成了 Section 头表</p>
+<p>通过 ELF 头信息可以得到总共有 30 个 Section 头，第一个头位于文件开始偏移的 15512 字节</p>
+<p>通过<code>readelf -S</code> 查看 Section 头部信息</p>
+<p><img src="/image/learn_c/25_3.webp" alt="section_head"></p>
+<p>.text 主要存放程序对应的机器代码，.rodata 存放只读常量，.data 存放已经初始化的全局变量或者静态变量，.bss 中coffee初始值为 0 的全局或者静态变量。</p>
+<p>使用 <code>objdump -s</code> 查看 某个 Section 的完整内容</p>
+<p><img src="/image/learn_c/25_4.webp" alt="section_rodata"></p>
+<h2 id="program-头">Program 头</h2>
+<p>除了由 Section 组成的静态视图外，众多的 Segment 组成了可执行文件的动态图。</p>
+<p>Segment 指定了应用程序在实际运行时，应该如何在进程的 VAS 内部组织数据。</p>
+<p>使用<code>readelf -l</code> 查看 Segment 情况</p>
+<p><img src="/image/learn_c/25_5.webp" alt="section_segment"></p>
+<p>Segment 对应的头部称之为 Program 头</p>
+<p>其中 “LOAD” 类型的 Segment 会在运行时载入到进程的 VAS 中， 而其余的 Segment 主要用于辅助程序的正常运行（如动态链接）。</p>
+<p>通常 Segment 和 Section 之间有一定的对应关系，上图中 第一个 LOAD 类型的 Segment 便包含 .text 和 .rodata 等 Section， 第二个 LOAD Segment 包含 .data Section。这样印证了 两个 LOAD 对应的 FLags 分别 为 RE 和 RW。</p>
+<p>另外第一个 LOAD 的 Offset 为 0 ，这意味着执行时会除了将对应的 Sections 加载到内存外，文件 ELF 头也会加载到内存中。</p>
+<p><img src="/image/learn_c/25_6.webp" alt="head_view"></p>
+<h2 id="elf-编程">ELF 编程</h2>
+<p>可以使用 elf.h 库对 ELF 格式的应用编程</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;elf.h&gt;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="kt">void</span> <span class="nf">print_elf_type</span><span class="p">(</span><span class="kt">uint16_t</span> <span class="n">type_enum</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">switch</span> <span class="p">(</span><span class="n">type_enum</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">case</span> <span class="nl">ET_REL</span><span class="p">:</span> <span class="n">printf</span><span class="p">(</span><span class="s">&#34;A relocatable file.&#34;</span><span class="p">);</span> <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="nl">ET_DYN</span><span class="p">:</span> <span class="n">printf</span><span class="p">(</span><span class="s">&#34;A shared object file.&#34;</span><span class="p">);</span> <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="nl">ET_NONE</span><span class="p">:</span> <span class="n">printf</span><span class="p">(</span><span class="s">&#34;An unknown type.&#34;</span><span class="p">);</span> <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="nl">ET_EXEC</span><span class="p">:</span> <span class="n">printf</span><span class="p">(</span><span class="s">&#34;An executable file.&#34;</span><span class="p">);</span> <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="nl">ET_CORE</span><span class="p">:</span> <span class="n">printf</span><span class="p">(</span><span class="s">&#34;A core file.&#34;</span><span class="p">);</span> <span class="k">break</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">Elf64_Ehdr</span> <span class="n">elf_header</span><span class="p">;</span>
+  <span class="n">FILE</span><span class="o">*</span> <span class="n">fp</span> <span class="o">=</span> <span class="n">fopen</span><span class="p">(</span><span class="s">&#34;./elf&#34;</span><span class="p">,</span> <span class="s">&#34;r&#34;</span><span class="p">);</span>
+  <span class="n">fread</span><span class="p">(</span><span class="o">&amp;</span><span class="n">elf_header</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">Elf64_Ehdr</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fp</span><span class="p">);</span>
+  <span class="n">print_elf_type</span><span class="p">(</span><span class="n">elf_header</span><span class="p">.</span><span class="n">e_type</span><span class="p">);</span>  <span class="c1">// &#34;An executable file.&#34;
+</span><span class="c1"></span>  <span class="n">fclose</span><span class="p">(</span><span class="n">fp</span><span class="p">);</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="elf-文件类型">ELF 文件类型</h2>
+<p><img src="/image/learn_c/25_7.webp" alt="elf_file_type"></p>
 
     </div>
 
