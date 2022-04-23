@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]业务开发算法 50 讲（更新中）">
 <meta itemprop="description" content="第零讲 git diff 文本差分算法 定义 git diff 内置了多种算法 ，这里介绍的是其默认算法 Myers 差分算法。 An edit script for A and B is a set of insertion and deletion commands that transform A into B. 文本差分算法可以定义"><meta itemprop="datePublished" content="2022-03-14T08:36:33+08:00" />
 <meta itemprop="dateModified" content="2022-04-16T12:26:33+08:00" />
-<meta itemprop="wordCount" content="6607">
+<meta itemprop="wordCount" content="8245">
 <meta itemprop="keywords" content="算法," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]业务开发算法 50 讲（更新中）"/>
 <meta name="twitter:description" content="第零讲 git diff 文本差分算法 定义 git diff 内置了多种算法 ，这里介绍的是其默认算法 Myers 差分算法。 An edit script for A and B is a set of insertion and deletion commands that transform A into B. 文本差分算法可以定义"/>
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 6607 words </span>
-          <span class="more-meta"> 14 min read </span>
+        <span class="more-meta"> 8245 words </span>
+          <span class="more-meta"> 17 min read </span>
 
         
         
@@ -416,6 +416,34 @@
             <li><a href="#旋转操作">旋转操作</a></li>
             <li><a href="#2-节点插入">2 节点插入</a></li>
             <li><a href="#3-节点插入">3 节点插入</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#第七讲-堆">第七讲 堆</a>
+      <ul>
+        <li><a href="#优先队列">优先队列</a></li>
+        <li><a href="#二叉堆">二叉堆</a></li>
+        <li><a href="#priorityqueue-实现">PriorityQueue 实现</a>
+          <ul>
+            <li><a href="#堆的操作">堆的操作</a>
+              <ul>
+                <li><a href="#插入">插入</a></li>
+                <li><a href="#删除">删除</a></li>
+                <li><a href="#扩容">扩容</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#第八讲-外部排序">第八讲 外部排序</a>
+      <ul>
+        <li><a href="#常见排序算法">常见排序算法</a></li>
+        <li><a href="#外部排序">外部排序</a>
+          <ul>
+            <li><a href="#运行时间">运行时间</a></li>
+            <li><a href="#败者树">败者树</a></li>
           </ul>
         </li>
       </ul>
@@ -1726,6 +1754,397 @@ Node 的具体实现可以是链表或者红黑树，当链表足够长时，会
 <p>将三节点的左右节点变成黑色后，需要将中间键变成红色，这样当前子树到各个子节点路径的
 黑色节点数量就不会变化了</p>
 <p><img src="/image/algo_in_action/6_11.webp" alt="insert"></p>
+<h1 id="第七讲-堆">第七讲 堆</h1>
+<h2 id="优先队列">优先队列</h2>
+<p>优先队列中的每一个元素，我们会赋予它一个优先级，优先级相同的元素遵循先进选出的原则，
+，另有优先级高可以优先出队。</p>
+<p>优先队列可以有 多种实现方式，如链表、红黑树，但对于出队时找到优先级最高的元素需求，
+二叉堆是更好的选择 。</p>
+<h2 id="二叉堆">二叉堆</h2>
+<p>二叉堆 binary heap 是建立在二叉树之上的，它有两个约束：</p>
+<ul>
+<li>二叉堆是一颗满二叉树</li>
+<li>二叉堆的每个节点和其子节点有偏序关系，大顶堆要求所有节点的值一定大于其左右子树的任何一个节点的值，小顶堆 同理。</li>
+</ul>
+<h2 id="priorityqueue-实现">PriorityQueue 实现</h2>
+<p>以 JDK 14 的 PriorityQueue （简称 PQ）为例，分析基于堆的具体实现</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">PriorityQueue</span><span class="o">&lt;</span><span class="n">E</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="n">AbstractQueue</span><span class="o">&lt;</span><span class="n">E</span><span class="o">&gt;</span>
+    <span class="kd">implements</span> <span class="n">java</span><span class="o">.</span><span class="na">io</span><span class="o">.</span><span class="na">Serializable</span> <span class="o">{</span>
+      <span class="cm">/**
+</span><span class="cm">       * Priority queue represented as a balanced binary heap: the two
+</span><span class="cm">       * children of queue[n] are queue[2*n+1] and queue[2*(n+1)].  The
+</span><span class="cm">       * priority queue is ordered by comparator, or by the elements&#39;
+</span><span class="cm">       * natural ordering, if comparator is null: For each node n in the
+</span><span class="cm">       * heap and each descendant d of n, n &lt;= d.  The element with the
+</span><span class="cm">       * lowest value is in queue[0], assuming the queue is nonempty.
+</span><span class="cm">       */</span>
+      <span class="kd">transient</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">queue</span><span class="o">;</span> <span class="c1">// non-private to simplify nested class access
+</span><span class="c1"></span>      
+      <span class="cm">/**
+</span><span class="cm">       * The number of elements in the priority queue.
+</span><span class="cm">       */</span>
+      <span class="kt">int</span> <span class="n">size</span><span class="o">;</span>
+      
+      <span class="cm">/**
+</span><span class="cm">       * Inserts the specified element into this priority queue.
+</span><span class="cm">       *
+</span><span class="cm">       * @return {@code true} (as specified by {@link Queue#offer})
+</span><span class="cm">       * @throws ClassCastException if the specified element cannot be
+</span><span class="cm">       *         compared with elements currently in this priority queue
+</span><span class="cm">       *         according to the priority queue&#39;s ordering
+</span><span class="cm">       * @throws NullPointerException if the specified element is null
+</span><span class="cm">       */</span>
+      <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">offer</span><span class="o">(</span><span class="n">E</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span> <span class="o">...</span> <span class="o">}</span>
+      
+      <span class="cm">/**
+</span><span class="cm">       * Increases the capacity of the array.
+</span><span class="cm">       *
+</span><span class="cm">       * @param minCapacity the desired minimum capacity
+</span><span class="cm">       */</span>
+      <span class="kd">private</span> <span class="kt">void</span> <span class="nf">grow</span><span class="o">(</span><span class="kt">int</span> <span class="n">minCapacity</span><span class="o">)</span> <span class="o">{</span> <span class="o">...</span> <span class="o">}</span>
+      
+      <span class="kd">public</span> <span class="n">E</span> <span class="nf">peek</span><span class="o">()</span> <span class="o">{</span>
+          <span class="k">return</span> <span class="o">(</span><span class="n">E</span><span class="o">)</span> <span class="n">queue</span><span class="o">[</span><span class="n">0</span><span class="o">];</span>
+      <span class="o">}</span>
+
+      <span class="cm">/**
+</span><span class="cm">       * Inserts item x at position k, maintaining heap invariant by
+</span><span class="cm">       * promoting x up the tree until it is greater than or equal to
+</span><span class="cm">       * its parent, or is the root.
+</span><span class="cm">       *
+</span><span class="cm">       * To simplify and speed up coercions and comparisons, the
+</span><span class="cm">       * Comparable and Comparator versions are separated into different
+</span><span class="cm">       * methods that are otherwise identical. (Similarly for siftDown.)
+</span><span class="cm">       *
+</span><span class="cm">       * @param k the position to fill
+</span><span class="cm">       * @param x the item to insert
+</span><span class="cm">       */</span>
+      <span class="kd">private</span> <span class="kt">void</span> <span class="nf">siftUp</span><span class="o">(</span><span class="kt">int</span> <span class="n">k</span><span class="o">,</span> <span class="n">E</span> <span class="n">x</span><span class="o">)</span> <span class="o">{</span> <span class="o">...</span> <span class="o">}</span>
+      
+      <span class="kd">public</span> <span class="n">E</span> <span class="nf">poll</span><span class="o">()</span> <span class="o">{</span> <span class="o">...</span> <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>可以看到 使用 queue 数组来存放元素，节点 queue[k] 对应的左右节点分别为
+queue[2k+1]、queue[2k+2]。</p>
+<p><img src="/image/algo_in_action/7_1.webp" alt="binary_heap"></p>
+<h3 id="堆的操作">堆的操作</h3>
+<h4 id="插入">插入</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="cm">/**
+</span><span class="cm"> * Inserts the specified element into this priority queue.
+</span><span class="cm"> *
+</span><span class="cm"> * @return {@code true} (as specified by {@link Queue#offer})
+</span><span class="cm"> * @throws ClassCastException if the specified element cannot be
+</span><span class="cm"> *         compared with elements currently in this priority queue
+</span><span class="cm"> *         according to the priority queue&#39;s ordering
+</span><span class="cm"> * @throws NullPointerException if the specified element is null
+</span><span class="cm"> */</span>
+<span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">offer</span><span class="o">(</span><span class="n">E</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">e</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="n">NullPointerException</span><span class="o">();</span>
+    <span class="n">modCount</span><span class="o">++;</span>
+    <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">size</span><span class="o">;</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">i</span> <span class="o">&gt;=</span> <span class="n">queue</span><span class="o">.</span><span class="na">length</span><span class="o">)</span>
+        <span class="n">grow</span><span class="o">(</span><span class="n">i</span> <span class="o">+</span> <span class="n">1</span><span class="o">);</span>
+    <span class="n">siftUp</span><span class="o">(</span><span class="n">i</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="n">1</span><span class="o">;</span>
+    <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>真正的插入操作是在 siftUp 函数中实现的。
+首先把元素放在数组尾部，然后依次向上与父节点比较，如果满足条件则位置互换。</p>
+<p><img src="/image/algo_in_action/7_2.webp" alt="sift_up"></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kt">void</span> <span class="nf">siftUp</span><span class="o">(</span><span class="kt">int</span> <span class="n">k</span><span class="o">,</span> <span class="n">E</span> <span class="n">x</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">comparator</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span>
+        <span class="n">siftUpUsingComparator</span><span class="o">(</span><span class="n">k</span><span class="o">,</span> <span class="n">x</span><span class="o">,</span> <span class="n">queue</span><span class="o">,</span> <span class="n">comparator</span><span class="o">);</span>
+    <span class="k">else</span>
+        <span class="n">siftUpComparable</span><span class="o">(</span><span class="n">k</span><span class="o">,</span> <span class="n">x</span><span class="o">,</span> <span class="n">queue</span><span class="o">);</span>
+<span class="o">}</span>
+
+
+
+<span class="kd">private</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="kt">void</span> <span class="nf">siftUpComparable</span><span class="o">(</span><span class="kt">int</span> <span class="n">k</span><span class="o">,</span> <span class="n">T</span> <span class="n">x</span><span class="o">,</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">es</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">Comparable</span><span class="o">&lt;?</span> <span class="kd">super</span> <span class="n">T</span><span class="o">&gt;</span> <span class="n">key</span> <span class="o">=</span> <span class="o">(</span><span class="n">Comparable</span><span class="o">&lt;?</span> <span class="kd">super</span> <span class="n">T</span><span class="o">&gt;)</span> <span class="n">x</span><span class="o">;</span>
+    <span class="k">while</span> <span class="o">(</span><span class="n">k</span> <span class="o">&gt;</span> <span class="n">0</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// 计算父节点的下标
+</span><span class="c1"></span>        <span class="kt">int</span> <span class="n">parent</span> <span class="o">=</span> <span class="o">(</span><span class="n">k</span> <span class="o">-</span> <span class="n">1</span><span class="o">)</span> <span class="o">&gt;&gt;&gt;</span> <span class="n">1</span><span class="o">;</span>
+        <span class="n">Object</span> <span class="n">e</span> <span class="o">=</span> <span class="n">es</span><span class="o">[</span><span class="n">parent</span><span class="o">];</span>
+        <span class="c1">// 比较当前节点和父节点的关系 如果当前节点优先级更高，我们可以直接结束比较
+</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">key</span><span class="o">.</span><span class="na">compareTo</span><span class="o">((</span><span class="n">T</span><span class="o">)</span> <span class="n">e</span><span class="o">)</span> <span class="o">&gt;=</span> <span class="n">0</span><span class="o">)</span>
+            <span class="k">break</span><span class="o">;</span>
+        <span class="c1">// 交换节点
+</span><span class="c1"></span>        <span class="n">es</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">=</span> <span class="n">e</span><span class="o">;</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">parent</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="n">es</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">=</span> <span class="n">key</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="删除">删除</h4>
+<p>删除操作是将返回并删除堆顶元素</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="n">E</span> <span class="nf">poll</span><span class="o">()</span> <span class="o">{</span>
+    <span class="kd">final</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">es</span><span class="o">;</span>
+    <span class="kd">final</span> <span class="n">E</span> <span class="n">result</span><span class="o">;</span>
+    <span class="c1">// 取出堆顶元素
+</span><span class="c1"></span>    <span class="k">if</span> <span class="o">((</span><span class="n">result</span> <span class="o">=</span> <span class="o">(</span><span class="n">E</span><span class="o">)</span> <span class="o">((</span><span class="n">es</span> <span class="o">=</span> <span class="n">queue</span><span class="o">)[</span><span class="n">0</span><span class="o">]))</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">modCount</span><span class="o">++;</span>
+        <span class="kd">final</span> <span class="kt">int</span> <span class="n">n</span><span class="o">;</span>
+        <span class="c1">// 其实就是要将最后一个元素放到顶部
+</span><span class="c1"></span>        <span class="kd">final</span> <span class="n">E</span> <span class="n">x</span> <span class="o">=</span> <span class="o">(</span><span class="n">E</span><span class="o">)</span> <span class="n">es</span><span class="o">[(</span><span class="n">n</span> <span class="o">=</span> <span class="o">--</span><span class="n">size</span><span class="o">)];</span>
+        <span class="c1">// 将最后一个元素置空
+</span><span class="c1"></span>        <span class="n">es</span><span class="o">[</span><span class="n">n</span><span class="o">]</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="c1">// 进行siftdown操作
+</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">n</span> <span class="o">&gt;</span> <span class="n">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="kd">final</span> <span class="n">Comparator</span><span class="o">&lt;?</span> <span class="kd">super</span> <span class="n">E</span><span class="o">&gt;</span> <span class="n">cmp</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">((</span><span class="n">cmp</span> <span class="o">=</span> <span class="n">comparator</span><span class="o">)</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span>
+                <span class="n">siftDownComparable</span><span class="o">(</span><span class="n">0</span><span class="o">,</span> <span class="n">x</span><span class="o">,</span> <span class="n">es</span><span class="o">,</span> <span class="n">n</span><span class="o">);</span>
+            <span class="k">else</span>
+                <span class="n">siftDownUsingComparator</span><span class="o">(</span><span class="n">0</span><span class="o">,</span> <span class="n">x</span><span class="o">,</span> <span class="n">es</span><span class="o">,</span> <span class="n">n</span><span class="o">,</span> <span class="n">cmp</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><img src="/image/algo_in_action/7_3.webp" alt="sift_down"></p>
+<p>将根节点删除后，我们将尾部的节点提到根节点，然后依次下沉比较交互</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="kt">void</span> <span class="nf">siftDownComparable</span><span class="o">(</span><span class="kt">int</span> <span class="n">k</span><span class="o">,</span> <span class="n">T</span> <span class="n">x</span><span class="o">,</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">es</span><span class="o">,</span> <span class="kt">int</span> <span class="n">n</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// assert n &gt; 0;
+</span><span class="c1"></span>    <span class="n">Comparable</span><span class="o">&lt;?</span> <span class="kd">super</span> <span class="n">T</span><span class="o">&gt;</span> <span class="n">key</span> <span class="o">=</span> <span class="o">(</span><span class="n">Comparable</span><span class="o">&lt;?</span> <span class="kd">super</span> <span class="n">T</span><span class="o">&gt;)</span><span class="n">x</span><span class="o">;</span>
+    <span class="kt">int</span> <span class="n">half</span> <span class="o">=</span> <span class="n">n</span> <span class="o">&gt;&gt;&gt;</span> <span class="n">1</span><span class="o">;</span>           <span class="c1">// loop while a non-leaf
+</span><span class="c1"></span>    <span class="k">while</span> <span class="o">(</span><span class="n">k</span> <span class="o">&lt;</span> <span class="n">half</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">int</span> <span class="n">child</span> <span class="o">=</span> <span class="o">(</span><span class="n">k</span> <span class="o">&lt;&lt;</span> <span class="n">1</span><span class="o">)</span> <span class="o">+</span> <span class="n">1</span><span class="o">;</span> <span class="c1">// assume left child is least
+</span><span class="c1"></span>        <span class="n">Object</span> <span class="n">c</span> <span class="o">=</span> <span class="n">es</span><span class="o">[</span><span class="n">child</span><span class="o">];</span>
+        <span class="kt">int</span> <span class="n">right</span> <span class="o">=</span> <span class="n">child</span> <span class="o">+</span> <span class="n">1</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">right</span> <span class="o">&lt;</span> <span class="n">n</span> <span class="o">&amp;&amp;</span>
+            <span class="o">((</span><span class="n">Comparable</span><span class="o">&lt;?</span> <span class="kd">super</span> <span class="n">T</span><span class="o">&gt;)</span> <span class="n">c</span><span class="o">).</span><span class="na">compareTo</span><span class="o">((</span><span class="n">T</span><span class="o">)</span> <span class="n">es</span><span class="o">[</span><span class="n">right</span><span class="o">])</span> <span class="o">&gt;</span> <span class="n">0</span><span class="o">)</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">es</span><span class="o">[</span><span class="n">child</span> <span class="o">=</span> <span class="n">right</span><span class="o">];</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">key</span><span class="o">.</span><span class="na">compareTo</span><span class="o">((</span><span class="n">T</span><span class="o">)</span> <span class="n">c</span><span class="o">)</span> <span class="o">&lt;=</span> <span class="n">0</span><span class="o">)</span>
+            <span class="k">break</span><span class="o">;</span>
+        <span class="n">es</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">=</span> <span class="n">c</span><span class="o">;</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">child</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="n">es</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">=</span> <span class="n">key</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="扩容">扩容</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="cm">/**
+</span><span class="cm"> * Increases the capacity of the array.
+</span><span class="cm"> *
+</span><span class="cm"> * @param minCapacity the desired minimum capacity
+</span><span class="cm"> */</span>
+<span class="kd">private</span> <span class="kt">void</span> <span class="nf">grow</span><span class="o">(</span><span class="kt">int</span> <span class="n">minCapacity</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kt">int</span> <span class="n">oldCapacity</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="na">length</span><span class="o">;</span>
+    <span class="c1">// Double size if small; else grow by 50%
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="n">newCapacity</span> <span class="o">=</span> <span class="n">ArraysSupport</span><span class="o">.</span><span class="na">newLength</span><span class="o">(</span><span class="n">oldCapacity</span><span class="o">,</span>
+            <span class="n">minCapacity</span> <span class="o">-</span> <span class="n">oldCapacity</span><span class="o">,</span> <span class="cm">/* minimum growth */</span>
+            <span class="n">oldCapacity</span> <span class="o">&lt;</span> <span class="n">64</span> <span class="o">?</span> <span class="n">oldCapacity</span> <span class="o">+</span> <span class="n">2</span> <span class="o">:</span> <span class="n">oldCapacity</span> <span class="o">&gt;&gt;</span> <span class="n">1</span>
+                                       <span class="cm">/* preferred growth */</span><span class="o">);</span>
+    <span class="n">queue</span> <span class="o">=</span> <span class="n">Arrays</span><span class="o">.</span><span class="na">copyOf</span><span class="o">(</span><span class="n">queue</span><span class="o">,</span> <span class="n">newCapacity</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>和 vector 扩容思想类似，当原容量小于 64 时， 扩容到 2倍 +2 ，否则 1.5倍。</p>
+<h1 id="第八讲-外部排序">第八讲 外部排序</h1>
+<h2 id="常见排序算法">常见排序算法</h2>
+<p><img src="/image/algo_in_action/8_1.webp" alt="sort_algo"></p>
+<h2 id="外部排序">外部排序</h2>
+<p>外部排序 是指借助外部存储来排序，相比内存，外部排序有更大的IO消耗。</p>
+<p>常用的外部排序为归并排序</p>
+<p><img src="/image/algo_in_action/8_2.webp" alt="merge_sort"></p>
+<h3 id="运行时间">运行时间</h3>
+<p>每一层我们读取外层的数据总量是一样的，我们要做的是让归并的层次越低越好</p>
+<p>假设数据段为 n, 归并路数为 k，那么层数为 logk(n)。
+但 增加 k 的大小也会导致 从 k 个元素中选择 最小 的元素的代价变高。</p>
+<h3 id="败者树">败者树</h3>
+<p><img src="/image/algo_in_action/8_3.webp" alt="tournament_tree">
+<img src="/image/algo_in_action/8_4.webp" alt="tournament_tree"></p>
+<p>败者树的思想是使用叶子节点存储待比较的元素，两两比较，在父节点存储失败者，然后
+对获胜 这再两两比较，得到更上层的失败者。</p>
+<p>根节点之上有一个最终获胜者</p>
+<p>对于 取出胜者并添加新元素的操作，只需要将新元素置于胜者的位置 ，再依次比较即可</p>
+<p><img src="/image/algo_in_action/8_5.webp" alt="tournament_tree"></p>
 
     </div>
 
