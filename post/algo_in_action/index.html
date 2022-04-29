@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]业务开发算法 50 讲（更新中）">
 <meta itemprop="description" content="第零讲 git diff 文本差分算法 定义 git diff 内置了多种算法 ，这里介绍的是其默认算法 Myers 差分算法。 An edit script for A and B is a set of insertion and deletion commands that transform A into B. 文本差分算法可以定义"><meta itemprop="datePublished" content="2022-03-14T08:36:33+08:00" />
 <meta itemprop="dateModified" content="2022-04-16T12:26:33+08:00" />
-<meta itemprop="wordCount" content="8302">
+<meta itemprop="wordCount" content="9998">
 <meta itemprop="keywords" content="算法," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]业务开发算法 50 讲（更新中）"/>
 <meta name="twitter:description" content="第零讲 git diff 文本差分算法 定义 git diff 内置了多种算法 ，这里介绍的是其默认算法 Myers 差分算法。 An edit script for A and B is a set of insertion and deletion commands that transform A into B. 文本差分算法可以定义"/>
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 8302 words </span>
-          <span class="more-meta"> 17 min read </span>
+        <span class="more-meta"> 9998 words </span>
+          <span class="more-meta"> 20 min read </span>
 
         
         
@@ -443,6 +443,36 @@
         <li><a href="#外部排序">外部排序</a></li>
         <li><a href="#运行时间">运行时间</a></li>
         <li><a href="#败者树">败者树</a></li>
+      </ul>
+    </li>
+    <li><a href="#第九讲-二分法">第九讲 二分法</a>
+      <ul>
+        <li><a href="#二分查找">二分查找</a></li>
+        <li><a href="#kafka">Kafka</a>
+          <ul>
+            <li><a href="#消息查找">消息查找</a></li>
+            <li><a href="#源码实现">源码实现</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#第十讲-暴力搜索算法">第十讲 暴力搜索算法</a></li>
+    <li><a href="#第十一讲-字符串匹配">第十一讲 字符串匹配</a>
+      <ul>
+        <li><a href="#brute-force-算法">Brute-Force 算法</a></li>
+        <li><a href="#boyer-moore-算法">Boyer-Moore 算法</a>
+          <ul>
+            <li><a href="#坏字符规则">坏字符规则</a></li>
+            <li><a href="#好后缀规则">好后缀规则</a></li>
+          </ul>
+        </li>
+        <li><a href="#bm-算法具体实现">BM 算法具体实现</a>
+          <ul>
+            <li><a href="#坏字符最右位置计算">坏字符最右位置计算</a></li>
+            <li><a href="#好后缀计算">好后缀计算</a></li>
+          </ul>
+        </li>
+        <li><a href="#匹配">匹配</a></li>
       </ul>
     </li>
   </ul>
@@ -2144,7 +2174,332 @@ queue[2k+1]、queue[2k+2]。</p>
 <p>败者树相比堆，Pop时只需要和上层的败者比较即可，不像堆一定要和左右子树比较两次。</p>
 <p><img src="/image/algo_in_action/8_5.webp" alt="tournament_tree"></p>
 <p>相关算法题 - <a href="https://leetcode-cn.com/problems/merge-k-sorted-lists/solution/xcdytv-by-ppd-2-sspr/">合并K个有序链表</a></p>
+<h1 id="第九讲-二分法">第九讲 二分法</h1>
+<h2 id="二分查找">二分查找</h2>
+<p>二分查找的核心是查找元素和比较有序排列</p>
+<h2 id="kafka">Kafka</h2>
+<p>Kafka 中所有的消息都是以&quot;日志&quot;的形式存储，消息按写入时间顺序，依次追加在许多日志文件中。
+文件中每条消息会相对第一条消息有一个偏移量(类似自增ID)。</p>
+<p>Kafka 每个 topic 会有多个 partition，每个 partition下 的日志按照顺序分成一个个有序日志段。</p>
+<p><img src="/image/algo_in_action/9_1.webp" alt="kafka_log"></p>
+<h3 id="消息查找">消息查找</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">00000000000000000000.log
+00000000000000000000.index
+00000000000000000000.timeindex
+00000000000000000035.log
+00000000000000000035.index
+00000000000000000035.timeindex
+</code></pre></td></tr></table>
+</div>
+</div><p>上面为一个典型的日志文件存储情况：</p>
+<ul>
+<li>.log 文件存储的就是消息本身的日志文件</li>
+<li>.index 文件是索引文件</li>
+<li>.timeindex 文件是基于时间戳的索引文件</li>
+</ul>
+<p>.index 文件内容示例如下图</p>
+<p><img src="/image/algo_in_action/9_2.webp" alt="kafka_log2"></p>
+<p>kafka为了使用更小的内存空间，采用了稀疏索引。</p>
+<h3 id="源码实现">源码实现</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala">      <span class="cm">/**
+</span><span class="cm">     * Lookup lower and upper bounds for the given target.
+</span><span class="cm">     */</span>
+    <span class="k">private</span> <span class="k">def</span> <span class="n">indexSlotRangeFor</span><span class="o">(</span><span class="n">idx</span><span class="k">:</span> <span class="kt">ByteBuffer</span><span class="o">,</span> <span class="n">target</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">searchEntity</span><span class="k">:</span> <span class="kt">IndexSearchEntity</span><span class="o">)</span><span class="k">:</span> <span class="o">(</span><span class="kt">Int</span><span class="o">,</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+      <span class="c1">// 检查index是否为空
+</span><span class="c1"></span>      <span class="k">if</span><span class="o">(</span><span class="nc">_entries</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span>
+        <span class="k">return</span> <span class="o">(-</span><span class="mi">1</span><span class="o">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">)</span>
+  
+        <span class="c1">// 二分搜索
+</span><span class="c1"></span>      <span class="k">def</span> <span class="n">binarySearch</span><span class="o">(</span><span class="n">begin</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">end</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">:</span> <span class="o">(</span><span class="kt">Int</span><span class="o">,</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="n">lo</span> <span class="k">=</span> <span class="n">begin</span>
+        <span class="k">var</span> <span class="n">hi</span> <span class="k">=</span> <span class="n">end</span>
+        <span class="k">while</span><span class="o">(</span><span class="n">lo</span> <span class="o">&lt;</span> <span class="n">hi</span><span class="o">)</span> <span class="o">{</span>
+          <span class="k">val</span> <span class="n">mid</span> <span class="k">=</span> <span class="n">ceil</span><span class="o">(</span><span class="n">hi</span><span class="o">/</span><span class="mf">2.0</span> <span class="o">+</span> <span class="n">lo</span><span class="o">/</span><span class="mf">2.0</span><span class="o">).</span><span class="n">toInt</span>
+          <span class="k">val</span> <span class="n">found</span> <span class="k">=</span> <span class="n">parseEntry</span><span class="o">(</span><span class="n">idx</span><span class="o">,</span> <span class="n">mid</span><span class="o">)</span>
+          <span class="k">val</span> <span class="n">compareResult</span> <span class="k">=</span> <span class="n">compareIndexEntry</span><span class="o">(</span><span class="n">found</span><span class="o">,</span> <span class="n">target</span><span class="o">,</span> <span class="n">searchEntity</span><span class="o">)</span>
+          <span class="k">if</span><span class="o">(</span><span class="n">compareResult</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">)</span>
+            <span class="n">hi</span> <span class="k">=</span> <span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span>
+          <span class="k">else</span> <span class="k">if</span><span class="o">(</span><span class="n">compareResult</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="o">)</span>
+            <span class="n">lo</span> <span class="k">=</span> <span class="n">mid</span>
+          <span class="k">else</span>
+            <span class="k">return</span> <span class="o">(</span><span class="n">mid</span><span class="o">,</span> <span class="n">mid</span><span class="o">)</span>
+        <span class="o">}</span>
+        <span class="o">(</span><span class="n">lo</span><span class="o">,</span> <span class="k">if</span> <span class="o">(</span><span class="n">lo</span> <span class="o">==</span> <span class="nc">_entries</span> <span class="o">-</span> <span class="mi">1</span><span class="o">)</span> <span class="o">-</span><span class="mi">1</span> <span class="k">else</span> <span class="n">lo</span> <span class="o">+</span> <span class="mi">1</span><span class="o">)</span>
+      <span class="o">}</span>
+  
+      <span class="k">val</span> <span class="n">firstHotEntry</span> <span class="k">=</span> <span class="nc">Math</span><span class="o">.</span><span class="n">max</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="nc">_entries</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="nc">_warmEntries</span><span class="o">)</span>
+      <span class="c1">// 查询的目标offset是否在热区
+</span><span class="c1"></span>      <span class="k">if</span><span class="o">(</span><span class="n">compareIndexEntry</span><span class="o">(</span><span class="n">parseEntry</span><span class="o">(</span><span class="n">idx</span><span class="o">,</span> <span class="n">firstHotEntry</span><span class="o">),</span> <span class="n">target</span><span class="o">,</span> <span class="n">searchEntity</span><span class="o">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">binarySearch</span><span class="o">(</span><span class="n">firstHotEntry</span><span class="o">,</span> <span class="nc">_entries</span> <span class="o">-</span> <span class="mi">1</span><span class="o">)</span>
+      <span class="o">}</span>
+  
+      <span class="c1">// 查询的目标offset是否小于最小的offset
+</span><span class="c1"></span>      <span class="k">if</span><span class="o">(</span><span class="n">compareIndexEntry</span><span class="o">(</span><span class="n">parseEntry</span><span class="o">(</span><span class="n">idx</span><span class="o">,</span> <span class="mi">0</span><span class="o">),</span> <span class="n">target</span><span class="o">,</span> <span class="n">searchEntity</span><span class="o">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">)</span>
+        <span class="k">return</span> <span class="o">(-</span><span class="mi">1</span><span class="o">,</span> <span class="mi">0</span><span class="o">)</span>
+  
+      <span class="k">return</span> <span class="n">binarySearch</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="n">firstHotEntry</span><span class="o">)</span>
+    <span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Kafka 使用了 mmap 将磁盘文件和内存进行映射， 消息队列的特性决定了
+大部分索引查询其实都是在日志比较靠近尾部的区域，将索引中最后 8KB
+认为热区，查询是优先查热区，没有命中再查冷区，这样就可以减少缺页中断的次数。</p>
+<p>kafka 采用冷热二分查询的改进见这个<a href="https://issues.apache.org/jira/browse/KAFKA-6432">issue</a></p>
+<h1 id="第十讲-暴力搜索算法">第十讲 暴力搜索算法</h1>
+<p>BFS 和 DFS 是两种常见的搜索算法</p>
+<h1 id="第十一讲-字符串匹配">第十一讲 字符串匹配</h1>
+<h2 id="brute-force-算法">Brute-Force 算法</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="cm">/*
+</span><span class="cm"> * s: 主串
+</span><span class="cm"> * p：模式串
+</span><span class="cm"> */</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">match</span><span class="p">(</span><span class="n">string</span> <span class="n">s</span><span class="p">,</span> <span class="n">string</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">ans</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+  <span class="kt">int</span> <span class="n">m</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+  <span class="kt">int</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span> <span class="o">-</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">m</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">j</span><span class="p">]</span> <span class="o">!=</span> <span class="n">p</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="k">break</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">j</span> <span class="o">==</span> <span class="n">m</span><span class="p">)</span> <span class="n">ans</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">ans</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="boyer-moore-算法">Boyer-Moore 算法</h2>
+<h3 id="坏字符规则">坏字符规则</h3>
+<p>BM 算法采用从后向前匹配的方式</p>
+<p><img src="/image/algo_in_action/11_1.webp" alt="1"></p>
+<p>如上图， 位置 6 匹配，那这里的 &ldquo;S&rdquo; 就是是个坏字符，遇到坏字符时，
+如果在模式串中没有出现，则说明没有重叠，可以直接跳过这段。</p>
+<p><img src="/image/algo_in_action/11_2.webp" alt="2"></p>
+<p>下一步匹配时，发现坏字符&quot;P&quot;，但 &ldquo;P&rdquo; 在模式串有出现，可以将模式串最后一次出现 &ldquo;P&quot;的位置对齐</p>
+<p><img src="/image/algo_in_action/11_3.webp" alt="3"></p>
+<p>每次发现坏字符时，我们需要向右移动移动 （失配位置 - 失配字符最右出现的下标）位，其中如果失配字符没有在模式串出现，则下标为 -1，</p>
+<h3 id="好后缀规则">好后缀规则</h3>
+<p><img src="/image/algo_in_action/11_4.webp" alt="4"></p>
+<p>在 SIMPLE 和 EXAMPLE 的匹配中，我们发&quot;MPLE&quot;都匹配得上，那&quot;MPLE&quot;就称之为好后缀，
+同样&quot;PLE&rdquo;、&ldquo;LE&rdquo;、&ldquo;E&rdquo; 都是好后缀。</p>
+<p>如果用坏字符规则，则应该将模式串移动(2 - (-1)) = 3 位，因为&quot;I&quot; 在模式串不存在。</p>
+<p>我们使用好后缀的规则： 找到好后缀在模式串中最右的匹配位置，总计向后移动（模式串字符串长度 - 1 - 好后缀在模式串上次出现的位置）位。
+上图好后缀&quot;E&quot; 的计算值为 6 （7-1-0）位</p>
+<h2 id="bm-算法具体实现">BM 算法具体实现</h2>
+<h3 id="坏字符最右位置计算">坏字符最右位置计算</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">get_bc</span><span class="p">(</span><span class="n">pattern</span><span class="p">):</span>
+    <span class="n">bc</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span> <span class="c1"># 记录每个badchar最右出现的位置</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">char</span> <span class="o">=</span> <span class="n">pattern</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">bc</span><span class="p">[</span><span class="n">char</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">bc</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>我们用 dict 来记录每个字符最右侧位置。工业级的实现会用 [0, 256] 的数组替代来提高性能。</p>
+<h3 id="好后缀计算">好后缀计算</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">get_gs</span><span class="p">(</span><span class="n">pattern</span><span class="p">):</span>
+    <span class="n">gs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">gs</span><span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>
 
+    <span class="c1"># suf_len 用于标记后缀长度</span>
+    <span class="k">for</span> <span class="n">suf_len</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pattern</span><span class="p">)):</span>
+        <span class="n">suffix</span> <span class="o">=</span> <span class="n">pattern</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span> <span class="o">-</span> <span class="n">suf_len</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:]</span>
+        <span class="c1"># j 用于标记可用于匹配的位置</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span> <span class="o">-</span> <span class="n">suf_len</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">substr</span> <span class="o">=</span> <span class="n">pattern</span><span class="p">[</span><span class="n">j</span><span class="p">:</span><span class="n">j</span> <span class="o">+</span> <span class="n">suf_len</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">suffix</span> <span class="o">==</span> <span class="n">substr</span><span class="p">:</span>
+                <span class="n">gs</span><span class="p">[</span><span class="n">suffix</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span> <span class="o">-</span> <span class="n">j</span> <span class="o">-</span> <span class="n">suf_len</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="k">for</span> <span class="n">suf_len</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pattern</span><span class="p">)):</span>
+        <span class="n">suffix</span> <span class="o">=</span> <span class="n">pattern</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span> <span class="o">-</span> <span class="n">suf_len</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:]</span>
+        <span class="k">if</span> <span class="n">suffix</span> <span class="ow">in</span> <span class="n">gs</span><span class="p">:</span> <span class="k">continue</span>
+        <span class="n">gs</span><span class="p">[</span><span class="n">suffix</span><span class="p">]</span> <span class="o">=</span> <span class="n">gs</span><span class="p">[</span><span class="n">suffix</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span>
+
+    <span class="n">gs</span><span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">gs</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="匹配">匹配</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">bm</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">bc</span><span class="p">,</span> <span class="n">gs</span><span class="p">):</span>
+    <span class="c1"># i 用于标记当前模式串和主串哪个位置左对齐。</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span> 
+    <span class="c1"># j 用于标记当前模式串匹配到哪个位置；从右往左遍历匹配。</span>
+    <span class="n">j</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>
+
+    <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">string</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">j</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="c1"># 从右往左匹配每个位置</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">string</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">pattern</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">a</span> <span class="o">==</span> <span class="n">b</span><span class="p">:</span> <span class="c1"># 匹配的上，继续匹配前一位</span>
+                <span class="n">j</span> <span class="o">=</span> <span class="n">j</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span> <span class="c1"># 匹配不上，根据两个规则的预处理结果进行快速移动</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="nb">max</span><span class="p">(</span><span class="n">gs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">pattern</span><span class="p">[</span><span class="n">j</span><span class="p">:],</span> <span class="nb">len</span><span class="p">(</span><span class="n">pattern</span><span class="p">)),</span> <span class="n">j</span> <span class="o">-</span> <span class="n">bc</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+                <span class="n">j</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>
+            <span class="c1"># 匹配成功返回匹配位置</span>
+            <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">i</span>
+    <span class="c1"># 匹配失败返回 None</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+    
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">string</span> <span class="o">=</span> <span class="s1">&#39;here is a simple example &#39;</span> 
+    <span class="n">pattern</span> <span class="o">=</span> <span class="s1">&#39;example&#39;</span>
+
+    <span class="n">bc</span> <span class="o">=</span> <span class="n">get_bc</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>  <span class="c1"># 坏字符表</span>
+    <span class="n">gs</span> <span class="o">=</span> <span class="n">get_gs</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>  <span class="c1"># 好后缀表</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">gs</span><span class="p">)</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">bm</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">bc</span><span class="p">,</span> <span class="n">gs</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div>
     </div>
 
     
