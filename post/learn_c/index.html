@@ -64,12 +64,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://ppd0705.github.io/post/learn_c/" /><meta property="article:section" content="post" />
 <meta property="article:published_time" content="2022-01-31T17:04:50+08:00" />
-<meta property="article:modified_time" content="2022-04-17T10:48:50+08:00" />
+<meta property="article:modified_time" content="2022-04-29T22:08:50+08:00" />
 
 <meta itemprop="name" content="[笔记]深入C语言和程序运行原理（更新中）">
 <meta itemprop="description" content="第零讲 课前热身 数据量单位 位（bit）： 是最小存储单位，每个位可以存一个二进制码值得 0 或 1 字节（byte）： 通常是由八个位组成的一个存储单元，"><meta itemprop="datePublished" content="2022-01-31T17:04:50+08:00" />
-<meta itemprop="dateModified" content="2022-04-17T10:48:50+08:00" />
-<meta itemprop="wordCount" content="17598">
+<meta itemprop="dateModified" content="2022-04-29T22:08:50+08:00" />
+<meta itemprop="wordCount" content="20380">
 <meta itemprop="keywords" content="C," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]深入C语言和程序运行原理（更新中）"/>
 <meta name="twitter:description" content="第零讲 课前热身 数据量单位 位（bit）： 是最小存储单位，每个位可以存一个二进制码值得 0 或 1 字节（byte）： 通常是由八个位组成的一个存储单元，"/>
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 17598 words </span>
-          <span class="more-meta"> 36 min read </span>
+        <span class="more-meta"> 20380 words </span>
+          <span class="more-meta"> 41 min read </span>
 
         
         
@@ -598,6 +598,34 @@
         <li><a href="#program-头">Program 头</a></li>
         <li><a href="#elf-编程">ELF 编程</a></li>
         <li><a href="#elf-文件类型">ELF 文件类型</a></li>
+      </ul>
+    </li>
+    <li><a href="#第二十六讲-进程如何使用操作系统内存">第二十六讲 进程如何使用操作系统内存</a>
+      <ul>
+        <li><a href="#计算机内部缓存系统">计算机内部缓存系统</a></li>
+        <li><a href="#虚拟内存机制">虚拟内存机制</a></li>
+        <li><a href="#vas-数据布局">VAS 数据布局</a></li>
+        <li><a href="#页表">页表</a></li>
+        <li><a href="#多级页表">多级页表</a></li>
+        <li><a href="#tlb">TLB</a></li>
+      </ul>
+    </li>
+    <li><a href="#第二十七讲-静态链接">第二十七讲 静态链接</a>
+      <ul>
+        <li><a href="#目标文件">目标文件</a></li>
+        <li><a href="#符号解析">符号解析</a></li>
+        <li><a href="#重定位">重定位</a></li>
+      </ul>
+    </li>
+    <li><a href="#第二十八讲-动态链接">第二十八讲 动态链接</a>
+      <ul>
+        <li><a href="#共享库">共享库</a></li>
+        <li><a href="#使用示例">使用示例</a></li>
+        <li><a href="#位置无关代码">位置无关代码</a></li>
+        <li><a href="#全局偏移表">全局偏移表</a></li>
+        <li><a href="#过程链接表">过程链接表</a></li>
+        <li><a href="#加载时链接">加载时链接</a></li>
+        <li><a href="#运行时链接">运行时链接</a></li>
       </ul>
     </li>
   </ul>
@@ -3643,7 +3671,235 @@ src/%.o: src/%.c include/%.h
 </div>
 </div><h2 id="elf-文件类型">ELF 文件类型</h2>
 <p><img src="/image/learn_c/25_7.webp" alt="elf_file_type"></p>
+<h1 id="第二十六讲-进程如何使用操作系统内存">第二十六讲 进程如何使用操作系统内存</h1>
+<h2 id="计算机内部缓存系统">计算机内部缓存系统</h2>
+<p>缓存由 L1、L2 等高速缓存和内存组成</p>
+<h2 id="虚拟内存机制">虚拟内存机制</h2>
+<p>虚拟内存 Virtual Memory 是操作系统在物理内存的基础上进行了一层抽象，以帮助运行于其上的应用程序合理分配内存</p>
+<p><img src="/image/learn_c/26_1.webp" alt="retrieve_data"></p>
+<p>CPU 会借助内存管理单元 MMU 将虚拟地址翻译成物理地址，然后再进行实际数据的获取。</p>
+<p>每一个应用进程都有独立的虚拟地址空间 VAS，从进程的角度看，它可以独享整个计算机上的内存。在64 位 Linux 系统中，与应用代码相关的 Segment 会从 VAS 的固定地址 0x400000 处开始加载，而Section 内容将在满足一定对齐要求的条件下按顺序加载到高地址方向的虚拟内存中。</p>
+<p>0x0 到 0x400000 (4K) 的虚拟地址不会使用，这样空指针可以触发异常</p>
+<p>可以通过<code>cat /proc/&lt;pid&gt;/maps</code> 查看某个运行中的进程的 VAS 布局情况。</p>
+<p><img src="/image/learn_c/26_2.webp" alt="vas_map"></p>
+<h2 id="vas-数据布局">VAS 数据布局</h2>
+<p><img src="/image/learn_c/26_3.webp" alt="vas_detail"></p>
+<p>VAS 数据按地址有低到高，可以分为如下几个部分：</p>
+<ul>
+<li>LOAD Segments: 包括与代码相关的 Text Segment（.text, .rodata） 位于最低地址处，紧接着为包含已初始化和未初始化数据的Data Segment（.data, .bss）</li>
+<li>堆: 堆内存，向高地址方向增长</li>
+<li>共享库数据：包含各类 .so 共享库相关的数据，程序会在运行时通过动态连接器来完成对它们的加载和处理</li>
+<li>栈：栈内存，向低地址方向增长</li>
+<li>用于系统调用加速的内核数据：该部分数据主要提供了用户进程可以直接和内核交互的接口，其中 [vvar] 包含只读的内核数据，另外 [vdso] 和 [vsyscall] 则包含用于辅助操作系统加速用户进程执行某些系统调用过程的信息。</li>
+<li>其他内核数据</li>
+</ul>
+<h2 id="页表">页表</h2>
+<p>每个进程有一个独立的页表结构来维护 VAS 中的虚拟页在对应物理内存中的映射状态。</p>
+<p>页表本身维护在物理内存中，其内部由多个 PTE （Page Table Entry） 组成，每个虚拟页对应一个 PTE 。</p>
+<p>CPU、MMU、页表、物理内存和磁盘五者之间的协作关系如下图：</p>
+<p><img src="/image/learn_c/26_4.webp" alt="PTE"></p>
+<h2 id="多级页表">多级页表</h2>
+<p><img src="/image/learn_c/26_5.webp" alt="multi_level_page_table"></p>
+<p>多级页表节省空间的最重要的两个因素是：</p>
+<ol>
+<li>当一级页表某个PTE 没有实际映射时，其对应的二级页表便不会被创建</li>
+<li>只有一级页表才需要常驻内存，二级页表仅在需要时创建或者从磁盘调入</li>
+</ol>
+<h2 id="tlb">TLB</h2>
+<p>TLB (Translation Lookaside Buffer) 是 MMU 的一部分，用来加快虚拟地址查 PTE 的过程。可以简单将 TLB 理解为一个具有 N 行 M 列的矩阵，MMU 会从 虚拟地址中提取用于查询表项的索引和标记，这两个值可以定位到具体单元格，如果单元格有值，则可以与虚拟地址中的其他信息一起组成最终的物理地址；否则仍需要通过主机查询页表的方式获取物理地址。</p>
+<h1 id="第二十七讲-静态链接">第二十七讲 静态链接</h1>
+<p>示例代码如下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="c1">// main.c
+</span><span class="c1"></span><span class="cp">#define LEN 2
+</span><span class="cp"></span><span class="k">extern</span> <span class="kt">int</span> <span class="n">sharedArr</span><span class="p">[</span><span class="n">LEN</span><span class="p">];</span>
+<span class="k">extern</span> <span class="kt">int</span> <span class="nf">sum</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="n">arr</span><span class="p">,</span> <span class="kt">int</span> <span class="n">n</span><span class="p">);</span>
+<span class="kt">int</span><span class="o">*</span> <span class="n">array</span> <span class="o">=</span> <span class="n">sharedArr</span><span class="p">;</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">val</span> <span class="o">=</span> <span class="n">sum</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">LEN</span><span class="p">);</span>
+  <span class="k">return</span> <span class="n">val</span><span class="p">;</span>
+<span class="p">}</span>
 
+<span class="c1">// sum.c
+</span><span class="c1"></span><span class="cp">#define LEN 2
+</span><span class="cp"></span><span class="kt">int</span> <span class="n">sharedArr</span><span class="p">[</span><span class="n">LEN</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="p">};</span>
+<span class="kt">int</span> <span class="nf">sum</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="n">arr</span><span class="p">,</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">s</span> <span class="o">+=</span> <span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">s</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>使用 gcc 将代码分别编译成二进制可执行文件 main 和目标文件 main.o、sum.o</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">gcc main.c sum.c -o main  <span class="c1"># 生成可执行文件 main；</span>
+gcc -c main.c -o main.o  <span class="c1"># 生成目标文件 main.o；</span>
+gcc -c sum.c -o sum.o  <span class="c1"># 生成目标文件 sum.o；</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="目标文件">目标文件</h2>
+<p>目标文件是一种被称为”可重定位文件“的 ELF 文件类型。但它不包含 与动视图相关的的多种 Segment 和 Program 头部， 因此不同类型的 Section 便成了用于描述它所有特征的基本结构。</p>
+<p><img src="/image/learn_c/27_1.webp" alt="object_file"></p>
+<p>可以使用<code>nm</code> 命令查看目标文件中的符号表，符号表包含了所有全局变量和函数信息
+<img src="/image/learn_c/27_2.webp" alt="nm_result"></p>
+<p>nm 会返回三列数据</p>
+<ul>
+<li>第一列代表符号在对应 Section 中的偏移量</li>
+<li>第二列代表符号的类型，D 代表已初始化的全局数据，位于 .data Section; T 代表函数，位于 .text Section; U 代表符号未定义</li>
+<li>第三列代表名称</li>
+</ul>
+<h2 id="符号解析">符号解析</h2>
+<p>编译器编译源码时，会为无法在当前编译单元内找到定义的符号生成一个特定符号表条目。
+链接器在随后进行符号解析时会在全局符号表中进行搜索。</p>
+<p>如果链接器找到了多个同名定义， 会按照一定规则进行解析。符号有强弱之分，通常函数和已初始化的全局变量为强符号，而未初始化的全局变量为弱符号。</p>
+<ul>
+<li>如果有一个强符号和多个弱符号，选强符号</li>
+<li>如果有多个弱符号，任意选一个（通常选择占用空间最大的）</li>
+<li>如果有多个强符号，则报错</li>
+</ul>
+<p>通过为函数显示添加 <strong>attribute((weak))</strong> 标记可以设置其为弱符号。</p>
+<h2 id="重定位">重定位</h2>
+<p>符号解析之后，链接器开始将多个目标文件相同类型的Section 进行合并，同时为这些 Section 及 符号指定运行时 VAS 地址。</p>
+<p>链接器通过重定位步骤来修改 .data 和 .text 两个 Section 中对每个符号的引用信息，使得它们可以指向正确的运行时地址。</p>
+<p>重定位依赖特殊的 Section: .rela.data 和 rela.text, 通常这两个 Section 也称之为重定位表。</p>
+<p><img src="/image/learn_c/27_3.webp" alt="readelf"></p>
+<p>上图中每列数据含义：</p>
+<ul>
+<li>Offest: 指目标在 Section 中的偏移</li>
+<li>Info:</li>
+<li>Type: 指重定位类型</li>
+<li>Sym. Value: 当前值</li>
+<li>Sym. Name + Addend: 符号名称和修正量</li>
+</ul>
+<p><img src="/image/learn_c/27_4.webp" alt="relocation_type"></p>
+<p>重定位类型如上图，计算方式中 S 表示实际地址，A 表示 Addend，P 表示被修改的具体位置，L 表示在 PLT 中该符号的入口地址。</p>
+<p>通过 objdump 可以找到重定向目标的位置</p>
+<p>以 R_x86_64_pc32 类型 arrary 举例计算， 验证 “S+A-P” 的计算方式</p>
+<p>S 实际地址 可以通过<code>nm</code> 查看, 结果为 0x601020</p>
+<p><img src="/image/learn_c/27_5.webp" alt="nm"></p>
+<p>A 修正量为 -4</p>
+<p>P 修改位置可以通过<code>objdump -M inter -d main</code>查看，40053e未改行机器指令起始位置， 在此基础上加 3个字节（操作指令+寄存器占用？）即可得到重定向的修改位置： 4000541</p>
+<p><img src="/image/learn_c/27_6.webp" alt="objdump"></p>
+<p><code>0x601020 - 0x4 - 0x400541</code> 结果为 0x200adb,对应大端地址即为 <code>db 01 20 00</code></p>
+<h1 id="第二十八讲-动态链接">第二十八讲 动态链接</h1>
+<h2 id="共享库">共享库</h2>
+<p>能够被动态链接加载的库称之为共享库 Shared Library，在 Linux 中这类库文件以 ”.so“ 后缀结尾</p>
+<h2 id="使用示例">使用示例</h2>
+<p>已上一讲中 sum.c 和 main.c 两个文件为例，将 sum.c 编译成 动态库，并让 main.c 对应的应用程序使用。</p>
+<ol>
+<li>使用命令<code>gcc sum.c -shared -fPIC -o libsum.o</code> 编译动态库文件</li>
+<li>使用命令<code>gcc -o main main.c -lsum -L.</code>编译应用程序</li>
+<li>使用命令<code>export LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH</code> 来设置动态链接器查找动态库文件的目录</li>
+<li>执行<code>./main</code></li>
+<li></li>
+</ol>
+<h2 id="位置无关代码">位置无关代码</h2>
+<p>位置无关代码（Position Independent Code, PIC）是一类特殊的机器代码，这些代码在使用时，可以被放置在每个进程 VAS 中任意位置，而无需链接器对它内部引用的地址进行重定位。</p>
+<p>通常可以将模块之间的数据引用分为四种方式:</p>
+<ul>
+<li>模块内部函数调用</li>
+<li>模块内部数据访问</li>
+<li>模块之间函数调用</li>
+<li>模块之间数据访问</li>
+</ul>
+<p>模块内部函数调用一般以 PC 寄存器寻址方式进行，不依赖 VAS 内的绝对地址。</p>
+<p>模块内部数据访问时由于.data 和 .text 是相对固定的，数据访问也可以使用相对稳定的地址进行。</p>
+<h2 id="全局偏移表">全局偏移表</h2>
+<p>全局偏移表（Global Offset Table， GOT）是位于每个模块 Data Segment起始位置处的一个特殊结构，其内部的每个表项都存放一个地址信息，这些地址对应这被当前
+模块引用的外部函数或者变量在 VAS 中的实际地址。</p>
+<p>当程序被加载进内存时，动态连接器根据实际情况，通过修正 GOT 中的值，来修正代码对应符号的实际引用地址</p>
+<p><img src="/image/learn_c/28_1.webp" alt="GOT"></p>
+<h2 id="过程链接表">过程链接表</h2>
+<p>过程链接表 （Procedure Linkage Table, PLT） 是位于 Text Segment 中的一个表结构。其中 第一表项 PT[0] 内部存放的代码专门用于调用动态连链接器，而其他表项则依次存放着用于完成用户函数调用过程相关的代码，这些表项的地址将被 call 指令直接使用。</p>
+<h2 id="加载时链接">加载时链接</h2>
+<p>动态连接器进行的符号重定位发生在程序代码被真正执行之前</p>
+<h2 id="运行时链接">运行时链接</h2>
+<p>程序可以自动选择想要加载的共享库模块，并在不使用时卸载。动态链接主要使用
+dlopen、dlsym、、dlerror、dlclose 四个接口实现</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;dlfcn.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="k">typedef</span> <span class="nf">double</span> <span class="p">(</span><span class="o">*</span><span class="n">cos_t</span><span class="p">)(</span><span class="kt">double</span><span class="p">);</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">cos_t</span> <span class="n">cosine</span><span class="p">;</span>
+  <span class="kt">char</span> <span class="o">*</span><span class="n">error</span><span class="p">;</span>
+  <span class="kt">void</span><span class="o">*</span> <span class="n">handle</span> <span class="o">=</span> <span class="n">dlopen</span><span class="p">(</span><span class="s">&#34;libm.so.6&#34;</span><span class="p">,</span> <span class="n">RTLD_LAZY</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">handle</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&#34;%s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">dlerror</span><span class="p">());</span>
+    <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="n">dlerror</span><span class="p">();</span>
+  <span class="n">cosine</span> <span class="o">=</span> <span class="p">(</span><span class="n">cos_t</span><span class="p">)</span> <span class="n">dlsym</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s">&#34;cos&#34;</span><span class="p">);</span>
+  <span class="n">error</span> <span class="o">=</span> <span class="n">dlerror</span><span class="p">();</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">error</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&#34;%s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">error</span><span class="p">);</span>
+    <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%f</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="p">(</span><span class="o">*</span><span class="n">cosine</span><span class="p">)(</span><span class="mf">2.0</span><span class="p">));</span>
+  <span class="n">dlclose</span><span class="p">(</span><span class="n">handle</span><span class="p">);</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div>
     </div>
 
     
@@ -3656,7 +3912,7 @@ src/%.o: src/%.c include/%.h
   <p class="copyright-item">
     <span class="item-title">LastMod</span>
     <span class="item-content">
-      2022-04-17
+      2022-04-29
       
     </span>
   </p>
