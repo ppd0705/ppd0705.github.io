@@ -2924,7 +2924,7 @@ queue[2k+1]、queue[2k+2]。&lt;/p&gt;
     </item>
     
     <item>
-      <title>[笔记]深入C语言和程序运行原理（更新中）</title>
+      <title>[笔记]深入C语言和程序运行原理</title>
       <link>https://ppd0705.github.io/post/learn_c/</link>
       <pubDate>Mon, 31 Jan 2022 17:04:50 +0800</pubDate>
       
@@ -6194,7 +6194,256 @@ dlopen、dlsym、、dlerror、dlclose 四个接口实现&lt;/p&gt;
 &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description>
+&lt;/div&gt;&lt;h1 id=&#34;第二十九讲-c-程序入口&#34;&gt;第二十九讲 C 程序入口&lt;/h1&gt;
+&lt;h2 id=&#34;真正的入口函数&#34;&gt;真正的入口函数&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;c1&#34;&gt;// main.c
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;main&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/learn_c/29_1.webp&#34; alt=&#34;objdump&#34;&gt;&lt;/p&gt;
+&lt;p&gt;可以从图中看到，程序首先从 _start 开始执行&lt;/p&gt;
+&lt;h3 id=&#34;_start&#34;&gt;_start&lt;/h3&gt;
+&lt;p&gt;_start 是链接器在生成目标可执行文件时，默认使用的一个符号名称。链接器在链接时会在全局符号表中找到该符号，并将虚拟地址拷贝到 ELF 头的 e_entry 字段中。&lt;/p&gt;
+&lt;p&gt;可以通过命令&lt;code&gt;ld --verbose&lt;/code&gt;查看&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/learn_c/29_2.webp&#34; alt=&#34;ld_verbose&#34;&gt;&lt;/p&gt;
+&lt;p&gt;_start 符号具体定义来自 crt1.o 文件&lt;/p&gt;
+&lt;p&gt;编译时带”-v“ 参数可是看到相关信息&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/learn_c/29_3.webp&#34; alt=&#34;gcc_verbose&#34;&gt;&lt;/p&gt;
+&lt;h3 id=&#34;_start-作用&#34;&gt;_start 作用&lt;/h3&gt;
+&lt;p&gt;crt1.o 是 C 运行时库 （C Runtime Library CRT） 提供的一个用于辅助应用程序正常运行的特殊文件，汇编代码见&lt;a href=&#34;https://github.com/bminor/glibc/blob/b92a49359f33a461db080a33940d73f47c756126/sysdeps/x86_64/start.S&#34;&gt;文件&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;31
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;32
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;33
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;34
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;35
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;36
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-asm&#34; data-lang=&#34;asm&#34;&gt;&lt;span class=&#34;c&#34;&gt;#include &amp;lt;sysdep.h&amp;gt;
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;
+&lt;span class=&#34;nf&#34;&gt;ENTRY&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;_start&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;cfi_undefined&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;rip&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;xorl&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;%ebp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;%ebp&lt;/span&gt;  &lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;复位&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;ebp&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;%RDX_LP&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;%R9_LP&lt;/span&gt;   &lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;保存&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;FINI&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;函数的地址到&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;r9&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;
+&lt;span class=&#34;c&#34;&gt;#ifdef __ILP32__
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;err&#34;&gt;/*&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;模拟&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;ILP32&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;模型下的栈操作，将位于栈顶的&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;argc&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;放入&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;rsi&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;%rsp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;),&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;%esi&lt;/span&gt;  
+  &lt;span class=&#34;no&#34;&gt;add&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;$4&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;%esp&lt;/span&gt;  &lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;同时让栈顶向高地址移动&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;4&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;字节&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;
+&lt;span class=&#34;c&#34;&gt;#else
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;nf&#34;&gt;popq&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;%rsi&lt;/span&gt;  &lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;将位于栈顶的&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;argc&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;放入&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;rsi&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;
+&lt;span class=&#34;c&#34;&gt;#endif
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;%RSP_LP&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;%RDX_LP&lt;/span&gt;  &lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;将&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;argv&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;放入&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;rdx&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;and&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;~&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;15&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;%RSP_LP&lt;/span&gt;  &lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;对齐栈到&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;16&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;字节&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;pushq&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;%rax&lt;/span&gt;  &lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;将&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;rax&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;的值存入栈中，以用于在函数调用前保持对齐状态&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;pushq&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;%rsp&lt;/span&gt;  &lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;将当前栈顶地址存入栈中&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;
+
+  &lt;span class=&#34;nf&#34;&gt;xorl&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;%r8d&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;%r8d&lt;/span&gt;  &lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;复位&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;r8&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;xorl&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;%ecx&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;%ecx&lt;/span&gt;  &lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;复位&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;ecx&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;
+&lt;span class=&#34;c&#34;&gt;#ifdef PIC
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;err&#34;&gt;/*&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;将&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;GOT&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;表项中的&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;main&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;函数地址存放到&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;rdi&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;main@GOTPCREL&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;%rip&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;),&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;%RDI_LP&lt;/span&gt;  
+&lt;span class=&#34;c&#34;&gt;#else
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;no&#34;&gt;mov&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;$main&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;%RDI_LP&lt;/span&gt;  &lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;将&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;main&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;函数的绝对地址存放到&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;rdi&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;
+&lt;span class=&#34;c&#34;&gt;#endif
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;err&#34;&gt;/*&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;调用&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;__libc_start_main&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;函数&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;call&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;__libc_start_main@GOTPCREL&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;%rip&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;hlt&lt;/span&gt;  
+&lt;span class=&#34;no&#34;&gt;END&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;_start&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+  &lt;span class=&#34;na&#34;&gt;.data&lt;/span&gt;
+  &lt;span class=&#34;na&#34;&gt;.globl&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;__data_start&lt;/span&gt;
+&lt;span class=&#34;nl&#34;&gt;__data_start:&lt;/span&gt;
+  &lt;span class=&#34;na&#34;&gt;.long&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;
+  &lt;span class=&#34;na&#34;&gt;.weak&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;data_start&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;data_start&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;__data_start&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;_libc_start_main 函数原型&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;__libc_start_main&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;main&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;char&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;**&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;char&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;**&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;),&lt;/span&gt; 
+                      &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;argc&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; 
+                      &lt;span class=&#34;kt&#34;&gt;char&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;**&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;argv&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; 
+                      &lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;init&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;),&lt;/span&gt; 
+                      &lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fini&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;),&lt;/span&gt; 
+                      &lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;rtld_fini&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;),&lt;/span&gt; 
+                      &lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;stack_end&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;_libc_start_main 会为用户代码的执行做一些前期准备工作&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;执行对用户ID的必要安全性检查&lt;/li&gt;
+&lt;li&gt;初始化线程子系统&lt;/li&gt;
+&lt;li&gt;注册 rtld_fini 函数，以便在动态共享对象退出是释放资源&lt;/li&gt;
+&lt;li&gt;注册 fini 处理程序，以便在程序退出时执行&lt;/li&gt;
+&lt;li&gt;调用初始化函数 init&lt;/li&gt;
+&lt;li&gt;调用 main 函数&lt;/li&gt;
+&lt;li&gt;用 main 的返回值调用 exit 函数&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;crt&#34;&gt;CRT&lt;/h2&gt;
+&lt;p&gt;CRT（C Runtime Library CRT） 为应用程序提供了对启动与退出、C 标准库函数、IO、堆、C 语言特殊实现、调试等多方面功能的实现和支持。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;crt1.o 提供了 _start 符号的具体实现，仅参与可执行文件的编译过程&lt;/li&gt;
+&lt;li&gt;crti.o 和 crtn.o 两者通过协作，为共享对象提供了可以使用”构造函数“和”析构函数“的能力&lt;/li&gt;
+&lt;li&gt;crtbegin.o 和 crtend.o 分别提供了 ”构造函数“和”析构函数“的实现&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;第三十讲-abi-和-api&#34;&gt;第三十讲 ABI 和 API&lt;/h1&gt;
+&lt;h2 id=&#34;api&#34;&gt;API&lt;/h2&gt;
+&lt;p&gt;API（Application Programming Interface）侧重点在于编程，通过遵循 API  规范，可以在相应的编程语言代码中使用这些接口。
+对于 C 语言来说，标准库头文件中的函数原型便是一种 API 的具体表现， glibc 和 musl 是其的具体实现。&lt;/p&gt;
+&lt;p&gt;API 的重要特征是提供相应功能的同时隐藏实现细节，让使用者可以按照较为统一和稳定的方式来使用系统的能力。&lt;/p&gt;
+&lt;h2 id=&#34;abi&#34;&gt;ABI&lt;/h2&gt;
+&lt;p&gt;ABI（Application Bianry Interface）侧重点在于机器指令层面的具体格式，
+ABI 将程序、操作系统、硬件平台之间协作需要遵守的特定规则暴露出来。这些规则指定这个体系运行的二进制应用程序应该如何在机器代码层面进行数据访问或函数调用。&lt;/p&gt;
+&lt;p&gt;API 规范通常涵盖如下内容：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;函数调用规范&lt;/li&gt;
+&lt;li&gt;处理器可以访问的数据类型的大小和对齐方式&lt;/li&gt;
+&lt;li&gt;进程初始化细节（如栈和寄存器的状态变化）&lt;/li&gt;
+&lt;li&gt;对象文件（如 .o）的基本结构&lt;/li&gt;
+&lt;li&gt;程序载入和动态链接的细节&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;第三十一讲-程序和操作系统交互&#34;&gt;第三十一讲 程序和操作系统交互&lt;/h1&gt;
+&lt;h2 id=&#34;什么是系统调用&#34;&gt;什么是系统调用&lt;/h2&gt;
+&lt;p&gt;系统调用是由操作系统内核封装过的一些可供上层应用程序使用的接口&lt;/p&gt;
+&lt;p&gt;以 getpid 函数具体&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;cp&#34;&gt;#include&lt;/span&gt; &lt;span class=&#34;cpf&#34;&gt;&amp;lt;unistd.h&amp;gt;&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;#include&lt;/span&gt; &lt;span class=&#34;cpf&#34;&gt;&amp;#34;syscall.h&amp;#34;&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;pid_t&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;getpid&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;__syscall&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;SYS_getpid&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;__syscall 对应的汇编实现&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-asm&#34; data-lang=&#34;asm&#34;&gt;&lt;span class=&#34;na&#34;&gt;.global&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;__syscall&lt;/span&gt;
+&lt;span class=&#34;na&#34;&gt;.type&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;__syscall&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;@function&lt;/span&gt;
+&lt;span class=&#34;nl&#34;&gt;__syscall:&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;movq&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;%rdi&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;%rax&lt;/span&gt;  &lt;span class=&#34;err&#34;&gt;//&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;将函数对应的&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;ID&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;存放到&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;rax&lt;/span&gt; 
+  &lt;span class=&#34;no&#34;&gt;movq&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;%rsi&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;%rdi&lt;/span&gt;  &lt;span class=&#34;err&#34;&gt;//&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;将函数参数存放对寄存器&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;movq&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;%rdx&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;%rsi&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;movq&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;%rcx&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;%rdx&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;movq&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;%r8&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;%r10&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;movq&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;%r9&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;%r8&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;movq&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;8&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;%rsp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;),&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;%r9&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;syscall&lt;/span&gt;  &lt;span class=&#34;err&#34;&gt;//&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;执行指令&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;ret&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;系统调用和用户函数&#34;&gt;系统调用和用户函数&lt;/h2&gt;
+&lt;p&gt;两者最大区在在于 系统调用执行的代码位于操作系统底层的内核环境中，而用户代码则位于内核之上的应用环境中。&lt;/p&gt;
+&lt;p&gt;在 x86 架构中， 特权级别分为四个层次&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/learn_c/31_1.webp&#34; alt=&#34;protection_rings&#34;&gt;&lt;/p&gt;
+&lt;p&gt;不同特权级别，CPU 能被允许执行的机器指令和使用的起存器不同&lt;/p&gt;
+&lt;h2 id=&#34;系统调用实现&#34;&gt;系统调用实现&lt;/h2&gt;
+&lt;p&gt;可以使用 int 实现系统调用&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-asm&#34; data-lang=&#34;asm&#34;&gt;&lt;span class=&#34;nf&#34;&gt;extern&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;sub&lt;/span&gt;
+&lt;span class=&#34;nf&#34;&gt;global&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;_start&lt;/span&gt;
+&lt;span class=&#34;nf&#34;&gt;section&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;.text&lt;/span&gt;
+&lt;span class=&#34;nl&#34;&gt;_start:&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;and&lt;/span&gt;   &lt;span class=&#34;no&#34;&gt;rsp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0xfffffffffffffff0&lt;/span&gt;  &lt;span class=&#34;err&#34;&gt;//&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;16&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;位对齐&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt;   &lt;span class=&#34;no&#34;&gt;esi&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt;   &lt;span class=&#34;no&#34;&gt;edi&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;call&lt;/span&gt;  &lt;span class=&#34;no&#34;&gt;sub&lt;/span&gt;
+  &lt;span class=&#34;c&#34;&gt;# use &amp;#34;int&amp;#34; to invoke a system call.
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt;   &lt;span class=&#34;no&#34;&gt;ebx&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;eax&lt;/span&gt;  
+  &lt;span class=&#34;no&#34;&gt;mov&lt;/span&gt;   &lt;span class=&#34;no&#34;&gt;eax&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;
+  &lt;span class=&#34;nf&#34;&gt;int&lt;/span&gt;   &lt;span class=&#34;mi&#34;&gt;0x80&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;上述代码执行过程如图&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/learn_c/31_2.webp&#34; alt=&#34;syscall&#34;&gt;&lt;/p&gt;
+</description>
       
     </item>
     
