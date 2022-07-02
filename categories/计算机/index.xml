@@ -6,7 +6,16 @@
     <description>Recent content in 计算机 on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 27 Mar 2022 21:21:20 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 29 Jun 2022 08:20:51 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>[笔记]Kafka 核心技术与实战 （更新中）</title>
+      <link>https://ppd0705.github.io/post/kafka_in_action/</link>
+      <pubDate>Wed, 29 Jun 2022 08:20:51 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/kafka_in_action/</guid>
+      <description>第一讲 消息系统 ABC 定义 维基百科版: 消息系统是一组规范，利用这组规范在不同系统之间传递语义准确的消息，实现松耦合的异步数据传递。 传输模型 点对点 发</description>
+    </item>
+    
     <item>
       <title>supervisor 源码解读</title>
       <link>https://ppd0705.github.io/post/learn_supervisor/</link>
@@ -176,15 +185,6 @@
       
       <guid>https://ppd0705.github.io/post/asgi_note/</guid>
       <description>Asynchronous Server Gateway Interface Onverview two components protocol server: terminates socket and translates them into connections and per-connection event messages application: lives in inside a server, is instantiated once per connection, and handles event messages as they happen difference between two components applications are instant objects that are fed events rather than simple callable, and must run as asyncio-compativle corountines two separate parts of a connection: a connection scope; events</description>
-    </item>
-    
-    <item>
-      <title>gunicorn笔记</title>
-      <link>https://ppd0705.github.io/post/gunicorn_note/</link>
-      <pubDate>Thu, 20 Feb 2020 21:29:37 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/gunicorn_note/</guid>
-      <description>简介 gunicorn是一遵守WSGI协议的web服务器， 其整体架构是Master/Workers模型。master进程通过信号机制管理wor</description>
     </item>
     
   </channel>

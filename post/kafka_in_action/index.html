@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>PPD&#39;s blog</title>
+  <title>[笔记]Kafka 核心技术与实战 （更新中） - PPD&#39;s blog</title>
   
 
 <meta name="renderer" content="webkit" />
@@ -23,7 +23,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 
 <meta name="author" content="PPD" />
-  <meta name="description" content="PPD&#39;s blog" />
+  <meta name="description" content="第一讲 消息系统 ABC 定义 维基百科版: 消息系统是一组规范，利用这组规范在不同系统之间传递语义准确的消息，实现松耦合的异步数据传递。 传输模型 点对点 发" />
+
   <meta name="keywords" content="PPD, blog" />
 
 
@@ -34,8 +35,8 @@
 <meta name="generator" content="Hugo 0.86.0-DEV" />
 
 
-<link rel="canonical" href="https://ppd0705.github.io/" />
-<link href="/index.xml" rel="alternate" type="application/rss+xml" title="PPD&#39;s blog" />
+<link rel="canonical" href="https://ppd0705.github.io/post/kafka_in_action/" />
+
 
 
 
@@ -58,15 +59,20 @@
 
 
 
-<meta property="og:title" content="PPD&#39;s blog" />
-<meta property="og:description" content="PPD&#39;s blog" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://ppd0705.github.io/" />
+<meta property="og:title" content="[笔记]Kafka 核心技术与实战 （更新中）" />
+<meta property="og:description" content="第一讲 消息系统 ABC 定义 维基百科版: 消息系统是一组规范，利用这组规范在不同系统之间传递语义准确的消息，实现松耦合的异步数据传递。 传输模型 点对点 发" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ppd0705.github.io/post/kafka_in_action/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-06-29T08:20:51+08:00" />
+<meta property="article:modified_time" content="2022-07-01T11:20:51+08:00" />
 
-<meta itemprop="name" content="PPD&#39;s blog">
-<meta itemprop="description" content="PPD&#39;s blog"><meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="PPD&#39;s blog"/>
-<meta name="twitter:description" content="PPD&#39;s blog"/>
+<meta itemprop="name" content="[笔记]Kafka 核心技术与实战 （更新中）">
+<meta itemprop="description" content="第一讲 消息系统 ABC 定义 维基百科版: 消息系统是一组规范，利用这组规范在不同系统之间传递语义准确的消息，实现松耦合的异步数据传递。 传输模型 点对点 发"><meta itemprop="datePublished" content="2022-06-29T08:20:51+08:00" />
+<meta itemprop="dateModified" content="2022-07-01T11:20:51+08:00" />
+<meta itemprop="wordCount" content="1004">
+<meta itemprop="keywords" content="消息队列," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="[笔记]Kafka 核心技术与实战 （更新中）"/>
+<meta name="twitter:description" content="第一讲 消息系统 ABC 定义 维基百科版: 消息系统是一组规范，利用这组规范在不同系统之间传递语义准确的消息，实现松耦合的异步数据传递。 传输模型 点对点 发"/>
 
 <!--[if lte IE 9]>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
@@ -214,7 +220,7 @@
   <ul id="menu" class="menu">
     
     
-        <li class="menu-item active">
+        <li class="menu-item">
         
           
           
@@ -283,384 +289,253 @@
     <main id="main" class="main bg-llight">
       <div class="content-wrapper">
         <div id="content" class="content container">
-          
-<section id="posts" class="posts">
-  
-  
+          <article class="post bg-white">
     
-  
-  
-  
-    <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
+    <header class="post-header">
+      <h1 class="post-title">[笔记]Kafka 核心技术与实战 （更新中）</h1>
       
-      <a class="post-link" href="/post/python_io/">Python标准库io和select</a>
-    </h1>
+      <div class="post-meta">
+        <time datetime="2022-06-29" class="post-time">
+          2022-06-29
+        </time>
+        <div class="post-category">
+            <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
+            
+          </div>
+        <span class="more-meta"> 1004 words </span>
+          <span class="more-meta"> 3 min read </span>
+
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
+    </header>
+
     
-    <div class="post-meta">
-      <time datetime="2019-11-05" class="post-time">
-        2019-11-05
-      </time>
-      <div class="post-category">
-          <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Table of Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#第一讲-消息系统-abc">第一讲 消息系统 ABC</a>
+      <ul>
+        <li><a href="#定义">定义</a></li>
+        <li><a href="#传输模型">传输模型</a></li>
+        <li><a href="#核心作用">核心作用</a></li>
+      </ul>
+    </li>
+    <li><a href="#第二讲-kafka-术语">第二讲 kafka 术语</a></li>
+    <li><a href="#第四讲-kafka-发现版本">第四讲 kafka 发现版本</a>
+      <ul>
+        <li><a href="#apache-kafka">Apache Kafka</a></li>
+        <li><a href="#confluent-kafka">Confluent Kafka</a></li>
+        <li><a href="#cdhhdp-kafka">CDH/HDP Kafka</a></li>
+      </ul>
+    </li>
+    <li><a href="#第六讲-线上集群部署">第六讲 线上集群部署</a>
+      <ul>
+        <li><a href="#操作系统">操作系统</a></li>
+        <li><a href="#磁盘">磁盘</a></li>
+        <li><a href="#磁盘容量">磁盘容量</a></li>
+        <li><a href="#带宽">带宽</a></li>
+      </ul>
+    </li>
+    <li><a href="#第七讲-最最最重要集群参数上">第七讲 最最最重要集群参数（上）</a>
+      <ul>
+        <li><a href="#broker-参数">Broker 参数</a>
+          <ul>
+            <li><a href="#存储相关">存储相关</a></li>
+            <li><a href="#zookeeper-相关">zookeeper 相关</a></li>
+            <li><a href="#topic-管理相关">topic 管理相关</a></li>
+            <li><a href="#数据留存相关">数据留存相关</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#第八讲-最最最重要集群参数下">第八讲 最最最重要集群参数（下）</a>
+      <ul>
+        <li><a href="#topic-级别参数">Topic 级别参数</a></li>
+        <li><a href="#jvm-参数">JVM 参数</a></li>
+        <li><a href="#操作系统参数">操作系统参数</a></li>
+      </ul>
+    </li>
+    <li><a href="#相关连接">相关连接</a>
+      <ul>
+        <li><a href="#kafka管理和监控平台">kafka管理和监控平台</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      <h1 id="第一讲-消息系统-abc">第一讲 消息系统 ABC</h1>
+<h2 id="定义">定义</h2>
+<p>维基百科版: 消息系统是一组规范，利用这组规范在不同系统之间传递语义准确的消息，实现松耦合的异步数据传递。</p>
+<h2 id="传输模型">传输模型</h2>
+<ul>
+<li>点对点</li>
+<li>发布订阅</li>
+</ul>
+<h2 id="核心作用">核心作用</h2>
+<ul>
+<li>削峰填谷</li>
+</ul>
+<h1 id="第二讲-kafka-术语">第二讲 kafka 术语</h1>
+<ul>
+<li>Record: 消息</li>
+<li>Topic: 主题</li>
+<li>Partition: 分区，有序不变，每个主题至少有一个分区，从 0 开始</li>
+<li>Offset: 分区位移，表示分区中消息的位置信息，单调递增且不变</li>
+<li>Replica: 副本，每个分区可有多个副本，仅 Leader 副本对外提供服务，Follower 副本仅做数据备份</li>
+<li>Producer: 生产者，发布信息</li>
+<li>Consumer: 消息者，消费消息</li>
+<li>Consumer Offset: 消费者位移，表示消费者消费进度</li>
+<li>Consumer Group: 多个消费者组成一个组，共同消费一个主题，实现高吞吐</li>
+<li>Rebalance: 重平衡，消费组某个成员挂掉后，其他消费者自动重新分配订阅主题的过程</li>
+</ul>
+<p>示意图如下：</p>
+<p><img src="/image/kafka_in_action/2_1.webp" alt="term"></p>
+<p>问：kafka 为什么不像 mysql 那样允许 follower 对外提供服务？</p>
+<ul>
+<li>kafka 使用不是典型的读多写少的场景</li>
+<li>分区 Leader 分布在不同的 Broker 节点， 已提供了负载均衡的功能</li>
+</ul>
+<h1 id="第四讲-kafka-发现版本">第四讲 kafka 发现版本</h1>
+<h2 id="apache-kafka">Apache Kafka</h2>
+<p>社区版， 迭代速度快，社区响应度高</p>
+<h2 id="confluent-kafka">Confluent Kafka</h2>
+<p>kafka创始人创建的商业公司Confluent， 为 kafka 提供了很多高级特性， 如跨数据中心备份、集群监控</p>
+<h2 id="cdhhdp-kafka">CDH/HDP Kafka</h2>
+<p>大数据云公司提供版本，集成在数据平台中</p>
+<h1 id="第六讲-线上集群部署">第六讲 线上集群部署</h1>
+<h2 id="操作系统">操作系统</h2>
+<p>kafka 客户端 在 Linux 上使用 epoll I/O 模型， 在 Windows 上使用 select</p>
+<h2 id="磁盘">磁盘</h2>
+<p>kafka 大多数场景 是顺序读写，使用机械磁盘可以胜任线上坏境</p>
+<h2 id="磁盘容量">磁盘容量</h2>
+<p>容量需要考虑如下因素</p>
+<ul>
+<li>新增消息数</li>
+<li>平均消息大小</li>
+<li>消息留存时间</li>
+<li>备份数</li>
+<li>是否启用压缩</li>
+</ul>
+<h2 id="带宽">带宽</h2>
+<p>根据使用经验，超过 70% 带宽阈值就有网络丢包的可能性，</p>
+<p><img src="/image/kafka_in_action/6_1.webp" alt="summary"></p>
+<h1 id="第七讲-最最最重要集群参数上">第七讲 最最最重要集群参数（上）</h1>
+<h2 id="broker-参数">Broker 参数</h2>
+<h3 id="存储相关">存储相关</h3>
+<ul>
+<li>log.dirs: 指定目录 如 /home/kafka1,/home/kafka2, 多个目录可以实现故障转移Failover</li>
+</ul>
+<h3 id="zookeeper-相关">zookeeper 相关</h3>
+<ul>
+<li>zookeeper.connect: zk1:2181,zk2:2181,zk3:2181/kafka1</li>
+</ul>
+<h3 id="topic-管理相关">topic 管理相关</h3>
+<ul>
+<li>auto.create.topics.enable: 是否允许自动创建Topic</li>
+<li>unclean.leader.election.enable: 是否运行 Unclean Leader 选举</li>
+<li>auto.leader.rebalance.enable: 是否允许定期举行 Leader 选举</li>
+</ul>
+<h3 id="数据留存相关">数据留存相关</h3>
+<ul>
+<li>log.retention.{hours|minutes|ms}: 控制数据保留时长，默认hours=168</li>
+<li>log.retention.bytes: 消息保存总容量大小，默认不限制</li>
+<li>log.segment.bytes: 日志文件区块大小，默认 1GB （一个 partition 有 多个 segment 文件组成，不会删除最新的一个segment）</li>
+<li>segment.ms: 日志文件毫秒周期，默认 7 天</li>
+<li>message.max.bytes: 最大接受消息大小，默认1000012，976KB</li>
+</ul>
+<h1 id="第八讲-最最最重要集群参数下">第八讲 最最最重要集群参数（下）</h1>
+<h2 id="topic-级别参数">Topic 级别参数</h2>
+<ul>
+<li>retention.ms: 消息保存时长，优先于Broker级别设置</li>
+<li>retention.bytes: 消息保存大小，优先于与Broker级别设置</li>
+</ul>
+<h2 id="jvm-参数">JVM 参数</h2>
+<ul>
+<li>KAFKA_HEAP_OPTS: 堆大小， 建议设成 6G</li>
+<li>KAFKA_JVM_PERFORMANCE_OPTS: GC参数</li>
+</ul>
+<h2 id="操作系统参数">操作系统参数</h2>
+<ul>
+<li>文件描述符限制： 使用 ulimit -n 1000000 改成一个较大值</li>
+<li>文件系统类型：XFS 性能强于 ext4</li>
+<li>Flush 落盘时间： 默认是 5s，可适当增大来降低物理磁盘的写操作</li>
+</ul>
+<h1 id="相关连接">相关连接</h1>
+<h2 id="kafka管理和监控平台">kafka管理和监控平台</h2>
+<ul>
+<li><a href="https://github.com/smartloli/EFAK">A easy and high-performance monitoring system</a></li>
+<li><a href="https://github.com/xaecbd/KCenter">A unified platform for kafka cluster management</a></li>
+<li><a href="https://github.com/didi/LogiKM">一站式Apache Kafka集群指标监控与运维管控平台</a></li>
+</ul>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">PPD</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">
+      2022-07-01
+      
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">License</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="https://ppd0705.github.io/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/">消息队列</a>
           
         </div>
-      <span class="more-meta"> 230 words </span>
-      <span class="more-meta"> 1 min read </span>
-      
-      
-      
-    </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      三种I/O类型 Binary: expects and produces bytes objects, 不会编解码，不会换行 Text: expects and produces str objects， 自动编解码和换行 Raw(unbuffered): uilding-block for binary and text streams 底层类 抽象基类IOBase: 无read
-    </div>
-    <div class="read-more">
-      <a href="/post/python_io/" class="read-more-link">Read more</a>
-    </div>
-    
-  </div>
-</article>
 
-  
-    <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
       
-      <a class="post-link" href="/post/asyncio/">Asyncio主要类和方法一览</a>
-    </h1>
-    
-    <div class="post-meta">
-      <time datetime="2019-11-05" class="post-time">
-        2019-11-05
-      </time>
-      <div class="post-category">
-          <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
-          
-        </div>
-      <span class="more-meta"> 1029 words </span>
-      <span class="more-meta"> 3 min read </span>
-      
-      
-      
-    </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      events Handle 基本属性： loop, context, call_back, args run: 执行call_back TimeHandle: 带有when到期时间的handle,也用于来比较大小 AbstractServer: 抽象server, 定义start_se
-    </div>
-    <div class="read-more">
-      <a href="/post/asyncio/" class="read-more-link">Read more</a>
-    </div>
-    
-  </div>
-</article>
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/post/learn_supervisor/">
+            <span class="next-text nav-default">supervisor 源码解读</span>
+            <span class="prev-text nav-mobile">Next</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
 
-  
-    <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
-      
-      <a class="post-link" href="/post/python_standard_libary_heapq/">Python标准库heapq</a>
-    </h1>
-    
-    <div class="post-meta">
-      <time datetime="2019-10-28" class="post-time">
-        2019-10-28
-      </time>
-      <div class="post-category">
-          <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
-          
-        </div>
-      <span class="more-meta"> 315 words </span>
-      <span class="more-meta"> 1 min read </span>
-      
-      
-      
-    </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      底层设计: 完全二叉树（除了最后一层，其他层都是满的，最后一层的节点都靠左排列） 每个节点的值都小于等于左右子节点的值 使用list存储 入堆hea
-    </div>
-    <div class="read-more">
-      <a href="/post/python_standard_libary_heapq/" class="read-more-link">Read more</a>
-    </div>
-    
-  </div>
-</article>
-
-  
-    <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
-      
-      <a class="post-link" href="/post/python_standard_libary_1/">Python标准库之并发相关库</a>
-    </h1>
-    
-    <div class="post-meta">
-      <time datetime="2019-10-27" class="post-time">
-        2019-10-27
-      </time>
-      <div class="post-category">
-          <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
-          
-        </div>
-      <span class="more-meta"> 874 words </span>
-      <span class="more-meta"> 2 min read </span>
-      
-      
-      
-    </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      threading Lock: 可被其他线程释放 .RLock: 与Lock的区别在于可被锁拥有者多次获取，只能被被锁拥有者释放，释放次数等于获取次数才算完全释放 Condition: condition实
-    </div>
-    <div class="read-more">
-      <a href="/post/python_standard_libary_1/" class="read-more-link">Read more</a>
-    </div>
-    
-  </div>
-</article>
-
-  
-    <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
-      
-      <a class="post-link" href="/post/functools/">Python标准库functools</a>
-    </h1>
-    
-    <div class="post-meta">
-      <time datetime="2019-10-21" class="post-time">
-        2019-10-21
-      </time>
-      <div class="post-category">
-          <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
-          
-        </div>
-      <span class="more-meta"> 919 words </span>
-      <span class="more-meta"> 2 min read </span>
-      
-      
-      
-    </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      functools主要有3个函数：partial, wraps, lru_cache partial: 利用一个类装饰器把现函数和参数保存起来, 后续调用的时候再补充和更新参数 1 2 3 4 5 6 7
-    </div>
-    <div class="read-more">
-      <a href="/post/functools/" class="read-more-link">Read more</a>
-    </div>
-    
-  </div>
-</article>
-
-  
-    <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
-      
-      <a class="post-link" href="/post/redis_procotol_1/">Redis协议初探及redis-py源码节选</a>
-    </h1>
-    
-    <div class="post-meta">
-      <time datetime="2019-10-05" class="post-time">
-        2019-10-05
-      </time>
-      <div class="post-category">
-          <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
-          
-        </div>
-      <span class="more-meta"> 741 words </span>
-      <span class="more-meta"> 2 min read </span>
-      
-      
-      
-    </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      通讯协议 基于TCP协议 数据以\r\n分隔，数据类型五种，按第一个字节来区分 simple string: ”+“， 状态回复 1 +OK\r\n error: &ldquo;-&quot;， 错误回复 1
-    </div>
-    <div class="read-more">
-      <a href="/post/redis_procotol_1/" class="read-more-link">Read more</a>
-    </div>
-    
-  </div>
-</article>
-
-  
-    <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
-      
-      <a class="post-link" href="/post/mongo_procotol_1/">Mongo协议初探及pymongo源码节选</a>
-    </h1>
-    
-    <div class="post-meta">
-      <time datetime="2019-10-05" class="post-time">
-        2019-10-05
-      </time>
-      <div class="post-category">
-          <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
-          
-        </div>
-      <span class="more-meta"> 1071 words </span>
-      <span class="more-meta"> 3 min read </span>
-      
-      
-      
-    </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      通讯协议 组成 head: 消息头 payload length(int32): 消息长度 request_id(int32)： 请求ID response_to(int32): 服务端响应对应请求的reques_id(请求类型为OP_QUE
-    </div>
-    <div class="read-more">
-      <a href="/post/mongo_procotol_1/" class="read-more-link">Read more</a>
-    </div>
-    
-  </div>
-</article>
-
-  
-    <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
-      
-      <a class="post-link" href="/post/mysql_procotol_1/">MySQL协议初探及pymysql源码节选</a>
-    </h1>
-    
-    <div class="post-meta">
-      <time datetime="2019-09-04" class="post-time">
-        2019-09-04
-      </time>
-      <div class="post-category">
-          <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
-          
-        </div>
-      <span class="more-meta"> 682 words </span>
-      <span class="more-meta"> 2 min read </span>
-      
-      
-      
-    </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      总体交互过程 登录流程 TCP连接建立 1 2 3 4 5 # Connection.connection sock = socket.create_connection((host, port),connection_timeout) sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1) sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1) _rfile = _makefile(sock, &#39;rb&#39;) Server向Client发送Handshake packet：包
-    </div>
-    <div class="read-more">
-      <a href="/post/mysql_procotol_1/" class="read-more-link">Read more</a>
-    </div>
-    
-  </div>
-</article>
-
-  
-    <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
-      
-      <a class="post-link" href="/post/setuptools_doc_notes/">Setuptools_doc_notes</a>
-    </h1>
-    
-    <div class="post-meta">
-      <time datetime="2019-08-20" class="post-time">
-        2019-08-20
-      </time>
-      <div class="post-category">
-          <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
-          
-        </div>
-      <span class="more-meta"> 561 words </span>
-      <span class="more-meta"> 2 min read </span>
-      
-      
-      
-    </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      版本规则 正式版本由一串被.符号分隔开的数据组成 2.1，代表release 2 的第一个子版本 2.1 == 2.1.0 == 2.01 预发布版本，通常在版本号后加字母tag， 如
-    </div>
-    <div class="read-more">
-      <a href="/post/setuptools_doc_notes/" class="read-more-link">Read more</a>
-    </div>
-    
-  </div>
-</article>
-
-  
-    <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
-      
-      <a class="post-link" href="/post/java_basic_3/">Java_basic_3</a>
-    </h1>
-    
-    <div class="post-meta">
-      <time datetime="2019-07-31" class="post-time">
-        2019-07-31
-      </time>
-      <div class="post-category">
-          <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
-          
-        </div>
-      <span class="more-meta"> 385 words </span>
-      <span class="more-meta"> 1 min read </span>
-      
-      
-      
-    </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      异常 异常类继承自Throwable, 分为Eroor和Exception两类 Error是无需捕获的严重异常 Exception分为Runtime
-    </div>
-    <div class="read-more">
-      <a href="/post/java_basic_3/" class="read-more-link">Read more</a>
-    </div>
-    
-  </div>
-</article>
-
-  
-</section>
-
-
-
-
-
-
-  
-  
-  
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
 
   
   
@@ -669,42 +544,29 @@
   
 
   
-  
 
   
   
-  <nav class="pagination">
-    <ul>
-      
-      <li >
-        <a href="/">1</a>
-      </li>
-      
-      <li >
-        <a href="/page/2/">2</a>
-      </li>
-      
-      <li >
-        <a href="/page/3/">3</a>
-      </li>
-      
-      <li  class="active" >
-        <a href="/page/4/">4</a>
-      </li>
-      
-      <li >
-        <a href="/page/5/">5</a>
-      </li>
-      
-    </ul>
-  </nav>
-
-  
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "ppd0705/ppd0705.github.io"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
   
 
+  
 
+  
 
+  
 
+    
+
+  
 
         </div>
       </div>
