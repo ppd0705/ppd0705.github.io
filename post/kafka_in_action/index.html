@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]Kafka 核心技术与实战 （更新中）">
 <meta itemprop="description" content="第一讲 消息系统 ABC 定义 维基百科版: 消息系统是一组规范，利用这组规范在不同系统之间传递语义准确的消息，实现松耦合的异步数据传递。 传输模型 点对点 发"><meta itemprop="datePublished" content="2022-06-29T08:20:51+08:00" />
 <meta itemprop="dateModified" content="2022-07-01T11:20:51+08:00" />
-<meta itemprop="wordCount" content="1004">
+<meta itemprop="wordCount" content="1806">
 <meta itemprop="keywords" content="消息队列," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]Kafka 核心技术与实战 （更新中）"/>
 <meta name="twitter:description" content="第一讲 消息系统 ABC 定义 维基百科版: 消息系统是一组规范，利用这组规范在不同系统之间传递语义准确的消息，实现松耦合的异步数据传递。 传输模型 点对点 发"/>
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 1004 words </span>
-          <span class="more-meta"> 3 min read </span>
+        <span class="more-meta"> 1806 words </span>
+          <span class="more-meta"> 4 min read </span>
 
         
         
@@ -364,6 +364,39 @@
         <li><a href="#topic-级别参数">Topic 级别参数</a></li>
         <li><a href="#jvm-参数">JVM 参数</a></li>
         <li><a href="#操作系统参数">操作系统参数</a></li>
+      </ul>
+    </li>
+    <li><a href="#第九讲--消息分区机制原理">第九讲  消息分区机制原理</a>
+      <ul>
+        <li><a href="#分区作用">分区作用</a></li>
+        <li><a href="#分区写入策略">分区写入策略</a>
+          <ul>
+            <li><a href="#轮询策略">轮询策略</a></li>
+            <li><a href="#随机策略">随机策略</a></li>
+            <li><a href="#按消息键分配策略">按消息键分配策略</a></li>
+            <li><a href="#显式指定分区">显式指定分区</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#第十讲-压缩算法">第十讲 压缩算法</a>
+      <ul>
+        <li><a href="#流程">流程</a></li>
+        <li><a href="#压缩算法对比">压缩算法对比</a></li>
+      </ul>
+    </li>
+    <li><a href="#第十一讲-无消息丢失配置">第十一讲 无消息丢失配置</a>
+      <ul>
+        <li><a href="#producer端">producer端</a></li>
+        <li><a href="#broker-端">broker 端</a></li>
+        <li><a href="#consumer-端">consumer 端</a></li>
+      </ul>
+    </li>
+    <li><a href="#第十二讲-拦截器">第十二讲 拦截器</a></li>
+    <li><a href="#第十四讲-幂等和事务">第十四讲 幂等和事务</a>
+      <ul>
+        <li><a href="#幂等性-producer">幂等性 Producer</a></li>
+        <li><a href="#事务型-producer">事务型 Producer</a></li>
       </ul>
     </li>
     <li><a href="#相关连接">相关连接</a>
@@ -475,6 +508,124 @@
 <li>文件系统类型：XFS 性能强于 ext4</li>
 <li>Flush 落盘时间： 默认是 5s，可适当增大来降低物理磁盘的写操作</li>
 </ul>
+<h1 id="第九讲--消息分区机制原理">第九讲  消息分区机制原理</h1>
+<h2 id="分区作用">分区作用</h2>
+<p><img src="/image/kafka_in_action/9_1.webp" alt="topic_anatomy">
+数据的读写操作是针对分区这个粒度进行的</p>
+<p>分区的作用就是提供负载均衡的能力，实现系统的高伸缩性</p>
+<h2 id="分区写入策略">分区写入策略</h2>
+<h3 id="轮询策略">轮询策略</h3>
+<p><img src="/image/kafka_in_action/9_2.webp" alt="round_robin"></p>
+<p>默认策略，将消息平均分配到所有分区</p>
+<h3 id="随机策略">随机策略</h3>
+<p><img src="/image/kafka_in_action/9_3.webp" alt="random"></p>
+<p>如果追求数据均匀分布， 优先使用轮询策略</p>
+<h3 id="按消息键分配策略">按消息键分配策略</h3>
+<p><img src="/image/kafka_in_action/9_4.webp" alt="hash_key_ordering"></p>
+<p>键相同的消息会写入到同一个分区</p>
+<h3 id="显式指定分区">显式指定分区</h3>
+<p>kafka-python 可以支持</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="n">producer</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;some_message_bytes&#39;</span><span class="p">,</span> <span class="n">partiion</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>kafka-go 需要实现对应接口达到类似效果</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">CustomBalancer</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">kfk</span><span class="p">.</span><span class="nx">RoundRobin</span>
+<span class="p">}</span>
+
+<span class="c1">//nolint
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">h</span> <span class="o">*</span><span class="nx">CustomBalancer</span><span class="p">)</span> <span class="nf">Balance</span><span class="p">(</span><span class="nx">msg</span> <span class="nx">kfk</span><span class="p">.</span><span class="nx">Message</span><span class="p">,</span> <span class="nx">partitions</span> <span class="o">...</span><span class="kt">int</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">Partition</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">h</span><span class="p">.</span><span class="nx">RoundRobin</span><span class="p">.</span><span class="nf">Balance</span><span class="p">(</span><span class="nx">msg</span><span class="p">,</span> <span class="nx">partitions</span><span class="o">...</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">Partition</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>消费者可以显式指定消费分区， 消费者组通过自平衡分配分区</p>
+<h1 id="第十讲-压缩算法">第十讲 压缩算法</h1>
+<h2 id="流程">流程</h2>
+<p>Producer 端压缩、Broker 端 保持、Consumer 端解压缩</p>
+<h2 id="压缩算法对比">压缩算法对比</h2>
+<p><img src="/image/kafka_in_action/10_1.webp" alt="compression"></p>
+<p>依据情况选择压缩比和吞吐率合适的算法</p>
+<h1 id="第十一讲-无消息丢失配置">第十一讲 无消息丢失配置</h1>
+<p>kafka 只对已提交的消息做有限度的持久化保证</p>
+<h2 id="producer端">producer端</h2>
+<ol>
+<li>使用带回调的方法： send(msg, callback),</li>
+<li>acks=-1 所有副本收到消息才算已提交</li>
+<li>retries 设置一个较大值，在网络抖动失败时会重试消息发送 （重试可能导致消息乱序，max.in.flight.requests.per.connection=1可以避免）</li>
+</ol>
+<h2 id="broker-端">broker 端</h2>
+<ol>
+<li>unclean.leader.election.enable =  false 不让落后的broker 参与Leader选举</li>
+<li>replication.factor &gt;= 3 消息多保持几份</li>
+<li>min.insync.replicas &gt; 1 控制消息至少写入到多少分布才算已提交 （只在 acks=-1 是生效）</li>
+</ol>
+<h2 id="consumer-端">consumer 端</h2>
+<ol>
+<li>enable.auto.commit = false 手动提交维护</li>
+</ol>
+<h1 id="第十二讲-拦截器">第十二讲 拦截器</h1>
+<p>生产者可以在发送消息前和提交成功后植入拦截器</p>
+<p>消费者可以在消费消息前以及提交位移后植入拦截器</p>
+<h1 id="第十四讲-幂等和事务">第十四讲 幂等和事务</h1>
+<p>kafka 默认提供的可交付保障是至少一次 at lease once; 通过禁止重试可以实现至多一次 at most once</p>
+<h2 id="幂等性-producer">幂等性 Producer</h2>
+<p>通过设置 enable.idempotence = true 可以开启</p>
+<p>开启以后，单分区单会话能够保证不会出现重复消息</p>
+<p>背后的实现逻辑是 Broker 多保存数据，当 Producer 发送了相同字段的消息后，Broker
+能够知晓消息重复了，并将其丢弃掉</p>
+<h2 id="事务型-producer">事务型 Producer</h2>
+<p>设置 enable.idempotence = true， 以及  transaction.id</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="n">producer</span><span class="o">.</span><span class="na">initTransactions</span><span class="o">();</span>
+<span class="k">try</span> <span class="o">{</span>
+            <span class="n">producer</span><span class="o">.</span><span class="na">beginTransaction</span><span class="o">();</span>
+            <span class="n">producer</span><span class="o">.</span><span class="na">send</span><span class="o">(</span><span class="n">record1</span><span class="o">);</span>
+            <span class="n">producer</span><span class="o">.</span><span class="na">send</span><span class="o">(</span><span class="n">record2</span><span class="o">);</span>
+            <span class="n">producer</span><span class="o">.</span><span class="na">commitTransaction</span><span class="o">();</span>
+<span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">KafkaException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">producer</span><span class="o">.</span><span class="na">abortTransaction</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面的代码能保证 Record1 和 Record2 要么全部成功，要么全部失败</p>
+<p>事务可以保证跨分区、跨会话的幂等性</p>
+<p>消费者端设置隔离级别 isolation.level = read_committed 后会只读取成功完成的事务消息</p>
 <h1 id="相关连接">相关连接</h1>
 <h2 id="kafka管理和监控平台">kafka管理和监控平台</h2>
 <ul>

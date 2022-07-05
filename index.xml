@@ -115,6 +115,124 @@
 &lt;li&gt;文件系统类型：XFS 性能强于 ext4&lt;/li&gt;
 &lt;li&gt;Flush 落盘时间： 默认是 5s，可适当增大来降低物理磁盘的写操作&lt;/li&gt;
 &lt;/ul&gt;
+&lt;h1 id=&#34;第九讲--消息分区机制原理&#34;&gt;第九讲  消息分区机制原理&lt;/h1&gt;
+&lt;h2 id=&#34;分区作用&#34;&gt;分区作用&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/kafka_in_action/9_1.webp&#34; alt=&#34;topic_anatomy&#34;&gt;
+数据的读写操作是针对分区这个粒度进行的&lt;/p&gt;
+&lt;p&gt;分区的作用就是提供负载均衡的能力，实现系统的高伸缩性&lt;/p&gt;
+&lt;h2 id=&#34;分区写入策略&#34;&gt;分区写入策略&lt;/h2&gt;
+&lt;h3 id=&#34;轮询策略&#34;&gt;轮询策略&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/kafka_in_action/9_2.webp&#34; alt=&#34;round_robin&#34;&gt;&lt;/p&gt;
+&lt;p&gt;默认策略，将消息平均分配到所有分区&lt;/p&gt;
+&lt;h3 id=&#34;随机策略&#34;&gt;随机策略&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/kafka_in_action/9_3.webp&#34; alt=&#34;random&#34;&gt;&lt;/p&gt;
+&lt;p&gt;如果追求数据均匀分布， 优先使用轮询策略&lt;/p&gt;
+&lt;h3 id=&#34;按消息键分配策略&#34;&gt;按消息键分配策略&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/kafka_in_action/9_4.webp&#34; alt=&#34;hash_key_ordering&#34;&gt;&lt;/p&gt;
+&lt;p&gt;键相同的消息会写入到同一个分区&lt;/p&gt;
+&lt;h3 id=&#34;显式指定分区&#34;&gt;显式指定分区&lt;/h3&gt;
+&lt;p&gt;kafka-python 可以支持&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;n&#34;&gt;producer&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;send&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;topic&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;sa&#34;&gt;b&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;some_message_bytes&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;partiion&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;kafka-go 需要实现对应接口达到类似效果&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;kd&#34;&gt;type&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;CustomBalancer&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+	&lt;span class=&#34;nx&#34;&gt;kfk&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;RoundRobin&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;//nolint
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kd&#34;&gt;func&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;h&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;CustomBalancer&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;Balance&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;msg&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;kfk&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;Message&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;partitions&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;...&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+	&lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;msg&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;Partition&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;==&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+		&lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;h&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;RoundRobin&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;Balance&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;msg&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;partitions&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;...&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+	&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+	&lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;msg&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;Partition&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;消费者可以显式指定消费分区， 消费者组通过自平衡分配分区&lt;/p&gt;
+&lt;h1 id=&#34;第十讲-压缩算法&#34;&gt;第十讲 压缩算法&lt;/h1&gt;
+&lt;h2 id=&#34;流程&#34;&gt;流程&lt;/h2&gt;
+&lt;p&gt;Producer 端压缩、Broker 端 保持、Consumer 端解压缩&lt;/p&gt;
+&lt;h2 id=&#34;压缩算法对比&#34;&gt;压缩算法对比&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/kafka_in_action/10_1.webp&#34; alt=&#34;compression&#34;&gt;&lt;/p&gt;
+&lt;p&gt;依据情况选择压缩比和吞吐率合适的算法&lt;/p&gt;
+&lt;h1 id=&#34;第十一讲-无消息丢失配置&#34;&gt;第十一讲 无消息丢失配置&lt;/h1&gt;
+&lt;p&gt;kafka 只对已提交的消息做有限度的持久化保证&lt;/p&gt;
+&lt;h2 id=&#34;producer端&#34;&gt;producer端&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;使用带回调的方法： send(msg, callback),&lt;/li&gt;
+&lt;li&gt;acks=-1 所有副本收到消息才算已提交&lt;/li&gt;
+&lt;li&gt;retries 设置一个较大值，在网络抖动失败时会重试消息发送 （重试可能导致消息乱序，max.in.flight.requests.per.connection=1可以避免）&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;broker-端&#34;&gt;broker 端&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;unclean.leader.election.enable =  false 不让落后的broker 参与Leader选举&lt;/li&gt;
+&lt;li&gt;replication.factor &amp;gt;= 3 消息多保持几份&lt;/li&gt;
+&lt;li&gt;min.insync.replicas &amp;gt; 1 控制消息至少写入到多少分布才算已提交 （只在 acks=-1 是生效）&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;consumer-端&#34;&gt;consumer 端&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;enable.auto.commit = false 手动提交维护&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h1 id=&#34;第十二讲-拦截器&#34;&gt;第十二讲 拦截器&lt;/h1&gt;
+&lt;p&gt;生产者可以在发送消息前和提交成功后植入拦截器&lt;/p&gt;
+&lt;p&gt;消费者可以在消费消息前以及提交位移后植入拦截器&lt;/p&gt;
+&lt;h1 id=&#34;第十四讲-幂等和事务&#34;&gt;第十四讲 幂等和事务&lt;/h1&gt;
+&lt;p&gt;kafka 默认提供的可交付保障是至少一次 at lease once; 通过禁止重试可以实现至多一次 at most once&lt;/p&gt;
+&lt;h2 id=&#34;幂等性-producer&#34;&gt;幂等性 Producer&lt;/h2&gt;
+&lt;p&gt;通过设置 enable.idempotence = true 可以开启&lt;/p&gt;
+&lt;p&gt;开启以后，单分区单会话能够保证不会出现重复消息&lt;/p&gt;
+&lt;p&gt;背后的实现逻辑是 Broker 多保存数据，当 Producer 发送了相同字段的消息后，Broker
+能够知晓消息重复了，并将其丢弃掉&lt;/p&gt;
+&lt;h2 id=&#34;事务型-producer&#34;&gt;事务型 Producer&lt;/h2&gt;
+&lt;p&gt;设置 enable.idempotence = true， 以及  transaction.id&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;n&#34;&gt;producer&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;initTransactions&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;try&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+            &lt;span class=&#34;n&#34;&gt;producer&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;beginTransaction&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;
+            &lt;span class=&#34;n&#34;&gt;producer&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;send&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;record1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+            &lt;span class=&#34;n&#34;&gt;producer&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;send&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;record2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+            &lt;span class=&#34;n&#34;&gt;producer&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;commitTransaction&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;catch&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;KafkaException&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;e&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+            &lt;span class=&#34;n&#34;&gt;producer&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;abortTransaction&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;上面的代码能保证 Record1 和 Record2 要么全部成功，要么全部失败&lt;/p&gt;
+&lt;p&gt;事务可以保证跨分区、跨会话的幂等性&lt;/p&gt;
+&lt;p&gt;消费者端设置隔离级别 isolation.level = read_committed 后会只读取成功完成的事务消息&lt;/p&gt;
 &lt;h1 id=&#34;相关连接&#34;&gt;相关连接&lt;/h1&gt;
 &lt;h2 id=&#34;kafka管理和监控平台&#34;&gt;kafka管理和监控平台&lt;/h2&gt;
 &lt;ul&gt;
