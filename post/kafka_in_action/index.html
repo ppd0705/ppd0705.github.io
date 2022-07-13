@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]Kafka 核心技术与实战 （更新中）">
 <meta itemprop="description" content="第一讲 消息系统 ABC 定义 维基百科版: 消息系统是一组规范，利用这组规范在不同系统之间传递语义准确的消息，实现松耦合的异步数据传递。 传输模型 点对点 发"><meta itemprop="datePublished" content="2022-06-29T08:20:51+08:00" />
 <meta itemprop="dateModified" content="2022-07-01T11:20:51+08:00" />
-<meta itemprop="wordCount" content="2101">
+<meta itemprop="wordCount" content="4058">
 <meta itemprop="keywords" content="消息队列," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]Kafka 核心技术与实战 （更新中）"/>
 <meta name="twitter:description" content="第一讲 消息系统 ABC 定义 维基百科版: 消息系统是一组规范，利用这组规范在不同系统之间传递语义准确的消息，实现松耦合的异步数据传递。 传输模型 点对点 发"/>
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 2101 words </span>
-          <span class="more-meta"> 5 min read </span>
+        <span class="more-meta"> 4058 words </span>
+          <span class="more-meta"> 9 min read </span>
 
         
         
@@ -407,7 +407,35 @@
       </ul>
     </li>
     <li><a href="#第十六讲-位移主题">第十六讲 位移主题</a></li>
-    <li><a href="#相关连接">相关连接</a>
+    <li><a href="#第十七讲-消费者组重平衡">第十七讲 消费者组重平衡</a></li>
+    <li><a href="#第-18-讲-位移提交">第 18 讲 位移提交</a>
+      <ul>
+        <li><a href="#自动提交">自动提交</a></li>
+      </ul>
+    </li>
+    <li><a href="#手动提交">手动提交</a></li>
+    <li><a href="#第二十一讲-java-版消费者-tcp-连接管理">第二十一讲 Java 版消费者 TCP 连接管理</a>
+      <ul>
+        <li><a href="#创建连接时机">创建连接时机</a></li>
+        <li><a href="#案例分析">案例分析</a></li>
+      </ul>
+    </li>
+    <li><a href="#第二十二讲-消费者组消费进度监控">第二十二讲 消费者组消费进度监控</a>
+      <ul>
+        <li><a href="#使用命令行工具">使用命令行工具</a></li>
+        <li><a href="#使用-java-consumer-api">使用 Java Consumer API</a></li>
+        <li><a href="#使用jmx-监控指标">使用JMX 监控指标</a></li>
+      </ul>
+    </li>
+    <li><a href="#第二十三讲-副本机制">第二十三讲 副本机制</a>
+      <ul>
+        <li><a href="#副本定义">副本定义</a></li>
+        <li><a href="#副本角色">副本角色</a></li>
+        <li><a href="#in-sync-replicas-isr">In-sync Replicas (ISR)</a></li>
+        <li><a href="#unclean-领导者选举">Unclean 领导者选举</a></li>
+      </ul>
+    </li>
+    <li><a href="#相关链接">相关链接</a>
       <ul>
         <li><a href="#kafka管理和监控平台">kafka管理和监控平台</a></li>
       </ul>
@@ -657,7 +685,302 @@
 而自动提交会定期地提交位移，即使没有新消息，这样会导致位移主题消息会越来越多，所以位移主题采用
 log compaction 删除策略来删除重复消息</p>
 <p><img src="/image/kafka_in_action/16_1.webp" alt="compaction"></p>
-<h1 id="相关连接">相关连接</h1>
+<h1 id="第十七讲-消费者组重平衡">第十七讲 消费者组重平衡</h1>
+<p>重平衡就是消费者组中所有消费者就如何订阅主题分区达成共识的过程。
+重平衡过程中，所有消费者不消费任何消息，在协调者 coordinator 的帮助下，完成订阅主题分区的分配。</p>
+<p>broker 在启动时，会启动相应的 coordinator 组件，消费者组通过位移主题 __consumer_offsets
+查找对应 coordinator 所在的 broker</p>
+<p>消费者组所在 consumer_offsets 分区通过 <code>abs(hash(group_id) % topic_partition_count)</code> 计算可以得到</p>
+<p>如何避免消费者被协调者错误移除？</p>
+<ul>
+<li>session.timeout.ms: 心跳超时时间， 建议设置成 6s</li>
+<li>heartbeat.interval.ms: 心跳间隔，建议设置成 2s （即判定超时前能发送3轮心跳）</li>
+<li>max.pool.interval.ms: 最大 poll 间隔， 根据业务消费时长设定，应大于消费时长</li>
+<li>GC 参数： 频繁 GC 可能导致消费者停顿</li>
+</ul>
+<h1 id="第-18-讲-位移提交">第 18 讲 位移提交</h1>
+<h2 id="自动提交">自动提交</h2>
+<p>consumer 后台线程定时提交位移，相关参数</p>
+<ul>
+<li>enable.auto.commit = true (默认开启)</li>
+<li>auto.commit.interval.ms = 5000 (最小提交间隔，默认5s)</li>
+</ul>
+<p>假设消费者每 5s 提交一次位移，在第 3s 时发生重平衡，那么前3s的数据会再重复消费一次</p>
+<h1 id="手动提交">手动提交</h1>
+<p>显式通过调用 <code>cosummer.commitSync()</code> 提交位移</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="k">while</span> <span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">ConsumerRecords</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">records</span> <span class="o">=</span>
+                        <span class="n">consumer</span><span class="o">.</span><span class="na">poll</span><span class="o">(</span><span class="n">Duration</span><span class="o">.</span><span class="na">ofSeconds</span><span class="o">(</span><span class="n">1</span><span class="o">));</span>
+            <span class="n">process</span><span class="o">(</span><span class="n">records</span><span class="o">);</span> <span class="c1">// 处理消息
+</span><span class="c1"></span>            <span class="k">try</span> <span class="o">{</span>
+                        <span class="n">consumer</span><span class="o">.</span><span class="na">commitSync</span><span class="o">();</span>
+            <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">CommitFailedException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="n">handle</span><span class="o">(</span><span class="n">e</span><span class="o">);</span> <span class="c1">// 处理提交失败异常
+</span><span class="c1"></span>            <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>commitSync 是同步调用， 会阻塞线程，可以使用 commitAsync</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="k">while</span> <span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">ConsumerRecords</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">records</span> <span class="o">=</span> 
+  <span class="n">consumer</span><span class="o">.</span><span class="na">poll</span><span class="o">(</span><span class="n">Duration</span><span class="o">.</span><span class="na">ofSeconds</span><span class="o">(</span><span class="n">1</span><span class="o">));</span>
+            <span class="n">process</span><span class="o">(</span><span class="n">records</span><span class="o">);</span> <span class="c1">// 处理消息
+</span><span class="c1"></span>            <span class="n">consumer</span><span class="o">.</span><span class="na">commitAsync</span><span class="o">((</span><span class="n">offsets</span><span class="o">,</span> <span class="n">exception</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span>
+  <span class="k">if</span> <span class="o">(</span><span class="n">exception</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span>
+            <span class="n">handle</span><span class="o">(</span><span class="n">exception</span><span class="o">);</span>
+  <span class="o">});</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>可以将两者结合，利用 commitSync 的重试规避瞬时错误，利用 commitAsync 来减少阻塞</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="k">try</span> <span class="o">{</span>
+           <span class="k">while</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="n">ConsumerRecords</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">records</span> <span class="o">=</span> 
+                                    <span class="n">consumer</span><span class="o">.</span><span class="na">poll</span><span class="o">(</span><span class="n">Duration</span><span class="o">.</span><span class="na">ofSeconds</span><span class="o">(</span><span class="n">1</span><span class="o">));</span>
+                        <span class="n">process</span><span class="o">(</span><span class="n">records</span><span class="o">);</span> <span class="c1">// 处理消息
+</span><span class="c1"></span>                        <span class="n">commitAysnc</span><span class="o">();</span> <span class="c1">// 使用异步提交规避阻塞
+</span><span class="c1"></span>            <span class="o">}</span>
+<span class="o">}</span> <span class="k">catch</span><span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">handle</span><span class="o">(</span><span class="n">e</span><span class="o">);</span> <span class="c1">// 处理异常
+</span><span class="c1"></span><span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+           <span class="k">try</span> <span class="o">{</span>
+                        <span class="n">consumer</span><span class="o">.</span><span class="na">commitSync</span><span class="o">();</span> <span class="c1">// 最后一次提交使用同步阻塞式提交
+</span><span class="c1"></span>            <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+                        <span class="n">consumer</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+            <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="第二十一讲-java-版消费者-tcp-连接管理">第二十一讲 Java 版消费者 TCP 连接管理</h1>
+<p>TCP 连接是在调用 KafkaConsumer.poll 方法被创建的。
+poll 内部有三个时机可以创建 TCP 连接</p>
+<h2 id="创建连接时机">创建连接时机</h2>
+<ol>
+<li>发起 FindCoordinator 请求时</li>
+</ol>
+<p>消费者启动时会向负载最小的 Broker 建立连接，请求告知主题对应的 coordinator Leader 在哪个 broker</p>
+<ol start="2">
+<li>连接协调者</li>
+</ol>
+<p>步骤 1 之后会和 coordinator 建立连接</p>
+<ol start="3">
+<li>消费数据时</li>
+</ol>
+<p>消费者会向每个分区 Leader 所在的 Broker 建立连接。</p>
+<p>假设消费的 5 个分区在 4 个 Broker 上，那会建立 4 个连接。</p>
+<h2 id="案例分析">案例分析</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"># 建立第一个连接，连接的Broker的 ID 是 -1， 表明还不知道其任何信息
+[2019-05-27 10:00:54,142] DEBUG [Consumer clientId=consumer-1, groupId=test] Initiating connection to node localhost:9092 (id: -1 rack: null) using address localhost/127.0.0.1 (org.apache.kafka.clients.NetworkClient:944)
+
+# 向第一个连接请求集群元数据信息
+[2019-05-27 10:00:54,188] DEBUG [Consumer clientId=consumer-1, groupId=test] Sending metadata request MetadataRequestData(topics=[MetadataRequestTopic(name=&#39;t4&#39;)], allowAutoTopicCreation=true, includeClusterAuthorizedOperations=false, includeTopicAuthorizedOperations=false) to node localhost:9092 (id: -1 rack: null) (org.apache.kafka.clients.NetworkClient:1097)
+
+# 向第一个连接发送 FindCoordinator 请求
+[2019-05-27 10:00:54,188] TRACE [Consumer clientId=consumer-1, groupId=test] Sending FIND_COORDINATOR {key=test,key_type=0} with correlation id 0 to node -1 (org.apache.kafka.clients.NetworkClient:496)
+
+# 收到 Coordinator 所在 Broker 信息
+[2019-05-27 10:00:54,203] TRACE [Consumer clientId=consumer-1, groupId=test] Completed receive from node -1 for FIND_COORDINATOR with correlation id 0, received {throttle_time_ms=0,error_code=0,error_message=null, node_id=2,host=localhost,port=9094} (org.apache.kafka.clients.NetworkClient:837)
+
+# 和 Coordinator 建立第二个连接
+[2019-05-27 10:00:54,204] DEBUG [Consumer clientId=consumer-1, groupId=test] Initiating connection to node localhost:9094 (id: 2147483645 rack: null) using address localhost/127.0.0.1 (org.apache.kafka.clients.NetworkClient:944)
+
+# 建立第三到五个连接，用于实际消息的获取，说明这三个 Broker 都有要消费的分区
+[2019-05-27 10:00:54,237] DEBUG [Consumer clientId=consumer-1, groupId=test] Initiating connection to node localhost:9094 (id: 2 rack: null) using address localhost/127.0.0.1 (org.apache.kafka.clients.NetworkClient:944)
+[2019-05-27 10:00:54,237] DEBUG [Consumer clientId=consumer-1, groupId=test] Initiating connection to node localhost:9092 (id: 0 rack: null) using address localhost/127.0.0.1 (org.apache.kafka.clients.NetworkClient:944)
+[2019-05-27 10:00:54,238] DEBUG [Consumer clientId=consumer-1, groupId=test] Initiating connection to node localhost:9093 (id: 1 rack: null) using address localhost/127.0.0.1 (org.apache.kafka.clients.NetworkClient:944)
+</code></pre></td></tr></table>
+</div>
+</div><p>总结上面的日志信息，可以看出消费者通常会创建三类连接：</p>
+<ol>
+<li>确认协调者和获取集群元数据</li>
+<li>连接协调者，令其执行组成员管理操作</li>
+<li>执行实际消息的获取</li>
+</ol>
+<p>当第三类连接建立后，第一类连接会被关闭，定期请求元数据的需求切换到第三类连接上。</p>
+<p>问： 第三类连接是主题级别还是 Broker 级别 ？</p>
+<h1 id="第二十二讲-消费者组消费进度监控">第二十二讲 消费者组消费进度监控</h1>
+<p>消息滞后使用 Consumer Lag 衡量，假设当前生成了 20 万条消息，消费了 15 万条，那么
+Consumer Lag 就等于 5 万。</p>
+<h2 id="使用命令行工具">使用命令行工具</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">$ bin/kafka-consumer-groups.sh --bootstrap-server &lt;Kafka broker连接信息&gt; --describe --group &lt;group名称&gt;
+</code></pre></td></tr></table>
+</div>
+</div><p><img src="/image/kafka_in_action/22_1.webp" alt="consumer_group_lag"></p>
+<h2 id="使用-java-consumer-api">使用 Java Consumer API</h2>
+<p>使用 AdminClient 查询</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">static</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">Long</span><span class="o">&gt;</span> <span class="nf">lagOf</span><span class="o">(</span><span class="n">String</span> <span class="n">groupID</span><span class="o">,</span> <span class="n">String</span> <span class="n">bootstrapServers</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">TimeoutException</span> <span class="o">{</span>
+        <span class="n">Properties</span> <span class="n">props</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Properties</span><span class="o">();</span>
+        <span class="n">props</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">CommonClientConfigs</span><span class="o">.</span><span class="na">BOOTSTRAP_SERVERS_CONFIG</span><span class="o">,</span> <span class="n">bootstrapServers</span><span class="o">);</span>
+        <span class="k">try</span> <span class="o">(</span><span class="n">AdminClient</span> <span class="n">client</span> <span class="o">=</span> <span class="n">AdminClient</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="n">props</span><span class="o">))</span> <span class="o">{</span>
+            <span class="n">ListConsumerGroupOffsetsResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="na">listConsumerGroupOffsets</span><span class="o">(</span><span class="n">groupID</span><span class="o">);</span>
+            <span class="k">try</span> <span class="o">{</span>
+                <span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">OffsetAndMetadata</span><span class="o">&gt;</span> <span class="n">consumedOffsets</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="na">partitionsToOffsetAndMetadata</span><span class="o">().</span><span class="na">get</span><span class="o">(</span><span class="n">10</span><span class="o">,</span> <span class="n">TimeUnit</span><span class="o">.</span><span class="na">SECONDS</span><span class="o">);</span>
+                <span class="n">props</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">ConsumerConfig</span><span class="o">.</span><span class="na">ENABLE_AUTO_COMMIT_CONFIG</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span> <span class="c1">// 禁止自动提交位移
+</span><span class="c1"></span>                <span class="n">props</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">ConsumerConfig</span><span class="o">.</span><span class="na">GROUP_ID_CONFIG</span><span class="o">,</span> <span class="n">groupID</span><span class="o">);</span>
+                <span class="n">props</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">ConsumerConfig</span><span class="o">.</span><span class="na">KEY_DESERIALIZER_CLASS_CONFIG</span><span class="o">,</span> <span class="n">StringDeserializer</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+                <span class="n">props</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">ConsumerConfig</span><span class="o">.</span><span class="na">VALUE_DESERIALIZER_CLASS_CONFIG</span><span class="o">,</span> <span class="n">StringDeserializer</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+                <span class="k">try</span> <span class="o">(</span><span class="kd">final</span> <span class="n">KafkaConsumer</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">consumer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">KafkaConsumer</span><span class="o">&lt;&gt;(</span><span class="n">props</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="n">Map</span><span class="o">&lt;</span><span class="n">TopicPartition</span><span class="o">,</span> <span class="n">Long</span><span class="o">&gt;</span> <span class="n">endOffsets</span> <span class="o">=</span> <span class="n">consumer</span><span class="o">.</span><span class="na">endOffsets</span><span class="o">(</span><span class="n">consumedOffsets</span><span class="o">.</span><span class="na">keySet</span><span class="o">());</span>
+                    <span class="k">return</span> <span class="n">endOffsets</span><span class="o">.</span><span class="na">entrySet</span><span class="o">().</span><span class="na">stream</span><span class="o">().</span><span class="na">collect</span><span class="o">(</span><span class="n">Collectors</span><span class="o">.</span><span class="na">toMap</span><span class="o">(</span><span class="n">entry</span> <span class="o">-&gt;</span> <span class="n">entry</span><span class="o">.</span><span class="na">getKey</span><span class="o">(),</span>
+                            <span class="n">entry</span> <span class="o">-&gt;</span> <span class="n">entry</span><span class="o">.</span><span class="na">getValue</span><span class="o">()</span> <span class="o">-</span> <span class="n">consumedOffsets</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">entry</span><span class="o">.</span><span class="na">getKey</span><span class="o">()).</span><span class="na">offset</span><span class="o">()));</span>
+                <span class="o">}</span>
+            <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">InterruptedException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">Thread</span><span class="o">.</span><span class="na">currentThread</span><span class="o">().</span><span class="na">interrupt</span><span class="o">();</span>
+                <span class="c1">// 处理中断异常
+</span><span class="c1"></span>                <span class="c1">// ...
+</span><span class="c1"></span>                <span class="k">return</span> <span class="n">Collections</span><span class="o">.</span><span class="na">emptyMap</span><span class="o">();</span>
+            <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">ExecutionException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+                <span class="c1">// 处理ExecutionException
+</span><span class="c1"></span>                <span class="c1">// ...
+</span><span class="c1"></span>                <span class="k">return</span> <span class="n">Collections</span><span class="o">.</span><span class="na">emptyMap</span><span class="o">();</span>
+            <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">TimeoutException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="n">TimeoutException</span><span class="o">(</span><span class="s">&#34;Timed out when getting lag for consumer group &#34;</span> <span class="o">+</span> <span class="n">groupID</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="使用jmx-监控指标">使用JMX 监控指标</h2>
+<p>使用 JMX 指标集成到 Grafana 等监控框架中</p>
+<p>kafka 消费者 提供了名为 <code>kafka.consumer:type=consumer-fetch-manager-metrics,client-id=“{client-id}”</code> 指标</p>
+<p>其中有两个指标和消费进度有关：</p>
+<ul>
+<li>records-lag-max</li>
+<li>records-lead-min: 消费者位移和分区最旧消息的最小差值</li>
+</ul>
+<h1 id="第二十三讲-副本机制">第二十三讲 副本机制</h1>
+<h2 id="副本定义">副本定义</h2>
+<p>副本本质上是一个只能追加写消息的提交日志。</p>
+<p>这些副本分散保存在不同的 Broker 上， 从而能够对抗 Broker 宕机带来的数据不可用。</p>
+<p><img src="/image/kafka_in_action/23_1.webp" alt="replica1"></p>
+<h2 id="副本角色">副本角色</h2>
+<p><img src="/image/kafka_in_action/23_2.webp" alt="replica2"></p>
+<p>副本分为两类，Leader 和 Follower， 分区在创建时会选出一个 Leader 副本， 其余副本成为 Follower。</p>
+<p>所有的读写请求都由 Leader 处理，Follower 只是从 Leader 异步拉取消息从而实现同步</p>
+<p>当 Leader 挂掉后，ZooKeeper 能够监控到并开启新一轮的选举</p>
+<p>Follower 不对外提供服务的好处：</p>
+<ol>
+<li>方便实现 Read-your-writes 。如果从 Follower 读取消息，由于是异步的，可能看不到最新的消息</li>
+<li>方便实现单调读 Monotonic Reads 。如果从多个副本读消息，可能出现某条消息一会存在一会不存在</li>
+</ol>
+<h2 id="in-sync-replicas-isr">In-sync Replicas (ISR)</h2>
+<p>ISR 指与 Leader 同步的副本集合， Leader 本身也包括在 ISR 中</p>
+<p>通过 replica.lag.time.max.ms 参数指定 Follower 能够落后 Leader 的最长时间，
+在此范围内的 Follower 都在 ISR 中。</p>
+<h2 id="unclean-领导者选举">Unclean 领导者选举</h2>
+<p>当 ISR 为空时，只存在非同步副本。
+unclean.leader.election.enable 参数控制是否允许 Unclean 领导者选举</p>
+<p>开启的好处是使得 Leader 副本一直存在，提高可用性，但是可能会造成数据丢失，不建议开启。</p>
+<h1 id="相关链接">相关链接</h1>
 <h2 id="kafka管理和监控平台">kafka管理和监控平台</h2>
 <ul>
 <li><a href="https://github.com/smartloli/EFAK">A easy and high-performance monitoring system</a></li>
