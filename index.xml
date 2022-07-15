@@ -551,6 +551,27 @@ Consumer Lag 就等于 5 万。&lt;/p&gt;
 &lt;p&gt;当 ISR 为空时，只存在非同步副本。
 unclean.leader.election.enable 参数控制是否允许 Unclean 领导者选举&lt;/p&gt;
 &lt;p&gt;开启的好处是使得 Leader 副本一直存在，提高可用性，但是可能会造成数据丢失，不建议开启。&lt;/p&gt;
+&lt;h1 id=&#34;第二十四讲-请求处理过程&#34;&gt;第二十四讲 请求处理过程&lt;/h1&gt;
+&lt;p&gt;kafka 定义了一组请求协议，用于实现各种交互操作，&lt;code&gt;PRODUCE&lt;/code&gt;
+请求用于生产消息，&lt;code&gt;FETCH&lt;/code&gt;请求用于消费消息，&lt;code&gt;METADATA&lt;/code&gt;请求用于获取集群元数据&lt;/p&gt;
+&lt;h2 id=&#34;数据类请求&#34;&gt;数据类请求&lt;/h2&gt;
+&lt;p&gt;kafka 使用 Reactor 模式处理请求&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/kafka_in_action/24_1.webp&#34; alt=&#34;reactor&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Acceptor 线程用于分发请求，分发使用轮询模式&lt;/p&gt;
+&lt;p&gt;网络线程池来处理具体的请求，&lt;code&gt;num.network.threads&lt;/code&gt; 参数控制线程数量，默认为3。&lt;/p&gt;
+&lt;p&gt;网络线程拿到请求后，将请求放入一个共享队列中，IO 线程池负责从队列中
+取出请求，执行真正的处理。如果是 PRODUCE 请求，则将消息写入磁盘日志；
+如果是 FETCH 请求，则从磁盘或页缓存中读取消息。&lt;/p&gt;
+&lt;p&gt;IO 线程处理完请求后， 会将响应发送到网络线程池的响应队列中，然后由
+对应的网络线程将响应返回给客户端。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;num.io.threads&lt;/code&gt; 参数控制 IO 线程数量，默认为8。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/kafka_in_action/24_2.webp&#34; alt=&#34;io_thread_pool&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Purgatory 组件用来缓存延时请求。比如设置了 ack=all 的 PRODUCE 请求，
+需要等待所有 ISR 副本接收后才能返回。&lt;/p&gt;
+&lt;h2 id=&#34;控制类请求&#34;&gt;控制类请求&lt;/h2&gt;
+&lt;p&gt;控制类请求用来执行特定的 kafka 内部动作，比如负责更新 Leader/Follower/ISR 的
+&lt;code&gt;LeaderAndIsr&lt;/code&gt; 请求、负责勒令副本下线的 &lt;code&gt;StopReplica&lt;/code&gt; 请求。&lt;/p&gt;
+&lt;p&gt;kafka 将 控制类请求和数据类请求分类，分别创建了两套网络线程池和 IO 线程池&lt;/p&gt;
 &lt;h1 id=&#34;相关链接&#34;&gt;相关链接&lt;/h1&gt;
 &lt;h2 id=&#34;kafka管理和监控平台&#34;&gt;kafka管理和监控平台&lt;/h2&gt;
 &lt;ul&gt;
