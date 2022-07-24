@@ -6,7 +6,16 @@
     <description>Recent content in 计算机 on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 29 Jun 2022 08:20:51 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 24 Jul 2022 10:50:35 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>[笔记]k8s入门（更新中）</title>
+      <link>https://ppd0705.github.io/post/getting_started_with_k8s/</link>
+      <pubDate>Sun, 24 Jul 2022 10:50:35 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/getting_started_with_k8s/</guid>
+      <description>第零讲 环境准备 使用 virtualbox 安装 ubuntu 虚拟环境 个人采坑记录 共享粘贴板设置 配置了双向粘贴版 和 安装 apt install virtualbox-guest-utils 还是不行， 每次得手动启动 VBoxClient --clipborad. 通过 df -h 查看目录找到 挂载</description>
+    </item>
+    
     <item>
       <title>[笔记]Kafka 核心技术与实战 （更新中）</title>
       <link>https://ppd0705.github.io/post/kafka_in_action/</link>
@@ -176,15 +185,6 @@
       
       <guid>https://ppd0705.github.io/post/uvicorn_note/</guid>
       <description>简介 Unicorn是一个遵守ASGI协议的web服务器，使用asycnio框架，要求python3.6+，支持HTTP1.1和WebSock</description>
-    </item>
-    
-    <item>
-      <title>ASGI摘抄</title>
-      <link>https://ppd0705.github.io/post/asgi_note/</link>
-      <pubDate>Wed, 04 Mar 2020 08:25:38 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/asgi_note/</guid>
-      <description>Asynchronous Server Gateway Interface Onverview two components protocol server: terminates socket and translates them into connections and per-connection event messages application: lives in inside a server, is instantiated once per connection, and handles event messages as they happen difference between two components applications are instant objects that are fed events rather than simple callable, and must run as asyncio-compativle corountines two separate parts of a connection: a connection scope; events</description>
     </item>
     
   </channel>

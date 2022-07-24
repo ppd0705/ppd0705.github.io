@@ -6,10 +6,168 @@
     <description>Recent content on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 29 Jun 2022 08:20:51 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 24 Jul 2022 10:50:35 +0800</lastBuildDate>
     
         <atom:link href="https://ppd0705.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>[笔记]k8s入门（更新中）</title>
+      <link>https://ppd0705.github.io/post/getting_started_with_k8s/</link>
+      <pubDate>Sun, 24 Jul 2022 10:50:35 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/getting_started_with_k8s/</guid>
+      
+        <description>&lt;h1 id=&#34;第零讲-环境准备&#34;&gt;第零讲 环境准备&lt;/h1&gt;
+&lt;p&gt;使用 virtualbox 安装 ubuntu 虚拟环境&lt;/p&gt;
+&lt;h2 id=&#34;个人采坑记录&#34;&gt;个人采坑记录&lt;/h2&gt;
+&lt;h3 id=&#34;共享粘贴板设置&#34;&gt;共享粘贴板设置&lt;/h3&gt;
+&lt;p&gt;配置了双向粘贴版 和 安装 &lt;code&gt;apt install virtualbox-guest-utils&lt;/code&gt; 还是不行， 每次得手动启动 &lt;code&gt;VBoxClient --clipborad&lt;/code&gt;.
+通过 &lt;code&gt;df -h&lt;/code&gt; 查看目录找到 挂载的脚步 在 &lt;code&gt;/media/ubuntu/VBox_GAs_6.1.34/&lt;/code&gt; 目录
+后面卸载 virtualbox-guest-utils， 运行 &lt;code&gt;sh /media/ubuntu/VBox_GAs_6.1.34/VBoxLinuxAdditions.run&lt;/code&gt; 安装才可以&lt;/p&gt;
+&lt;h1 id=&#34;第一讲-初始容器&#34;&gt;第一讲 初始容器&lt;/h1&gt;
+&lt;p&gt;&lt;code&gt;sudo usermod -aG docker ${USER}&lt;/code&gt; 将当前用户加入 docker  组，然后重启， 否则需要 root 权限。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker version&lt;/code&gt;  查看客户端和服务端版本信息&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker info&lt;/code&gt; 查看服务端系统信息&lt;/p&gt;
+&lt;h1 id=&#34;第二讲-被隔离的进程&#34;&gt;第二讲 被隔离的进程&lt;/h1&gt;
+&lt;p&gt;容器就是一个特殊的隔离环境，它能够让进程只看到这个环境里的有限信息。&lt;/p&gt;
+&lt;p&gt;隔离实现基于 Linux 提供的三种技术：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;namcespace：资源隔离&lt;/li&gt;
+&lt;li&gt;cgroup：配额限制&lt;/li&gt;
+&lt;li&gt;chroot：文件系统根目录限制&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;第三讲-docker-实用命令&#34;&gt;第三讲 docker 实用命令&lt;/h1&gt;
+&lt;h2 id=&#34;常用镜像操作命令&#34;&gt;常用镜像操作命令&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/get_started_with_k8s/3_1.webp&#34; alt=&#34;image_cmd&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;常用容器操作命令&#34;&gt;常用容器操作命令&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/get_started_with_k8s/3_2.webp&#34; alt=&#34;container_cmd&#34;&gt;&lt;/p&gt;
+&lt;h1 id=&#34;第四讲-dockerfile-编写&#34;&gt;第四讲 Dockerfile 编写&lt;/h1&gt;
+&lt;p&gt;镜像是由许多只读层堆叠起来的&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/get_started_with_k8s/4_1.webp&#34; alt=&#34;image_layer&#34;&gt;&lt;/p&gt;
+&lt;p&gt;可以通过 &lt;code&gt;docker inspect&lt;/code&gt;命令查看镜像的分层信息&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/get_started_with_k8s/4_2.webp&#34; alt=&#34;image_layer2&#34;&gt;&lt;/p&gt;
+&lt;p&gt;示例&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;
+# Dockerfile
+# docker build -t ngx-app .
+# docker build -t ngx-app:1.0 .
+
+ARG IMAGE_BASE=&amp;#34;nginx&amp;#34;
+ARG IMAGE_TAG=&amp;#34;1.21-alpine&amp;#34;
+
+FROM ${IMAGE_BASE}:${IMAGE_TAG}
+
+COPY ./default.conf /etc/nginx/conf.d/
+
+RUN cd /usr/share/nginx/html \
+    &amp;amp;&amp;amp; echo &amp;#34;hello nginx&amp;#34; &amp;gt; a.txt
+
+EXPOSE 8081 8082 8083
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;第五讲 镜像仓库&lt;/p&gt;
+&lt;p&gt;镜像仓库 registry 是提供镜像服务的网站，如上传、下载镜像等&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://hub.docker.com&#34;&gt;Docker Hub&lt;/a&gt; 是当前最大的镜像仓库，上面有官方镜像、认证镜像、非官方镜像等&lt;/p&gt;
+&lt;p&gt;名字规则： user/image:tag&lt;/p&gt;
+&lt;p&gt;离线环境可以使用归档命令来共享&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;docker save ngx-app:latest -o ngx.tar
+
+docker load -i ngx.tar
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h1 id=&#34;第六讲-容器如何如外接互通&#34;&gt;第六讲 容器如何如外接互通&lt;/h1&gt;
+&lt;h2 id=&#34;如何拷贝容器内数据&#34;&gt;如何拷贝容器内数据&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;宿主机到容器&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;docker cp a.txt 062:/tmp
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;容器到宿主机&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;docker cp 062:/tmp/a.txt ./b.txt
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;如何共享文件目录&#34;&gt;如何共享文件目录&lt;/h2&gt;
+&lt;p&gt;volume 挂载&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;docker run -v host_path:container_path image:tag
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;如何网络互通&#34;&gt;如何网络互通&lt;/h2&gt;
+&lt;h3 id=&#34;host-模式&#34;&gt;host 模式&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;docker run -d --rm --net&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;host  nginx:alpine
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;对比 &lt;code&gt;ip addr&lt;/code&gt;命令在宿主机和容器的结果，可以发现是相同的&lt;/p&gt;
+&lt;h3 id=&#34;bridge-模式&#34;&gt;bridge 模式&lt;/h3&gt;
+&lt;p&gt;桥接模式类似现实世界的交换机，不过是由软件虚拟出来的，
+容器和宿主机通过虚拟网卡接入网桥 docker0，收发网络包&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/get_started_with_k8s/6_1.webp&#34; alt=&#34;bridge_docker0&#34;&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;docker run -d --rm --net&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;bridge  nginx:alpine
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;使用 &lt;code&gt;-p host_port:container_port&lt;/code&gt; 映射宿主机和容器端口&lt;/p&gt;
+&lt;h1 id=&#34;链接&#34;&gt;链接&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://time.geekbang.org/column/intro/100114501?tab=catalog&#34;&gt;极客时间课程&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+      
+    </item>
     
     <item>
       <title>[笔记]Kafka 核心技术与实战 （更新中）</title>
@@ -572,6 +730,7 @@ unclean.leader.election.enable 参数控制是否允许 Unclean 领导者选举&
 &lt;p&gt;控制类请求用来执行特定的 kafka 内部动作，比如负责更新 Leader/Follower/ISR 的
 &lt;code&gt;LeaderAndIsr&lt;/code&gt; 请求、负责勒令副本下线的 &lt;code&gt;StopReplica&lt;/code&gt; 请求。&lt;/p&gt;
 &lt;p&gt;kafka 将 控制类请求和数据类请求分类，分别创建了两套网络线程池和 IO 线程池&lt;/p&gt;
+&lt;h1 id=&#34;第二十五讲-重平衡过程&#34;&gt;第二十五讲 重平衡过程&lt;/h1&gt;
 &lt;h1 id=&#34;相关链接&#34;&gt;相关链接&lt;/h1&gt;
 &lt;h2 id=&#34;kafka管理和监控平台&#34;&gt;kafka管理和监控平台&lt;/h2&gt;
 &lt;ul&gt;
@@ -27996,226 +28155,6 @@ do {
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-</description>
-      
-    </item>
-    
-    <item>
-      <title>[笔记]GoogleSRE</title>
-      <link>https://ppd0705.github.io/post/google_sre/</link>
-      <pubDate>Sun, 05 Jul 2020 22:24:16 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/google_sre/</guid>
-      
-        <description>&lt;h2 id=&#34;第一部分&#34;&gt;第一部分&lt;/h2&gt;
-&lt;h3 id=&#34;第一章&#34;&gt;第一章&lt;/h3&gt;
-&lt;p&gt;SRE(site reliability engineering): 设计和研发大型、分不出计算机系统。有时和研发团队工作，其他时候开发基础组件，推广这些基础组件在多个项目中复用。&lt;/p&gt;
-&lt;p&gt;SRE关注的焦点在可靠性（reliability）,可靠性指的是在指定环境下成功执行某个功能指定时间的概率。&lt;/p&gt;
-&lt;p&gt;SRE花50%时间在真实的开发工作上。这样既保障了SRE有足够的运维经验，也有足够的时间和精力去进行真正有创造性的、自主的研发工作。&lt;/p&gt;
-&lt;p&gt;SRE职责通常有：可用性改进，延迟优化，性能优化，效率优化，变更管理，监控，容量规划和管理&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;监控系统： 警报信息应该由系统自动分析，并只有三类输出&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;紧急警报alert: 收到警报的人员需要立即执行某种操作&lt;/li&gt;
-&lt;li&gt;工单ticket: 收到ticker的人员可以在几天内执行某种操作&lt;/li&gt;
-&lt;li&gt;日志logging: 日志用于调试和事后分析&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;变更管理：可以自动化的完成以下几个项目&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;渐进式发布机制&lt;/li&gt;
-&lt;li&gt;迅速而准确地检测到问题的发生&lt;/li&gt;
-&lt;li&gt;出现问题时，安全迅速的回滚&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id=&#34;第三章-拥抱风险&#34;&gt;第三章 拥抱风险&lt;/h3&gt;
-&lt;p&gt;服务可用性=成功请求数/总请求数&lt;/p&gt;
-&lt;p&gt;由于产品研发和SRE基于不同的指标进行绩效评估，所以组员共同定义一个基于SLO的季度错误预算，通常做法如下：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;产品管理层顶一个一个SLO, 确定一项服务在每个季度预计的正常运行时间&lt;/li&gt;
-&lt;li&gt;实际在线时间由一个中立的第三方-监控系统来预算&lt;/li&gt;
-&lt;li&gt;两者的差值就是这个季度剩余的错误预算&lt;/li&gt;
-&lt;li&gt;只有仍有剩余的错误预算就可以发布新版本&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;使用错误预算的好处&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;可以通过这个调节发布新版本的速度， 产品开发指导预算还剩多少，可以控制自己的风险&lt;/li&gt;
-&lt;li&gt;SRE可以有权停止新版本的发布&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id=&#34;第四章-服务质量目标&#34;&gt;第四章 服务质量目标&lt;/h3&gt;
-&lt;p&gt;SLI(service level indicator):服务质量指标， 如响应时间，准确性&lt;/p&gt;
-&lt;p&gt;SLO(service levelo objective):服务质量目标，即SLI的预期值，如响应时间10ms&lt;/p&gt;
-&lt;p&gt;SLA(service level agreement):服务质量协议,包含SLI/SLO等一系列明确或不明确的协议， 描述了达到或没有达到SLO之后的明确后果&lt;/p&gt;
-&lt;h4 id=&#34;sli&#34;&gt;SLI&lt;/h4&gt;
-&lt;p&gt;基于服务性质的不同，会选择不同的指标，通常四五个具有代表性的指标就可以对系统监控程度做出评估和关注&lt;/p&gt;
-&lt;p&gt;标准化一些常见的SLI&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;汇总间隔： 每分钟一次&lt;/li&gt;
-&lt;li&gt;范围： 集群中全部任务&lt;/li&gt;
-&lt;li&gt;度量频率： 每10s一次&lt;/li&gt;
-&lt;li&gt;获取：黑盒监控任务通过HTTP GET请求获取&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;slo&#34;&gt;SLO&lt;/h4&gt;
-&lt;p&gt;SLO应该具体指出如何被度量以及有效条件&lt;/p&gt;
-&lt;p&gt;SLO可以在系统运维时提供决策&lt;/p&gt;
-&lt;p&gt;SLO 也可以建立用户预期，避免用户对服务过度依赖（google chubby服务会在有错误预算的时候有一安排一次可控的故障，找出对其不合理依赖的上游服务）&lt;/p&gt;
-&lt;h3 id=&#34;第五章-减少琐事&#34;&gt;第五章 减少琐事&lt;/h3&gt;
-&lt;h4 id=&#34;何为琐事&#34;&gt;何为琐事&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;手动性的，重复性的，可以被自动化的&lt;/li&gt;
-&lt;li&gt;突然出现的、应对性的工作，而非主动安排的&lt;/li&gt;
-&lt;li&gt;没有持久价值的&lt;/li&gt;
-&lt;li&gt;与服务规模线性增长的&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;何为工程工作&#34;&gt;何为工程工作&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;创新的、需要主管判断的&lt;/li&gt;
-&lt;li&gt;着重通过设计来解决问题&lt;/li&gt;
-&lt;li&gt;符合长期战略的&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id=&#34;第六章-分布式系统的监控&#34;&gt;第六章 分布式系统的监控&lt;/h3&gt;
-&lt;h4 id=&#34;为何监控&#34;&gt;为何监控&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;报警&lt;/li&gt;
-&lt;li&gt;不同条件的比较（不同时间范围比较）&lt;/li&gt;
-&lt;li&gt;分析长期趋势&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;4个监控黄金指标&#34;&gt;4个监控黄金指标&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;延迟:服务处理某个请求所需要的时间，区分成功请求和失败请求&lt;/li&gt;
-&lt;li&gt;流量:对于web服务来说同时是每秒HTTP请求数量，对于流媒体系统来说科目是I/O速率&lt;/li&gt;
-&lt;li&gt;错误:请求失败的速率&lt;/li&gt;
-&lt;li&gt;饱和度(saturation):服务容量有多满。如内存、I/O&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;第二部分&#34;&gt;第二部分&lt;/h2&gt;
-&lt;p&gt;SRE的终极责任是确保服务可以正常运转&lt;/p&gt;
-&lt;h3 id=&#34;第10章-基于时间序列数据进行有效报警&#34;&gt;第10章 基于时间序列数据进行有效报警&lt;/h3&gt;
-&lt;p&gt;监控系统既要从服务质量目标层面进行报警，也应该保持足够的粒度，可以追踪到具体某个组件&lt;/p&gt;
-&lt;p&gt;应用软件保留HTTP接口提供全部监控变量值，Borgmon安装配置定时抓取，将数据保存在内存中，并定时落盘。&lt;/p&gt;
-&lt;p&gt;这些数据都是类似(timestamp, value)格式存储在一个按时间排序的链表中，该链表称为time series&lt;/p&gt;
-&lt;p&gt;当Borgmon计算完成一条报警规则结果为true时会产生一条警报&lt;/p&gt;
-&lt;p&gt;每条报警规则都指定了一个最小持续时间值，只有当警报持续时间超过这个值得时间才会发送警报，这个周期至少被设置为两个计算周期。&lt;/p&gt;
-&lt;p&gt;Borgmon会将报警信息发送到报警管理服务Altermanager，其负责将警报发送到合适的渠道，另外也管理&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;报警信息的去重&lt;/li&gt;
-&lt;li&gt;根据保荐信息将多个警报信息合并&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;探针程序是一个检查检查测试模型和一些高级time-series创建功能的混合体，既可以探测到前端，也可以探测到负载均衡后面的服务&lt;/p&gt;
-&lt;h3 id=&#34;第11章-on-call轮值&#34;&gt;第11章 on-call轮值&lt;/h3&gt;
-&lt;p&gt;on-call工程师可以承诺分钟级别执行生产系统的维护需求&lt;/p&gt;
-&lt;p&gt;SRE不会超过25%的时间用来on-call，另外50%花在软件工程上，其余25%用来处理其余运维工作&lt;/p&gt;
-&lt;h3 id=&#34;第12章-有效的故障排查手段&#34;&gt;第12章 有效的故障排查手段&lt;/h3&gt;
-&lt;p&gt;故障排查依赖于两个要素&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;对于通用故障排查过程的理解&lt;/li&gt;
-&lt;li&gt;对于发生故障的系统的足够了解&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;对于排查的过程我们定义为反复采用&lt;code&gt;假设-排除&lt;/code&gt;的过程&lt;/p&gt;
-&lt;p&gt;优化排查过程&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;服务增加可观察项，如增加白盒测试指标，利用结构化的日志&lt;/li&gt;
-&lt;li&gt;利用成熟的观察性好的组件来设计系统&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id=&#34;第14章-紧急事件管理&#34;&gt;第14章 紧急事件管理&lt;/h3&gt;
-&lt;p&gt;明确职责可以让每个人更加独立自主解决问题&lt;/p&gt;
-&lt;p&gt;通常分为4种角色&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;incident command事故总控: 负责组建事务处理团队，按优先级分配任务&lt;/li&gt;
-&lt;li&gt;operation work 事务处理团队：唯一能对事故系统做修改的团队&lt;/li&gt;
-&lt;li&gt;communication 发言人： 公众发言人，负责向其他人发送周期性通知，及时更新处理状态&lt;/li&gt;
-&lt;li&gt;planning 规划负责人：为事务处理团队提供支持，如填写Bug报告记录系统，安排职责交接记录&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;对外宣布事故的标准，满足如下一条应该实及时宣布&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;是否需要引入第二个团队&lt;/li&gt;
-&lt;li&gt;是否影响到最终用户&lt;/li&gt;
-&lt;li&gt;分析一小时后仍未得到解决&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id=&#34;第15章-事后总结从失败中学习&#34;&gt;第15章 事后总结：从失败中学习&lt;/h3&gt;
-&lt;p&gt;事后总结&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;是一个全公司的学习机会&lt;/li&gt;
-&lt;li&gt;对事不对人&lt;/li&gt;
-&lt;li&gt;假设参与事件的人在当时拥有的信息下做了正确的举动&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;事后总结是一个团队协作的过程，大家都可以来完善。&lt;/p&gt;
-&lt;p&gt;事后总结包括正式的评审和发布过程，评审条件包括&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;关键的灾难数据是否被收集和保存&lt;/li&gt;
-&lt;li&gt;影响评估是否完整&lt;/li&gt;
-&lt;li&gt;根源问题调查是否深入&lt;/li&gt;
-&lt;li&gt;是否及时解决了根源问题，排期优先级是否合理&lt;/li&gt;
-&lt;li&gt;事故处理过程是否共享给了所有相关部门&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;建立事后总结文化&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;每周一次的本周最佳事后总结&lt;/li&gt;
-&lt;li&gt;组织事后阅读俱乐部，共同讨论一篇有趣或有影响力的事后总结&lt;/li&gt;
-&lt;li&gt;再现事故现场，故障处理分角色扮演&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;事后总结纳入个人绩效考核以及管理层积极参与和认可，可加强事后总结机制&lt;/p&gt;
-&lt;p&gt; &lt;/p&gt;
-&lt;h3 id=&#34;第23章-利用分布式共识来提高可靠性&#34;&gt;第23章 利用分布式共识来提高可靠性&lt;/h3&gt;
-&lt;h4 id=&#34;cap理论&#34;&gt;CAP理论&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;Consistency: 每次读取要么获得最新的数据，要么获得错误&lt;/li&gt;
-&lt;li&gt;Availability: 每次都能获得一个非错误响应，但不保证返回的最新的数据&lt;/li&gt;
-&lt;li&gt;Partition tolerance: 尽管任意数量的消息被节点间的网络丢失或延迟，系统任继续运行&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h5 id=&#34;ca不能容忍网络错误或节点错误需要非常严格的全体一致的协议如2-phase-commit&#34;&gt;CA：不能容忍网络错误或节点错误，需要非常严格的全体一致的协议，如2 phase commit&lt;/h5&gt;
-&lt;h5 id=&#34;cp只需要保证大多数节点的一致性协议少数落后的节点会变成不可用状态-如paxos算法&#34;&gt;CP：只需要保证大多数节点的一致性协议，少数落后的节点会变成不可用状态, 如Paxos算法&lt;/h5&gt;
-&lt;h5 id=&#34;ap这样的系统不能达成一致性会出现数据冲突&#34;&gt;AP：这样的系统不能达成一致性，会出现数据冲突&lt;/h5&gt;
-&lt;h4 id=&#34;常见的分布式共识问题&#34;&gt;常见的分布式共识问题&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;领头人选举&lt;/li&gt;
-&lt;li&gt;获取小组成员信息&lt;/li&gt;
-&lt;li&gt;分布式锁和租约机制&lt;/li&gt;
-&lt;li&gt;分布式队列&lt;/li&gt;
-&lt;li&gt;以及任何需要在多个进程共同维护一致的关键状态的机制&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;paxos概要&#34;&gt;Paxos概要&lt;/h4&gt;
-&lt;p&gt;Paxos基于提案(proposal)的,每个提案都对应一个序号，保证了系统的所有操作严格有序，
-如果提案被大多数节点接受即成功，反之失败&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;第一阶段： 提案者proposer发送一个序列化给数个接受者acceptor,每个acceptor尽在
-没有接受过带有更高序列号的提案的情况下接受这个提案&lt;/li&gt;
-&lt;li&gt;第二阶段: proposer接收到大多数节点的同意回复时，便发送一个带有值得提交信息commit message来尝试提交这个提案&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;复制状态机replicated-state-machinersm&#34;&gt;复制状态机replicated state machine(RSM)&lt;/h4&gt;
-&lt;p&gt;RSM是一个能在多个进程用同样顺序执行同样一组操作的系统&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;操作按共识算法来全局排序&lt;/li&gt;
-&lt;li&gt;使用关东窗口协议sliding window protocol来同步成员之间的状态消息&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;分布式共识系统的部署&#34;&gt;分布式共识系统的部署&lt;/h4&gt;
-&lt;p&gt;副本的数量： 一组2f+1副本可同时承受f个副本失败而继续运行&lt;/p&gt;
-&lt;p&gt;因为慢的副本也需要参与冲裁过程所以系统能够承受的失败和落后的副本数量越多，那么整体的系统
-性能也就越好&lt;/p&gt;
-&lt;p&gt;副本之间的距离增加，网络往返时间也会增加，系统承受失败的程度也会增加(网络同时出问题的概率会变小)&lt;/p&gt;
-&lt;p&gt;向一个采取大多数法定仲裁  追过程系统增加新副本可能会降低系统的可用性&lt;/p&gt;
-&lt;h3 id=&#34;第24章-分布式周期任务系统&#34;&gt;第24章 分布式周期任务系统&lt;/h3&gt;
-&lt;p&gt;为了提升Cron的可靠性，我们将实际进程和物理机器分开，运行一个服务，仅通过知名该服务的资源要求以及英国运行的数据中心即可。
-运行一个任务等于想数据中心分发器发送一个RPC&lt;/p&gt;
-&lt;p&gt;采用Paxos共识算法保证多个副本的状态一致，使用一个单独的领头人副本，仅该副本可以修改共享状态和启动Cron任务&lt;/p&gt;
-&lt;p&gt;任务启动前和启动后均会同步通知到其他的副本，这样每个副本知道任务的启动状态&lt;/p&gt;
-&lt;p&gt;任务的启动过程中可能会发生多次RPC调用，为了能够判断RPC是否成功，需要满足其一：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;所有需要在选举过后继续的外部操作必须是幂等的，这样可在选举过后重新进行该操作&lt;/li&gt;
-&lt;li&gt;可以通过查询外部系统确定某项操作是否进行成功&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id=&#34;第28章-迅速培养sre加入on-call&#34;&gt;第28章 迅速培养SRE加入on-call&lt;/h3&gt;
-&lt;h4 id=&#34;培训初期着重于体系&#34;&gt;培训初期：着重于体系&lt;/h4&gt;
-&lt;p&gt;先培训经常会用到的、系统的抽象概念，可以考虑将系统按功能进行分组&lt;/p&gt;
-&lt;p&gt;提供一个学习检查列表：列出最有用的文档以及一些服务的基本知识，并提供一些简单的问题以便自检&lt;/p&gt;
-&lt;p&gt;分配一个初始项目，给他们提供足够多的基础知识，同时让他们能为服务做一点小的但有意义的贡献&lt;/p&gt;
-&lt;h4 id=&#34;培养方向功能的能力和随机应变能力&#34;&gt;培养方向功能的能力和随机应变能力&lt;/h4&gt;
-&lt;p&gt;通过对系统工作原理的基本理解、同时愿意深入研究调试工具、RPC框架，来理解系统中数据流动&lt;/p&gt;
-&lt;h3 id=&#34;第29章-处理中断性任务&#34;&gt;第29章 处理中断性任务&lt;/h3&gt;
-&lt;p&gt;决策：如何能用最低人力成本来满足最低响应时间&lt;/p&gt;
-&lt;p&gt;让SRE尽可能的待在流状态(flow state)里, 这种状态可以提升生产力、创造力&lt;/p&gt;
 </description>
       
     </item>
