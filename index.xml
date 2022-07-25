@@ -161,6 +161,59 @@ docker load -i ngx.tar
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;使用 &lt;code&gt;-p host_port:container_port&lt;/code&gt; 映射宿主机和容器端口&lt;/p&gt;
+&lt;h1 id=&#34;第九讲-本机搭建-k8s-环境&#34;&gt;第九讲 本机搭建 k8s 环境&lt;/h1&gt;
+&lt;p&gt;使用 &lt;a href=&#34;https://kubernetes.io/zh-cn/docs/tutorials/hello-minikube/&#34;&gt;minikube&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;启动 minikube&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;minikube start --kubernetes-version&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;v1.23.3 --image-mirror-country&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;cn
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;启动容器服务&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;nb&#34;&gt;alias&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;kubectl&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;minikube kubectl --&amp;#34;&lt;/span&gt;
+
+kubectl run ngx --image&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;nginx:alpine
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h1 id=&#34;第十讲-k8s-工作机制&#34;&gt;第十讲 k8s 工作机制&lt;/h1&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/get_started_with_k8s/10_1.webp&#34; alt=&#34;k8s_architecture&#34;&gt;&lt;/p&gt;
+&lt;p&gt;k8s 有许多模块组成，这些模块可分为组件（component）和插件（addon）两类&lt;/p&gt;
+&lt;h2 id=&#34;master-组件&#34;&gt;master 组件&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/get_started_with_k8s/10_2.webp&#34; alt=&#34;master&#34;&gt;&lt;/p&gt;
+&lt;h3 id=&#34;apiserver&#34;&gt;apiserver&lt;/h3&gt;
+&lt;p&gt;apiserver 是 k8s 系统唯一入口，对外提供了一些列 RESTful API，其他组件
+只能和它直接通信， 相当于联络员&lt;/p&gt;
+&lt;h3 id=&#34;etcd&#34;&gt;etcd&lt;/h3&gt;
+&lt;p&gt;etcd 用来持久化存储系统里各种资源对象和状态，相当于配置管理员。
+其他组件想读写 etcd 的数据必须通过 apiserver&lt;/p&gt;
+&lt;h3 id=&#34;scheduler&#34;&gt;scheduler&lt;/h3&gt;
+&lt;p&gt;scheduler  负责容器的编排工作，检查阶段的资源状态，把 pod 调度到 最合适的节点运行，
+相当于部署人员。&lt;/p&gt;
+&lt;h3 id=&#34;controller-manager&#34;&gt;controller-manager&lt;/h3&gt;
+&lt;p&gt;controller-manager 负责维护容器和节点等资源状态，实现孤战检测、服务迁移、应用伸缩等功能，
+相当于监控运维人员。&lt;/p&gt;
+&lt;h2 id=&#34;node-组件&#34;&gt;Node 组件&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/get_started_with_k8s/10_3.webp&#34; alt=&#34;node&#34;&gt;&lt;/p&gt;
+&lt;h3 id=&#34;kubelet&#34;&gt;kubelet&lt;/h3&gt;
+&lt;p&gt;kubelet 负责管理 Node 相关绝大部分操作， Node 上只有它与 apiserver 通信，
+实现状态报告、命令下发、启停容器等功能，相当于小管家。&lt;/p&gt;
+&lt;p&gt;kubelet 因为要管理整个节点，容器化会限制它的能力，所有运行在物理机上。&lt;/p&gt;
+&lt;h3 id=&#34;kube-proxy&#34;&gt;kube-proxy&lt;/h3&gt;
+&lt;p&gt;kube-proxy 是 Node 的网络代理，转发 TCP/UDP 数据包，相当于专职小邮差&lt;/p&gt;
+&lt;h3 id=&#34;container-runtime&#34;&gt;container-runtime&lt;/h3&gt;
+&lt;h2 id=&#34;插件&#34;&gt;插件&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/get_started_with_k8s/10_4.webp&#34; alt=&#34;addons&#34;&gt;&lt;/p&gt;
+&lt;p&gt;比较重要的两个插件：DNS、Dashboard&lt;/p&gt;
 &lt;h1 id=&#34;链接&#34;&gt;链接&lt;/h1&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://time.geekbang.org/column/intro/100114501?tab=catalog&#34;&gt;极客时间课程&lt;/a&gt;&lt;/li&gt;

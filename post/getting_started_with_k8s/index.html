@@ -64,12 +64,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://ppd0705.github.io/post/getting_started_with_k8s/" /><meta property="article:section" content="post" />
 <meta property="article:published_time" content="2022-07-24T10:50:35+08:00" />
-<meta property="article:modified_time" content="2022-07-24T18:00:35+08:00" />
+<meta property="article:modified_time" content="2022-07-25T21:50:35+08:00" />
 
 <meta itemprop="name" content="[笔记]k8s入门（更新中）">
 <meta itemprop="description" content="第零讲 环境准备 使用 virtualbox 安装 ubuntu 虚拟环境 个人采坑记录 共享粘贴板设置 配置了双向粘贴版 和 安装 apt install virtualbox-guest-utils 还是不行， 每次得手动启动 VBoxClient --clipborad. 通过 df -h 查看目录找到 挂载"><meta itemprop="datePublished" content="2022-07-24T10:50:35+08:00" />
-<meta itemprop="dateModified" content="2022-07-24T18:00:35+08:00" />
-<meta itemprop="wordCount" content="685">
+<meta itemprop="dateModified" content="2022-07-25T21:50:35+08:00" />
+<meta itemprop="wordCount" content="1095">
 <meta itemprop="keywords" content="k8s," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]k8s入门（更新中）"/>
 <meta name="twitter:description" content="第零讲 环境准备 使用 virtualbox 安装 ubuntu 虚拟环境 个人采坑记录 共享粘贴板设置 配置了双向粘贴版 和 安装 apt install virtualbox-guest-utils 还是不行， 每次得手动启动 VBoxClient --clipborad. 通过 df -h 查看目录找到 挂载"/>
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 685 words </span>
-          <span class="more-meta"> 2 min read </span>
+        <span class="more-meta"> 1095 words </span>
+          <span class="more-meta"> 3 min read </span>
 
         
         
@@ -352,6 +352,27 @@
             <li><a href="#bridge-模式">bridge 模式</a></li>
           </ul>
         </li>
+      </ul>
+    </li>
+    <li><a href="#第九讲-本机搭建-k8s-环境">第九讲 本机搭建 k8s 环境</a></li>
+    <li><a href="#第十讲-k8s-工作机制">第十讲 k8s 工作机制</a>
+      <ul>
+        <li><a href="#master-组件">master 组件</a>
+          <ul>
+            <li><a href="#apiserver">apiserver</a></li>
+            <li><a href="#etcd">etcd</a></li>
+            <li><a href="#scheduler">scheduler</a></li>
+            <li><a href="#controller-manager">controller-manager</a></li>
+          </ul>
+        </li>
+        <li><a href="#node-组件">Node 组件</a>
+          <ul>
+            <li><a href="#kubelet">kubelet</a></li>
+            <li><a href="#kube-proxy">kube-proxy</a></li>
+            <li><a href="#container-runtime">container-runtime</a></li>
+          </ul>
+        </li>
+        <li><a href="#插件">插件</a></li>
       </ul>
     </li>
     <li><a href="#链接">链接</a></li>
@@ -505,6 +526,59 @@ docker load -i ngx.tar
 </code></pre></td></tr></table>
 </div>
 </div><p>使用 <code>-p host_port:container_port</code> 映射宿主机和容器端口</p>
+<h1 id="第九讲-本机搭建-k8s-环境">第九讲 本机搭建 k8s 环境</h1>
+<p>使用 <a href="https://kubernetes.io/zh-cn/docs/tutorials/hello-minikube/">minikube</a></p>
+<p>启动 minikube</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">minikube start --kubernetes-version<span class="o">=</span>v1.23.3 --image-mirror-country<span class="o">=</span>cn
+</code></pre></td></tr></table>
+</div>
+</div><p>启动容器服务</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">alias</span> <span class="nv">kubectl</span><span class="o">=</span><span class="s2">&#34;minikube kubectl --&#34;</span>
+
+kubectl run ngx --image<span class="o">=</span>nginx:alpine
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="第十讲-k8s-工作机制">第十讲 k8s 工作机制</h1>
+<p><img src="/image/get_started_with_k8s/10_1.webp" alt="k8s_architecture"></p>
+<p>k8s 有许多模块组成，这些模块可分为组件（component）和插件（addon）两类</p>
+<h2 id="master-组件">master 组件</h2>
+<p><img src="/image/get_started_with_k8s/10_2.webp" alt="master"></p>
+<h3 id="apiserver">apiserver</h3>
+<p>apiserver 是 k8s 系统唯一入口，对外提供了一些列 RESTful API，其他组件
+只能和它直接通信， 相当于联络员</p>
+<h3 id="etcd">etcd</h3>
+<p>etcd 用来持久化存储系统里各种资源对象和状态，相当于配置管理员。
+其他组件想读写 etcd 的数据必须通过 apiserver</p>
+<h3 id="scheduler">scheduler</h3>
+<p>scheduler  负责容器的编排工作，检查阶段的资源状态，把 pod 调度到 最合适的节点运行，
+相当于部署人员。</p>
+<h3 id="controller-manager">controller-manager</h3>
+<p>controller-manager 负责维护容器和节点等资源状态，实现孤战检测、服务迁移、应用伸缩等功能，
+相当于监控运维人员。</p>
+<h2 id="node-组件">Node 组件</h2>
+<p><img src="/image/get_started_with_k8s/10_3.webp" alt="node"></p>
+<h3 id="kubelet">kubelet</h3>
+<p>kubelet 负责管理 Node 相关绝大部分操作， Node 上只有它与 apiserver 通信，
+实现状态报告、命令下发、启停容器等功能，相当于小管家。</p>
+<p>kubelet 因为要管理整个节点，容器化会限制它的能力，所有运行在物理机上。</p>
+<h3 id="kube-proxy">kube-proxy</h3>
+<p>kube-proxy 是 Node 的网络代理，转发 TCP/UDP 数据包，相当于专职小邮差</p>
+<h3 id="container-runtime">container-runtime</h3>
+<h2 id="插件">插件</h2>
+<p><img src="/image/get_started_with_k8s/10_4.webp" alt="addons"></p>
+<p>比较重要的两个插件：DNS、Dashboard</p>
 <h1 id="链接">链接</h1>
 <ul>
 <li><a href="https://time.geekbang.org/column/intro/100114501?tab=catalog">极客时间课程</a></li>
@@ -522,7 +596,7 @@ docker load -i ngx.tar
   <p class="copyright-item">
     <span class="item-title">LastMod</span>
     <span class="item-content">
-      2022-07-24
+      2022-07-25
       
     </span>
   </p>
