@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]k8s入门（更新中）">
 <meta itemprop="description" content="第零讲 环境准备 使用 virtualbox 安装 ubuntu 虚拟环境 个人采坑记录 共享粘贴板设置 配置了双向粘贴版 和 安装 apt install virtualbox-guest-utils 还是不行， 每次得手动启动 VBoxClient --clipborad. 通过 df -h 查看目录找到 挂载"><meta itemprop="datePublished" content="2022-07-24T10:50:35+08:00" />
 <meta itemprop="dateModified" content="2022-07-25T21:50:35+08:00" />
-<meta itemprop="wordCount" content="1095">
+<meta itemprop="wordCount" content="1375">
 <meta itemprop="keywords" content="k8s," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]k8s入门（更新中）"/>
 <meta name="twitter:description" content="第零讲 环境准备 使用 virtualbox 安装 ubuntu 虚拟环境 个人采坑记录 共享粘贴板设置 配置了双向粘贴版 和 安装 apt install virtualbox-guest-utils 还是不行， 每次得手动启动 VBoxClient --clipborad. 通过 df -h 查看目录找到 挂载"/>
@@ -302,7 +302,7 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 1095 words </span>
+        <span class="more-meta"> 1375 words </span>
           <span class="more-meta"> 3 min read </span>
 
         
@@ -373,6 +373,14 @@
           </ul>
         </li>
         <li><a href="#插件">插件</a></li>
+      </ul>
+    </li>
+    <li><a href="#第十一讲-api">第十一讲 API</a>
+      <ul>
+        <li><a href="#yaml">YAML</a></li>
+        <li><a href="#api-对象">API 对象</a></li>
+        <li><a href="#如何描述-api-对象">如何描述 API 对象</a></li>
+        <li><a href="#编写-yaml-技巧">编写 yaml 技巧</a></li>
       </ul>
     </li>
     <li><a href="#链接">链接</a></li>
@@ -579,6 +587,75 @@ kubectl run ngx --image<span class="o">=</span>nginx:alpine
 <h2 id="插件">插件</h2>
 <p><img src="/image/get_started_with_k8s/10_4.webp" alt="addons"></p>
 <p>比较重要的两个插件：DNS、Dashboard</p>
+<h1 id="第十一讲-api">第十一讲 API</h1>
+<h2 id="yaml">YAML</h2>
+<p>k8s 使用 yaml 声明式（declarative）地描述资源</p>
+<p><img src="/image/get_started_with_k8s/11_1.webp" alt="yaml"></p>
+<h2 id="api-对象">API 对象</h2>
+<p>k8s 在理论层面抽象出了许多个概念，用来描述系统的管理运维工作，这些概念叫做
+&ldquo;API 对象&rdquo;。</p>
+<p>可以使用<code>kubectl api-resources</code> 查看对象列表</p>
+<p><img src="/image/get_started_with_k8s/11_2.webp" alt="api_resources"></p>
+<h2 id="如何描述-api-对象">如何描述 API 对象</h2>
+<p>命令式启动pod <code>kubectl run ngx --image=nginx:alpine</code> 可以改写成如下声明式配置</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Pod</span><span class="w">
+</span><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w"> 
+</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">ngx-pod</span><span class="w">
+</span><span class="w">  </span><span class="nt">labels</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="nt">env</span><span class="p">:</span><span class="w"> </span><span class="l">demo</span><span class="w">
+</span><span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l">chrono</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">containers</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span>- <span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">nginx:alpine</span><span class="w">
+</span><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">ngx</span><span class="w">
+</span><span class="w">      </span><span class="nt">ports</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span>- <span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="m">80</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>可以将 配置类比成 HTTP 报文，分为两部分</p>
+<ul>
+<li>header: apiVersion, kind, metadata</li>
+<li>body: spec</li>
+</ul>
+<p>可以使用如下命令创建和删除资源</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">kubectl apply -f ngx-pod.yaml
+
+kubectl delete -f ngx-pod.yaml
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="编写-yaml-技巧">编写 yaml 技巧</h2>
+<ol>
+<li>使用<code>kubectl api-resources</code>查看对应的 API 版本 和 类型</li>
+<li>使用<code>kubectl explain</code> 查看对应资源的详细说明</li>
+<li>使用<code>--dry-run=client -o yaml</code> 生成 yaml 文件</li>
+</ol>
 <h1 id="链接">链接</h1>
 <ul>
 <li><a href="https://time.geekbang.org/column/intro/100114501?tab=catalog">极客时间课程</a></li>
