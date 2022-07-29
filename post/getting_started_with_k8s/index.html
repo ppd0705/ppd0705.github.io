@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]k8s入门（更新中）">
 <meta itemprop="description" content="第零讲 环境准备 使用 virtualbox 安装 ubuntu 虚拟环境 个人采坑记录 共享粘贴板设置 配置了双向粘贴版 和 安装 apt install virtualbox-guest-utils 还是不行， 每次得手动启动 VBoxClient --clipborad. 通过 df -h 查看目录找到 挂载"><meta itemprop="datePublished" content="2022-07-24T10:50:35+08:00" />
 <meta itemprop="dateModified" content="2022-07-25T21:50:35+08:00" />
-<meta itemprop="wordCount" content="1375">
+<meta itemprop="wordCount" content="2163">
 <meta itemprop="keywords" content="k8s," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]k8s入门（更新中）"/>
 <meta name="twitter:description" content="第零讲 环境准备 使用 virtualbox 安装 ubuntu 虚拟环境 个人采坑记录 共享粘贴板设置 配置了双向粘贴版 和 安装 apt install virtualbox-guest-utils 还是不行， 每次得手动启动 VBoxClient --clipborad. 通过 df -h 查看目录找到 挂载"/>
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 1375 words </span>
-          <span class="more-meta"> 3 min read </span>
+        <span class="more-meta"> 2163 words </span>
+          <span class="more-meta"> 5 min read </span>
 
         
         
@@ -383,6 +383,30 @@
         <li><a href="#编写-yaml-技巧">编写 yaml 技巧</a></li>
       </ul>
     </li>
+    <li><a href="#第十二讲-pod">第十二讲 Pod</a>
+      <ul>
+        <li><a href="#如何使用-yaml-描述-pod">如何使用 yaml 描述 Pod</a></li>
+        <li><a href="#如何使用-kubectl-操作-pod">如何使用 kubectl 操作 Pod</a></li>
+      </ul>
+    </li>
+    <li><a href="#第十三讲-jobcronjob">第十三讲 Job/CronJob</a>
+      <ul>
+        <li><a href="#job">Job</a></li>
+        <li><a href="#cronjob">CronJob</a></li>
+      </ul>
+    </li>
+    <li><a href="#第十四讲-configmapsecret">第十四讲 ConfigMap/Secret</a>
+      <ul>
+        <li><a href="#configmap">ConfigMap</a></li>
+        <li><a href="#secret">Secret</a></li>
+        <li><a href="#使用">使用</a>
+          <ul>
+            <li><a href="#环境变量">环境变量</a></li>
+            <li><a href="#加载文件">加载文件</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
     <li><a href="#链接">链接</a></li>
   </ul>
 </nav>
@@ -399,7 +423,7 @@
 通过 <code>df -h</code> 查看目录找到 挂载的脚步 在 <code>/media/ubuntu/VBox_GAs_6.1.34/</code> 目录
 后面卸载 virtualbox-guest-utils， 运行 <code>sh /media/ubuntu/VBox_GAs_6.1.34/VBoxLinuxAdditions.run</code> 安装才可以</p>
 <h1 id="第一讲-初始容器">第一讲 初始容器</h1>
-<p><code>sudo usermod -aG docker ${USER}</code> 将当前用户加入 docker  组，然后重启， 否则需要 root 权限。</p>
+<p><code>sudo usermod -aG docker ${USER}</code> 将当前用户加入 docker 组，然后重启， 否则需要 root 权限。</p>
 <p><code>docker version</code>  查看客户端和服务端版本信息</p>
 <p><code>docker info</code> 查看服务端系统信息</p>
 <h1 id="第二讲-被隔离的进程">第二讲 被隔离的进程</h1>
@@ -570,10 +594,10 @@ kubectl run ngx --image<span class="o">=</span>nginx:alpine
 <p>etcd 用来持久化存储系统里各种资源对象和状态，相当于配置管理员。
 其他组件想读写 etcd 的数据必须通过 apiserver</p>
 <h3 id="scheduler">scheduler</h3>
-<p>scheduler  负责容器的编排工作，检查阶段的资源状态，把 pod 调度到 最合适的节点运行，
+<p>scheduler 负责容器的编排工作，检查阶段的资源状态，把 pod 调度到 最合适的节点运行，
 相当于部署人员。</p>
 <h3 id="controller-manager">controller-manager</h3>
-<p>controller-manager 负责维护容器和节点等资源状态，实现孤战检测、服务迁移、应用伸缩等功能，
+<p>controller-manager 负责维护容器和节点等资源状态，实现故障检测、服务迁移、应用伸缩等功能，
 相当于监控运维人员。</p>
 <h2 id="node-组件">Node 组件</h2>
 <p><img src="/image/get_started_with_k8s/10_3.webp" alt="node"></p>
@@ -618,7 +642,7 @@ kubectl run ngx --image<span class="o">=</span>nginx:alpine
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
 </span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Pod</span><span class="w">
-</span><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w"> 
+</span><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
 </span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">ngx-pod</span><span class="w">
 </span><span class="w">  </span><span class="nt">labels</span><span class="p">:</span><span class="w">
 </span><span class="w">    </span><span class="nt">env</span><span class="p">:</span><span class="w"> </span><span class="l">demo</span><span class="w">
@@ -629,7 +653,7 @@ kubectl run ngx --image<span class="o">=</span>nginx:alpine
 </span><span class="w">    </span>- <span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">nginx:alpine</span><span class="w">
 </span><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">ngx</span><span class="w">
 </span><span class="w">      </span><span class="nt">ports</span><span class="p">:</span><span class="w">
-</span><span class="w">      </span>- <span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="m">80</span><span class="w">
+</span><span class="w">        </span>- <span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="m">80</span><span class="w">
 </span></code></pre></td></tr></table>
 </div>
 </div><p>可以将 配置类比成 HTTP 报文，分为两部分</p>
@@ -656,6 +680,343 @@ kubectl delete -f ngx-pod.yaml
 <li>使用<code>kubectl explain</code> 查看对应资源的详细说明</li>
 <li>使用<code>--dry-run=client -o yaml</code> 生成 yaml 文件</li>
 </ol>
+<h1 id="第十二讲-pod">第十二讲 Pod</h1>
+<p>Pod 是对容器的&quot;打包&quot;，是 k8s 最小的调度部署单位, 类似于 Linux 里面的进程组</p>
+<p><img src="/image/get_started_with_k8s/12_1.webp" alt="pod"></p>
+<h2 id="如何使用-yaml-描述-pod">如何使用 yaml 描述 Pod</h2>
+<p>Pod 有四个基本组成部分</p>
+<ul>
+<li>apiVersion: 固定为 v1</li>
+<li>kind： 固定为 Pod</li>
+<li>metadata:
+<ul>
+<li>name: 指定名称，可以带 pod 后缀方便和其他资源区分</li>
+<li>labels: 标签，可添加任意的 key/value, 如 env=dev、region=north</li>
+</ul>
+</li>
+<li>containers: 容器列表
+<ul>
+<li>image: 镜像</li>
+<li>name: 名字</li>
+<li>ports:对外暴露的端口</li>
+<li>imagePullPolicy: 镜像拉取策略，默认为 IfNotPresent, 本地不存在才会来取远程镜像</li>
+<li>env: 定义环境变量，运行时指定</li>
+<li>command: 容器启动时执行的命令，相当于Dockerfile 的 ENTRYPOINT</li>
+<li>args:  command 参数，相当于 Dockerfile 的 CMD 指令</li>
+</ul>
+</li>
+</ul>
+<h2 id="如何使用-kubectl-操作-pod">如何使用 kubectl 操作 Pod</h2>
+<p>使用 <code>kubectl apply -f</code>、<code>kubectl delete -f</code> 创建或删除 Pod</p>
+<p>使用 <code>kubectl logs</code> 产看日志</p>
+<p>使用 <code>kubectl exec -it $pod -- sh</code> 进入 Pod 内部</p>
+<h1 id="第十三讲-jobcronjob">第十三讲 Job/CronJob</h1>
+<p>Job/CronJob 都属于离线业务，区别在于 Job 只运行一次</p>
+<h2 id="job">Job</h2>
+<p>Job yaml 相比 Pod, 区别在于 spec 使用 template 字段来定义 Pod</p>
+<p><img src="/image/get_started_with_k8s/13_1.webp" alt="job"></p>
+<p>使用 <code>kubectl apply -f job.yaml</code> 启动 job</p>
+<p>使用 <code>kubectl get job</code> 查看 job 状态
+使用 <code>kubectl get pod</code> 查看 job 中的 pod 的 状态</p>
+<p><img src="/image/get_started_with_k8s/13_2.webp" alt="job_status"></p>
+<p>部分离线作业重要字段</p>
+<ul>
+<li>activeDeadlineSeconds: pod 超时时间</li>
+<li>backoffLimit: pod 失败重试次数</li>
+<li>completions: Job 需要完成运行多少个 Pod, 默认为1</li>
+<li>parallelism: completions 对应的并发度</li>
+</ul>
+<p>示例如下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">batch/v1</span><span class="w">
+</span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Job</span><span class="w">
+</span><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">sleep-job</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">activeDeadlineSeconds</span><span class="p">:</span><span class="w"> </span><span class="m">15</span><span class="w">
+</span><span class="w">  </span><span class="nt">backoffLimit</span><span class="p">:</span><span class="w"> </span><span class="m">2</span><span class="w">
+</span><span class="w">  </span><span class="nt">completions</span><span class="p">:</span><span class="w"> </span><span class="m">4</span><span class="w">
+</span><span class="w">  </span><span class="nt">parallelism</span><span class="p">:</span><span class="w"> </span><span class="m">2</span><span class="w">
+</span><span class="w">
+</span><span class="w">  </span><span class="nt">template</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span><span class="nt">restartPolicy</span><span class="p">:</span><span class="w"> </span><span class="l">OnFailure</span><span class="w">
+</span><span class="w">      </span><span class="nt">containers</span><span class="p">:</span><span class="w">
+</span><span class="w">        </span>- <span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">busybox</span><span class="w">
+</span><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">echo-job</span><span class="w">
+</span><span class="w">          </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l">IfNotPresent</span><span class="w">
+</span><span class="w">          </span><span class="nt">command</span><span class="p">:</span><span class="w">
+</span><span class="w">            </span>- <span class="l">sh</span><span class="w">
+</span><span class="w">            </span>- -<span class="l">c</span><span class="w">
+</span><span class="w">            </span>- <span class="l">sleep $(($RANDOM % 10 + 1)) &amp;&amp; echo done</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><h2 id="cronjob">CronJob</h2>
+<p>CronJob 其实组合了Job</p>
+<p><img src="/image/get_started_with_k8s/13_3.webp" alt="cronjob"></p>
+<h1 id="第十四讲-configmapsecret">第十四讲 ConfigMap/Secret</h1>
+<p>ConfigMap 保存明文配置， Secret 保存 私密配置</p>
+<h2 id="configmap">ConfigMap</h2>
+<p>ConfigMap 可以使用 <code> kubectl create cm  info --from-literal=aa=bb --dry-run=client -o yaml &gt; info-cm.ayml</code> 创建模版</p>
+<p>示例</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">ConfigMap</span><span class="w">
+</span><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">info</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="nt">data</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">count</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;10&#39;</span><span class="w">
+</span><span class="w">  </span><span class="nt">debug</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;on&#39;</span><span class="w">
+</span><span class="w">  </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;/etc/systemd&#39;</span><span class="w">
+</span><span class="w">  </span><span class="nt">greeting</span><span class="p">:</span><span class="w"> </span><span class="p">|</span><span class="sd">
+</span><span class="sd">    </span><span class="w">    </span><span class="l">say hello to kubernetes.</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>创建和查看</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">kubectl apply -f info-cm.yaml
+
+kubectl get cm
+
+kubectl describe cm info
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="secret">Secret</h2>
+<p>Secret 使用 <code>kubectl create secret generic</code> 创建模板</p>
+<p>示例</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Secret</span><span class="w">
+</span><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">user</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="nt">data</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">cm9vdA== </span><span class="w"> </span><span class="c"># root</span><span class="w">
+</span><span class="w">  </span><span class="nt">pwd</span><span class="p">:</span><span class="w"> </span><span class="l">MTIzNDU2  </span><span class="w"> </span><span class="c"># 123456</span><span class="w">
+</span><span class="w">  </span><span class="nt">db</span><span class="p">:</span><span class="w"> </span><span class="l">bXlzcWw=   </span><span class="w"> </span><span class="c"># mysql</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">kubectl create secret generic user  --from-literal<span class="o">=</span><span class="nv">aa</span><span class="o">=</span>bb --dry-run<span class="o">=</span>client -o yaml &gt; user-secret.yaml
+
+kubectl apply -f user-secret.yaml
+
+kubectl get secret
+
+kubectl describe secret user
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="使用">使用</h2>
+<h3 id="环境变量">环境变量</h3>
+<p>使用 <code>configMapKeyRef</code>和<code>secretKeyRef</code> 来引用</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Pod</span><span class="w">
+</span><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">env-pod</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">containers</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span>- <span class="nt">env</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">COUNT</span><span class="w">
+</span><span class="w">        </span><span class="nt">valueFrom</span><span class="p">:</span><span class="w">
+</span><span class="w">          </span><span class="nt">configMapKeyRef</span><span class="p">:</span><span class="w">
+</span><span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">info</span><span class="w">
+</span><span class="w">            </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l">count</span><span class="w">
+</span><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">GREETING</span><span class="w">
+</span><span class="w">        </span><span class="nt">valueFrom</span><span class="p">:</span><span class="w">
+</span><span class="w">          </span><span class="nt">configMapKeyRef</span><span class="p">:</span><span class="w">
+</span><span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">info</span><span class="w">
+</span><span class="w">            </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l">greeting</span><span class="w">
+</span><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">USERNAME</span><span class="w">
+</span><span class="w">        </span><span class="nt">valueFrom</span><span class="p">:</span><span class="w">
+</span><span class="w">          </span><span class="nt">secretKeyRef</span><span class="p">:</span><span class="w">
+</span><span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">user</span><span class="w">
+</span><span class="w">            </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l">name</span><span class="w">
+</span><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">PASSWORD</span><span class="w">
+</span><span class="w">        </span><span class="nt">valueFrom</span><span class="p">:</span><span class="w">
+</span><span class="w">          </span><span class="nt">secretKeyRef</span><span class="p">:</span><span class="w">
+</span><span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">user</span><span class="w">
+</span><span class="w">            </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l">pwd</span><span class="w">
+</span><span class="w">
+</span><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">busybox</span><span class="w">
+</span><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">busy</span><span class="w">
+</span><span class="w">    </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l">IfNotPresent</span><span class="w">
+</span><span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&#34;/bin/sleep&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;300&#34;</span><span class="p">]</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>引用示意图如下</p>
+<p><img src="/image/get_started_with_k8s/14_1.webp" alt="config_map_ref"></p>
+<h3 id="加载文件">加载文件</h3>
+<p>Pod 可以挂载 Volume, 可以在 <code>spec</code> 中指定，在 <code>containers</code>引用</p>
+<p>引用示意图如下</p>
+<p><img src="/image/get_started_with_k8s/14_2.webp" alt="config_map_volume"></p>
+<p>示意配置如下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Pod</span><span class="w">
+</span><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">vol-pod</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">volumes</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">cm-vol</span><span class="w">
+</span><span class="w">    </span><span class="nt">configMap</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">info</span><span class="w">
+</span><span class="w">  </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">sec-vol</span><span class="w">
+</span><span class="w">    </span><span class="nt">secret</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span><span class="nt">secretName</span><span class="p">:</span><span class="w"> </span><span class="l">user</span><span class="w">
+</span><span class="w">
+</span><span class="w">  </span><span class="nt">containers</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span>- <span class="nt">volumeMounts</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span>- <span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l">/tmp/cm-items</span><span class="w">
+</span><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">cm-vol</span><span class="w">
+</span><span class="w">    </span>- <span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l">/tmp/sec-items</span><span class="w">
+</span><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">sec-vol</span><span class="w">
+</span><span class="w">
+</span><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">busybox</span><span class="w">
+</span><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">busy</span><span class="w">
+</span><span class="w">    </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l">IfNotPresent</span><span class="w">
+</span><span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&#34;/bin/sleep&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;300&#34;</span><span class="p">]</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>挂载后，ConfigMap 和 Secret 的 键成了文件名，值成了文件内容</p>
+<p><img src="/image/get_started_with_k8s/14_3.webp" alt="config_map_volume2"></p>
 <h1 id="链接">链接</h1>
 <ul>
 <li><a href="https://time.geekbang.org/column/intro/100114501?tab=catalog">极客时间课程</a></li>
