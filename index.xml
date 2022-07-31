@@ -1190,6 +1190,69 @@ unclean.leader.election.enable 参数控制是否允许 Unclean 领导者选举&
 &lt;code&gt;LeaderAndIsr&lt;/code&gt; 请求、负责勒令副本下线的 &lt;code&gt;StopReplica&lt;/code&gt; 请求。&lt;/p&gt;
 &lt;p&gt;kafka 将 控制类请求和数据类请求分类，分别创建了两套网络线程池和 IO 线程池&lt;/p&gt;
 &lt;h1 id=&#34;第二十五讲-重平衡过程&#34;&gt;第二十五讲 重平衡过程&lt;/h1&gt;
+&lt;h2 id=&#34;通知触发&#34;&gt;通知触发&lt;/h2&gt;
+&lt;p&gt;重平衡通知是通过心跳来通知的， 协调者会将&lt;code&gt;REBALANCE_IN_PROCESS&lt;/code&gt;包含在心跳响应中。&lt;/p&gt;
+&lt;h2 id=&#34;消费者组状态机&#34;&gt;消费者组状态机&lt;/h2&gt;
+&lt;p&gt;kafka 为消费者组定义了五种状态&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/kafka_in_action/25_1.webp&#34; alt=&#34;all_status&#34;&gt;&lt;/p&gt;
+&lt;p&gt;状态机状态流转如下&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/kafka_in_action/25_2.webp&#34; alt=&#34;status_transfer&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;消费者端流程&#34;&gt;消费者端流程&lt;/h2&gt;
+&lt;p&gt;在消费者端，重平衡分为两个步骤：加入组和等待领导者消费者分配方案。这两个步骤
+分别对应两类特定的请求：JoinGroup 和 SyncGroup。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/kafka_in_action/25_3.webp&#34; alt=&#34;join_group&#34;&gt;&lt;/p&gt;
+&lt;p&gt;在收到所有消费者的订阅消息后，消费者通常将第一个发送 JoinGroup 消息的成员
+当做领导者，并将所有订阅信息发给领导者。领导者做出方案后，会发送 SyncGroup
+请求，将方案发给协调者。其他成员也会发送空的 SyncGroup 请求。
+协调者会将分配方案在 SyncAGroup 响应中发送。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/kafka_in_action/25_4.webp&#34; alt=&#34;sync_group&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;协调者端流程&#34;&gt;协调者端流程&lt;/h2&gt;
+&lt;h3 id=&#34;新成员入组&#34;&gt;新成员入组&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/kafka_in_action/25_5.webp&#34; alt=&#34;new_member&#34;&gt;&lt;/p&gt;
+&lt;h3 id=&#34;成员主动离组&#34;&gt;成员主动离组&lt;/h3&gt;
+&lt;p&gt;主动离组会发起 LeaveGroup&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/kafka_in_action/25_6.webp&#34; alt=&#34;reduce_member&#34;&gt;&lt;/p&gt;
+&lt;h3 id=&#34;成员崩溃&#34;&gt;成员崩溃&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/kafka_in_action/25_7.webp&#34; alt=&#34;lost_member&#34;&gt;&lt;/p&gt;
+&lt;p&gt;重平衡开始后，协调者会给予成员一段缓冲时间 rebalance.timeout，要求成员必须在 这段时间快速上报自己的位移消息。&lt;/p&gt;
+&lt;h1 id=&#34;第二十七讲-高水位-和-leader-epoch&#34;&gt;第二十七讲 高水位 和 Leader Epoch&lt;/h1&gt;
+&lt;h2 id=&#34;什么是高水位&#34;&gt;什么是高水位&lt;/h2&gt;
+&lt;p&gt;《Streaming System》 表述： 水位是一个单调增加且表征最早未完成工作（
+oldest work not  yet completed）的时间戳&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/kafka_in_action/27_1.webp&#34; alt=&#34;high_watermark&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;高水位的作用&#34;&gt;高水位的作用&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;定义消息可见性，即标识哪些消息可以被消费者消费&lt;/li&gt;
+&lt;li&gt;帮助kafka 完成副本同步。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/kafka_in_action/27_2.webp&#34; alt=&#34;high_watermark&#34;&gt;&lt;/p&gt;
+&lt;p&gt;位移值等于高水位的消息也属于未提交的消息。&lt;/p&gt;
+&lt;p&gt;同一个副本对象，其高水位值小于等于 LEO 值&lt;/p&gt;
+&lt;h2 id=&#34;高水位更新机制&#34;&gt;高水位更新机制&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/kafka_in_action/27_3.webp&#34; alt=&#34;high_watermark_update&#34;&gt;&lt;/p&gt;
+&lt;p&gt;leader 副本 会保存 所有  follower 副本的 LEO 值，其作用是帮助 leader
+副本确认其高水位，即整个分区高水位。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/kafka_in_action/27_4.webp&#34; alt=&#34;high_watermark_update_detail&#34;&gt;&lt;/p&gt;
+&lt;h3 id=&#34;leader副本&#34;&gt;leader副本&lt;/h3&gt;
+&lt;p&gt;处理生产者请求：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;写入消息到本地磁盘&lt;/li&gt;
+&lt;li&gt;更新分区高水位值： 获取保存的所有 远程副本 LEO 值，
+currentHW = max(crrentHW, min(LEO-1, &amp;hellip;, LEO-n))&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;处理 follower 副本拉取消息逻辑&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;读取磁盘中的消息数据&lt;/li&gt;
+&lt;li&gt;使用 follower 副本发送请求中 的位移值更新远程 副本的 LEO 值&lt;/li&gt;
+&lt;li&gt;更新分区高水位值&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;follower副本&#34;&gt;follower副本&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;写入消息到本地磁盘&lt;/li&gt;
+&lt;li&gt;更新 LEO 值 currentLEO&lt;/li&gt;
+&lt;li&gt;更新高水位值：  获取leader 发送的高水位值 currentHW, 更新高水位为
+min(currentHW, currentLEO)&lt;/li&gt;
+&lt;/ol&gt;
 &lt;h1 id=&#34;相关链接&#34;&gt;相关链接&lt;/h1&gt;
 &lt;h2 id=&#34;kafka管理和监控平台&#34;&gt;kafka管理和监控平台&lt;/h2&gt;
 &lt;ul&gt;
