@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]k8s入门（更新中）">
 <meta itemprop="description" content="第零讲 环境准备 使用 virtualbox 安装 ubuntu 虚拟环境 个人采坑记录 共享粘贴板设置 配置了双向粘贴版 和 安装 apt install virtualbox-guest-utils 还是不行， 每次得手动启动 VBoxClient --clipborad. 通过 df -h 查看目录找到 挂载"><meta itemprop="datePublished" content="2022-07-24T10:50:35+08:00" />
 <meta itemprop="dateModified" content="2022-07-25T21:50:35+08:00" />
-<meta itemprop="wordCount" content="2163">
+<meta itemprop="wordCount" content="2210">
 <meta itemprop="keywords" content="k8s," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]k8s入门（更新中）"/>
 <meta name="twitter:description" content="第零讲 环境准备 使用 virtualbox 安装 ubuntu 虚拟环境 个人采坑记录 共享粘贴板设置 配置了双向粘贴版 和 安装 apt install virtualbox-guest-utils 还是不行， 每次得手动启动 VBoxClient --clipborad. 通过 df -h 查看目录找到 挂载"/>
@@ -302,7 +302,7 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 2163 words </span>
+        <span class="more-meta"> 2210 words </span>
           <span class="more-meta"> 5 min read </span>
 
         
@@ -1021,7 +1021,45 @@ kubectl describe secret user
 <ul>
 <li><a href="https://time.geekbang.org/column/intro/100114501?tab=catalog">极客时间课程</a></li>
 </ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json">
+<span class="err">cat</span> <span class="err">&lt;&lt;EOF</span> <span class="err">|</span> <span class="err">sudo</span> <span class="err">tee</span> <span class="err">/etc/docker/daemon.json</span>
+<span class="p">{</span>
+  <span class="nt">&#34;exec-opts&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&#34;native.cgroupdriver=systemd&#34;</span><span class="p">],</span>
+  <span class="nt">&#34;log-driver&#34;</span><span class="p">:</span> <span class="s2">&#34;json-file&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;log-opts&#34;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&#34;max-size&#34;</span><span class="p">:</span> <span class="s2">&#34;100m&#34;</span>
+  <span class="p">},</span>
+  <span class="nt">&#34;storage-driver&#34;</span><span class="p">:</span> <span class="s2">&#34;overlay2&#34;</span>
+<span class="p">}</span>
+<span class="err">EOF</span>
 
+<span class="err">sudo</span> <span class="err">systemctl</span> <span class="err">enable</span> <span class="err">docker</span>
+<span class="err">sudo</span> <span class="err">systemctl</span> <span class="err">daemon-reload</span>
+<span class="err">sudo</span> <span class="err">systemctl</span> <span class="err">restart</span> <span class="err">docker</span>
+
+</code></pre></td></tr></table>
+</div>
+</div>
     </div>
 
     
@@ -1058,6 +1096,19 @@ kubectl describe secret user
       
       <nav class="post-nav">
         
+          <a class="prev" href="/post/hello_30/">
+            
+            <i class="iconfont">
+              <svg  class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M691.908486 949.511495l75.369571-89.491197c10.963703-12.998035 10.285251-32.864502-1.499144-44.378743L479.499795 515.267417 757.434875 204.940602c11.338233-12.190647 11.035334-32.285311-0.638543-44.850487l-80.46666-86.564541c-11.680017-12.583596-30.356378-12.893658-41.662889-0.716314L257.233596 494.235404c-11.332093 12.183484-11.041474 32.266891 0.657986 44.844348l80.46666 86.564541c1.772366 1.910513 3.706415 3.533476 5.750981 4.877077l306.620399 321.703933C662.505829 963.726242 680.945807 962.528973 691.908486 949.511495z"></path>
+</svg>
+
+            </i>
+            <span class="prev-text nav-default">你好！三十岁</span>
+            <span class="prev-text nav-mobile">Prev</span>
+          </a>
         
           <a class="next" href="/post/kafka_in_action/">
             <span class="next-text nav-default">[笔记]Kafka 核心技术与实战 （更新中）</span>

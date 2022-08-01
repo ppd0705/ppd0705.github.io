@@ -6,7 +6,16 @@
     <description>Recent content in Tags on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 24 Jul 2022 10:50:35 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 02 Aug 2022 06:30:31 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>随想</title>
+      <link>https://ppd0705.github.io/tags/%E9%9A%8F%E6%83%B3/</link>
+      <pubDate>Tue, 02 Aug 2022 06:30:31 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/tags/%E9%9A%8F%E6%83%B3/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>k8s</title>
       <link>https://ppd0705.github.io/tags/k8s/</link>
@@ -175,15 +184,6 @@
       <pubDate>Sun, 05 Jul 2020 22:24:16 +0800</pubDate>
       
       <guid>https://ppd0705.github.io/tags/sre/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>C#</title>
-      <link>https://ppd0705.github.io/tags/c#/</link>
-      <pubDate>Mon, 25 May 2020 22:44:02 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/tags/c#/</guid>
       <description></description>
     </item>
     
