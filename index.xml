@@ -660,11 +660,271 @@ kubectl describe secret user
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;挂载后，ConfigMap 和 Secret 的 键成了文件名，值成了文件内容&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/get_started_with_k8s/14_3.webp&#34; alt=&#34;config_map_volume2&#34;&gt;&lt;/p&gt;
-&lt;h1 id=&#34;链接&#34;&gt;链接&lt;/h1&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://time.geekbang.org/column/intro/100114501?tab=catalog&#34;&gt;极客时间课程&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
+&lt;h1 id=&#34;第十七讲-搭建多节点-k8s-集群&#34;&gt;第十七讲 搭建多节点 k8s 集群&lt;/h1&gt;
+&lt;h2 id=&#34;实验环境准备&#34;&gt;实验环境准备&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/get_started_with_k8s/17_1.webp&#34; alt=&#34;machine&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;安装前&#34;&gt;安装前&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;修改hostname, k8s 使用 hostname 来区分集群节点，所以 hostname 不能重名。&lt;/li&gt;
+&lt;/ol&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;sudo vim /etc/hostname 
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;安装 docker 运行时，将其 cgroup 的驱动程序改为 systemd&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;cat &lt;span class=&#34;s&#34;&gt;&amp;lt;&amp;lt;EOF | sudo tee /etc/docker/daemon.json
+&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;{
+&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;  &amp;#34;exec-opts&amp;#34;: [&amp;#34;native.cgroupdriver=systemd&amp;#34;],
+&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;  &amp;#34;log-driver&amp;#34;: &amp;#34;json-file&amp;#34;,
+&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;  &amp;#34;log-opts&amp;#34;: {
+&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;    &amp;#34;max-size&amp;#34;: &amp;#34;100m&amp;#34;
+&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;  },
+&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;  &amp;#34;storage-driver&amp;#34;: &amp;#34;overlay2&amp;#34;
+&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;}
+&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;EOF&lt;/span&gt;
+
+sudo systemctl &lt;span class=&#34;nb&#34;&gt;enable&lt;/span&gt; docker
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;启用 br_netfilter 模块， 使 k8s 能够检查和转发网络流量&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;cat &lt;span class=&#34;s&#34;&gt;&amp;lt;&amp;lt;EOF | sudo tee /etc/modules-load.d/k8s.conf
+&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;br_netfilter
+&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;EOF&lt;/span&gt;
+
+cat &lt;span class=&#34;s&#34;&gt;&amp;lt;&amp;lt;EOF | sudo tee /etc/sysctl.d/k8s.conf
+&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;net.bridge.bridge-nf-call-ip6tables = 1
+&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;net.bridge.bridge-nf-call-iptables = 1
+&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;net.ipv4.ip_forward=1 # better than modify /etc/sysctl.conf
+&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;EOF&lt;/span&gt;
+
+sudo sysctl --system
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;关闭 swap， 提升 k8s 性能&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;sudo swapoff -a
+sudo sed -ri &lt;span class=&#34;s1&#34;&gt;&amp;#39;/\sswap\s/s/^#?/#/&amp;#39;&lt;/span&gt; /etc/fstab
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;安装-kubeadm&#34;&gt;安装 kubeadm&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;更换 k8s 下载源&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;sudo apt install -y apt-transport-https ca-certificates curl
+
+curl https://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; sudo apt-key add -
+
+cat &lt;span class=&#34;s&#34;&gt;&amp;lt;&amp;lt;EOF | sudo tee /etc/apt/sources.list.d/kubernetes.list
+&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;deb https://mirrors.aliyun.com/kubernetes/apt/ kubernetes-xenial main
+&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;EOF&lt;/span&gt;
+
+sudo apt update
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;下载 kubeadm&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;sudo apt install -y &lt;span class=&#34;nv&#34;&gt;kubeadm&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;1.23.3-00 &lt;span class=&#34;nv&#34;&gt;kubelet&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;1.23.3-00 &lt;span class=&#34;nv&#34;&gt;kubectl&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;1.23.3-00
+
+&lt;span class=&#34;c1&#34;&gt;# 锁定版本，避免错误升级&lt;/span&gt;
+sudo apt-mark hold kubeadm kubelet kubectl
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;下载镜像&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;由于 k8s 镜像在 google 镜像仓库 gcr.io，国内访问困难，
+改用国内镜像，然后使用 docker tag 改名&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;nv&#34;&gt;repo&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;registry.aliyuncs.com/google_containers
+
+&lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; name in &lt;span class=&#34;sb&#34;&gt;`&lt;/span&gt;kubeadm config images list --kubernetes-version v1.23.3&lt;span class=&#34;sb&#34;&gt;`&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;do&lt;/span&gt;
+
+    &lt;span class=&#34;nv&#34;&gt;src_name&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;#k8s.gcr.io/&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt;
+    &lt;span class=&#34;nv&#34;&gt;src_name&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;src_name&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;#coredns/&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt;
+
+    docker pull &lt;span class=&#34;nv&#34;&gt;$repo&lt;/span&gt;/&lt;span class=&#34;nv&#34;&gt;$src_name&lt;/span&gt;
+
+    docker tag &lt;span class=&#34;nv&#34;&gt;$repo&lt;/span&gt;/&lt;span class=&#34;nv&#34;&gt;$src_name&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$name&lt;/span&gt;
+    docker rmi &lt;span class=&#34;nv&#34;&gt;$repo&lt;/span&gt;/&lt;span class=&#34;nv&#34;&gt;$src_name&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;done&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;安装-master-节点&#34;&gt;安装 master 节点&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# --pod-network-cidr 设置集群使用网段&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;# --apiserver-advertise-address 设置apiserver 地址&lt;/span&gt;
+sudo kubeadm init &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;    --pod-network-cidr&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;10.10.0.0/16 &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;    --apiserver-advertise-address&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;192.168.10.210 &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;    --kubernetes-version&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;v1.23.3
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;安装后复制 kubectl 配置文件&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;mkdir -p &lt;span class=&#34;nv&#34;&gt;$HOME&lt;/span&gt;/.kube
+sudo cp -i /etc/kubernetes/admin.conf &lt;span class=&#34;nv&#34;&gt;$HOME&lt;/span&gt;/.kube/config
+sudo chown &lt;span class=&#34;k&#34;&gt;$(&lt;/span&gt;id -u&lt;span class=&#34;k&#34;&gt;)&lt;/span&gt;:&lt;span class=&#34;k&#34;&gt;$(&lt;/span&gt;id -g&lt;span class=&#34;k&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$HOME&lt;/span&gt;/.kube/config
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;加入集群&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubeadm join 192.168.10.210:6443 --token tv9mkx.tw7it9vphe158e74 &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;  --discovery-token-ca-cert-hash sha256:e8721b8630d5b562e23c010c70559a6d3084f629abad6a2920e87855f8fb96f3
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;安装网络插件，这里使用 flannel&lt;/p&gt;
+&lt;p&gt;使用配置模版 &lt;a href=&#34;https://github.com/flannel-io/flannel/blob/master/Documentation/kube-flannel.yml&#34;&gt;kube-flannel.yml&lt;/a&gt;, 修改网段&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;nt&#34;&gt;net-conf.json&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;&lt;span class=&#34;sd&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;sd&#34;&gt;  {
+&lt;/span&gt;&lt;span class=&#34;sd&#34;&gt;    &amp;#34;Network&amp;#34;: &amp;#34;10.10.0.0/16&amp;#34;,
+&lt;/span&gt;&lt;span class=&#34;sd&#34;&gt;    &amp;#34;Backend&amp;#34;: {
+&lt;/span&gt;&lt;span class=&#34;sd&#34;&gt;      &amp;#34;Type&amp;#34;: &amp;#34;vxlan&amp;#34;
+&lt;/span&gt;&lt;span class=&#34;sd&#34;&gt;    }
+&lt;/span&gt;&lt;span class=&#34;sd&#34;&gt;  }&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;  
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;应用&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl  apply -f kube-flannel.yml
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;使用 &lt;code&gt;kubectl get node&lt;/code&gt; 验证&lt;/p&gt;
+&lt;h2 id=&#34;安装-worker-节点&#34;&gt;安装 worker 节点&lt;/h2&gt;
+&lt;p&gt;克隆 master 虚拟机， 使用 &lt;code&gt;kubeamd join&lt;/code&gt; 指令加入即可&lt;/p&gt;
+&lt;h1 id=&#34;第十八讲-deployment&#34;&gt;第十八讲 Deployment&lt;/h1&gt;
+&lt;p&gt;Deployment 主要用来管理在线业务 Pod&lt;/p&gt;
+&lt;p&gt;生成默认模版&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl create deploy ngx-dep --image&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;nginx:alpine --dry-run&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;client -o yaml &amp;gt; ngx-dep.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
 &lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
 &lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
@@ -682,27 +942,167 @@ kubectl describe secret user
 &lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
 &lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
 &lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class=&#34;lntd&#34;&gt;
-&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;
-&lt;span class=&#34;err&#34;&gt;cat&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;&amp;lt;&amp;lt;EOF&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;sudo&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;tee&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;/etc/docker/daemon.json&lt;/span&gt;
-&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
-  &lt;span class=&#34;nt&#34;&gt;&amp;#34;exec-opts&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;native.cgroupdriver=systemd&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;],&lt;/span&gt;
-  &lt;span class=&#34;nt&#34;&gt;&amp;#34;log-driver&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;json-file&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
-  &lt;span class=&#34;nt&#34;&gt;&amp;#34;log-opts&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
-    &lt;span class=&#34;nt&#34;&gt;&amp;#34;max-size&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;100m&amp;#34;&lt;/span&gt;
-  &lt;span class=&#34;p&#34;&gt;},&lt;/span&gt;
-  &lt;span class=&#34;nt&#34;&gt;&amp;#34;storage-driver&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;overlay2&amp;#34;&lt;/span&gt;
-&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
-&lt;span class=&#34;err&#34;&gt;EOF&lt;/span&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;apiVersion&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;apps/v1&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;kind&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;Deployment&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;metadata&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;labels&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;app&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;ngx-dep&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;ngx-dep&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;  
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;spec&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;replicas&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;selector&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;matchLabels&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;      &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;app&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;ngx-dep&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;      
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;template&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;metadata&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;      &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;labels&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;        &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;app&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;ngx-dep&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;spec&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;      &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;containers&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;      &lt;/span&gt;- &lt;span class=&#34;nt&#34;&gt;image&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;nginx:alpine&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;        &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;nginx&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;code&gt;replicas&lt;/code&gt; 表示副本数量&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;selector&lt;/code&gt; 作用是筛选出要被 Deployment 管理的 Pod 对象， 下属 &lt;code&gt;matchLabels&lt;/code&gt; 必须和
+&lt;code&gt;template&lt;/code&gt; 的 &lt;code&gt;labels&lt;/code&gt; 完全相同&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/get_started_with_k8s/18_1.webp&#34; alt=&#34;deployment_yaml&#34;&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 查看deploy状态&lt;/span&gt;
+kubectl get deploy
 
-&lt;span class=&#34;err&#34;&gt;sudo&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;systemctl&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;enable&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;docker&lt;/span&gt;
-&lt;span class=&#34;err&#34;&gt;sudo&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;systemctl&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;daemon-reload&lt;/span&gt;
-&lt;span class=&#34;err&#34;&gt;sudo&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;systemctl&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;restart&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;docker&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;# 使用标签筛选 pod&lt;/span&gt;
+kubectl get pod -l &lt;span class=&#34;nv&#34;&gt;app&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;ngx-dep
 
+&lt;span class=&#34;c1&#34;&gt;# 调整 replicas&lt;/span&gt;
+kubectl scale --replicas&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;5&lt;/span&gt;  deploy ngx-dep
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description>
+&lt;/div&gt;&lt;h1 id=&#34;第十九讲-daemonset&#34;&gt;第十九讲 DaemonSet&lt;/h1&gt;
+&lt;h2 id=&#34;介绍&#34;&gt;介绍&lt;/h2&gt;
+&lt;p&gt;DaemonSet 会在 满足条件的所有节点上运行一个 Pod, 就像 Linux 系统里的 守护进程（Daemon）&lt;/p&gt;
+&lt;p&gt;一些应用与节点存在绑定关系，如&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;网络应用 kube-proxy&lt;/li&gt;
+&lt;li&gt;监控应用 prometheus&lt;/li&gt;
+&lt;li&gt;日志应用 fluentd&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;DaemonSet 不可以用 &lt;code&gt;kubectl create&lt;/code&gt; 创建模板，可以在 Deployment 模版上修改
+， 主要区别就是 DaemonSet 没有 &lt;code&gt;replicas&lt;/code&gt; 字段&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/get_started_with_k8s/19_1.webp&#34; alt=&#34;daemon_set_yaml&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;taint-和-toleration&#34;&gt;taint 和 toleration&lt;/h2&gt;
+&lt;p&gt;节点的标签有一个专门字段&lt;code&gt;taint&lt;/code&gt; 污点来表述，Pod 可以配置  &lt;code&gt;toleratoin&lt;/code&gt; 来筛选 taint&lt;/p&gt;
+&lt;p&gt;taint 可以在 kubectl describe node 查看&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 添加 taint&lt;/span&gt;
+kubectl taint node master node-role.kubernetes.io/master:NoSchedule-
+
+&lt;span class=&#34;c1&#34;&gt;# 结尾加&amp;#34;-&amp;#34; 来移除 taint&lt;/span&gt;
+kubectl taint node master node-role.kubernetes.io/master:NoSchedule-
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;可以 Pod 的 spec 下 选择 taint&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;nt&#34;&gt;tolerations&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;- &lt;span class=&#34;nt&#34;&gt;key&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;node-role.kubernetes.io/master&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;effect&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;NoSchedule&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;operator&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;Exists&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;静态-pod&#34;&gt;静态 Pod&lt;/h2&gt;
+&lt;p&gt;静态 Pod 不受  k8s 系统管控， 不与 apiserver  发生关系&lt;/p&gt;
+&lt;p&gt;对应配置文件默认存放在 /etc/kubernetes/manifests 目录下&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/get_started_with_k8s/19_2.webp&#34; alt=&#34;static_pods&#34;&gt;&lt;/p&gt;
+&lt;p&gt;如 master 节点的四个核心组件都是以 静态 Pod 形式存在的&lt;/p&gt;
+&lt;h1 id=&#34;第二十讲-service&#34;&gt;第二十讲 Service&lt;/h1&gt;
+&lt;p&gt;Service 工作原理和 Nginx 差不多， k8s 会分给它一个静态 IP,
+然后它再去自动管理维护后面动态变化的 Pod 集合，当客户端访问 Service，它根据某种策略把流量转发给后面某个 Pod.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/get_started_with_k8s/20_1.webp&#34; alt=&#34;service&#34;&gt;&lt;/p&gt;
+&lt;p&gt;可以使用如下命令创建 yaml 模版&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl expose deploy ngx-dep --port&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;80&lt;/span&gt; --target-port&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;80&lt;/span&gt; --dry-run&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;client -o yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;配置中主要有两个关键字 &lt;code&gt;selector&lt;/code&gt; 和  &lt;code&gt;ports&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/get_started_with_k8s/20_2.webp&#34; alt=&#34;service_yaml&#34;&gt;&lt;/p&gt;
+&lt;p&gt;查看 ngx-svc 详情&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/get_started_with_k8s/20_3.webp&#34; alt=&#34;service_detail&#34;&gt;&lt;/p&gt;
+&lt;p&gt;exec 到 pod 进行测试&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/get_started_with_k8s/20_4.webp&#34; alt=&#34;service_test&#34;&gt;&lt;/p&gt;
+&lt;p&gt;k8s 会自动给对象分配域名,可以使用 &lt;code&gt;ngx-svc&lt;/code&gt;等域名访问&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/get_started_with_k8s/20_5.webp&#34; alt=&#34;service_dns&#34;&gt;&lt;/p&gt;
+&lt;p&gt;service 默认为 &lt;code&gt;ClusterIP&lt;/code&gt; 类型，即静态 IP 只能集群内部访问。
+可以使用 &lt;code&gt;NodePort&lt;/code&gt; 类型， 这样节点会提供一个对外暴露的端口指向该 service&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;apiVersion&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;v1&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nn&#34;&gt;...&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;spec&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;...&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;type&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;NodePort&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;NodePort 类型有如下缺点：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;端口有限，默认只在 30000~32767 范围分配&lt;/li&gt;
+&lt;li&gt;每个节点都开端口，提高了网络通信成本&lt;/li&gt;
+&lt;li&gt;需要对外暴露节点的 IP 地址，为了安全需要搭建一个反向代码，增加了复杂度。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;链接&#34;&gt;链接&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://time.geekbang.org/column/intro/100114501?tab=catalog&#34;&gt;极客时间课程&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
       
     </item>
     

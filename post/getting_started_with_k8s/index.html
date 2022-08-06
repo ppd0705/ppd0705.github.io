@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]k8s入门（更新中）">
 <meta itemprop="description" content="第零讲 环境准备 使用 virtualbox 安装 ubuntu 虚拟环境 个人采坑记录 共享粘贴板设置 配置了双向粘贴版 和 安装 apt install virtualbox-guest-utils 还是不行， 每次得手动启动 VBoxClient --clipborad. 通过 df -h 查看目录找到 挂载"><meta itemprop="datePublished" content="2022-07-24T10:50:35+08:00" />
 <meta itemprop="dateModified" content="2022-07-25T21:50:35+08:00" />
-<meta itemprop="wordCount" content="2210">
+<meta itemprop="wordCount" content="3377">
 <meta itemprop="keywords" content="k8s," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]k8s入门（更新中）"/>
 <meta name="twitter:description" content="第零讲 环境准备 使用 virtualbox 安装 ubuntu 虚拟环境 个人采坑记录 共享粘贴板设置 配置了双向粘贴版 和 安装 apt install virtualbox-guest-utils 还是不行， 每次得手动启动 VBoxClient --clipborad. 通过 df -h 查看目录找到 挂载"/>
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 2210 words </span>
-          <span class="more-meta"> 5 min read </span>
+        <span class="more-meta"> 3377 words </span>
+          <span class="more-meta"> 7 min read </span>
 
         
         
@@ -407,6 +407,24 @@
         </li>
       </ul>
     </li>
+    <li><a href="#第十七讲-搭建多节点-k8s-集群">第十七讲 搭建多节点 k8s 集群</a>
+      <ul>
+        <li><a href="#实验环境准备">实验环境准备</a></li>
+        <li><a href="#安装前">安装前</a></li>
+        <li><a href="#安装-kubeadm">安装 kubeadm</a></li>
+        <li><a href="#安装-master-节点">安装 master 节点</a></li>
+        <li><a href="#安装-worker-节点">安装 worker 节点</a></li>
+      </ul>
+    </li>
+    <li><a href="#第十八讲-deployment">第十八讲 Deployment</a></li>
+    <li><a href="#第十九讲-daemonset">第十九讲 DaemonSet</a>
+      <ul>
+        <li><a href="#介绍">介绍</a></li>
+        <li><a href="#taint-和-toleration">taint 和 toleration</a></li>
+        <li><a href="#静态-pod">静态 Pod</a></li>
+      </ul>
+    </li>
+    <li><a href="#第二十讲-service">第二十讲 Service</a></li>
     <li><a href="#链接">链接</a></li>
   </ul>
 </nav>
@@ -1017,11 +1035,271 @@ kubectl describe secret user
 </div>
 </div><p>挂载后，ConfigMap 和 Secret 的 键成了文件名，值成了文件内容</p>
 <p><img src="/image/get_started_with_k8s/14_3.webp" alt="config_map_volume2"></p>
-<h1 id="链接">链接</h1>
-<ul>
-<li><a href="https://time.geekbang.org/column/intro/100114501?tab=catalog">极客时间课程</a></li>
-</ul>
+<h1 id="第十七讲-搭建多节点-k8s-集群">第十七讲 搭建多节点 k8s 集群</h1>
+<h2 id="实验环境准备">实验环境准备</h2>
+<p><img src="/image/get_started_with_k8s/17_1.webp" alt="machine"></p>
+<h2 id="安装前">安装前</h2>
+<ol>
+<li>修改hostname, k8s 使用 hostname 来区分集群节点，所以 hostname 不能重名。</li>
+</ol>
 <div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">sudo vim /etc/hostname 
+</code></pre></td></tr></table>
+</div>
+</div><ol start="2">
+<li>安装 docker 运行时，将其 cgroup 的驱动程序改为 systemd</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">cat <span class="s">&lt;&lt;EOF | sudo tee /etc/docker/daemon.json
+</span><span class="s">{
+</span><span class="s">  &#34;exec-opts&#34;: [&#34;native.cgroupdriver=systemd&#34;],
+</span><span class="s">  &#34;log-driver&#34;: &#34;json-file&#34;,
+</span><span class="s">  &#34;log-opts&#34;: {
+</span><span class="s">    &#34;max-size&#34;: &#34;100m&#34;
+</span><span class="s">  },
+</span><span class="s">  &#34;storage-driver&#34;: &#34;overlay2&#34;
+</span><span class="s">}
+</span><span class="s">EOF</span>
+
+sudo systemctl <span class="nb">enable</span> docker
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+</code></pre></td></tr></table>
+</div>
+</div><ol start="3">
+<li>启用 br_netfilter 模块， 使 k8s 能够检查和转发网络流量</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">cat <span class="s">&lt;&lt;EOF | sudo tee /etc/modules-load.d/k8s.conf
+</span><span class="s">br_netfilter
+</span><span class="s">EOF</span>
+
+cat <span class="s">&lt;&lt;EOF | sudo tee /etc/sysctl.d/k8s.conf
+</span><span class="s">net.bridge.bridge-nf-call-ip6tables = 1
+</span><span class="s">net.bridge.bridge-nf-call-iptables = 1
+</span><span class="s">net.ipv4.ip_forward=1 # better than modify /etc/sysctl.conf
+</span><span class="s">EOF</span>
+
+sudo sysctl --system
+</code></pre></td></tr></table>
+</div>
+</div><ol start="4">
+<li>关闭 swap， 提升 k8s 性能</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">sudo swapoff -a
+sudo sed -ri <span class="s1">&#39;/\sswap\s/s/^#?/#/&#39;</span> /etc/fstab
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="安装-kubeadm">安装 kubeadm</h2>
+<ol>
+<li>更换 k8s 下载源</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">sudo apt install -y apt-transport-https ca-certificates curl
+
+curl https://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg <span class="p">|</span> sudo apt-key add -
+
+cat <span class="s">&lt;&lt;EOF | sudo tee /etc/apt/sources.list.d/kubernetes.list
+</span><span class="s">deb https://mirrors.aliyun.com/kubernetes/apt/ kubernetes-xenial main
+</span><span class="s">EOF</span>
+
+sudo apt update
+</code></pre></td></tr></table>
+</div>
+</div><ol start="2">
+<li>下载 kubeadm</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">sudo apt install -y <span class="nv">kubeadm</span><span class="o">=</span>1.23.3-00 <span class="nv">kubelet</span><span class="o">=</span>1.23.3-00 <span class="nv">kubectl</span><span class="o">=</span>1.23.3-00
+
+<span class="c1"># 锁定版本，避免错误升级</span>
+sudo apt-mark hold kubeadm kubelet kubectl
+</code></pre></td></tr></table>
+</div>
+</div><ol start="3">
+<li>下载镜像</li>
+</ol>
+<p>由于 k8s 镜像在 google 镜像仓库 gcr.io，国内访问困难，
+改用国内镜像，然后使用 docker tag 改名</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="nv">repo</span><span class="o">=</span>registry.aliyuncs.com/google_containers
+
+<span class="k">for</span> name in <span class="sb">`</span>kubeadm config images list --kubernetes-version v1.23.3<span class="sb">`</span><span class="p">;</span> <span class="k">do</span>
+
+    <span class="nv">src_name</span><span class="o">=</span><span class="si">${</span><span class="nv">name</span><span class="p">#k8s.gcr.io/</span><span class="si">}</span>
+    <span class="nv">src_name</span><span class="o">=</span><span class="si">${</span><span class="nv">src_name</span><span class="p">#coredns/</span><span class="si">}</span>
+
+    docker pull <span class="nv">$repo</span>/<span class="nv">$src_name</span>
+
+    docker tag <span class="nv">$repo</span>/<span class="nv">$src_name</span> <span class="nv">$name</span>
+    docker rmi <span class="nv">$repo</span>/<span class="nv">$src_name</span>
+<span class="k">done</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="安装-master-节点">安装 master 节点</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># --pod-network-cidr 设置集群使用网段</span>
+<span class="c1"># --apiserver-advertise-address 设置apiserver 地址</span>
+sudo kubeadm init <span class="se">\
+</span><span class="se"></span>    --pod-network-cidr<span class="o">=</span>10.10.0.0/16 <span class="se">\
+</span><span class="se"></span>    --apiserver-advertise-address<span class="o">=</span>192.168.10.210 <span class="se">\
+</span><span class="se"></span>    --kubernetes-version<span class="o">=</span>v1.23.3
+</code></pre></td></tr></table>
+</div>
+</div><p>安装后复制 kubectl 配置文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">mkdir -p <span class="nv">$HOME</span>/.kube
+sudo cp -i /etc/kubernetes/admin.conf <span class="nv">$HOME</span>/.kube/config
+sudo chown <span class="k">$(</span>id -u<span class="k">)</span>:<span class="k">$(</span>id -g<span class="k">)</span> <span class="nv">$HOME</span>/.kube/config
+</code></pre></td></tr></table>
+</div>
+</div><p>加入集群</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">kubeadm join 192.168.10.210:6443 --token tv9mkx.tw7it9vphe158e74 <span class="se">\
+</span><span class="se"></span>  --discovery-token-ca-cert-hash sha256:e8721b8630d5b562e23c010c70559a6d3084f629abad6a2920e87855f8fb96f3
+</code></pre></td></tr></table>
+</div>
+</div><p>安装网络插件，这里使用 flannel</p>
+<p>使用配置模版 <a href="https://github.com/flannel-io/flannel/blob/master/Documentation/kube-flannel.yml">kube-flannel.yml</a>, 修改网段</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">net-conf.json</span><span class="p">:</span><span class="w"> </span><span class="p">|</span><span class="sd">
+</span><span class="sd">  {
+</span><span class="sd">    &#34;Network&#34;: &#34;10.10.0.0/16&#34;,
+</span><span class="sd">    &#34;Backend&#34;: {
+</span><span class="sd">      &#34;Type&#34;: &#34;vxlan&#34;
+</span><span class="sd">    }
+</span><span class="sd">  }</span><span class="w">  
+</span></code></pre></td></tr></table>
+</div>
+</div><p>应用</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">kubectl  apply -f kube-flannel.yml
+</code></pre></td></tr></table>
+</div>
+</div><p>使用 <code>kubectl get node</code> 验证</p>
+<h2 id="安装-worker-节点">安装 worker 节点</h2>
+<p>克隆 master 虚拟机， 使用 <code>kubeamd join</code> 指令加入即可</p>
+<h1 id="第十八讲-deployment">第十八讲 Deployment</h1>
+<p>Deployment 主要用来管理在线业务 Pod</p>
+<p>生成默认模版</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">kubectl create deploy ngx-dep --image<span class="o">=</span>nginx:alpine --dry-run<span class="o">=</span>client -o yaml &gt; ngx-dep.yaml
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
@@ -1039,27 +1317,167 @@ kubectl describe secret user
 </span><span class="lnt">14
 </span><span class="lnt">15
 </span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json">
-<span class="err">cat</span> <span class="err">&lt;&lt;EOF</span> <span class="err">|</span> <span class="err">sudo</span> <span class="err">tee</span> <span class="err">/etc/docker/daemon.json</span>
-<span class="p">{</span>
-  <span class="nt">&#34;exec-opts&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&#34;native.cgroupdriver=systemd&#34;</span><span class="p">],</span>
-  <span class="nt">&#34;log-driver&#34;</span><span class="p">:</span> <span class="s2">&#34;json-file&#34;</span><span class="p">,</span>
-  <span class="nt">&#34;log-opts&#34;</span><span class="p">:</span> <span class="p">{</span>
-    <span class="nt">&#34;max-size&#34;</span><span class="p">:</span> <span class="s2">&#34;100m&#34;</span>
-  <span class="p">},</span>
-  <span class="nt">&#34;storage-driver&#34;</span><span class="p">:</span> <span class="s2">&#34;overlay2&#34;</span>
-<span class="p">}</span>
-<span class="err">EOF</span>
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="w">
+</span><span class="w"></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">apps/v1</span><span class="w">
+</span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Deployment</span><span class="w">
+</span><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">labels</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l">ngx-dep</span><span class="w">
+</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">ngx-dep</span><span class="w">
+</span><span class="w">  
+</span><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="m">2</span><span class="w">
+</span><span class="w">  </span><span class="nt">selector</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l">ngx-dep</span><span class="w">
+</span><span class="w">      
+</span><span class="w">  </span><span class="nt">template</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span><span class="nt">labels</span><span class="p">:</span><span class="w">
+</span><span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l">ngx-dep</span><span class="w">
+</span><span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span><span class="nt">containers</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span>- <span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">nginx:alpine</span><span class="w">
+</span><span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">nginx</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><p><code>replicas</code> 表示副本数量</p>
+<p><code>selector</code> 作用是筛选出要被 Deployment 管理的 Pod 对象， 下属 <code>matchLabels</code> 必须和
+<code>template</code> 的 <code>labels</code> 完全相同</p>
+<p><img src="/image/get_started_with_k8s/18_1.webp" alt="deployment_yaml"></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 查看deploy状态</span>
+kubectl get deploy
 
-<span class="err">sudo</span> <span class="err">systemctl</span> <span class="err">enable</span> <span class="err">docker</span>
-<span class="err">sudo</span> <span class="err">systemctl</span> <span class="err">daemon-reload</span>
-<span class="err">sudo</span> <span class="err">systemctl</span> <span class="err">restart</span> <span class="err">docker</span>
+<span class="c1"># 使用标签筛选 pod</span>
+kubectl get pod -l <span class="nv">app</span><span class="o">=</span>ngx-dep
 
+<span class="c1"># 调整 replicas</span>
+kubectl scale --replicas<span class="o">=</span><span class="m">5</span>  deploy ngx-dep
 </code></pre></td></tr></table>
 </div>
+</div><h1 id="第十九讲-daemonset">第十九讲 DaemonSet</h1>
+<h2 id="介绍">介绍</h2>
+<p>DaemonSet 会在 满足条件的所有节点上运行一个 Pod, 就像 Linux 系统里的 守护进程（Daemon）</p>
+<p>一些应用与节点存在绑定关系，如</p>
+<ul>
+<li>网络应用 kube-proxy</li>
+<li>监控应用 prometheus</li>
+<li>日志应用 fluentd</li>
+</ul>
+<p>DaemonSet 不可以用 <code>kubectl create</code> 创建模板，可以在 Deployment 模版上修改
+， 主要区别就是 DaemonSet 没有 <code>replicas</code> 字段</p>
+<p><img src="/image/get_started_with_k8s/19_1.webp" alt="daemon_set_yaml"></p>
+<h2 id="taint-和-toleration">taint 和 toleration</h2>
+<p>节点的标签有一个专门字段<code>taint</code> 污点来表述，Pod 可以配置  <code>toleratoin</code> 来筛选 taint</p>
+<p>taint 可以在 kubectl describe node 查看</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 添加 taint</span>
+kubectl taint node master node-role.kubernetes.io/master:NoSchedule-
+
+<span class="c1"># 结尾加&#34;-&#34; 来移除 taint</span>
+kubectl taint node master node-role.kubernetes.io/master:NoSchedule-
+</code></pre></td></tr></table>
 </div>
+</div><p>可以 Pod 的 spec 下 选择 taint</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">tolerations</span><span class="p">:</span><span class="w">
+</span><span class="w"></span>- <span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l">node-role.kubernetes.io/master</span><span class="w">
+</span><span class="w">  </span><span class="nt">effect</span><span class="p">:</span><span class="w"> </span><span class="l">NoSchedule</span><span class="w">
+</span><span class="w">  </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="l">Exists</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><h2 id="静态-pod">静态 Pod</h2>
+<p>静态 Pod 不受  k8s 系统管控， 不与 apiserver  发生关系</p>
+<p>对应配置文件默认存放在 /etc/kubernetes/manifests 目录下</p>
+<p><img src="/image/get_started_with_k8s/19_2.webp" alt="static_pods"></p>
+<p>如 master 节点的四个核心组件都是以 静态 Pod 形式存在的</p>
+<h1 id="第二十讲-service">第二十讲 Service</h1>
+<p>Service 工作原理和 Nginx 差不多， k8s 会分给它一个静态 IP,
+然后它再去自动管理维护后面动态变化的 Pod 集合，当客户端访问 Service，它根据某种策略把流量转发给后面某个 Pod.</p>
+<p><img src="/image/get_started_with_k8s/20_1.webp" alt="service"></p>
+<p>可以使用如下命令创建 yaml 模版</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">kubectl expose deploy ngx-dep --port<span class="o">=</span><span class="m">80</span> --target-port<span class="o">=</span><span class="m">80</span> --dry-run<span class="o">=</span>client -o yaml
+</code></pre></td></tr></table>
+</div>
+</div><p>配置中主要有两个关键字 <code>selector</code> 和  <code>ports</code></p>
+<p><img src="/image/get_started_with_k8s/20_2.webp" alt="service_yaml"></p>
+<p>查看 ngx-svc 详情</p>
+<p><img src="/image/get_started_with_k8s/20_3.webp" alt="service_detail"></p>
+<p>exec 到 pod 进行测试</p>
+<p><img src="/image/get_started_with_k8s/20_4.webp" alt="service_test"></p>
+<p>k8s 会自动给对象分配域名,可以使用 <code>ngx-svc</code>等域名访问</p>
+<p><img src="/image/get_started_with_k8s/20_5.webp" alt="service_dns"></p>
+<p>service 默认为 <code>ClusterIP</code> 类型，即静态 IP 只能集群内部访问。
+可以使用 <code>NodePort</code> 类型， 这样节点会提供一个对外暴露的端口指向该 service</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="w">
+</span><span class="w"></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span><span class="w"></span><span class="nn">...</span><span class="w">
+</span><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="l">...</span><span class="w">
+</span><span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">NodePort</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>NodePort 类型有如下缺点：</p>
+<ul>
+<li>端口有限，默认只在 30000~32767 范围分配</li>
+<li>每个节点都开端口，提高了网络通信成本</li>
+<li>需要对外暴露节点的 IP 地址，为了安全需要搭建一个反向代码，增加了复杂度。</li>
+</ul>
+<h1 id="链接">链接</h1>
+<ul>
+<li><a href="https://time.geekbang.org/column/intro/100114501?tab=catalog">极客时间课程</a></li>
+</ul>
+
     </div>
 
     
