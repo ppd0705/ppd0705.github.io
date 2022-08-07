@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>[笔记]Kafka 核心技术与实战 （更新中） - PPD&#39;s blog</title>
+  <title>[笔记]Kafka 核心技术与实战 - PPD&#39;s blog</title>
   
 
 <meta name="renderer" content="webkit" />
@@ -59,19 +59,19 @@
 
 
 
-<meta property="og:title" content="[笔记]Kafka 核心技术与实战 （更新中）" />
+<meta property="og:title" content="[笔记]Kafka 核心技术与实战" />
 <meta property="og:description" content="第一讲 消息系统 ABC 定义 维基百科版: 消息系统是一组规范，利用这组规范在不同系统之间传递语义准确的消息，实现松耦合的异步数据传递。 传输模型 点对点 发" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://ppd0705.github.io/post/kafka_in_action/" /><meta property="article:section" content="post" />
 <meta property="article:published_time" content="2022-06-29T08:20:51+08:00" />
-<meta property="article:modified_time" content="2022-07-31T17:56:51+08:00" />
+<meta property="article:modified_time" content="2022-08-07T17:16:51+08:00" />
 
-<meta itemprop="name" content="[笔记]Kafka 核心技术与实战 （更新中）">
+<meta itemprop="name" content="[笔记]Kafka 核心技术与实战">
 <meta itemprop="description" content="第一讲 消息系统 ABC 定义 维基百科版: 消息系统是一组规范，利用这组规范在不同系统之间传递语义准确的消息，实现松耦合的异步数据传递。 传输模型 点对点 发"><meta itemprop="datePublished" content="2022-06-29T08:20:51+08:00" />
-<meta itemprop="dateModified" content="2022-07-31T17:56:51+08:00" />
-<meta itemprop="wordCount" content="5225">
+<meta itemprop="dateModified" content="2022-08-07T17:16:51+08:00" />
+<meta itemprop="wordCount" content="5740">
 <meta itemprop="keywords" content="消息队列," /><meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="[笔记]Kafka 核心技术与实战 （更新中）"/>
+<meta name="twitter:title" content="[笔记]Kafka 核心技术与实战"/>
 <meta name="twitter:description" content="第一讲 消息系统 ABC 定义 维基百科版: 消息系统是一组规范，利用这组规范在不同系统之间传递语义准确的消息，实现松耦合的异步数据传递。 传输模型 点对点 发"/>
 
 <!--[if lte IE 9]>
@@ -292,7 +292,7 @@
           <article class="post bg-white">
     
     <header class="post-header">
-      <h1 class="post-title">[笔记]Kafka 核心技术与实战 （更新中）</h1>
+      <h1 class="post-title">[笔记]Kafka 核心技术与实战</h1>
       
       <div class="post-meta">
         <time datetime="2022-06-29" class="post-time">
@@ -302,8 +302,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 5225 words </span>
-          <span class="more-meta"> 11 min read </span>
+        <span class="more-meta"> 5740 words </span>
+          <span class="more-meta"> 12 min read </span>
 
         
         
@@ -465,6 +465,19 @@
             <li><a href="#follower副本">follower副本</a></li>
           </ul>
         </li>
+      </ul>
+    </li>
+    <li><a href="#第二十八讲-主题管理">第二十八讲 主题管理</a></li>
+    <li><a href="#第二十九讲-动态配置">第二十九讲 动态配置</a></li>
+    <li><a href="#第三十讲-重设消费者组位移">第三十讲 重设消费者组位移</a>
+      <ul>
+        <li><a href="#策略类型">策略类型</a></li>
+        <li><a href="#命令行设置">命令行设置</a></li>
+      </ul>
+    </li>
+    <li><a href="#第三十一讲-常见脚本汇总">第三十一讲 常见脚本汇总</a>
+      <ul>
+        <li><a href="#重点操作">重点操作</a></li>
       </ul>
     </li>
     <li><a href="#相关链接">相关链接</a>
@@ -1097,7 +1110,208 @@ currentHW = max(crrentHW, min(LEO-1, &hellip;, LEO-n))</li>
 <li>更新高水位值：  获取leader 发送的高水位值 currentHW, 更新高水位为
 min(currentHW, currentLEO)</li>
 </ol>
-<h1 id="相关链接">相关链接</h1>
+<h1 id="第二十八讲-主题管理">第二十八讲 主题管理</h1>
+<p>创建主题</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">bin/kafka-topics.sh --bootstrap-server broker_host:port --create --topic my_topic_name  --partitions <span class="m">1</span> --replication-factor <span class="m">1</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>查询主题列表</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">bin/kafka-topics.sh --bootstrap-server broker_host:port --list
+</code></pre></td></tr></table>
+</div>
+</div><p>查询单个主题详情</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">bin/kafka-topics.sh --bootstrap-server broker_host:port --describe --topic &lt;topic_name&gt;
+</code></pre></td></tr></table>
+</div>
+</div><p>修改（增加）主题分区</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">bin/kafka-topics.sh --bootstrap-server broker_host:port --alter --topic &lt;topic_name&gt; --partitions &lt;新分区数&gt;
+</code></pre></td></tr></table>
+</div>
+</div><p>修改主题单条消息最大字节数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">bin/kafka-configs.sh --zookeeper zookeeper_host:port --entity-type topics --entity-name &lt;topic_name&gt; --alter --add-config max.message.bytes<span class="o">=</span><span class="m">10485760</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>修改主题带宽限速</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">bin/kafka-configs.sh --zookeeper zookeeper_host:port --alter --add-config <span class="s1">&#39;leader.replication.throttled.rate=104857600,follower.replication.throttled.rate=104857600&#39;</span> --entity-type brokers --entity-name <span class="m">0</span>
+
+bin/kafka-configs.sh --zookeeper zookeeper_host:port --alter --add-config <span class="s1">&#39;leader.replication.throttled.replicas=*,follower.replication.throttled.replicas=*&#39;</span> --entity-type topics --entity-name <span class="nb">test</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>删除主题</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">bin/kafka-topics.sh --bootstrap-server broker_host:port --delete  --topic &lt;topic_name&gt;
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="第二十九讲-动态配置">第二十九讲 动态配置</h1>
+<p>broker config 有三类参数</p>
+<ul>
+<li>read-only: 重启 broker 才会生效</li>
+<li>per-broker: 对应 broker 生效</li>
+<li>cluster-wide: 整个集群生效</li>
+</ul>
+<p>常用动态参数</p>
+<ol>
+<li>log.retention.ms</li>
+</ol>
+<p>修改日志留存时间</p>
+<ol start="2">
+<li>num.io.threads 和 num.network.threads</li>
+</ol>
+<p>修改 IO 和网络线程数量</p>
+<ol start="3">
+<li>num.replica.fetchers
+修改 follower 拉取数据的线程数量</li>
+</ol>
+<h1 id="第三十讲-重设消费者组位移">第三十讲 重设消费者组位移</h1>
+<h2 id="策略类型">策略类型</h2>
+<p>kafka 支持 7 种策略</p>
+<p><img src="/image/kafka_in_action/30_1.webp" alt="consumer_offset_strategy"></p>
+<h2 id="命令行设置">命令行设置</h2>
+<p>Earliest</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">bin/kafka-consumer-groups.sh --bootstrap-server kafka-host:port --group test-group --reset-offsets --all-topics --to-earliest –execute
+</code></pre></td></tr></table>
+</div>
+</div><p>Latest</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">bin/kafka-consumer-groups.sh --bootstrap-server kafka-host:port --group test-group --reset-offsets --all-topics --to-latest --execute
+</code></pre></td></tr></table>
+</div>
+</div><p>Current</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">bin/kafka-consumer-groups.sh --bootstrap-server kafka-host:port --group test-group --reset-offsets --all-topics --to-current --execute
+</code></pre></td></tr></table>
+</div>
+</div><p>Specified-Offset</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">bin/kafka-consumer-groups.sh --bootstrap-server kafka-host:port --group test-group --reset-offsets --all-topics --to-offset &lt;offset&gt; --execute
+</code></pre></td></tr></table>
+</div>
+</div><p>Shift-By-N</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">bin/kafka-consumer-groups.sh --bootstrap-server kafka-host:port --group test-group --reset-offsets --shift-by &lt;offset_N&gt; --execute
+</code></pre></td></tr></table>
+</div>
+</div><p>Datetime</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">bin/kafka-consumer-groups.sh --bootstrap-server kafka-host:port --group test-group --reset-offsets --to-datetime 2019-06-20T20:00:00.000 --execute
+</code></pre></td></tr></table>
+</div>
+</div><p>Duration</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">bin/kafka-consumer-groups.sh --bootstrap-server kafka-host:port --group test-group --reset-offsets --by-duration PT0H30M0S --execute
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="第三十一讲-常见脚本汇总">第三十一讲 常见脚本汇总</h1>
+<p><code>kafka-dump-log</code> 查看 kafka 消息文件的内容，包括消息的各种元数据信息和消息本身</p>
+<p><code>kafka-log-dirs</code> 查看各个 Broker 磁盘占用情况</p>
+<h2 id="重点操作">重点操作</h2>
+<p>生成消息</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">$ bin/kafka-console-producer.sh --broker-list kafka-host:port --topic test-topic --request-required-acks -1 --producer-property compression.type<span class="o">=</span>lz4
+&gt;
+</code></pre></td></tr></table>
+</div>
+</div><p>消费消息</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">$ bin/kafka-console-consumer.sh --bootstrap-server kafka-host:port --topic test-topic --group test-group --from-beginning --consumer-property enable.auto.commit<span class="o">=</span><span class="nb">false</span> 
+</code></pre></td></tr></table>
+</div>
+</div><p>查看文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">
+$ bin/kafka-dump-log.sh --files ../data_dir/kafka_1/test-topic-1/00000000000000000000.log 
+Dumping ../data_dir/kafka_1/test-topic-1/00000000000000000000.log
+Starting offset: <span class="m">0</span>
+baseOffset: <span class="m">0</span> lastOffset: <span class="m">14</span> count: <span class="m">15</span> baseSequence: -1 lastSequence: -1 producerId: -1 producerEpoch: -1 partitionLeaderEpoch: <span class="m">0</span> isTransactional: <span class="nb">false</span> isControl: <span class="nb">false</span> position: <span class="m">0</span> CreateTime: <span class="m">1561597044933</span> size: <span class="m">1237</span> magic: <span class="m">2</span> compresscodec: LZ4 crc: <span class="m">646766737</span> isvalid: <span class="nb">true</span>
+baseOffset: <span class="m">15</span> lastOffset: <span class="m">29</span> count: <span class="m">15</span> baseSequence: -1 lastSequence: -1 producerId: -1 producerEpoch: -1 partitionLeaderEpoch: <span class="m">0</span> isTransactional: <span class="nb">false</span> isControl: <span class="nb">false</span> position: <span class="m">1237</span> CreateTime: <span class="m">1561597044934</span> size: <span class="m">1237</span> magic: <span class="m">2</span> compresscodec: LZ4 crc: <span class="m">3751986433</span> isvalid: <span class="nb">true</span>
+......
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="相关链接">相关链接</h1>
 <h2 id="kafka管理和监控平台">kafka管理和监控平台</h2>
 <ul>
 <li><a href="https://github.com/smartloli/EFAK">A easy and high-performance monitoring system</a></li>
@@ -1117,7 +1331,7 @@ min(currentHW, currentLEO)</li>
   <p class="copyright-item">
     <span class="item-title">LastMod</span>
     <span class="item-content">
-      2022-07-31
+      2022-08-07
       
     </span>
   </p>
