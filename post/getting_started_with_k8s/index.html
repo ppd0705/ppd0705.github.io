@@ -64,12 +64,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://ppd0705.github.io/post/getting_started_with_k8s/" /><meta property="article:section" content="post" />
 <meta property="article:published_time" content="2022-07-24T10:50:35+08:00" />
-<meta property="article:modified_time" content="2022-08-20T11:56:35+08:00" />
+<meta property="article:modified_time" content="2022-08-28T17:08:35+08:00" />
 
 <meta itemprop="name" content="[笔记]k8s入门（更新中）">
 <meta itemprop="description" content="第零讲 环境准备 使用 virtualbox 安装 ubuntu 虚拟环境 个人采坑记录 共享粘贴板设置 配置了双向粘贴版 和 安装 apt install virtualbox-guest-utils 还是不行， 每次得手动启动 VBoxClient --clipborad. 通过 df -h 查看目录找到 挂载"><meta itemprop="datePublished" content="2022-07-24T10:50:35+08:00" />
-<meta itemprop="dateModified" content="2022-08-20T11:56:35+08:00" />
-<meta itemprop="wordCount" content="4846">
+<meta itemprop="dateModified" content="2022-08-28T17:08:35+08:00" />
+<meta itemprop="wordCount" content="5435">
 <meta itemprop="keywords" content="k8s," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]k8s入门（更新中）"/>
 <meta name="twitter:description" content="第零讲 环境准备 使用 virtualbox 安装 ubuntu 虚拟环境 个人采坑记录 共享粘贴板设置 配置了双向粘贴版 和 安装 apt install virtualbox-guest-utils 还是不行， 每次得手动启动 VBoxClient --clipborad. 通过 df -h 查看目录找到 挂载"/>
@@ -284,8 +284,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 4846 words </span>
-          <span class="more-meta"> 10 min read </span>
+        <span class="more-meta"> 5435 words </span>
+          <span class="more-meta"> 11 min read </span>
 
         
         
@@ -433,6 +433,18 @@
       </ul>
     </li>
     <li><a href="#第二十六讲-statefulset">第二十六讲 StatefulSet</a></li>
+    <li><a href="#第二十七讲-滚动更新">第二十七讲 滚动更新</a>
+      <ul>
+        <li><a href="#更新">更新</a></li>
+        <li><a href="#历史及回滚">历史及回滚</a></li>
+      </ul>
+    </li>
+    <li><a href="#第二十八讲-如何监控-pod-健康状态">第二十八讲 如何监控 Pod 健康状态</a>
+      <ul>
+        <li><a href="#资源配额">资源配额</a></li>
+        <li><a href="#检查探针">检查探针</a></li>
+      </ul>
+    </li>
     <li><a href="#链接">链接</a></li>
   </ul>
 </nav>
@@ -2635,7 +2647,181 @@ rabc.yaml、class.yaml 和 deployment.yaml</p>
 <p><img src="/image/get_started_with_k8s/26_3.webp" alt="p3"></p>
 <p>pvc 状态</p>
 <p><img src="/image/get_started_with_k8s/26_4.webp" alt="p4"></p>
-<h1 id="链接">链接</h1>
+<h1 id="第二十七讲-滚动更新">第二十七讲 滚动更新</h1>
+<h2 id="更新">更新</h2>
+<p>k8s 里面的应用的版本变化就是指 template 里的 Pod 变化，最终
+使用 template 的 Hash 值作为 版本号</p>
+<p>apply 更新的 yaml 后，可以使用<code>kubectl rollout status</code>查看更新状态</p>
+<p><img src="/image/get_started_with_k8s/27_1.webp" alt="p1"></p>
+<p>可以使用 <code>kubectl describe  deployment  ngx-dep</code> 查看具体的 pod 变化</p>
+<p><img src="/image/get_started_with_k8s/27_2.webp" alt="p2"></p>
+<p>pod 变化过程示意图</p>
+<p><img src="/image/get_started_with_k8s/27_3.webp" alt="p3"></p>
+<h2 id="历史及回滚">历史及回滚</h2>
+<p>可使用 <code>kubectl rollout history deployment ngx-dep</code> 查看更新历史， 默认保存最近十次记录</p>
+<p>可使用 <code>kubectl rollout history deployment ngx-dep --revision=2</code> 查看具体历史的详情</p>
+<p><img src="/image/get_started_with_k8s/27_4.webp" alt="p4"></p>
+<p>可使用 <code>kubectl rollout undo deployment ngx-dep</code> 来回滚</p>
+<p>可使用 <code>kubectl rollout undo deployment ngx-dep --to-revision=3</code> 来回滚到任意版本</p>
+<p>回滚时 pod 变化过程示意图</p>
+<p><img src="/image/get_started_with_k8s/27_5.webp" alt="p5"></p>
+<p>添加版本备注信息</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">apps/v1</span><span class="w">
+</span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Deployment</span><span class="w">
+</span><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">ngx-dep</span><span class="w">
+</span><span class="w">  </span><span class="nt">annotations</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="nt">kubernetes.io/change-cause</span><span class="p">:</span><span class="w"> </span><span class="l">v1, ngx=1.21</span><span class="w">
+</span><span class="w"></span><span class="nn">...</span><span class="w"> </span><span class="l">...</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><h1 id="第二十八讲-如何监控-pod-健康状态">第二十八讲 如何监控 Pod 健康状态</h1>
+<h2 id="资源配额">资源配额</h2>
+<p>通过在 容器描述部分添加 resources 字段来声明资源</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Pod</span><span class="w">
+</span><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">ngx-pod-resources</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">containers</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span>- <span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">nginx:alpine</span><span class="w">
+</span><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">ngx</span><span class="w">
+</span><span class="w">
+</span><span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span><span class="nt">requests</span><span class="p">:</span><span class="w">
+</span><span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l">10m</span><span class="w">
+</span><span class="w">        </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l">100Mi</span><span class="w">
+</span><span class="w">      </span><span class="nt">limits</span><span class="p">:</span><span class="w">
+</span><span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l">20m</span><span class="w">
+</span><span class="w">        </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l">200Mi</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><p><code>requests</code> 表示容器需要申请的资源，<code>limits</code> 表示资源使用上限，超过则可能被强制停止。</p>
+<p>cpu 的单位<code>m</code>代表千分之一。</p>
+<p>如果不加资源声明，k8s 可以将 pod 调度到任意节点上，否则
+k8s 会根据每个 Pod 声明的需求，像搭积木或者玩俄罗斯方块一样，把节点尽量塞满。</p>
+<h2 id="检查探针">检查探针</h2>
+<p>k8s 定义了三种探针</p>
+<ul>
+<li>Startup: 启动探针，用来检查应用是否启动成功</li>
+<li>Liveness: 存活探针，用来检查应用是否正常运行</li>
+<li>Readiness: 就绪探针，用来检查应用是否可以接受流量</li>
+</ul>
+<p>三种探针是递进关系，Startup 成功后，才会执行后面两个探针</p>
+<p><img src="/image/get_started_with_k8s/28_1.webp" alt="p1"></p>
+<p>如果 Liveness 探针失败， k8s 会重启容器，Readiness 探针失败，会将容器从 Service 负载均衡集合中移除，不分配流量。</p>
+<p><img src="/image/get_started_with_k8s/28_2.webp" alt="p2"></p>
+<p>k8s 支持使用 shell、tcp、http 三种方式检测</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Pod</span><span class="w">
+</span><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">ngx-pod-probe</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">volumes</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">ngx-conf-vol</span><span class="w">
+</span><span class="w">    </span><span class="nt">configMap</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">ngx-conf</span><span class="w">
+</span><span class="w">
+</span><span class="w">  </span><span class="nt">containers</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span>- <span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">nginx:alpine</span><span class="w">
+</span><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">ngx</span><span class="w">
+</span><span class="w">    </span><span class="nt">ports</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span>- <span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="m">80</span><span class="w">
+</span><span class="w">    </span><span class="nt">volumeMounts</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span>- <span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l">/etc/nginx/conf.d</span><span class="w">
+</span><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">ngx-conf-vol</span><span class="w">
+</span><span class="w">
+</span><span class="w">    </span><span class="nt">startupProbe</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span><span class="nt">periodSeconds</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">
+</span><span class="w">      </span><span class="nt">exec</span><span class="p">:</span><span class="w">
+</span><span class="w">        </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&#34;cat&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;/var/run/nginx.pid&#34;</span><span class="p">]</span><span class="w">
+</span><span class="w">
+</span><span class="w">    </span><span class="nt">livenessProbe</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span><span class="nt">periodSeconds</span><span class="p">:</span><span class="w"> </span><span class="m">10</span><span class="w">
+</span><span class="w">      </span><span class="nt">tcpSocket</span><span class="p">:</span><span class="w">
+</span><span class="w">        </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="m">80</span><span class="w">
+</span><span class="w">
+</span><span class="w">    </span><span class="nt">readinessProbe</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span><span class="nt">periodSeconds</span><span class="p">:</span><span class="w"> </span><span class="m">5</span><span class="w">
+</span><span class="w">      </span><span class="nt">httpGet</span><span class="p">:</span><span class="w">
+</span><span class="w">        </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l">/ready</span><span class="w">
+</span><span class="w">        </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="m">80</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><h1 id="链接">链接</h1>
 <ul>
 <li><a href="https://time.geekbang.org/column/intro/100114501?tab=catalog">极客时间课程</a></li>
 </ul>
@@ -2652,7 +2838,7 @@ rabc.yaml、class.yaml 和 deployment.yaml</p>
   <p class="copyright-item">
     <span class="item-title">LastMod</span>
     <span class="item-content">
-      2022-08-20
+      2022-08-28
       
     </span>
   </p>
