@@ -64,12 +64,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://ppd0705.github.io/post/getting_started_with_k8s/" /><meta property="article:section" content="post" />
 <meta property="article:published_time" content="2022-07-24T10:50:35+08:00" />
-<meta property="article:modified_time" content="2022-09-08T09:08:35+08:00" />
+<meta property="article:modified_time" content="2022-09-25T16:40:35+08:00" />
 
 <meta itemprop="name" content="[笔记]k8s入门（更新中）">
 <meta itemprop="description" content="第零讲 环境准备 使用 virtualbox 安装 ubuntu 虚拟环境 个人采坑记录 共享粘贴板设置 配置了双向粘贴版 和 安装 apt install virtualbox-guest-utils 还是不行， 每次得手动启动 VBoxClient --clipborad. 通过 df -h 查看目录找到 挂载"><meta itemprop="datePublished" content="2022-07-24T10:50:35+08:00" />
-<meta itemprop="dateModified" content="2022-09-08T09:08:35+08:00" />
-<meta itemprop="wordCount" content="5624">
+<meta itemprop="dateModified" content="2022-09-25T16:40:35+08:00" />
+<meta itemprop="wordCount" content="6155">
 <meta itemprop="keywords" content="k8s," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]k8s入门（更新中）"/>
 <meta name="twitter:description" content="第零讲 环境准备 使用 virtualbox 安装 ubuntu 虚拟环境 个人采坑记录 共享粘贴板设置 配置了双向粘贴版 和 安装 apt install virtualbox-guest-utils 还是不行， 每次得手动启动 VBoxClient --clipborad. 通过 df -h 查看目录找到 挂载"/>
@@ -284,8 +284,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 5624 words </span>
-          <span class="more-meta"> 12 min read </span>
+        <span class="more-meta"> 6155 words </span>
+          <span class="more-meta"> 13 min read </span>
 
         
         
@@ -446,6 +446,13 @@
       </ul>
     </li>
     <li><a href="#第二十九讲-命名空间">第二十九讲 命名空间</a></li>
+    <li><a href="#第三十讲-如何使用-metrics-server-和-prometheus">第三十讲 如何使用 Metrics Server 和 Prometheus</a>
+      <ul>
+        <li><a href="#metrics-server">Metrics Server</a></li>
+        <li><a href="#horizontalpodautoscaler">HorizontalPodAutoscaler</a></li>
+        <li><a href="#prometheus">Prometheus</a></li>
+      </ul>
+    </li>
     <li><a href="#链接">链接</a></li>
   </ul>
 </nav>
@@ -2936,7 +2943,251 @@ k8s 会根据每个 Pod 声明的需求，像搭积木或者玩俄罗斯方块�
 </span><span class="w">      </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l">200Mi</span><span class="w">
 </span></code></pre></td></tr></table>
 </div>
-</div><h1 id="链接">链接</h1>
+</div><h1 id="第三十讲-如何使用-metrics-server-和-prometheus">第三十讲 如何使用 Metrics Server 和 Prometheus</h1>
+<h2 id="metrics-server">Metrics Server</h2>
+<p>metrics server 是一个专门来收集核心资源指标的工具，定时从所有节点的 kubelet
+里采集信息。</p>
+<p><img src="/image/get_started_with_k8s/30_1.webp" alt="p1"></p>
+<p>安装</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="c1">#  下载配置yaml</span>
+wget https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+
+
+<span class="c1"># 修改配置 </span>
+<span class="c1"># deployment.spec.template.spec.containers 对象 添加 &#39;- --kubelet-insecure-tls&#39;</span>
+<span class="c1"># deployment.spec.template.spec 对象 添加 &#39;nodeName: k8s-master #你自己的节点名称&#39;</span>
+
+<span class="c1"># 重命名镜像</span>
+
+<span class="nv">repo</span><span class="o">=</span>registry.aliyuncs.com/google_containers
+
+<span class="nv">name</span><span class="o">=</span>k8s.gcr.io/metrics-server/metrics-server:v0.6.1
+<span class="nv">src_name</span><span class="o">=</span>metrics-server:v0.6.1
+
+docker pull <span class="nv">$repo</span>/<span class="nv">$src_name</span>
+
+docker tag <span class="nv">$repo</span>/<span class="nv">$src_name</span> <span class="nv">$name</span>
+docker rmi <span class="nv">$repo</span>/<span class="nv">$src_name</span>
+
+
+<span class="c1"># 应用</span>
+
+kubectl apply -f components.yaml
+</code></pre></td></tr></table>
+</div>
+</div><p>查看
+<img src="/image/get_started_with_k8s/30_2.webp" alt="p2"></p>
+<h2 id="horizontalpodautoscaler">HorizontalPodAutoscaler</h2>
+<p>HorizontalPodAutoscaler 是 用来 自动伸缩 Pod 数量的对象，简称 hpa.</p>
+<p>hpa 从  Metrics Server 获取当前应用的指标，按照策略增减 Pod 数量</p>
+<p>使用 nginx deploy 示例</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">apps/v1</span><span class="w">
+</span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Deployment</span><span class="w">
+</span><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">ngx-hpa-dep</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">
+</span><span class="w">  </span><span class="nt">selector</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l">ngx-hpa-dep</span><span class="w">
+</span><span class="w">
+</span><span class="w">  </span><span class="nt">template</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span><span class="nt">labels</span><span class="p">:</span><span class="w">
+</span><span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l">ngx-hpa-dep</span><span class="w">
+</span><span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span><span class="nt">containers</span><span class="p">:</span><span class="w">
+</span><span class="w">        </span>- <span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">nginx:alpine</span><span class="w">
+</span><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">nginx</span><span class="w">
+</span><span class="w">          </span><span class="nt">ports</span><span class="p">:</span><span class="w">
+</span><span class="w">            </span>- <span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="m">80</span><span class="w">
+</span><span class="w">
+</span><span class="w">          </span><span class="nt">resources</span><span class="p">:</span><span class="w">
+</span><span class="w">            </span><span class="nt">requests</span><span class="p">:</span><span class="w">
+</span><span class="w">              </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l">50m</span><span class="w">
+</span><span class="w">              </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l">10Mi</span><span class="w">
+</span><span class="w">            </span><span class="nt">limits</span><span class="p">:</span><span class="w">
+</span><span class="w">              </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l">100m</span><span class="w">
+</span><span class="w">              </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l">20Mi</span><span class="w">
+</span><span class="w"></span><span class="nn">---</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Service</span><span class="w">
+</span><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">ngx-hpa-svc</span><span class="w">
+</span><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">ports</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span>- <span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="m">80</span><span class="w">
+</span><span class="w">      </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l">TCP</span><span class="w">
+</span><span class="w">      </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="m">80</span><span class="w">
+</span><span class="w">  </span><span class="nt">selector</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l">ngx-hpa-dep</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>创建 hpa 模版</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">export</span> <span class="nv">out</span><span class="o">=</span><span class="s2">&#34;--dry-run=client -o yaml&#34;</span>              <span class="c1"># 定义Shell变量</span>
+kubectl autoscale deploy ngx-hpa-dep --min<span class="o">=</span><span class="m">2</span> --max<span class="o">=</span><span class="m">10</span> --cpu-percent<span class="o">=</span><span class="m">5</span> <span class="nv">$out</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">autoscaling/v1</span><span class="w">
+</span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">HorizontalPodAutoscaler</span><span class="w">
+</span><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">ngx-hpa</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">maxReplicas</span><span class="p">:</span><span class="w"> </span><span class="m">10</span><span class="w">
+</span><span class="w">  </span><span class="nt">minReplicas</span><span class="p">:</span><span class="w"> </span><span class="m">2</span><span class="w">
+</span><span class="w">  </span><span class="nt">scaleTargetRef</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">apps/v1</span><span class="w">
+</span><span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Deployment</span><span class="w">
+</span><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">ngx-hpa-dep</span><span class="w">
+</span><span class="w">  </span><span class="nt">targetCPUUtilizationPercentage</span><span class="p">:</span><span class="w"> </span><span class="m">5</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><h2 id="prometheus">Prometheus</h2>
+<p>使用 <code>kube-prometheus</code> 部署比较方便</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="c1">#  下载部署文件</span>
+wget https://github.com/prometheus-operator/kube-prometheus/archive/refs/tags/v0.11.0.tar.gz
+
+
+<span class="c1"># 修改配置</span>
+<span class="c1">##  替换gcr 镜像 kubeStateMetrics-deployment.yaml、prometheusAdapter-deployment.yaml</span>
+image: k8s.gcr.io/kube-state-metrics/kube-state-metrics:v2.5.0
+image: k8s.gcr.io/prometheus-adapter/prometheus-adapter:v0.9.1
+
+image: chronolaw/kube-state-metrics:v2.5.0
+image: willdockerhub/prometheus-adapter:v0.9.1
+<span class="c1">## 添加NodePort IP ,方便本机测试 prometheus-service.yaml、grafana-service.yaml</span>
+spec.type: NodePort
+
+<span class="c1"># 创建服务</span>
+kubectl create -f manifests/setup
+kubectl create -f manifests
+
+</code></pre></td></tr></table>
+</div>
+</div><p>使用 <code>kubectl get svc -n monitoring</code> 获取 prometheus-k8s 服务 9090对应的端口、grafana 3000 对应的端口, 浏览器访问验证</p>
+<h1 id="链接">链接</h1>
 <ul>
 <li><a href="https://time.geekbang.org/column/intro/100114501?tab=catalog">极客时间课程</a></li>
 <li><a href="https://github.com/chronolaw/k8s_study/">课程示例代码仓库</a></li>
@@ -2954,7 +3205,7 @@ k8s 会根据每个 Pod 声明的需求，像搭积木或者玩俄罗斯方块�
   <p class="copyright-item">
     <span class="item-title">LastMod</span>
     <span class="item-content">
-      2022-09-08
+      2022-09-25
       
     </span>
   </p>
