@@ -2784,6 +2784,57 @@ kubectl create -f manifests
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;使用 &lt;code&gt;kubectl get svc -n monitoring&lt;/code&gt; 获取 prometheus-k8s 服务 9090对应的端口、grafana 3000 对应的端口, 浏览器访问验证&lt;/p&gt;
+&lt;h1 id=&#34;第三十一讲-网络通信&#34;&gt;第三十一讲 网络通信&lt;/h1&gt;
+&lt;h2 id=&#34;cni&#34;&gt;CNI&lt;/h2&gt;
+&lt;p&gt;为了适应跨主机通信的需求，k8s 提出了自己的网络模型 &lt;code&gt;IP-per-pod&lt;/code&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;每个 pod  有唯一的 IP 地址&lt;/li&gt;
+&lt;li&gt;pod 里所有容器共享这个 IP 地址&lt;/li&gt;
+&lt;li&gt;集群内所有 pod 共享一个网段&lt;/li&gt;
+&lt;li&gt;pod 可以直接基于 IP 访问另外一个 pod&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;k8s 定义了一个实现上述网络模型的标准 CNI(container networking interface)，
+根据实现原理， CNI 插件大致分为三类：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Overlay: 构建了一个工作在真实底层网络之上的&amp;quot;逻辑网络&amp;quot;，把原始的 Pod 网络数据封包，再通过下层网络发送出去，到了目的地再拆包。特点是适应性强，但性能较低。&lt;/li&gt;
+&lt;li&gt;Route：使用系统内置的路由功能来实现 Pod 跨主机通信。特点是性能较高，但对底层网络依赖性强。&lt;/li&gt;
+&lt;li&gt;Underlay：直接使用底层网络来实现CNI，Pod 和主机在一个网络里。 特点是性能最高，但对底层硬件和网络依赖性最强。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;插件介绍&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Flannel：早期使用 UDP 和 VXLAN 实现了 Overlay 模式，后来使用 Host-Gateway 支持了 Route 模式&lt;/li&gt;
+&lt;li&gt;Calico：Route 模式，使用 BGP 协议来维护路由信息，支持多种网络策略，具备数据加密、安全隔离、流量整形等功能&lt;/li&gt;
+&lt;li&gt;Cilium：同时支持 Overlay 和 Route 模式，深度使用了 eBPF 技术，在内核层次操作网络数据，性能很高。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;flannel-工作方式分析&#34;&gt;Flannel 工作方式分析&lt;/h2&gt;
+&lt;p&gt;创建 3 个 nginx pod&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl create deploy ngx-dep --image&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;nginx:alpine --replicas&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/get_started_with_k8s/31_1.webp&#34; alt=&#34;p1&#34;&gt;&lt;/p&gt;
+&lt;p&gt;默认使用基于 VXLAN 的 Overlay 模式，从单机的角度来看，Flannel 的网络结构几乎和
+Docker 一模一样，只不过网桥从 docker0 换成 了 cni0&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/get_started_with_k8s/31_2.webp&#34; alt=&#34;p2&#34;&gt;&lt;/p&gt;
+&lt;p&gt;本机网络连接示意图如下&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/get_started_with_k8s/31_3.webp&#34; alt=&#34;p3&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;route&lt;/code&gt; 查看路由表&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;10.10.0.0/24 网段的数据，都要走 cni0 设备，也就是“cni0”网桥。&lt;/li&gt;
+&lt;li&gt;10.10.1.0/24 网段的数据，都要走 flannel.1 设备，也就是 Flannel。&lt;/li&gt;
+&lt;li&gt;192.168.10.0/24 网段的数据，都要走 ens160 设备，也就是我们宿主机的网卡&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;假设我们要从 master 节点的“10.10.0.3”访问 worker 节点的“10.10.1.77”，因为
+master 节点的“cni0”网桥管理的只是“10.10.0.0/24”这个网段，
+所以按照路由表，凡是“10.10.1.0/24”都要让 flannel.1 来处理，
+这样就进入了 Flannel 插件的工作流程。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/get_started_with_k8s/31_4.webp&#34; alt=&#34;p4&#34;&gt;&lt;/p&gt;
+&lt;p&gt;跨主机网络示意图如下&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ppd0705.github.io/image/get_started_with_k8s/31_5.webp&#34; alt=&#34;p5&#34;&gt;&lt;/p&gt;
 &lt;h1 id=&#34;链接&#34;&gt;链接&lt;/h1&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://time.geekbang.org/column/intro/100114501?tab=catalog&#34;&gt;极客时间课程&lt;/a&gt;&lt;/li&gt;

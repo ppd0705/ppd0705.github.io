@@ -69,7 +69,7 @@
 <meta itemprop="name" content="[笔记]k8s入门（更新中）">
 <meta itemprop="description" content="第零讲 环境准备 使用 virtualbox 安装 ubuntu 虚拟环境 个人采坑记录 共享粘贴板设置 配置了双向粘贴版 和 安装 apt install virtualbox-guest-utils 还是不行， 每次得手动启动 VBoxClient --clipborad. 通过 df -h 查看目录找到 挂载"><meta itemprop="datePublished" content="2022-07-24T10:50:35+08:00" />
 <meta itemprop="dateModified" content="2022-09-25T16:40:35+08:00" />
-<meta itemprop="wordCount" content="6155">
+<meta itemprop="wordCount" content="6914">
 <meta itemprop="keywords" content="k8s," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]k8s入门（更新中）"/>
 <meta name="twitter:description" content="第零讲 环境准备 使用 virtualbox 安装 ubuntu 虚拟环境 个人采坑记录 共享粘贴板设置 配置了双向粘贴版 和 安装 apt install virtualbox-guest-utils 还是不行， 每次得手动启动 VBoxClient --clipborad. 通过 df -h 查看目录找到 挂载"/>
@@ -284,8 +284,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 6155 words </span>
-          <span class="more-meta"> 13 min read </span>
+        <span class="more-meta"> 6914 words </span>
+          <span class="more-meta"> 14 min read </span>
 
         
         
@@ -451,6 +451,12 @@
         <li><a href="#metrics-server">Metrics Server</a></li>
         <li><a href="#horizontalpodautoscaler">HorizontalPodAutoscaler</a></li>
         <li><a href="#prometheus">Prometheus</a></li>
+      </ul>
+    </li>
+    <li><a href="#第三十一讲-网络通信">第三十一讲 网络通信</a>
+      <ul>
+        <li><a href="#cni">CNI</a></li>
+        <li><a href="#flannel-工作方式分析">Flannel 工作方式分析</a></li>
       </ul>
     </li>
     <li><a href="#链接">链接</a></li>
@@ -3187,6 +3193,57 @@ kubectl create -f manifests
 </code></pre></td></tr></table>
 </div>
 </div><p>使用 <code>kubectl get svc -n monitoring</code> 获取 prometheus-k8s 服务 9090对应的端口、grafana 3000 对应的端口, 浏览器访问验证</p>
+<h1 id="第三十一讲-网络通信">第三十一讲 网络通信</h1>
+<h2 id="cni">CNI</h2>
+<p>为了适应跨主机通信的需求，k8s 提出了自己的网络模型 <code>IP-per-pod</code>:</p>
+<ul>
+<li>每个 pod  有唯一的 IP 地址</li>
+<li>pod 里所有容器共享这个 IP 地址</li>
+<li>集群内所有 pod 共享一个网段</li>
+<li>pod 可以直接基于 IP 访问另外一个 pod</li>
+</ul>
+<p>k8s 定义了一个实现上述网络模型的标准 CNI(container networking interface)，
+根据实现原理， CNI 插件大致分为三类：</p>
+<ul>
+<li>Overlay: 构建了一个工作在真实底层网络之上的&quot;逻辑网络&quot;，把原始的 Pod 网络数据封包，再通过下层网络发送出去，到了目的地再拆包。特点是适应性强，但性能较低。</li>
+<li>Route：使用系统内置的路由功能来实现 Pod 跨主机通信。特点是性能较高，但对底层网络依赖性强。</li>
+<li>Underlay：直接使用底层网络来实现CNI，Pod 和主机在一个网络里。 特点是性能最高，但对底层硬件和网络依赖性最强。</li>
+</ul>
+<p>插件介绍</p>
+<ul>
+<li>Flannel：早期使用 UDP 和 VXLAN 实现了 Overlay 模式，后来使用 Host-Gateway 支持了 Route 模式</li>
+<li>Calico：Route 模式，使用 BGP 协议来维护路由信息，支持多种网络策略，具备数据加密、安全隔离、流量整形等功能</li>
+<li>Cilium：同时支持 Overlay 和 Route 模式，深度使用了 eBPF 技术，在内核层次操作网络数据，性能很高。</li>
+</ul>
+<h2 id="flannel-工作方式分析">Flannel 工作方式分析</h2>
+<p>创建 3 个 nginx pod</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">kubectl create deploy ngx-dep --image<span class="o">=</span>nginx:alpine --replicas<span class="o">=</span><span class="m">3</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><img src="/image/get_started_with_k8s/31_1.webp" alt="p1"></p>
+<p>默认使用基于 VXLAN 的 Overlay 模式，从单机的角度来看，Flannel 的网络结构几乎和
+Docker 一模一样，只不过网桥从 docker0 换成 了 cni0</p>
+<p><img src="/image/get_started_with_k8s/31_2.webp" alt="p2"></p>
+<p>本机网络连接示意图如下</p>
+<p><img src="/image/get_started_with_k8s/31_3.webp" alt="p3"></p>
+<p><code>route</code> 查看路由表</p>
+<ul>
+<li>10.10.0.0/24 网段的数据，都要走 cni0 设备，也就是“cni0”网桥。</li>
+<li>10.10.1.0/24 网段的数据，都要走 flannel.1 设备，也就是 Flannel。</li>
+<li>192.168.10.0/24 网段的数据，都要走 ens160 设备，也就是我们宿主机的网卡</li>
+</ul>
+<p>假设我们要从 master 节点的“10.10.0.3”访问 worker 节点的“10.10.1.77”，因为
+master 节点的“cni0”网桥管理的只是“10.10.0.0/24”这个网段，
+所以按照路由表，凡是“10.10.1.0/24”都要让 flannel.1 来处理，
+这样就进入了 Flannel 插件的工作流程。</p>
+<p><img src="/image/get_started_with_k8s/31_4.webp" alt="p4"></p>
+<p>跨主机网络示意图如下</p>
+<p><img src="/image/get_started_with_k8s/31_5.webp" alt="p5"></p>
 <h1 id="链接">链接</h1>
 <ul>
 <li><a href="https://time.geekbang.org/column/intro/100114501?tab=catalog">极客时间课程</a></li>
