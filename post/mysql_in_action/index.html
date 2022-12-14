@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.86.0-DEV" />
+<meta name="generator" content="Hugo 0.108.0" />
 
 
 <link rel="canonical" href="https://ppd0705.github.io/post/mysql_in_action/" />
@@ -65,11 +65,10 @@
 <meta property="og:url" content="https://ppd0705.github.io/post/mysql_in_action/" /><meta property="article:section" content="post" />
 <meta property="article:published_time" content="2020-08-25T21:05:35+08:00" />
 <meta property="article:modified_time" content="2020-08-25T21:05:35+08:00" />
-
 <meta itemprop="name" content="[笔记]MySQL实战45讲">
 <meta itemprop="description" content="第一讲：一条SQL查询语句的执行过程 MySQL架构 Server层 连接器： 管理连接，权限验证 分析器：词法分析，语法分析 优化器：索引选择，joi"><meta itemprop="datePublished" content="2020-08-25T21:05:35+08:00" />
 <meta itemprop="dateModified" content="2020-08-25T21:05:35+08:00" />
-<meta itemprop="wordCount" content="16596">
+<meta itemprop="wordCount" content="16998">
 <meta itemprop="keywords" content="MySQL," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]MySQL实战45讲"/>
 <meta name="twitter:description" content="第一讲：一条SQL查询语句的执行过程 MySQL架构 Server层 连接器： 管理连接，权限验证 分析器：词法分析，语法分析 优化器：索引选择，joi"/>
@@ -284,7 +283,7 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 16596 words </span>
+        <span class="more-meta"> 16998 words </span>
           <span class="more-meta"> 34 min read </span>
 
         
@@ -663,10 +662,10 @@
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">CREATE</span><span class="w"> </span><span class="k">DATABASE</span><span class="w"> </span><span class="n">TEST</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">T</span><span class="p">(</span><span class="k">c</span><span class="w"> </span><span class="nb">int</span><span class="p">)</span><span class="w"> </span><span class="n">engine</span><span class="w"> </span><span class="n">InnoDB</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">T</span><span class="p">(</span><span class="k">c</span><span class="p">)</span><span class="w"> </span><span class="k">values</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="k">DATABASE</span><span class="w"> </span><span class="n">TEST</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">T</span><span class="p">(</span><span class="k">c</span><span class="w"> </span><span class="nb">int</span><span class="p">)</span><span class="w"> </span><span class="n">engine</span><span class="w"> </span><span class="n">InnoDB</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">T</span><span class="p">(</span><span class="k">c</span><span class="p">)</span><span class="w"> </span><span class="k">values</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><h5 id="对于如下示例在不同的隔离级别c1c2c3的结果分别是什么">对于如下示例，在不同的隔离级别<code>c1</code>/<code>c2</code>/<code>c3</code>的结果分别是什么？</h5>
 <table>
@@ -770,9 +769,9 @@
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="o">#</span><span class="w"> </span><span class="n">FTWRL</span><span class="w">
-</span><span class="w"></span><span class="n">Flush</span><span class="w"> </span><span class="n">tables</span><span class="w"> </span><span class="k">with</span><span class="w"> </span><span class="k">read</span><span class="w"> </span><span class="k">lock</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="o">#</span><span class="w"> </span><span class="n">FTWRL</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Flush</span><span class="w"> </span><span class="n">tables</span><span class="w"> </span><span class="k">with</span><span class="w"> </span><span class="k">read</span><span class="w"> </span><span class="k">lock</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>典型使用场景：做全库逻辑备份</li>
@@ -800,11 +799,11 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="o">#</span><span class="w"> </span><span class="err">加锁</span><span class="w">
-</span><span class="w"></span><span class="k">lock</span><span class="w"> </span><span class="n">tables</span><span class="w"> </span><span class="k">table_name</span><span class="w"> </span><span class="k">read</span><span class="o">/</span><span class="k">write</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="o">#</span><span class="w"> </span><span class="err">解锁</span><span class="w">
-</span><span class="w"></span><span class="n">unlock</span><span class="w"> </span><span class="n">tables</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="o">#</span><span class="w"> </span><span class="err">加锁</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">lock</span><span class="w"> </span><span class="n">tables</span><span class="w"> </span><span class="k">table_name</span><span class="w"> </span><span class="k">read</span><span class="o">/</span><span class="k">write</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">#</span><span class="w"> </span><span class="err">解锁</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">unlock</span><span class="w"> </span><span class="n">tables</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>效果：
@@ -938,8 +937,8 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">alter</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="n">SUser</span><span class="w"> </span><span class="k">add</span><span class="w"> </span><span class="k">index</span><span class="w"> </span><span class="n">index2</span><span class="p">(</span><span class="n">email</span><span class="p">(</span><span class="mi">6</span><span class="p">));</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">alter</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="n">SUser</span><span class="w"> </span><span class="k">add</span><span class="w"> </span><span class="k">index</span><span class="w"> </span><span class="n">index2</span><span class="p">(</span><span class="n">email</span><span class="p">(</span><span class="mi">6</span><span class="p">));</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>使用前缀索引，定义好长度，可以做到既省空间又不用额外增加太多的查询成本，使用前缀索引可能会损失区分度，需要预设一个可接受的比例</p>
 <div class="highlight"><div class="chroma">
@@ -953,14 +952,14 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="c1">--- 查看不同长度前缀的数量
-</span><span class="c1"></span><span class="k">select</span><span class="w"> 
-</span><span class="w">    </span><span class="k">count</span><span class="p">(</span><span class="k">distinct</span><span class="w"> </span><span class="k">left</span><span class="p">(</span><span class="n">filed</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span><span class="err">）</span><span class="k">as</span><span class="w"> </span><span class="n">L4</span><span class="p">,</span><span class="w"> 
-</span><span class="w">    </span><span class="k">count</span><span class="p">(</span><span class="k">distinct</span><span class="w"> </span><span class="k">left</span><span class="p">(</span><span class="n">filed</span><span class="p">,,</span><span class="mi">5</span><span class="p">)</span><span class="err">）</span><span class="k">as</span><span class="w"> </span><span class="n">L5</span><span class="p">,</span><span class="w"> 
-</span><span class="w">    </span><span class="k">count</span><span class="p">(</span><span class="k">distinct</span><span class="w"> </span><span class="k">left</span><span class="p">(</span><span class="n">filed</span><span class="p">,,</span><span class="mi">6</span><span class="p">)</span><span class="err">）</span><span class="k">as</span><span class="w"> </span><span class="n">L6</span><span class="p">,</span><span class="w"> 
-</span><span class="w">    </span><span class="k">count</span><span class="p">(</span><span class="k">distinct</span><span class="w"> </span><span class="k">left</span><span class="p">(</span><span class="n">filed</span><span class="p">,,</span><span class="mi">7</span><span class="p">)</span><span class="err">）</span><span class="k">as</span><span class="w"> </span><span class="n">L7</span><span class="w">
-</span><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">SUser</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="c1">--- 查看不同长度前缀的数量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">select</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">count</span><span class="p">(</span><span class="k">distinct</span><span class="w"> </span><span class="k">left</span><span class="p">(</span><span class="n">filed</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span><span class="err">）</span><span class="k">as</span><span class="w"> </span><span class="n">L4</span><span class="p">,</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">count</span><span class="p">(</span><span class="k">distinct</span><span class="w"> </span><span class="k">left</span><span class="p">(</span><span class="n">filed</span><span class="p">,,</span><span class="mi">5</span><span class="p">)</span><span class="err">）</span><span class="k">as</span><span class="w"> </span><span class="n">L5</span><span class="p">,</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">count</span><span class="p">(</span><span class="k">distinct</span><span class="w"> </span><span class="k">left</span><span class="p">(</span><span class="n">filed</span><span class="p">,,</span><span class="mi">6</span><span class="p">)</span><span class="err">）</span><span class="k">as</span><span class="w"> </span><span class="n">L6</span><span class="p">,</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">count</span><span class="p">(</span><span class="k">distinct</span><span class="w"> </span><span class="k">left</span><span class="p">(</span><span class="n">filed</span><span class="p">,,</span><span class="mi">7</span><span class="p">)</span><span class="err">）</span><span class="k">as</span><span class="w"> </span><span class="n">L7</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">SUser</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>使用前缀索引用不上覆盖索引，对应字段只存了前缀部分</p>
 <h4 id="其他-1">其他</h4>
@@ -986,8 +985,8 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"> fio -filename<span class="o">=</span><span class="nv">$filename</span> -direct<span class="o">=</span><span class="m">1</span> -iodepth <span class="m">1</span> -thread -rw<span class="o">=</span>randrw -ioengine<span class="o">=</span>psync -bs<span class="o">=</span>16k -size<span class="o">=</span>500M -numjobs<span class="o">=</span><span class="m">10</span> -runtime<span class="o">=</span><span class="m">10</span> -group_reporting -name<span class="o">=</span>mytest 
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"> fio -filename<span class="o">=</span><span class="nv">$filename</span> -direct<span class="o">=</span><span class="m">1</span> -iodepth <span class="m">1</span> -thread -rw<span class="o">=</span>randrw -ioengine<span class="o">=</span>psync -bs<span class="o">=</span>16k -size<span class="o">=</span>500M -numjobs<span class="o">=</span><span class="m">10</span> -runtime<span class="o">=</span><span class="m">10</span> -group_reporting -name<span class="o">=</span>mytest 
+</span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>刷盘速度参考因素： 脏页比例，redo log写盘速度</li>
@@ -1061,10 +1060,10 @@
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">graph TD
-A(写入redolog 处于prepare状态) --&gt; |时刻A| B(写入binlog)
-B --&gt; |时刻B| C[提交事务 处于commit状态]
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">graph TD
+</span></span><span class="line"><span class="cl">A(写入redolog 处于prepare状态) --&gt; |时刻A| B(写入binlog)
+</span></span><span class="line"><span class="cl">B --&gt; |时刻B| C[提交事务 处于commit状态]
+</span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>时刻A crash: binlog未写入，redo log未提交，事务会回滚</li>
@@ -1132,8 +1131,8 @@ B --&gt; |时刻B| C[提交事务 处于commit状态]
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">select word from words order by rand() limit 3;
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">select word from words order by rand() limit 3;
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>internal_tmp_disk_storage_engine</code>控制临时表的类型，默认建内存临时表，如果超过了<code>tmp_table_size</code>就会转成磁盘临时表</p>
 <h4 id="随机排序法">随机排序法</h4>
@@ -1147,10 +1146,10 @@ B --&gt; |时刻B| C[提交事务 处于commit状态]
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">select</span><span class="w"> </span><span class="k">max</span><span class="p">(</span><span class="n">id</span><span class="p">),</span><span class="k">min</span><span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="o">@</span><span class="n">M</span><span class="p">,</span><span class="o">@</span><span class="n">N</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="k">set</span><span class="w"> </span><span class="o">@</span><span class="n">X</span><span class="o">=</span><span class="w"> </span><span class="n">floor</span><span class="p">((</span><span class="o">@</span><span class="n">M</span><span class="o">-@</span><span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">rand</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="o">@</span><span class="n">N</span><span class="p">);</span><span class="w">
-</span><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="o">@</span><span class="n">X</span><span class="w"> </span><span class="k">limit</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="k">max</span><span class="p">(</span><span class="n">id</span><span class="p">),</span><span class="k">min</span><span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="o">@</span><span class="n">M</span><span class="p">,</span><span class="o">@</span><span class="n">N</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">set</span><span class="w"> </span><span class="o">@</span><span class="n">X</span><span class="o">=</span><span class="w"> </span><span class="n">floor</span><span class="p">((</span><span class="o">@</span><span class="n">M</span><span class="o">-@</span><span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">rand</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="o">@</span><span class="n">N</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="o">@</span><span class="n">X</span><span class="w"> </span><span class="k">limit</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>方法二</li>
@@ -1165,13 +1164,13 @@ B --&gt; |时刻B| C[提交事务 处于commit状态]
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="o">@</span><span class="k">C</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t</span><span class="p">;</span><span class="w">
-</span><span class="w"> </span><span class="k">set</span><span class="w"> </span><span class="o">@</span><span class="n">Y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">floor</span><span class="p">(</span><span class="o">@</span><span class="k">C</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">rand</span><span class="p">());</span><span class="w">
-</span><span class="w"> </span><span class="k">set</span><span class="w"> </span><span class="o">@</span><span class="k">sql</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">concat</span><span class="p">(</span><span class="s2">&#34;select * from t limit &#34;</span><span class="p">,</span><span class="w"> </span><span class="o">@</span><span class="n">Y</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;,1&#34;</span><span class="p">);</span><span class="w">
-</span><span class="w"> </span><span class="k">prepare</span><span class="w"> </span><span class="n">stmt</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="o">@</span><span class="k">sql</span><span class="p">;</span><span class="w">
-</span><span class="w"> </span><span class="k">execute</span><span class="w"> </span><span class="n">stmt</span><span class="p">;</span><span class="w">
-</span><span class="w"> </span><span class="k">DEALLOCATE</span><span class="w"> </span><span class="k">prepare</span><span class="w"> </span><span class="n">stmt</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="o">@</span><span class="k">C</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="k">set</span><span class="w"> </span><span class="o">@</span><span class="n">Y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">floor</span><span class="p">(</span><span class="o">@</span><span class="k">C</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">rand</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="k">set</span><span class="w"> </span><span class="o">@</span><span class="k">sql</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">concat</span><span class="p">(</span><span class="s2">&#34;select * from t limit &#34;</span><span class="p">,</span><span class="w"> </span><span class="o">@</span><span class="n">Y</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;,1&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="k">prepare</span><span class="w"> </span><span class="n">stmt</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="o">@</span><span class="k">sql</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="k">execute</span><span class="w"> </span><span class="n">stmt</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="k">DEALLOCATE</span><span class="w"> </span><span class="k">prepare</span><span class="w"> </span><span class="n">stmt</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="第十八讲-隐式转换">第十八讲 隐式转换</h3>
 <ul>
@@ -1191,12 +1190,12 @@ B --&gt; |时刻B| C[提交事务 处于commit状态]
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">str_a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">100</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="c1">-- 等同于 select * from t where CAST(str_a as signed int) = 100;
-</span><span class="c1"></span><span class="w">
-</span><span class="w"></span><span class="c1">-- 验证
-</span><span class="c1"></span><span class="k">select</span><span class="w"> </span><span class="s2">&#34;12mw23&#34;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">12</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">str_a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">100</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">-- 等同于 select * from t where CAST(str_a as signed int) = 100;
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">-- 验证
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">select</span><span class="w"> </span><span class="s2">&#34;12mw23&#34;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">12</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>隐式字符编码转换</li>
@@ -1220,22 +1219,22 @@ B --&gt; |时刻B| C[提交事务 处于commit状态]
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="c1">-- traddelog字符编码为utf8mb4, trade_detaul为utf8
-</span><span class="c1">-- tradeid字段有索引
-</span><span class="c1"></span><span class="k">select</span><span class="w"> </span><span class="n">d</span><span class="p">.</span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">tradelog</span><span class="w"> </span><span class="n">l</span><span class="p">,</span><span class="w"> </span><span class="n">trade_detail</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">d</span><span class="p">.</span><span class="n">tradeid</span><span class="o">=</span><span class="n">l</span><span class="p">.</span><span class="n">tradeid</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">l</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="mi">2</span><span class="p">;</span><span class="w"> </span><span class="cm">/*语句Q1*/</span><span class="w">
-</span><span class="w"></span><span class="c1">-- 其中查询是用不上索引，因为在tradeid上做了隐式字符转换
-</span><span class="c1"></span><span class="w">
-</span><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">trade_detail</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">tradeid</span><span class="o">=</span><span class="err">$</span><span class="n">L2</span><span class="p">.</span><span class="n">tradeid</span><span class="p">.</span><span class="n">value</span><span class="p">;</span><span class="cm">/*语句2*/</span><span class="w">
-</span><span class="w">
-</span><span class="w"></span><span class="c1">-- 等同于
-</span><span class="c1"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">trade_detail</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="k">CONVERT</span><span class="p">(</span><span class="n">tradeid</span><span class="w"> </span><span class="k">USING</span><span class="w"> </span><span class="n">utf8mb4</span><span class="p">)</span><span class="o">=</span><span class="err">$</span><span class="n">L2</span><span class="p">.</span><span class="n">tradeid</span><span class="p">.</span><span class="n">value</span><span class="w">
-</span><span class="w">
-</span><span class="w"></span><span class="c1">-- 优化
-</span><span class="c1"></span><span class="k">select</span><span class="w"> </span><span class="n">d</span><span class="p">.</span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">tradelog</span><span class="w"> </span><span class="n">l</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="n">trade_detail</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">d</span><span class="p">.</span><span class="n">tradeid</span><span class="o">=</span><span class="k">CONVERT</span><span class="p">(</span><span class="n">l</span><span class="p">.</span><span class="n">tradeid</span><span class="w"> </span><span class="k">USING</span><span class="w"> </span><span class="n">utf8</span><span class="p">)</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">l</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="mi">2</span><span class="p">;</span><span class="w"> 
-</span><span class="w">
-</span><span class="w"></span><span class="c1">-- 原因是tradeid没有了函数操作，即：
-</span><span class="c1"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">trade_detail</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">tradeid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">CONVERT</span><span class="p">(</span><span class="err">$</span><span class="n">L2</span><span class="p">.</span><span class="n">tradeid</span><span class="p">.</span><span class="n">value</span><span class="w"> </span><span class="k">USING</span><span class="w"> </span><span class="n">utf8mb4</span><span class="p">)</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="c1">-- traddelog字符编码为utf8mb4, trade_detaul为utf8
+</span></span></span><span class="line"><span class="cl"><span class="c1">-- tradeid字段有索引
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">select</span><span class="w"> </span><span class="n">d</span><span class="p">.</span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">tradelog</span><span class="w"> </span><span class="n">l</span><span class="p">,</span><span class="w"> </span><span class="n">trade_detail</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">d</span><span class="p">.</span><span class="n">tradeid</span><span class="o">=</span><span class="n">l</span><span class="p">.</span><span class="n">tradeid</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">l</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="mi">2</span><span class="p">;</span><span class="w"> </span><span class="cm">/*语句Q1*/</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">-- 其中查询是用不上索引，因为在tradeid上做了隐式字符转换
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">trade_detail</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">tradeid</span><span class="o">=</span><span class="err">$</span><span class="n">L2</span><span class="p">.</span><span class="n">tradeid</span><span class="p">.</span><span class="n">value</span><span class="p">;</span><span class="cm">/*语句2*/</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">-- 等同于
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">trade_detail</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="k">CONVERT</span><span class="p">(</span><span class="n">tradeid</span><span class="w"> </span><span class="k">USING</span><span class="w"> </span><span class="n">utf8mb4</span><span class="p">)</span><span class="o">=</span><span class="err">$</span><span class="n">L2</span><span class="p">.</span><span class="n">tradeid</span><span class="p">.</span><span class="n">value</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">-- 优化
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">select</span><span class="w"> </span><span class="n">d</span><span class="p">.</span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">tradelog</span><span class="w"> </span><span class="n">l</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="n">trade_detail</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">d</span><span class="p">.</span><span class="n">tradeid</span><span class="o">=</span><span class="k">CONVERT</span><span class="p">(</span><span class="n">l</span><span class="p">.</span><span class="n">tradeid</span><span class="w"> </span><span class="k">USING</span><span class="w"> </span><span class="n">utf8</span><span class="p">)</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">l</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="mi">2</span><span class="p">;</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">-- 原因是tradeid没有了函数操作，即：
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">trade_detail</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">tradeid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">CONVERT</span><span class="p">(</span><span class="err">$</span><span class="n">L2</span><span class="p">.</span><span class="n">tradeid</span><span class="p">.</span><span class="n">value</span><span class="w"> </span><span class="k">USING</span><span class="w"> </span><span class="n">utf8mb4</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="第十九讲-常见的阻塞场景">第十九讲 常见的阻塞场景</h3>
 <h4 id="查询长时间不返回">查询长时间不返回</h4>
@@ -1247,8 +1246,8 @@ B --&gt; |时刻B| C[提交事务 处于commit状态]
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">lock</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">write</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">lock</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">write</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>可以通过查询 sys.schema_table_lock_waits 这张表，我们就可以直接找出造成阻塞的 process id</p>
 <ul>
@@ -1259,8 +1258,8 @@ B --&gt; |时刻B| C[提交事务 处于commit状态]
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="n">flush</span><span class="w"> </span><span class="n">tables</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">with</span><span class="w"> </span><span class="k">read</span><span class="w"> </span><span class="k">lock</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="n">flush</span><span class="w"> </span><span class="n">tables</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">with</span><span class="w"> </span><span class="k">read</span><span class="w"> </span><span class="k">lock</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>等行锁</li>
@@ -1271,8 +1270,8 @@ B --&gt; |时刻B| C[提交事务 处于commit状态]
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="n">sys</span><span class="p">.</span><span class="n">innodb_lock_waits</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">locked_table</span><span class="o">=</span><span class="s1">&#39;`test`.`t`&#39;</span><span class="err">\</span><span class="k">G</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="n">sys</span><span class="p">.</span><span class="n">innodb_lock_waits</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">locked_table</span><span class="o">=</span><span class="s1">&#39;`test`.`t`&#39;</span><span class="err">\</span><span class="k">G</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="查询慢">查询慢</h4>
 <ul>
@@ -1365,18 +1364,18 @@ B --&gt; |时刻B| C[提交事务 处于commit状态]
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="c1">-- 基础数据
-</span><span class="c1"></span><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="o">`</span><span class="n">t</span><span class="o">`</span><span class="w"> </span><span class="p">(</span><span class="w">
-</span><span class="w">  </span><span class="o">`</span><span class="n">id</span><span class="o">`</span><span class="w"> </span><span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w">
-</span><span class="w">  </span><span class="o">`</span><span class="k">c</span><span class="o">`</span><span class="w"> </span><span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w">
-</span><span class="w">  </span><span class="o">`</span><span class="n">d</span><span class="o">`</span><span class="w"> </span><span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w">
-</span><span class="w">  </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="o">`</span><span class="n">id</span><span class="o">`</span><span class="p">),</span><span class="w">
-</span><span class="w">  </span><span class="k">KEY</span><span class="w"> </span><span class="o">`</span><span class="k">c</span><span class="o">`</span><span class="w"> </span><span class="p">(</span><span class="o">`</span><span class="k">c</span><span class="o">`</span><span class="p">)</span><span class="w">
-</span><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="n">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span><span class="p">;</span><span class="w">
-</span><span class="w">
-</span><span class="w"></span><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">values</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span><span class="w">
-</span><span class="w"></span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">),(</span><span class="mi">15</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">15</span><span class="p">),(</span><span class="mi">20</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">20</span><span class="p">),(</span><span class="mi">25</span><span class="p">,</span><span class="mi">25</span><span class="p">,</span><span class="mi">25</span><span class="p">);</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="c1">-- 基础数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="o">`</span><span class="n">t</span><span class="o">`</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">`</span><span class="n">id</span><span class="o">`</span><span class="w"> </span><span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">`</span><span class="k">c</span><span class="o">`</span><span class="w"> </span><span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">`</span><span class="n">d</span><span class="o">`</span><span class="w"> </span><span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="o">`</span><span class="n">id</span><span class="o">`</span><span class="p">),</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">KEY</span><span class="w"> </span><span class="o">`</span><span class="k">c</span><span class="o">`</span><span class="w"> </span><span class="p">(</span><span class="o">`</span><span class="k">c</span><span class="o">`</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="n">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">values</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">),(</span><span class="mi">15</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">15</span><span class="p">),(</span><span class="mi">20</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">20</span><span class="p">),(</span><span class="mi">25</span><span class="p">,</span><span class="mi">25</span><span class="p">,</span><span class="mi">25</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="加锁规则">加锁规则</h4>
 <ul>
@@ -1393,9 +1392,9 @@ B --&gt; |时刻B| C[提交事务 处于commit状态]
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">begin</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="k">update</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">set</span><span class="w"> </span><span class="n">d</span><span class="o">=</span><span class="n">d</span><span class="o">+</span><span class="mi">1</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">id</span><span class="o">=</span><span class="mi">7</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">begin</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">update</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">set</span><span class="w"> </span><span class="n">d</span><span class="o">=</span><span class="n">d</span><span class="o">+</span><span class="mi">1</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">id</span><span class="o">=</span><span class="mi">7</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>根据原则1和优化2，最终加锁范围是(5, 10)</p>
 <h4 id="案例二-非唯一索引等值锁">案例二 非唯一索引等值锁</h4>
@@ -1405,9 +1404,9 @@ B --&gt; |时刻B| C[提交事务 处于commit状态]
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">begin</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="k">c</span><span class="o">=</span><span class="mi">5</span><span class="w"> </span><span class="k">lock</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">share</span><span class="w"> </span><span class="k">mode</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">begin</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="k">c</span><span class="o">=</span><span class="mi">5</span><span class="w"> </span><span class="k">lock</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">share</span><span class="w"> </span><span class="k">mode</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>根据原则1、原则2和优化2，最终加锁范围是（0, 5],(5, 10)，因为使用可覆盖索引，所以主键索引上没有锁。</li>
@@ -1420,9 +1419,9 @@ B --&gt; |时刻B| C[提交事务 处于commit状态]
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">begin</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">11</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="k">update</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">begin</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">11</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="k">update</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>首次定位查找id=10是按等值查询判断，之后范围判断，最终加锁是是行锁10,next-key lock (10, 15]</p>
 <h4 id="案例四-非唯一索引范围锁">案例四 非唯一索引范围锁</h4>
@@ -1432,9 +1431,9 @@ B --&gt; |时刻B| C[提交事务 处于commit状态]
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">begin</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="k">c</span><span class="w"> </span><span class="o">&gt;=</span><span class="mi">10</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="k">c</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">11</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="k">update</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">begin</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="k">c</span><span class="w"> </span><span class="o">&gt;=</span><span class="mi">10</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="k">c</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">11</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="k">update</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>根据原则1 (5, 10], (10, 15]</p>
 <h4 id="案例五-唯一索引范围的bug">案例五 唯一索引范围的bug</h4>
@@ -1444,9 +1443,9 @@ B --&gt; |时刻B| C[提交事务 处于commit状态]
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">begin;
-select * from t where id&gt;10 and id&lt;=15 for update;
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">begin;
+</span></span><span class="line"><span class="cl">select * from t where id&gt;10 and id&lt;=15 for update;
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>根据原则1和bug1： (10, 15], (25, 20]</p>
 <h4 id="案例六-limit语句加锁">案例六 limit语句加锁</h4>
@@ -1456,9 +1455,9 @@ select * from t where id&gt;10 and id&lt;=15 for update;
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">begin</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t</span><span class="w">  </span><span class="k">where</span><span class="w"> </span><span class="k">c</span><span class="o">=</span><span class="mi">10</span><span class="w"> </span><span class="k">limit</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="k">update</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">begin</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t</span><span class="w">  </span><span class="k">where</span><span class="w"> </span><span class="k">c</span><span class="o">=</span><span class="mi">10</span><span class="w"> </span><span class="k">limit</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="k">update</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>因为有limit加锁区间为(5, 10]</p>
 <h4 id="案例七-死锁案例">案例七 死锁案例</h4>
@@ -1538,9 +1537,9 @@ select * from t where id&gt;10 and id&lt;=15 for update;
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="n">query_rewrite</span><span class="p">.</span><span class="n">rewrite_rules</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span><span class="w"> </span><span class="n">replacement</span><span class="p">,</span><span class="w"> </span><span class="n">pattern_database</span><span class="p">)</span><span class="w"> </span><span class="k">values</span><span class="p">(</span><span class="s2">&#34;select * from t where id+1=?&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;select * from t where id = ? - 1&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;db1&#34;</span><span class="p">);</span><span class="w">
-</span><span class="w"></span><span class="k">call</span><span class="w"> </span><span class="n">quetry_rewrite</span><span class="p">.</span><span class="n">flush_rewrite_rules</span><span class="p">();</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="n">query_rewrite</span><span class="p">.</span><span class="n">rewrite_rules</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span><span class="w"> </span><span class="n">replacement</span><span class="p">,</span><span class="w"> </span><span class="n">pattern_database</span><span class="p">)</span><span class="w"> </span><span class="k">values</span><span class="p">(</span><span class="s2">&#34;select * from t where id+1=?&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;select * from t where id = ? - 1&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;db1&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">call</span><span class="w"> </span><span class="n">quetry_rewrite</span><span class="p">.</span><span class="n">flush_rewrite_rules</span><span class="p">();</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><h5 id="mysql选错索引">MySQL选错索引</h5>
 <ul>
@@ -1713,8 +1712,8 @@ T3: 备库B执行完成这个事务</p>
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">select</span><span class="w"> </span><span class="n">master_pos_wait</span><span class="p">(</span><span class="n">file</span><span class="p">,</span><span class="w"> </span><span class="n">pos</span><span class="p">[,</span><span class="w"> </span><span class="n">timeout</span><span class="p">]);</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="n">master_pos_wait</span><span class="p">(</span><span class="n">file</span><span class="p">,</span><span class="w"> </span><span class="n">pos</span><span class="p">[,</span><span class="w"> </span><span class="n">timeout</span><span class="p">]);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>参数 file 和 pos 指的是主库上的文件名和位置, timeout 可选</li>
@@ -1728,8 +1727,8 @@ T3: 备库B执行完成这个事务</p>
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">select</span><span class="w"> </span><span class="n">wait_for_executed_gtid_set</span><span class="p">(</span><span class="n">gtid_set</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="n">wait_for_executed_gtid_set</span><span class="p">(</span><span class="n">gtid_set</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>超时返回1，等到从库执行的事务包含传入的gtid_set返回0</li>
@@ -1790,8 +1789,8 @@ T3: 备库B执行完成这个事务</p>
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">update</span><span class="w"> </span><span class="n">setup_instruments</span><span class="w"> </span><span class="k">set</span><span class="w"> </span><span class="n">ENABLED</span><span class="o">=</span><span class="s1">&#39;YES&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">Timed</span><span class="o">=</span><span class="s1">&#39;YES&#39;</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="k">like</span><span class="w"> </span><span class="s1">&#39;%wait/io/file/innodb/innodb_log_file%&#39;</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">update</span><span class="w"> </span><span class="n">setup_instruments</span><span class="w"> </span><span class="k">set</span><span class="w"> </span><span class="n">ENABLED</span><span class="o">=</span><span class="s1">&#39;YES&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">Timed</span><span class="o">=</span><span class="s1">&#39;YES&#39;</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="k">like</span><span class="w"> </span><span class="s1">&#39;%wait/io/file/innodb/innodb_log_file%&#39;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>查看</p>
 <div class="highlight"><div class="chroma">
@@ -1799,8 +1798,8 @@ T3: 备库B执行完成这个事务</p>
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">performance_schema</span><span class="p">.</span><span class="n">file_summary_by_event_name</span><span class="w">  </span><span class="k">where</span><span class="w"> </span><span class="n">event_name</span><span class="o">=</span><span class="s1">&#39;wait/io/file/innodb/innodb_log_file&#39;</span><span class="err">\</span><span class="k">G</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">performance_schema</span><span class="p">.</span><span class="n">file_summary_by_event_name</span><span class="w">  </span><span class="k">where</span><span class="w"> </span><span class="n">event_name</span><span class="o">=</span><span class="s1">&#39;wait/io/file/innodb/innodb_log_file&#39;</span><span class="err">\</span><span class="k">G</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>COUNT_STAR: 所有IO的总次数， 后4列分别是总和，最小值，平均值，最大值，单位是皮秒</li>
@@ -1814,8 +1813,8 @@ T3: 备库B执行完成这个事务</p>
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">performance_schema</span><span class="p">.</span><span class="n">file_summary_by_event_name</span><span class="w">  </span><span class="k">where</span><span class="w"> </span><span class="n">event_name</span><span class="o">=</span><span class="s1">&#39;wait/io/file/sql/binlog&#39;</span><span class="err">\</span><span class="k">G</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">performance_schema</span><span class="p">.</span><span class="n">file_summary_by_event_name</span><span class="w">  </span><span class="k">where</span><span class="w"> </span><span class="n">event_name</span><span class="o">=</span><span class="s1">&#39;wait/io/file/sql/binlog&#39;</span><span class="err">\</span><span class="k">G</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="检测">检测</h4>
 <p>检测单次IO请求时间是否超过200毫秒</p>
@@ -1824,8 +1823,8 @@ T3: 备库B执行完成这个事务</p>
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">select</span><span class="w"> </span><span class="n">event_name</span><span class="p">,</span><span class="n">MAX_TIMER_WAIT</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">performance_schema</span><span class="p">.</span><span class="n">file_summary_by_event_name</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">event_name</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;wait/io/file/innodb/innodb_log_file&#39;</span><span class="p">,</span><span class="s1">&#39;wait/io/file/sql/binlog&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">MAX_TIMER_WAIT</span><span class="o">&gt;</span><span class="mi">200</span><span class="o">*</span><span class="mi">1000000000</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="n">event_name</span><span class="p">,</span><span class="n">MAX_TIMER_WAIT</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">performance_schema</span><span class="p">.</span><span class="n">file_summary_by_event_name</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">event_name</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;wait/io/file/innodb/innodb_log_file&#39;</span><span class="p">,</span><span class="s1">&#39;wait/io/file/sql/binlog&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">MAX_TIMER_WAIT</span><span class="o">&gt;</span><span class="mi">200</span><span class="o">*</span><span class="mi">1000000000</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>清空数据</p>
 <div class="highlight"><div class="chroma">
@@ -1833,8 +1832,8 @@ T3: 备库B执行完成这个事务</p>
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="k">truncate</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="n">performance_schema</span><span class="p">.</span><span class="n">file_summary_by_event_name</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">truncate</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="n">performance_schema</span><span class="p">.</span><span class="n">file_summary_by_event_name</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="第30讲-用动态的观点看加锁">第30讲 用动态的观点看加锁</h3>
 <h4 id="不等号条件里面的等值查询">不等号条件里面的等值查询</h4>
@@ -1844,9 +1843,9 @@ T3: 备库B执行完成这个事务</p>
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">begin</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">id</span><span class="o">&gt;</span><span class="mi">9</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">id</span><span class="o">&lt;</span><span class="mi">12</span><span class="w"> </span><span class="k">order</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="k">desc</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="k">update</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">begin</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">id</span><span class="o">&gt;</span><span class="mi">9</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">id</span><span class="o">&lt;</span><span class="mi">12</span><span class="w"> </span><span class="k">order</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="k">desc</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="k">update</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>加锁范围(0, 5], (5, 10], (10, 15)
 15没有锁因为树搜索开始定位记录时用的是等值查询，优化器找第一个<code>id&lt;12</code>的值时找到了（10， 15）这个间隙</p>
@@ -1857,9 +1856,9 @@ T3: 备库B执行完成这个事务</p>
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">begin</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="k">c</span><span class="w"> </span><span class="k">in</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="k">lock</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">share</span><span class="w"> </span><span class="k">mode</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">begin</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="k">c</span><span class="w"> </span><span class="k">in</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="k">lock</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">share</span><span class="w"> </span><span class="k">mode</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>加锁过程</p>
 <ul>
@@ -1872,8 +1871,8 @@ T3: 备库B执行完成这个事务</p>
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">select</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="k">c</span><span class="w"> </span><span class="k">in</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="k">order</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="k">c</span><span class="w"> </span><span class="k">desc</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="k">update</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="k">c</span><span class="w"> </span><span class="k">in</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="k">order</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="k">c</span><span class="w"> </span><span class="k">desc</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="k">update</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>加锁过程</p>
 <ul>
@@ -1887,8 +1886,8 @@ T3: 备库B执行完成这个事务</p>
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">show</span><span class="w"> </span><span class="n">engine</span><span class="w"> </span><span class="n">innodb</span><span class="w"> </span><span class="n">status</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">show</span><span class="w"> </span><span class="n">engine</span><span class="w"> </span><span class="n">innodb</span><span class="w"> </span><span class="n">status</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>lock_mode X waiting表示next-key lock；</li>
@@ -1950,8 +1949,8 @@ T3: 备库B执行完成这个事务</p>
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="k">c</span><span class="o">&gt;=</span><span class="mi">15</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="k">c</span><span class="o">&lt;=</span><span class="mi">20</span><span class="w"> </span><span class="k">order</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="k">c</span><span class="w"> </span><span class="k">desc</span><span class="w"> </span><span class="k">lock</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">share</span><span class="w"> </span><span class="k">mode</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="k">c</span><span class="o">&gt;=</span><span class="mi">15</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="k">c</span><span class="o">&lt;=</span><span class="mi">20</span><span class="w"> </span><span class="k">order</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="k">c</span><span class="w"> </span><span class="k">desc</span><span class="w"> </span><span class="k">lock</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">share</span><span class="w"> </span><span class="k">mode</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>先定位索引c上最右边c=20的行，所以第一个等值查询会扫描到c=25</li>
@@ -2006,8 +2005,8 @@ T3: 备库B执行完成这个事务</p>
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="n">straight_join</span><span class="w"> </span><span class="n">t2</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="p">(</span><span class="n">t1</span><span class="p">.</span><span class="n">a</span><span class="o">=</span><span class="n">t2</span><span class="p">.</span><span class="n">a</span><span class="p">);</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="n">straight_join</span><span class="w"> </span><span class="n">t2</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="p">(</span><span class="n">t1</span><span class="p">.</span><span class="n">a</span><span class="o">=</span><span class="n">t2</span><span class="p">.</span><span class="n">a</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>straight_join 关闭优化器优化，这样t1必定为驱动表，t2必定为被驱动表</li>
@@ -2033,8 +2032,8 @@ T3: 备库B执行完成这个事务</p>
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="n">straight_join</span><span class="w"> </span><span class="n">t2</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="p">(</span><span class="n">t1</span><span class="p">.</span><span class="n">a</span><span class="o">=</span><span class="n">t2</span><span class="p">.</span><span class="n">b</span><span class="p">);</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="n">straight_join</span><span class="w"> </span><span class="n">t2</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="p">(</span><span class="n">t1</span><span class="p">.</span><span class="n">a</span><span class="o">=</span><span class="n">t2</span><span class="p">.</span><span class="n">b</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>join复杂度
@@ -2078,9 +2077,9 @@ T3: 备库B执行完成这个事务</p>
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="n">straight_join</span><span class="w"> </span><span class="n">t2</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="p">(</span><span class="n">t1</span><span class="p">.</span><span class="n">b</span><span class="o">=</span><span class="n">t2</span><span class="p">.</span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">t2</span><span class="p">.</span><span class="n">id</span><span class="o">&lt;=</span><span class="mi">50</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t2</span><span class="w"> </span><span class="n">straight_join</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="p">(</span><span class="n">t1</span><span class="p">.</span><span class="n">b</span><span class="o">=</span><span class="n">t2</span><span class="p">.</span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">t2</span><span class="p">.</span><span class="n">id</span><span class="o">&lt;=</span><span class="mi">50</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="n">straight_join</span><span class="w"> </span><span class="n">t2</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="p">(</span><span class="n">t1</span><span class="p">.</span><span class="n">b</span><span class="o">=</span><span class="n">t2</span><span class="p">.</span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">t2</span><span class="p">.</span><span class="n">id</span><span class="o">&lt;=</span><span class="mi">50</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t2</span><span class="w"> </span><span class="n">straight_join</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="p">(</span><span class="n">t1</span><span class="p">.</span><span class="n">b</span><span class="o">=</span><span class="n">t2</span><span class="p">.</span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">t2</span><span class="p">.</span><span class="n">id</span><span class="o">&lt;=</span><span class="mi">50</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>应该选t2做驱动表，这样只需再出50条数据</p>
 <div class="highlight"><div class="chroma">
@@ -2089,9 +2088,9 @@ T3: 备库B执行完成这个事务</p>
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">select</span><span class="w"> </span><span class="n">t1</span><span class="p">.</span><span class="n">b</span><span class="p">,</span><span class="n">t2</span><span class="p">.</span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w">  </span><span class="n">t1</span><span class="w">  </span><span class="n">straight_join</span><span class="w"> </span><span class="n">t2</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="p">(</span><span class="n">t1</span><span class="p">.</span><span class="n">b</span><span class="o">=</span><span class="n">t2</span><span class="p">.</span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">t2</span><span class="p">.</span><span class="n">id</span><span class="o">&lt;=</span><span class="mi">100</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="n">t1</span><span class="p">.</span><span class="n">b</span><span class="p">,</span><span class="n">t2</span><span class="p">.</span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w">  </span><span class="n">t2</span><span class="w">  </span><span class="n">straight_join</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="p">(</span><span class="n">t1</span><span class="p">.</span><span class="n">b</span><span class="o">=</span><span class="n">t2</span><span class="p">.</span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">t2</span><span class="p">.</span><span class="n">id</span><span class="o">&lt;=</span><span class="mi">100</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="n">t1</span><span class="p">.</span><span class="n">b</span><span class="p">,</span><span class="n">t2</span><span class="p">.</span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w">  </span><span class="n">t1</span><span class="w">  </span><span class="n">straight_join</span><span class="w"> </span><span class="n">t2</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="p">(</span><span class="n">t1</span><span class="p">.</span><span class="n">b</span><span class="o">=</span><span class="n">t2</span><span class="p">.</span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">t2</span><span class="p">.</span><span class="n">id</span><span class="o">&lt;=</span><span class="mi">100</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="n">t1</span><span class="p">.</span><span class="n">b</span><span class="p">,</span><span class="n">t2</span><span class="p">.</span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w">  </span><span class="n">t2</span><span class="w">  </span><span class="n">straight_join</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="p">(</span><span class="n">t1</span><span class="p">.</span><span class="n">b</span><span class="o">=</span><span class="n">t2</span><span class="p">.</span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">t2</span><span class="p">.</span><span class="n">id</span><span class="o">&lt;=</span><span class="mi">100</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>应该选t1做驱动表，只需要放一个字段b,而t2需要三个字段id, a, b</p>
 <h3 id="第35讲-join优化">第35讲 join优化</h3>
@@ -2123,30 +2122,30 @@ T3: 备库B执行完成这个事务</p>
 </span><span class="lnt">23
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="w">
-</span><span class="w"></span><span class="k">create</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="n">t1</span><span class="p">(</span><span class="n">id</span><span class="w"> </span><span class="nb">int</span><span class="w"> </span><span class="k">primary</span><span class="w"> </span><span class="k">key</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="nb">int</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="nb">int</span><span class="p">,</span><span class="w"> </span><span class="k">index</span><span class="p">(</span><span class="n">a</span><span class="p">));</span><span class="w">
-</span><span class="w"></span><span class="k">create</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="n">t2</span><span class="w"> </span><span class="k">like</span><span class="w"> </span><span class="n">t1</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="k">drop</span><span class="w"> </span><span class="k">procedure</span><span class="w"> </span><span class="n">idata</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="k">delimiter</span><span class="w"> </span><span class="p">;;</span><span class="w">
-</span><span class="w"></span><span class="k">create</span><span class="w"> </span><span class="k">procedure</span><span class="w"> </span><span class="n">idata</span><span class="p">()</span><span class="w">
-</span><span class="w"></span><span class="k">begin</span><span class="w">
-</span><span class="w">  </span><span class="k">declare</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="nb">int</span><span class="p">;</span><span class="w">
-</span><span class="w">  </span><span class="k">set</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="w">
-</span><span class="w">  </span><span class="n">while</span><span class="p">(</span><span class="n">i</span><span class="o">&lt;=</span><span class="mi">1000</span><span class="p">)</span><span class="k">do</span><span class="w">
-</span><span class="w">    </span><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="k">values</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="mi">1001</span><span class="o">-</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">);</span><span class="w">
-</span><span class="w">    </span><span class="k">set</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span><span class="w">
-</span><span class="w">  </span><span class="k">end</span><span class="w"> </span><span class="n">while</span><span class="p">;</span><span class="w">
-</span><span class="w">  
-</span><span class="w">  </span><span class="k">set</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="w">
-</span><span class="w">  </span><span class="n">while</span><span class="p">(</span><span class="n">i</span><span class="o">&lt;=</span><span class="mi">1000000</span><span class="p">)</span><span class="k">do</span><span class="w">
-</span><span class="w">    </span><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="n">t2</span><span class="w"> </span><span class="k">values</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">);</span><span class="w">
-</span><span class="w">    </span><span class="k">set</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span><span class="w">
-</span><span class="w">  </span><span class="k">end</span><span class="w"> </span><span class="n">while</span><span class="p">;</span><span class="w">
-</span><span class="w">
-</span><span class="w"></span><span class="k">end</span><span class="p">;;</span><span class="w">
-</span><span class="w"></span><span class="k">delimiter</span><span class="w"> </span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="k">call</span><span class="w"> </span><span class="n">idata</span><span class="p">();</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">create</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="n">t1</span><span class="p">(</span><span class="n">id</span><span class="w"> </span><span class="nb">int</span><span class="w"> </span><span class="k">primary</span><span class="w"> </span><span class="k">key</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="nb">int</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="nb">int</span><span class="p">,</span><span class="w"> </span><span class="k">index</span><span class="p">(</span><span class="n">a</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">create</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="n">t2</span><span class="w"> </span><span class="k">like</span><span class="w"> </span><span class="n">t1</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">drop</span><span class="w"> </span><span class="k">procedure</span><span class="w"> </span><span class="n">idata</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">delimiter</span><span class="w"> </span><span class="p">;;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">create</span><span class="w"> </span><span class="k">procedure</span><span class="w"> </span><span class="n">idata</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">begin</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">declare</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="nb">int</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">set</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">while</span><span class="p">(</span><span class="n">i</span><span class="o">&lt;=</span><span class="mi">1000</span><span class="p">)</span><span class="k">do</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="k">values</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="mi">1001</span><span class="o">-</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">set</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">end</span><span class="w"> </span><span class="n">while</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">set</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">while</span><span class="p">(</span><span class="n">i</span><span class="o">&lt;=</span><span class="mi">1000000</span><span class="p">)</span><span class="k">do</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="n">t2</span><span class="w"> </span><span class="k">values</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">set</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">end</span><span class="w"> </span><span class="n">while</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">end</span><span class="p">;;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">delimiter</span><span class="w"> </span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">call</span><span class="w"> </span><span class="n">idata</span><span class="p">();</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="multi-range-read优化">Multi-Range Read优化</h4>
 <div class="highlight"><div class="chroma">
@@ -2154,8 +2153,8 @@ T3: 备库B执行完成这个事务</p>
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">a</span><span class="o">&gt;=</span><span class="mi">1</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">a</span><span class="o">&lt;=</span><span class="mi">100</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">a</span><span class="o">&gt;=</span><span class="mi">1</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">a</span><span class="o">&lt;=</span><span class="mi">100</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>回表的时候将id值先放入read_rnd_buffer中，排序后再依次查数据，按主键递增顺序查询，对磁盘的读比较接近顺序读，能够提升读性能。</li>
@@ -2171,8 +2170,8 @@ T3: 备库B执行完成这个事务</p>
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="kt">set</span><span class="w"> </span><span class="n">optimizer_switch</span><span class="o">=</span><span class="s1">&#39;mrr=on,mrr_cost_based=off,batched_key_access=on&#39;</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="kt">set</span><span class="w"> </span><span class="n">optimizer_switch</span><span class="o">=</span><span class="s1">&#39;mrr=on,mrr_cost_based=off,batched_key_access=on&#39;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="bnl性能问题">BNL性能问题</h4>
 <ul>
@@ -2193,8 +2192,8 @@ T3: 备库B执行完成这个事务</p>
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t12</span><span class="w"> </span><span class="k">join</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="p">(</span><span class="n">t1</span><span class="p">.</span><span class="n">b</span><span class="o">=</span><span class="n">t2</span><span class="p">.</span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">t2</span><span class="p">.</span><span class="n">b</span><span class="w"> </span><span class="o">&gt;</span><span class="mi">1</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">t2</span><span class="p">.</span><span class="n">b</span><span class="o">&lt;=</span><span class="mi">2000</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t12</span><span class="w"> </span><span class="k">join</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="p">(</span><span class="n">t1</span><span class="p">.</span><span class="n">b</span><span class="o">=</span><span class="n">t2</span><span class="p">.</span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">t2</span><span class="p">.</span><span class="n">b</span><span class="w"> </span><span class="o">&gt;</span><span class="mi">1</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">t2</span><span class="p">.</span><span class="n">b</span><span class="o">&lt;=</span><span class="mi">2000</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>可以通过建立和被驱动表同结构临时表tmp_t，且给字段b加上索引，然后满足条件的数据放入临时表</li>
@@ -2205,9 +2204,9 @@ T3: 备库B执行完成这个事务</p>
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">create</span><span class="w"> </span><span class="k">temporary</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="n">tmp_t</span><span class="p">(</span><span class="n">id</span><span class="w"> </span><span class="nb">int</span><span class="w"> </span><span class="k">primary</span><span class="w"> </span><span class="k">key</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="nb">int</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="nb">int</span><span class="p">,</span><span class="w"> </span><span class="k">index</span><span class="p">(</span><span class="n">b</span><span class="p">))</span><span class="n">engine</span><span class="o">=</span><span class="n">innodb</span><span class="p">;</span><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="n">tmp_t</span><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t2</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">b</span><span class="o">&gt;=</span><span class="mi">1</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">&lt;=</span><span class="mi">2000</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="k">join</span><span class="w"> </span><span class="n">tmp_t</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="p">(</span><span class="n">t1</span><span class="p">.</span><span class="n">b</span><span class="o">=</span><span class="n">tmp_t</span><span class="p">.</span><span class="n">b</span><span class="p">);</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">create</span><span class="w"> </span><span class="k">temporary</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="n">tmp_t</span><span class="p">(</span><span class="n">id</span><span class="w"> </span><span class="nb">int</span><span class="w"> </span><span class="k">primary</span><span class="w"> </span><span class="k">key</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="nb">int</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="nb">int</span><span class="p">,</span><span class="w"> </span><span class="k">index</span><span class="p">(</span><span class="n">b</span><span class="p">))</span><span class="n">engine</span><span class="o">=</span><span class="n">innodb</span><span class="p">;</span><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="n">tmp_t</span><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t2</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">b</span><span class="o">&gt;=</span><span class="mi">1</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">&lt;=</span><span class="mi">2000</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="k">join</span><span class="w"> </span><span class="n">tmp_t</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="p">(</span><span class="n">t1</span><span class="p">.</span><span class="n">b</span><span class="o">=</span><span class="n">tmp_t</span><span class="p">.</span><span class="n">b</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>也可以业务端模拟hash join: 将t1的1000行数据放入hash set,然后将满足条件的2000行数据依次取去hash set中匹配</li>
@@ -2233,7 +2232,7 @@ T3: 备库B执行完成这个事务</p>
 </tr>
 <tr>
 <td></td>
-<td>show create table t; // table &rsquo;t' doesn&rsquo;t exist</td>
+<td>show create table t; // table &rsquo;t&rsquo; doesn&rsquo;t exist</td>
 </tr>
 <tr>
 <td>create table t(id int primary key)engine=innodb;show tables;</td>
@@ -2278,8 +2277,8 @@ T3: 备库B执行完成这个事务</p>
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="p">(</span><span class="k">select</span><span class="w"> </span><span class="mi">1000</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">f</span><span class="p">)</span><span class="w"> </span><span class="k">union</span><span class="w"> </span><span class="p">(</span><span class="k">select</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="k">order</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="k">desc</span><span class="w"> </span><span class="k">limit</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="p">(</span><span class="k">select</span><span class="w"> </span><span class="mi">1000</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">f</span><span class="p">)</span><span class="w"> </span><span class="k">union</span><span class="w"> </span><span class="p">(</span><span class="k">select</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="k">order</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="k">desc</span><span class="w"> </span><span class="k">limit</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><ol>
 <li>创建内存临时表，该表只有一个字段f,且为主键</li>
@@ -2300,8 +2299,8 @@ T3: 备库B执行完成这个事务</p>
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">select</span><span class="w"> </span><span class="n">id</span><span class="o">%</span><span class="mi">10</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="k">c</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="k">group</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">m</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="n">id</span><span class="o">%</span><span class="mi">10</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="k">c</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="k">group</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">m</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>从<code>Extra</code>信息中可以看出：使用了覆盖索引<code>a</code>,使用了临时表，使用了filesort</p>
 <ol>
@@ -2324,8 +2323,8 @@ mysql5.7支持了generated column机制，用来实现列数据的关联更新</
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">alter</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="k">add</span><span class="w"> </span><span class="k">column</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="nb">int</span><span class="w"> </span><span class="k">generated</span><span class="w"> </span><span class="n">always</span><span class="w"> </span><span class="k">as</span><span class="p">(</span><span class="n">id</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">100</span><span class="p">),</span><span class="w"> </span><span class="k">add</span><span class="w"> </span><span class="k">index</span><span class="p">(</span><span class="n">z</span><span class="p">);</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">alter</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="k">add</span><span class="w"> </span><span class="k">column</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="nb">int</span><span class="w"> </span><span class="k">generated</span><span class="w"> </span><span class="n">always</span><span class="w"> </span><span class="k">as</span><span class="p">(</span><span class="n">id</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">100</span><span class="p">),</span><span class="w"> </span><span class="k">add</span><span class="w"> </span><span class="k">index</span><span class="p">(</span><span class="n">z</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>所以原来的语句可以替换为</p>
 <div class="highlight"><div class="chroma">
@@ -2333,8 +2332,8 @@ mysql5.7支持了generated column机制，用来实现列数据的关联更新</
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">select</span><span class="w"> </span><span class="n">z</span><span class="p">,</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="k">c</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="k">group</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">z</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="n">z</span><span class="p">,</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="k">c</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="k">group</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">z</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="group-by优化---直接排序">group by优化&mdash;直接排序</h4>
 <p>如果知道数据量很大，内存临时表放不下，可以加<code>SQL_BIG_RESULT</code>提示直接走磁盘临时表</p>
@@ -2343,8 +2342,8 @@ mysql5.7支持了generated column机制，用来实现列数据的关联更新</
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">select</span><span class="w"> </span><span class="n">SQL_BIG_RESULT</span><span class="w"> </span><span class="n">id</span><span class="o">%</span><span class="mi">100</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="k">c</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="k">group</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">m</span><span class="p">;</span><span class="w"> 
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="n">SQL_BIG_RESULT</span><span class="w"> </span><span class="n">id</span><span class="o">%</span><span class="mi">100</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="k">c</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="k">group</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">m</span><span class="p">;</span><span class="w"> 
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>由于磁盘临时表是B+树存储, 存储效率不如数组效率来得高，优化器会直接用数组</p>
 <ul>
@@ -2371,8 +2370,8 @@ mysql5.7支持了generated column机制，用来实现列数据的关联更新</
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">alter</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="k">add</span><span class="w"> </span><span class="k">index</span><span class="w"> </span><span class="n">a_btree_index</span><span class="w"> </span><span class="k">using</span><span class="w"> </span><span class="n">btree</span><span class="p">(</span><span class="n">id</span><span class="p">);</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">alter</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="k">add</span><span class="w"> </span><span class="k">index</span><span class="w"> </span><span class="n">a_btree_index</span><span class="w"> </span><span class="k">using</span><span class="w"> </span><span class="n">btree</span><span class="p">(</span><span class="n">id</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="内存表的局限">内存表的局限</h4>
 <ul>
@@ -2429,8 +2428,8 @@ mysql5.7支持了generated column机制，用来实现列数据的关联更新</
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="n">mysqldump</span><span class="w"> </span><span class="o">-</span><span class="n">h$host</span><span class="w"> </span><span class="o">-</span><span class="n">P$port</span><span class="w"> </span><span class="o">-</span><span class="n">u$user</span><span class="w"> </span><span class="c1">--add-locks=0 --no-create-info --single-transaction  --set-gtid-purged=OFF db1 t --where=&#34;a&gt;900&#34; --result-file=/client_tmp/t.sql
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="n">mysqldump</span><span class="w"> </span><span class="o">-</span><span class="n">h$host</span><span class="w"> </span><span class="o">-</span><span class="n">P$port</span><span class="w"> </span><span class="o">-</span><span class="n">u$user</span><span class="w"> </span><span class="c1">--add-locks=0 --no-create-info --single-transaction  --set-gtid-purged=OFF db1 t --where=&#34;a&gt;900&#34; --result-file=/client_tmp/t.sql
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>参数解释</p>
 <ul>
@@ -2446,9 +2445,9 @@ mysql5.7支持了generated column机制，用来实现列数据的关联更新</
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="c1">--- 导出
-</span><span class="c1"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">db1</span><span class="p">.</span><span class="n">t</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">900</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="n">outfile</span><span class="w"> </span><span class="s1">&#39;/server_tmp/t.csv&#39;</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="c1">--- 导出
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">db1</span><span class="p">.</span><span class="n">t</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">900</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="n">outfile</span><span class="w"> </span><span class="s1">&#39;/server_tmp/t.csv&#39;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -2456,9 +2455,9 @@ mysql5.7支持了generated column机制，用来实现列数据的关联更新</
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="c1">--- 导入
-</span><span class="c1"></span><span class="k">load</span><span class="w"> </span><span class="k">data</span><span class="w"> </span><span class="n">infile</span><span class="w"> </span><span class="s1">&#39;/server_tmp/t.csv&#39;</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="n">db2</span><span class="p">.</span><span class="n">t</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="c1">--- 导入
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">load</span><span class="w"> </span><span class="k">data</span><span class="w"> </span><span class="n">infile</span><span class="w"> </span><span class="s1">&#39;/server_tmp/t.csv&#39;</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="n">db2</span><span class="p">.</span><span class="n">t</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="物理拷贝">物理拷贝</h4>
 <p><img src="/image/mysql_in_action/41_1.png" alt="41_1"></p>
@@ -2475,8 +2474,8 @@ mysql5.7支持了generated column机制，用来实现列数据的关联更新</
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">create</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="s1">&#39;ua&#39;</span><span class="o">@</span><span class="s1">&#39;%&#39;</span><span class="w"> </span><span class="n">identified</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="s1">&#39;pa&#39;</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">create</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="s1">&#39;ua&#39;</span><span class="o">@</span><span class="s1">&#39;%&#39;</span><span class="w"> </span><span class="n">identified</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="s1">&#39;pa&#39;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="全局权限">全局权限</h4>
 <div class="highlight"><div class="chroma">
@@ -2484,8 +2483,8 @@ mysql5.7支持了generated column机制，用来实现列数据的关联更新</
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">grant</span><span class="w"> </span><span class="k">all</span><span class="w"> </span><span class="k">privileges</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="o">*</span><span class="p">.</span><span class="o">*</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="s1">&#39;ua&#39;</span><span class="o">@</span><span class="s1">&#39;%&#39;</span><span class="w"> </span><span class="k">with</span><span class="w"> </span><span class="k">grant</span><span class="w"> </span><span class="k">option</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">grant</span><span class="w"> </span><span class="k">all</span><span class="w"> </span><span class="k">privileges</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="o">*</span><span class="p">.</span><span class="o">*</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="s1">&#39;ua&#39;</span><span class="o">@</span><span class="s1">&#39;%&#39;</span><span class="w"> </span><span class="k">with</span><span class="w"> </span><span class="k">grant</span><span class="w"> </span><span class="k">option</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>这个grant命令做了两个动作</p>
 <ol>
@@ -2499,8 +2498,8 @@ mysql5.7支持了generated column机制，用来实现列数据的关联更新</
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="n">grank</span><span class="w"> </span><span class="k">all</span><span class="w"> </span><span class="n">priviges</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="n">db1</span><span class="p">.</span><span class="o">*</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="s1">&#39;ua&#39;</span><span class="o">@</span><span class="s1">&#39;%&#39;</span><span class="w"> </span><span class="k">with</span><span class="w"> </span><span class="k">grant</span><span class="w"> </span><span class="k">option</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="n">grank</span><span class="w"> </span><span class="k">all</span><span class="w"> </span><span class="n">priviges</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="n">db1</span><span class="p">.</span><span class="o">*</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="s1">&#39;ua&#39;</span><span class="o">@</span><span class="s1">&#39;%&#39;</span><span class="w"> </span><span class="k">with</span><span class="w"> </span><span class="k">grant</span><span class="w"> </span><span class="k">option</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>这个grant命令做了两个动作</p>
 <ol>
@@ -2522,8 +2521,8 @@ mysql5.7支持了generated column机制，用来实现列数据的关联更新</
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="p">(</span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p_2017</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="p">(</span><span class="mi">2017</span><span class="p">)</span><span class="w"> </span><span class="n">ENGINE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">InnoDB</span><span class="p">,</span><span class="w"> </span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p_2018</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="p">(</span><span class="mi">2018</span><span class="p">)</span><span class="w"> </span><span class="n">ENGINE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">InnoDB</span><span class="p">,</span><span class="w"> </span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p_2019</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="p">(</span><span class="mi">2019</span><span class="p">)</span><span class="w"> </span><span class="n">ENGINE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">InnoDB</span><span class="p">,</span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p_others</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="k">MAXVALUE</span><span class="w"> </span><span class="n">ENGINE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">InnoDB</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="p">(</span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p_2017</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="p">(</span><span class="mi">2017</span><span class="p">)</span><span class="w"> </span><span class="n">ENGINE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">InnoDB</span><span class="p">,</span><span class="w"> </span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p_2018</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="p">(</span><span class="mi">2018</span><span class="p">)</span><span class="w"> </span><span class="n">ENGINE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">InnoDB</span><span class="p">,</span><span class="w"> </span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p_2019</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="p">(</span><span class="mi">2019</span><span class="p">)</span><span class="w"> </span><span class="n">ENGINE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">InnoDB</span><span class="p">,</span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p_others</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="k">MAXVALUE</span><span class="w"> </span><span class="n">ENGINE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">InnoDB</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>对于引擎层来说是多个表，对于Server层来说是一个表</p>
 <p>因为服务层是单个表，所以共用一个MDL锁</p>
@@ -2541,11 +2540,11 @@ mysql5.7支持了generated column机制，用来实现列数据的关联更新</
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">create</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="n">a</span><span class="p">(</span><span class="n">f1</span><span class="w"> </span><span class="nb">int</span><span class="p">,</span><span class="w"> </span><span class="n">f2</span><span class="w"> </span><span class="nb">int</span><span class="p">,</span><span class="w"> </span><span class="k">index</span><span class="p">(</span><span class="n">f1</span><span class="p">))</span><span class="n">engine</span><span class="o">=</span><span class="n">innodb</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="k">create</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">f1</span><span class="w"> </span><span class="nb">int</span><span class="p">,</span><span class="w"> </span><span class="n">f2</span><span class="w"> </span><span class="nb">int</span><span class="p">)</span><span class="n">engine</span><span class="o">=</span><span class="n">innodb</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="k">values</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">),(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">),(</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">),(</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">),(</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">);</span><span class="w">
-</span><span class="w"></span><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="k">values</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">),(</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">),(</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">),(</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">),(</span><span class="mi">7</span><span class="p">,</span><span class="mi">7</span><span class="p">),(</span><span class="mi">8</span><span class="p">,</span><span class="mi">8</span><span class="p">);</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">create</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="n">a</span><span class="p">(</span><span class="n">f1</span><span class="w"> </span><span class="nb">int</span><span class="p">,</span><span class="w"> </span><span class="n">f2</span><span class="w"> </span><span class="nb">int</span><span class="p">,</span><span class="w"> </span><span class="k">index</span><span class="p">(</span><span class="n">f1</span><span class="p">))</span><span class="n">engine</span><span class="o">=</span><span class="n">innodb</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">create</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">f1</span><span class="w"> </span><span class="nb">int</span><span class="p">,</span><span class="w"> </span><span class="n">f2</span><span class="w"> </span><span class="nb">int</span><span class="p">)</span><span class="n">engine</span><span class="o">=</span><span class="n">innodb</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="k">values</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">),(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">),(</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">),(</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">),(</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="k">values</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">),(</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">),(</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">),(</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">),(</span><span class="mi">7</span><span class="p">,</span><span class="mi">7</span><span class="p">),(</span><span class="mi">8</span><span class="p">,</span><span class="mi">8</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>Q1</li>
@@ -2555,8 +2554,8 @@ mysql5.7支持了generated column机制，用来实现列数据的关联更新</
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="k">left</span><span class="w"> </span><span class="k">join</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">f1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">f1</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">f2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">f2</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="k">left</span><span class="w"> </span><span class="k">join</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">f1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">f1</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">f2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">f2</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>驱动表为a,因为b.f1没有索引使用Block Nested Loop Join算法。执行的流程是：
 把表a的内容读入join_buffer中，顺序扫描b,判断是否符合join条件，符合的话作为结果集的一行返回。最后对于没有被匹配的表a的行，把剩余字段补NULL返回</p>
@@ -2569,8 +2568,8 @@ mysql5.7支持了generated column机制，用来实现列数据的关联更新</
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="k">left</span><span class="w"> </span><span class="k">join</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">f1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">f1</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">f2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">f2</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="k">left</span><span class="w"> </span><span class="k">join</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">f1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">f1</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">f2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">f2</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>驱动表为b,使用Index Nested-Loop Join, 顺序扫面b,每一行用b.f1到a中去查，然后再判断f2字段是否相等，如果是则作为结果集的一行.</p>
 <p>因为与NUll值比较永远返回NULL, where a.f2 = b.f2就不会包含b.f2是NULL的行。优化器把left join改成了join, 因为a.f1有所以所以把b作为了驱动表，可以通过show warning查看这个改写的结果</p>
@@ -2584,8 +2583,8 @@ mysql5.7支持了generated column机制，用来实现列数据的关联更新</
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="k">join</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="k">on</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">f1</span><span class="o">=</span><span class="n">b</span><span class="p">.</span><span class="n">f1</span><span class="p">)</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">f2</span><span class="o">=</span><span class="n">b</span><span class="p">.</span><span class="n">f2</span><span class="p">);</span><span class="w"> </span><span class="cm">/*Q3*/</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="k">join</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="k">on</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">f1</span><span class="o">=</span><span class="n">b</span><span class="p">.</span><span class="n">f1</span><span class="p">)</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">f2</span><span class="o">=</span><span class="n">b</span><span class="p">.</span><span class="n">f2</span><span class="p">);</span><span class="w"> </span><span class="cm">/*Q3*/</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>Q4</li>
@@ -2595,8 +2594,8 @@ mysql5.7支持了generated column机制，用来实现列数据的关联更新</
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="k">join</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="k">on</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">f1</span><span class="o">=</span><span class="n">b</span><span class="p">.</span><span class="n">f1</span><span class="p">)</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">f2</span><span class="o">=</span><span class="n">b</span><span class="p">.</span><span class="n">f2</span><span class="p">);</span><span class="w"> </span><span class="cm">/*Q3*/</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="k">join</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="k">on</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">f1</span><span class="o">=</span><span class="n">b</span><span class="p">.</span><span class="n">f1</span><span class="p">)</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">f2</span><span class="o">=</span><span class="n">b</span><span class="p">.</span><span class="n">f2</span><span class="p">);</span><span class="w"> </span><span class="cm">/*Q3*/</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>通过<code>show warnings</code> 可以看到Q3/Q4都被转换了为</p>
 <div class="highlight"><div class="chroma">
@@ -2604,8 +2603,8 @@ mysql5.7支持了generated column机制，用来实现列数据的关联更新</
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="k">join</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">f1</span><span class="o">=</span><span class="n">b</span><span class="p">.</span><span class="n">f1</span><span class="p">)</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">f2</span><span class="o">=</span><span class="n">b</span><span class="p">.</span><span class="n">f2</span><span class="p">);</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="k">join</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">f1</span><span class="o">=</span><span class="n">b</span><span class="p">.</span><span class="n">f1</span><span class="p">)</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">f2</span><span class="o">=</span><span class="n">b</span><span class="p">.</span><span class="n">f2</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="distinct和group-by的性能">distinct和group by的性能</h4>
 <div class="highlight"><div class="chroma">
@@ -2614,9 +2613,9 @@ mysql5.7支持了generated column机制，用来实现列数据的关联更新</
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="k">select</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">group</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="k">order</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="k">null</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="k">distinct</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t</span><span class="p">;</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">group</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="k">order</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="k">null</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">select</span><span class="w"> </span><span class="k">distinct</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>由于group不需要聚合，以上两句语句执行流程是一样的</p>
 <ul>
@@ -2644,19 +2643,19 @@ mysql5.7支持了generated column机制，用来实现列数据的关联更新</
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="k">create</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="n">t</span><span class="p">(</span><span class="n">id</span><span class="w"> </span><span class="nb">int</span><span class="w"> </span><span class="n">unsigned</span><span class="w"> </span><span class="n">auto_increment</span><span class="w"> </span><span class="k">primary</span><span class="w"> </span><span class="k">key</span><span class="p">)</span><span class="w"> </span><span class="n">auto_increment</span><span class="o">=</span><span class="mi">4294967295</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">values</span><span class="p">(</span><span class="k">null</span><span class="p">);</span><span class="w">
-</span><span class="w"></span><span class="o">//</span><span class="err">成功插入一行</span><span class="w"> </span><span class="mi">4294967295</span><span class="w">
-</span><span class="w"></span><span class="k">show</span><span class="w"> </span><span class="k">create</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="n">t</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="cm">/* CREATE TABLE `t` (
-</span><span class="cm">  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-</span><span class="cm">  PRIMARY KEY (`id`)
-</span><span class="cm">) ENGINE=InnoDB AUTO_INCREMENT=4294967295;
-</span><span class="cm">*/</span><span class="w">
-</span><span class="w">
-</span><span class="w"></span><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">values</span><span class="p">(</span><span class="k">null</span><span class="p">);</span><span class="w">
-</span><span class="w"></span><span class="o">//</span><span class="n">Duplicate</span><span class="w"> </span><span class="n">entry</span><span class="w"> </span><span class="s1">&#39;4294967295&#39;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="k">key</span><span class="w"> </span><span class="s1">&#39;PRIMARY&#39;</span><span class="w">
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">create</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="n">t</span><span class="p">(</span><span class="n">id</span><span class="w"> </span><span class="nb">int</span><span class="w"> </span><span class="n">unsigned</span><span class="w"> </span><span class="n">auto_increment</span><span class="w"> </span><span class="k">primary</span><span class="w"> </span><span class="k">key</span><span class="p">)</span><span class="w"> </span><span class="n">auto_increment</span><span class="o">=</span><span class="mi">4294967295</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">values</span><span class="p">(</span><span class="k">null</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="err">成功插入一行</span><span class="w"> </span><span class="mi">4294967295</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">show</span><span class="w"> </span><span class="k">create</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="n">t</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="cm">/* CREATE TABLE `t` (
+</span></span></span><span class="line"><span class="cl"><span class="cm">  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+</span></span></span><span class="line"><span class="cl"><span class="cm">  PRIMARY KEY (`id`)
+</span></span></span><span class="line"><span class="cl"><span class="cm">) ENGINE=InnoDB AUTO_INCREMENT=4294967295;
+</span></span></span><span class="line"><span class="cl"><span class="cm">*/</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">values</span><span class="p">(</span><span class="k">null</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="n">Duplicate</span><span class="w"> </span><span class="n">entry</span><span class="w"> </span><span class="s1">&#39;4294967295&#39;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="k">key</span><span class="w"> </span><span class="s1">&#39;PRIMARY&#39;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>达到上限后AUTO_INCREMENT不会改变，后续插入后报主键冲突</p>
 <h4 id="系统自增row_id">系统自增row_id</h4>
@@ -2671,11 +2670,11 @@ mysql5.7支持了generated column机制，用来实现列数据的关联更新</
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">// todo: lean c++
-do {
-  new_id= thread_id_counter++;
-} while (!thread_ids.insert_unique(new_id).second);
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// todo: lean c++
+</span></span><span class="line"><span class="cl">do {
+</span></span><span class="line"><span class="cl">  new_id= thread_id_counter++;
+</span></span><span class="line"><span class="cl">} while (!thread_ids.insert_unique(new_id).second);
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="参考">参考</h3>
 <ul>

@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.86.0-DEV" />
+<meta name="generator" content="Hugo 0.108.0" />
 
 
 <link rel="canonical" href="https://ppd0705.github.io/post/csharp_notes/" />
@@ -65,11 +65,10 @@
 <meta property="og:url" content="https://ppd0705.github.io/post/csharp_notes/" /><meta property="article:section" content="post" />
 <meta property="article:published_time" content="2020-05-25T22:44:02+08:00" />
 <meta property="article:modified_time" content="2020-05-25T22:44:02+08:00" />
-
 <meta itemprop="name" content="[笔记]C# 基本语法">
 <meta itemprop="description" content="前言：最近在维护一个获取http接口的数据然后填充到Excel的工具，于是接触到了C#，总体感觉下来，C#关键字多，语法多，功能强大，LIN"><meta itemprop="datePublished" content="2020-05-25T22:44:02+08:00" />
 <meta itemprop="dateModified" content="2020-05-25T22:44:02+08:00" />
-<meta itemprop="wordCount" content="2147">
+<meta itemprop="wordCount" content="2144">
 <meta itemprop="keywords" content="C#," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]C# 基本语法"/>
 <meta name="twitter:description" content="前言：最近在维护一个获取http接口的数据然后填充到Excel的工具，于是接触到了C#，总体感觉下来，C#关键字多，语法多，功能强大，LIN"/>
@@ -284,7 +283,7 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 2147 words </span>
+        <span class="more-meta"> 2144 words </span>
           <span class="more-meta"> 5 min read </span>
 
         
@@ -359,19 +358,19 @@
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>  <span class="cm">/* 引入System命名空间 */</span>
-<span class="k">namespace</span> <span class="nn">HelloWorldApplication</span> <span class="cm">/* 命名空间声明 */</span>
-<span class="p">{</span>
-   <span class="k">class</span> <span class="nc">HelloWorld</span> <span class="cm">/* 类 */</span>
-   <span class="p">{</span>
-      <span class="k">static</span> <span class="k">void</span> <span class="n">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="cm">/* Main方法*/</span>
-      <span class="p">{</span>
-         <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;Hello World&#34;</span><span class="p">);</span>
-         <span class="n">Console</span><span class="p">.</span><span class="n">ReadKey</span><span class="p">();</span>
-      <span class="p">}</span>
-   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="line"><span class="cl"><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>  <span class="cm">/* 引入System命名空间 */</span>
+</span></span><span class="line"><span class="cl"><span class="k">namespace</span> <span class="nn">HelloWorldApplication</span> <span class="cm">/* 命名空间声明 */</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">   <span class="k">class</span> <span class="nc">HelloWorld</span> <span class="cm">/* 类 */</span>
+</span></span><span class="line"><span class="cl">   <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">static</span> <span class="k">void</span> <span class="n">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="cm">/* Main方法*/</span>
+</span></span><span class="line"><span class="cl">      <span class="p">{</span>
+</span></span><span class="line"><span class="cl">         <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;Hello World&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">         <span class="n">Console</span><span class="p">.</span><span class="n">ReadKey</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">   <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="基本语法">基本语法</h4>
 <ul>
@@ -388,8 +387,8 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">dotnet new console -o myApp
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">dotnet new console -o myApp
+</span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>运行</li>
@@ -400,9 +399,9 @@
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">cd</span> myApp
-dotnet run
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">cd</span> myApp
+</span></span><span class="line"><span class="cl">dotnet run
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="类型和变量">类型和变量</h4>
 <h5 id="值类型">值类型</h5>
@@ -446,11 +445,11 @@ dotnet run
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="k">if</span> <span class="p">(...)</span>
-<span class="p">{}</span>
-<span class="k">else</span>
-<span class="p">{}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(...)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{}</span>
+</span></span><span class="line"><span class="cl"><span class="k">else</span>
+</span></span><span class="line"><span class="cl"><span class="p">{}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>switch</li>
@@ -470,18 +469,18 @@ dotnet run
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="k">switch</span> <span class="p">(</span><span class="n">n</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="k">case</span> <span class="m">0</span><span class="p">:</span>
-        <span class="p">...</span>
-        <span class="k">break</span><span class="p">;</span>
-    <span class="k">case</span> <span class="m">1</span><span class="p">:</span>
-        <span class="p">...</span>
-        <span class="k">break</span><span class="p">;</span>
-    <span class="n">defaut</span><span class="p">:</span>
-        <span class="p">...</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="line"><span class="cl"><span class="k">switch</span> <span class="p">(</span><span class="n">n</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="m">0</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="p">...</span>
+</span></span><span class="line"><span class="cl">        <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="m">1</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="p">...</span>
+</span></span><span class="line"><span class="cl">        <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">defaut</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="p">...</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>while</li>
@@ -492,9 +491,9 @@ dotnet run
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="k">while</span> <span class="p">(</span><span class="n">i</span> <span class="p">&lt;</span> <span class="m">100</span><span class="p">)</span>
-<span class="p">{}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="line"><span class="cl"><span class="k">while</span> <span class="p">(</span><span class="n">i</span> <span class="p">&lt;</span> <span class="m">100</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>do-while</li>
@@ -507,11 +506,11 @@ dotnet run
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="k">do</span>
-<span class="p">{</span>
-<span class="p">...</span>
-<span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="n">i</span> <span class="p">&gt;</span> <span class="m">100</span><span class="p">);</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="line"><span class="cl"><span class="k">do</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="p">...</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="n">i</span> <span class="p">&gt;</span> <span class="m">100</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>for</li>
@@ -524,11 +523,11 @@ dotnet run
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="p">&lt;</span> <span class="m">100</span><span class="p">;</span> <span class="n">i</span><span class="p">++;)</span>
-<span class="p">{</span>
-    <span class="p">...</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="line"><span class="cl"><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="p">&lt;</span> <span class="m">100</span><span class="p">;</span> <span class="n">i</span><span class="p">++;)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="p">...</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>foreach</li>
@@ -542,12 +541,12 @@ dotnet run
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="kt">int</span><span class="p">[]</span> <span class="n">l</span> <span class="p">=</span> <span class="p">{</span><span class="m">1</span><span class="p">,</span> <span class="m">2</span><span class="p">,</span> <span class="m">3</span><span class="p">};</span>
-<span class="k">foreach</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="k">in</span> <span class="n">l</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="line"><span class="cl"><span class="kt">int</span><span class="p">[]</span> <span class="n">l</span> <span class="p">=</span> <span class="p">{</span><span class="m">1</span><span class="p">,</span> <span class="m">2</span><span class="p">,</span> <span class="m">3</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="k">foreach</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="k">in</span> <span class="n">l</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>goto</li>
@@ -570,17 +569,17 @@ dotnet run
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="n">try</span>
-<span class="p">{</span>
-<span class="p">...</span>
-<span class="p">}</span>
-<span class="n">catch</span> <span class="p">(</span><span class="n">Exception</span> <span class="n">e</span><span class="p">)</span>
-<span class="p">{</span>
-<span class="p">}</span>
-<span class="n">finally</span>
-<span class="p">{</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="n">try</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="p">...</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nf">catch</span> <span class="p">(</span><span class="n">Exception</span> <span class="n">e</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="n">finally</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>lock</li>
@@ -620,36 +619,36 @@ dotnet run
 </span><span class="lnt">29
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#">
-<span class="cm">/* 申明 */</span>
-<span class="k">public</span> <span class="k">class</span> <span class="nc">Point</span>
-<span class="p">{</span>
-    <span class="k">public</span> <span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">;</span>
-    <span class="k">public</span> <span class="n">Point</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="n">x</span> <span class="p">=</span> <span class="n">x</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="n">y</span> <span class="p">=</span> <span class="n">y</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-
-
-<span class="cm">/* 实例化 */</span>
-
-<span class="n">Point</span> <span class="n">p1</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Point</span><span class="p">(</span><span class="m">10</span><span class="p">,</span> <span class="m">20</span><span class="p">);</span>
-
-<span class="cm">/* 继承 */</span>
-
-<span class="k">public</span> <span class="k">class</span> <span class="nc">Point3D</span><span class="p">:</span> <span class="n">Point</span>
-<span class="p">{</span>
-    <span class="k">public</span> <span class="kt">int</span> <span class="n">z</span><span class="p">;</span>
-    <span class="k">public</span> <span class="n">Point3D</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">,</span> <span class="kt">int</span> <span class="n">z</span><span class="p">):</span>
-        <span class="k">base</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="n">z</span> <span class="p">=</span> <span class="n">z</span><span class="p">;</span>
-    <span class="p">}</span>
-    
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">/* 申明 */</span>
+</span></span><span class="line"><span class="cl"><span class="k">public</span> <span class="k">class</span> <span class="nc">Point</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">public</span> <span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">public</span> <span class="n">Point</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">this</span><span class="p">.</span><span class="n">x</span> <span class="p">=</span> <span class="n">x</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">this</span><span class="p">.</span><span class="n">y</span> <span class="p">=</span> <span class="n">y</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">/* 实例化 */</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Point</span> <span class="n">p1</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Point</span><span class="p">(</span><span class="m">10</span><span class="p">,</span> <span class="m">20</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">/* 继承 */</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">public</span> <span class="k">class</span> <span class="nc">Point3D</span><span class="p">:</span> <span class="n">Point</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">public</span> <span class="kt">int</span> <span class="n">z</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">public</span> <span class="n">Point3D</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">,</span> <span class="kt">int</span> <span class="n">z</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">base</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">this</span><span class="p">.</span><span class="n">z</span> <span class="p">=</span> <span class="n">z</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="成员">成员</h4>
 <ul>
@@ -691,15 +690,15 @@ dotnet run
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="cm">/* 类名后用尖括号申明类型参数列表 */</span>
-<span class="k">public</span> <span class="k">class</span> <span class="nc">Pair</span><span class="p">&lt;</span><span class="n">TFirst</span><span class="p">,</span> <span class="n">TSecond</span><span class="p">&gt;</span>
-<span class="p">{</span>
-    <span class="k">public</span> <span class="n">TFirst</span> <span class="n">First</span><span class="p">;</span>
-    <span class="k">public</span> <span class="n">TSecond</span> <span class="n">Second</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="n">Pair</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;</span> <span class="n">pair</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Pair</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;</span> <span class="p">{</span><span class="n">First</span> <span class="p">=</span> <span class="m">1</span><span class="p">,</span> <span class="n">Second</span> <span class="p">=</span> <span class="s">&#34;two&#34;</span><span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="line"><span class="cl"><span class="cm">/* 类名后用尖括号申明类型参数列表 */</span>
+</span></span><span class="line"><span class="cl"><span class="k">public</span> <span class="k">class</span> <span class="nc">Pair</span><span class="p">&lt;</span><span class="n">TFirst</span><span class="p">,</span> <span class="n">TSecond</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">public</span> <span class="n">TFirst</span> <span class="n">First</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">public</span> <span class="n">TSecond</span> <span class="n">Second</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Pair</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;</span> <span class="n">pair</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Pair</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;</span> <span class="p">{</span><span class="n">First</span> <span class="p">=</span> <span class="m">1</span><span class="p">,</span> <span class="n">Second</span> <span class="p">=</span> <span class="s">&#34;two&#34;</span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="字段">字段</h4>
 <p>静态字段无论创建多少个类实例，都只有一个副本</p>
@@ -713,13 +712,13 @@ dotnet run
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="k">public</span> <span class="k">class</span> <span class="nc">Color</span>
-<span class="p">{</span>
-    <span class="k">public</span> <span class="k">static</span> <span class="k">readonly</span> <span class="n">Color</span> <span class="n">Black</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Color</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">);</span>
-    <span class="k">public</span> <span class="k">static</span> <span class="k">readonly</span> <span class="n">Color</span> <span class="n">White</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Color</span><span class="p">(</span><span class="m">255</span><span class="p">,</span> <span class="m">255</span><span class="p">,</span> <span class="m">255</span><span class="p">);</span>
-    <span class="k">private</span> <span class="kt">byte</span> <span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="line"><span class="cl"><span class="k">public</span> <span class="k">class</span> <span class="nc">Color</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">public</span> <span class="k">static</span> <span class="k">readonly</span> <span class="n">Color</span> <span class="n">Black</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Color</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">public</span> <span class="k">static</span> <span class="k">readonly</span> <span class="n">Color</span> <span class="n">White</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Color</span><span class="p">(</span><span class="m">255</span><span class="p">,</span> <span class="m">255</span><span class="p">,</span> <span class="m">255</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="kt">byte</span> <span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="方法">方法</h4>
 <h5 id="参数">参数</h5>
@@ -740,16 +739,16 @@ dotnet run
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="k">static</span> <span class="k">void</span> <span class="n">Swap</span><span class="p">(</span><span class="n">ret</span> <span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="n">ret</span> <span class="kt">int</span> <span class="n">y</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="kt">int</span> <span class="n">temp</span> <span class="p">=</span> <span class="n">x</span><span class="p">;</span>
-    <span class="n">x</span> <span class="p">=</span> <span class="n">y</span><span class="p">;</span>
-    <span class="n">y</span> <span class="p">=</span> <span class="n">temp</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="kt">int</span> <span class="n">i</span> <span class="p">=</span> <span class="m">2</span><span class="p">,</span> <span class="n">y</span> <span class="p">=</span> <span class="m">10</span><span class="p">;</span>
-<span class="n">Swap</span><span class="p">(</span><span class="k">ref</span> <span class="n">i</span><span class="p">,</span> <span class="k">ref</span> <span class="n">y</span><span class="p">);</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="line"><span class="cl"><span class="k">static</span> <span class="k">void</span> <span class="n">Swap</span><span class="p">(</span><span class="n">ret</span> <span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="n">ret</span> <span class="kt">int</span> <span class="n">y</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">temp</span> <span class="p">=</span> <span class="n">x</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">x</span> <span class="p">=</span> <span class="n">y</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">y</span> <span class="p">=</span> <span class="n">temp</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">i</span> <span class="p">=</span> <span class="m">2</span><span class="p">,</span> <span class="n">y</span> <span class="p">=</span> <span class="m">10</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">Swap</span><span class="p">(</span><span class="k">ref</span> <span class="n">i</span><span class="p">,</span> <span class="k">ref</span> <span class="n">y</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>输出参数: 传引用， 使用out修饰</li>
@@ -765,14 +764,14 @@ dotnet run
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="k">static</span> <span class="k">void</span> <span class="n">Divide</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">,</span> <span class="k">out</span> <span class="kt">int</span> <span class="n">result</span><span class="p">,</span> <span class="k">out</span> <span class="kt">int</span> <span class="n">remainder</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="n">result</span> <span class="p">=</span> <span class="n">x</span> <span class="p">/</span> <span class="n">y</span><span class="p">;</span>
-    <span class="n">remainer</span> <span class="p">=</span> <span class="n">x</span> <span class="p">%</span> <span class="n">y</span><span class="p">;</span>
-<span class="p">}</span>
-<span class="n">Diiden</span><span class="p">(</span><span class="m">10</span><span class="p">,</span> <span class="m">3</span><span class="p">,</span> <span class="k">out</span> <span class="kt">int</span> <span class="n">res</span><span class="p">,</span> <span class="k">out</span> <span class="kt">int</span> <span class="n">rem</span><span class="p">);</span>
-<span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;{0} {1}&#34;</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">rem</span><span class="p">);</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="line"><span class="cl"><span class="k">static</span> <span class="k">void</span> <span class="n">Divide</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">,</span> <span class="k">out</span> <span class="kt">int</span> <span class="n">result</span><span class="p">,</span> <span class="k">out</span> <span class="kt">int</span> <span class="n">remainder</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">result</span> <span class="p">=</span> <span class="n">x</span> <span class="p">/</span> <span class="n">y</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">remainer</span> <span class="p">=</span> <span class="n">x</span> <span class="p">%</span> <span class="n">y</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="n">Diiden</span><span class="p">(</span><span class="m">10</span><span class="p">,</span> <span class="m">3</span><span class="p">,</span> <span class="k">out</span> <span class="kt">int</span> <span class="n">res</span><span class="p">,</span> <span class="k">out</span> <span class="kt">int</span> <span class="n">rem</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;{0} {1}&#34;</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">rem</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>参数数组 使用params修饰，只能位于最后，只能是一维数组</li>
@@ -787,13 +786,13 @@ dotnet run
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="k">public</span> <span class="k">class</span> <span class="nc">Console</span>
-<span class="p">{</span>
-    <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="n">Write</span><span class="p">(</span><span class="kt">string</span> <span class="n">fmt</span><span class="p">,</span> <span class="k">params</span> <span class="kt">object</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
-    <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="n">WriteLine</span><span class="p">(</span><span class="kt">string</span> <span class="n">fmt</span><span class="p">,</span> <span class="k">params</span> <span class="kt">object</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
-    <span class="c1">// ...
-</span><span class="c1"></span><span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="line"><span class="cl"><span class="k">public</span> <span class="k">class</span> <span class="nc">Console</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="n">Write</span><span class="p">(</span><span class="kt">string</span> <span class="n">fmt</span><span class="p">,</span> <span class="k">params</span> <span class="kt">object</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="n">WriteLine</span><span class="p">(</span><span class="kt">string</span> <span class="n">fmt</span><span class="p">,</span> <span class="k">params</span> <span class="kt">object</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ...</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h5 id="方法主体和局部变量">方法主体和局部变量</h5>
 <h5 id="静态和实例方法">静态和实例方法</h5>
@@ -822,32 +821,30 @@ dotnet run
 </span><span class="lnt">19
 </span><span class="lnt">20
 </span><span class="lnt">21
-</span><span class="lnt">22
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="k">class</span> <span class="nc">Entity</span>
-<span class="p">{</span>
-    <span class="k">static</span> <span class="kt">int</span> <span class="n">nextSerialNo</span><span class="p">;</span>
-    <span class="kt">int</span> <span class="n">serialNo</span><span class="p">;</span>
-    <span class="k">public</span> <span class="n">Entity</span><span class="p">()</span> 
-    <span class="p">{</span>
-        <span class="n">serialNo</span> <span class="p">=</span> <span class="n">nextSerialNo</span><span class="p">++;</span>
-    <span class="p">}</span>
-    <span class="k">public</span> <span class="kt">int</span> <span class="n">GetSerialNo</span><span class="p">()</span> 
-    <span class="p">{</span>
-        <span class="k">return</span> <span class="n">serialNo</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="k">public</span> <span class="k">static</span> <span class="kt">int</span> <span class="n">GetNextSerialNo</span><span class="p">()</span> 
-    <span class="p">{</span>
-        <span class="k">return</span> <span class="n">nextSerialNo</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="n">SetNextSerialNo</span><span class="p">(</span><span class="kt">int</span> <span class="k">value</span><span class="p">)</span> 
-    <span class="p">{</span>
-        <span class="n">nextSerialNo</span> <span class="p">=</span> <span class="k">value</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Entity</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">static</span> <span class="kt">int</span> <span class="n">nextSerialNo</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">serialNo</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">public</span> <span class="n">Entity</span><span class="p">()</span> 
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">serialNo</span> <span class="p">=</span> <span class="n">nextSerialNo</span><span class="p">++;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">public</span> <span class="kt">int</span> <span class="n">GetSerialNo</span><span class="p">()</span> 
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">serialNo</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">public</span> <span class="k">static</span> <span class="kt">int</span> <span class="n">GetNextSerialNo</span><span class="p">()</span> 
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">nextSerialNo</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="n">SetNextSerialNo</span><span class="p">(</span><span class="kt">int</span> <span class="k">value</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">nextSerialNo</span> <span class="p">=</span> <span class="k">value</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h5 id="虚方法重载方法和抽象方法">虚方法、重载方法和抽象方法</h5>
 <ul>
@@ -899,46 +896,46 @@ dotnet run
 </span><span class="lnt">39
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
-<span class="k">class</span> <span class="nc">OverloadingExample</span>
-<span class="p">{</span>
-    <span class="k">static</span> <span class="k">void</span> <span class="n">F</span><span class="p">()</span> 
-    <span class="p">{</span>
-        <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;F()&#34;</span><span class="p">);</span>
-    <span class="p">}</span>
-    <span class="k">static</span> <span class="k">void</span> <span class="n">F</span><span class="p">(</span><span class="kt">object</span> <span class="n">x</span><span class="p">)</span> 
-    <span class="p">{</span>
-        <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;F(object)&#34;</span><span class="p">);</span>
-    <span class="p">}</span>
-    <span class="k">static</span> <span class="k">void</span> <span class="n">F</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">)</span> 
-    <span class="p">{</span>
-        <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;F(int)&#34;</span><span class="p">);</span>
-    <span class="p">}</span>
-    <span class="k">static</span> <span class="k">void</span> <span class="n">F</span><span class="p">(</span><span class="kt">double</span> <span class="n">x</span><span class="p">)</span> 
-    <span class="p">{</span>
-        <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;F(double)&#34;</span><span class="p">);</span>
-    <span class="p">}</span>
-    <span class="k">static</span> <span class="k">void</span> <span class="n">F</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;(</span><span class="n">T</span> <span class="n">x</span><span class="p">)</span> 
-    <span class="p">{</span>
-        <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;F&lt;T&gt;(T)&#34;</span><span class="p">);</span>
-    <span class="p">}</span>
-    <span class="k">static</span> <span class="k">void</span> <span class="n">F</span><span class="p">(</span><span class="kt">double</span> <span class="n">x</span><span class="p">,</span> <span class="kt">double</span> <span class="n">y</span><span class="p">)</span> 
-    <span class="p">{</span>
-        <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;F(double, double)&#34;</span><span class="p">);</span>
-    <span class="p">}</span>
-    <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="n">UsageExample</span><span class="p">()</span>
-    <span class="p">{</span>
-        <span class="n">F</span><span class="p">();</span>            <span class="c1">// Invokes F()
-</span><span class="c1"></span>        <span class="n">F</span><span class="p">(</span><span class="m">1</span><span class="p">);</span>           <span class="c1">// Invokes F(int)
-</span><span class="c1"></span>        <span class="n">F</span><span class="p">(</span><span class="m">1.0</span><span class="p">);</span>         <span class="c1">// Invokes F(double)
-</span><span class="c1"></span>        <span class="n">F</span><span class="p">(</span><span class="s">&#34;abc&#34;</span><span class="p">);</span>       <span class="c1">// Invokes F&lt;string&gt;(string)
-</span><span class="c1"></span>        <span class="n">F</span><span class="p">((</span><span class="kt">double</span><span class="p">)</span><span class="m">1</span><span class="p">);</span>   <span class="c1">// Invokes F(double)
-</span><span class="c1"></span>        <span class="n">F</span><span class="p">((</span><span class="kt">object</span><span class="p">)</span><span class="m">1</span><span class="p">);</span>   <span class="c1">// Invokes F(object)
-</span><span class="c1"></span>        <span class="n">F</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;(</span><span class="m">1</span><span class="p">);</span>      <span class="c1">// Invokes F&lt;int&gt;(int)
-</span><span class="c1"></span>        <span class="n">F</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">1</span><span class="p">);</span>        <span class="c1">// Invokes F(double, double)
-</span><span class="c1"></span>    <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="line"><span class="cl"><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">OverloadingExample</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">static</span> <span class="k">void</span> <span class="n">F</span><span class="p">()</span> 
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;F()&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">static</span> <span class="k">void</span> <span class="n">F</span><span class="p">(</span><span class="kt">object</span> <span class="n">x</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;F(object)&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">static</span> <span class="k">void</span> <span class="n">F</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;F(int)&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">static</span> <span class="k">void</span> <span class="n">F</span><span class="p">(</span><span class="kt">double</span> <span class="n">x</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;F(double)&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">static</span> <span class="k">void</span> <span class="n">F</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;(</span><span class="n">T</span> <span class="n">x</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;F&lt;T&gt;(T)&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">static</span> <span class="k">void</span> <span class="n">F</span><span class="p">(</span><span class="kt">double</span> <span class="n">x</span><span class="p">,</span> <span class="kt">double</span> <span class="n">y</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&#34;F(double, double)&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="n">UsageExample</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">F</span><span class="p">();</span>            <span class="c1">// Invokes F()</span>
+</span></span><span class="line"><span class="cl">        <span class="n">F</span><span class="p">(</span><span class="m">1</span><span class="p">);</span>           <span class="c1">// Invokes F(int)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">F</span><span class="p">(</span><span class="m">1.0</span><span class="p">);</span>         <span class="c1">// Invokes F(double)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">F</span><span class="p">(</span><span class="s">&#34;abc&#34;</span><span class="p">);</span>       <span class="c1">// Invokes F&lt;string&gt;(string)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">F</span><span class="p">((</span><span class="kt">double</span><span class="p">)</span><span class="m">1</span><span class="p">);</span>   <span class="c1">// Invokes F(double)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">F</span><span class="p">((</span><span class="kt">object</span><span class="p">)</span><span class="m">1</span><span class="p">);</span>   <span class="c1">// Invokes F(object)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">F</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;(</span><span class="m">1</span><span class="p">);</span>      <span class="c1">// Invokes F&lt;int&gt;(int)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">F</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">1</span><span class="p">);</span>        <span class="c1">// Invokes F(double, double)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="其他">其他</h4>
 <div class="highlight"><div class="chroma">
@@ -1029,97 +1026,95 @@ dotnet run
 </span><span class="lnt">84
 </span><span class="lnt">85
 </span><span class="lnt">86
-</span><span class="lnt">87
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="k">public</span> <span class="k">class</span> <span class="nc">MyList</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span>
-<span class="p">{</span>
-    <span class="c1">// Constant
-</span><span class="c1"></span>    <span class="k">const</span> <span class="kt">int</span> <span class="n">defaultCapacity</span> <span class="p">=</span> <span class="m">4</span><span class="p">;</span>
-
-    <span class="c1">// Fields
-</span><span class="c1"></span>    <span class="n">T</span><span class="p">[]</span> <span class="n">items</span><span class="p">;</span>
-    <span class="kt">int</span> <span class="n">count</span><span class="p">;</span>
-
-    <span class="c1">// Constructor
-</span><span class="c1"></span>    <span class="k">public</span> <span class="n">MyList</span><span class="p">(</span><span class="kt">int</span> <span class="n">capacity</span> <span class="p">=</span> <span class="n">defaultCapacity</span><span class="p">)</span> 
-    <span class="p">{</span>
-        <span class="n">items</span> <span class="p">=</span> <span class="k">new</span> <span class="n">T</span><span class="p">[</span><span class="n">capacity</span><span class="p">];</span>
-    <span class="p">}</span>
-
-    <span class="c1">// Properties
-</span><span class="c1"></span>    <span class="k">public</span> <span class="kt">int</span> <span class="n">Count</span> <span class="p">=&gt;</span> <span class="n">count</span><span class="p">;</span> 
-
-    <span class="k">public</span> <span class="kt">int</span> <span class="n">Capacity</span> 
-    <span class="p">{</span>
-        <span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="n">items</span><span class="p">.</span><span class="n">Length</span><span class="p">;</span> <span class="p">}</span>
-        <span class="k">set</span> 
-        <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="k">value</span> <span class="p">&lt;</span> <span class="n">count</span><span class="p">)</span> <span class="k">value</span> <span class="p">=</span> <span class="n">count</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="k">value</span> <span class="p">!=</span> <span class="n">items</span><span class="p">.</span><span class="n">Length</span><span class="p">)</span> 
-            <span class="p">{</span>
-                <span class="n">T</span><span class="p">[]</span> <span class="n">newItems</span> <span class="p">=</span> <span class="k">new</span> <span class="n">T</span><span class="p">[</span><span class="k">value</span><span class="p">];</span>
-                <span class="n">Array</span><span class="p">.</span><span class="n">Copy</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="n">newItems</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="n">count</span><span class="p">);</span>
-                <span class="n">items</span> <span class="p">=</span> <span class="n">newItems</span><span class="p">;</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-
-    <span class="c1">// Indexer
-</span><span class="c1"></span>    <span class="k">public</span> <span class="n">T</span> <span class="k">this</span><span class="p">[</span><span class="kt">int</span> <span class="n">index</span><span class="p">]</span> 
-    <span class="p">{</span>
-        <span class="k">get</span> 
-        <span class="p">{</span>
-            <span class="k">return</span> <span class="n">items</span><span class="p">[</span><span class="n">index</span><span class="p">];</span>
-        <span class="p">}</span>
-        <span class="k">set</span> 
-        <span class="p">{</span>
-            <span class="n">items</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="p">=</span> <span class="k">value</span><span class="p">;</span>
-            <span class="n">OnChanged</span><span class="p">();</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-    
-    <span class="c1">// Methods
-</span><span class="c1"></span>    <span class="k">public</span> <span class="k">void</span> <span class="n">Add</span><span class="p">(</span><span class="n">T</span> <span class="n">item</span><span class="p">)</span> 
-    <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">count</span> <span class="p">==</span> <span class="n">Capacity</span><span class="p">)</span> <span class="n">Capacity</span> <span class="p">=</span> <span class="n">count</span> <span class="p">*</span> <span class="m">2</span><span class="p">;</span>
-        <span class="n">items</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="p">=</span> <span class="n">item</span><span class="p">;</span>
-        <span class="n">count</span><span class="p">++;</span>
-        <span class="n">OnChanged</span><span class="p">();</span>
-    <span class="p">}</span>
-    <span class="k">protected</span> <span class="k">virtual</span> <span class="k">void</span> <span class="n">OnChanged</span><span class="p">()</span> <span class="p">=&gt;</span>
-        <span class="n">Changed</span><span class="p">?.</span><span class="n">Invoke</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="n">EventArgs</span><span class="p">.</span><span class="n">Empty</span><span class="p">);</span>
-
-    <span class="k">public</span> <span class="k">override</span> <span class="kt">bool</span> <span class="n">Equals</span><span class="p">(</span><span class="kt">object</span> <span class="n">other</span><span class="p">)</span> <span class="p">=&gt;</span>
-        <span class="n">Equals</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="n">other</span> <span class="k">as</span> <span class="n">MyList</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;);</span>
-
-    <span class="k">static</span> <span class="kt">bool</span> <span class="n">Equals</span><span class="p">(</span><span class="n">MyList</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="n">a</span><span class="p">,</span> <span class="n">MyList</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="n">b</span><span class="p">)</span> 
-    <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">Object</span><span class="p">.</span><span class="n">ReferenceEquals</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="k">null</span><span class="p">))</span> <span class="k">return</span> <span class="n">Object</span><span class="p">.</span><span class="n">ReferenceEquals</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="k">null</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">Object</span><span class="p">.</span><span class="n">ReferenceEquals</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="k">null</span><span class="p">)</span> <span class="p">||</span> <span class="n">a</span><span class="p">.</span><span class="n">count</span> <span class="p">!=</span> <span class="n">b</span><span class="p">.</span><span class="n">count</span><span class="p">)</span>
-            <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
-        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="p">&lt;</span> <span class="n">a</span><span class="p">.</span><span class="n">count</span><span class="p">;</span> <span class="n">i</span><span class="p">++)</span> 
-        <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(!</span><span class="kt">object</span><span class="p">.</span><span class="n">Equals</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">items</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">b</span><span class="p">.</span><span class="n">items</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span> 
-            <span class="p">{</span>
-                <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="k">return</span> <span class="k">true</span><span class="p">;</span>
-    <span class="p">}</span>
-
-    <span class="c1">// Event
-</span><span class="c1"></span>    <span class="k">public</span> <span class="k">event</span> <span class="n">EventHandler</span> <span class="n">Changed</span><span class="p">;</span>
-
-    <span class="c1">// Operators
-</span><span class="c1"></span>    <span class="k">public</span> <span class="k">static</span> <span class="kt">bool</span> <span class="k">operator</span> <span class="p">==(</span><span class="n">MyList</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="n">a</span><span class="p">,</span> <span class="n">MyList</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="p">=&gt;</span> 
-        <span class="n">Equals</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span>
-
-    <span class="k">public</span> <span class="k">static</span> <span class="kt">bool</span> <span class="k">operator</span> <span class="p">!=(</span><span class="n">MyList</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="n">a</span><span class="p">,</span> <span class="n">MyList</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="p">=&gt;</span> 
-        <span class="p">!</span><span class="n">Equals</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span>
-<span class="p">}</span>
-
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="line"><span class="cl"><span class="k">public</span> <span class="k">class</span> <span class="nc">MyList</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// Constant</span>
+</span></span><span class="line"><span class="cl">    <span class="k">const</span> <span class="kt">int</span> <span class="n">defaultCapacity</span> <span class="p">=</span> <span class="m">4</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Fields</span>
+</span></span><span class="line"><span class="cl">    <span class="n">T</span><span class="p">[]</span> <span class="n">items</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">count</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Constructor</span>
+</span></span><span class="line"><span class="cl">    <span class="k">public</span> <span class="n">MyList</span><span class="p">(</span><span class="kt">int</span> <span class="n">capacity</span> <span class="p">=</span> <span class="n">defaultCapacity</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">items</span> <span class="p">=</span> <span class="k">new</span> <span class="n">T</span><span class="p">[</span><span class="n">capacity</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Properties</span>
+</span></span><span class="line"><span class="cl">    <span class="k">public</span> <span class="kt">int</span> <span class="n">Count</span> <span class="p">=&gt;</span> <span class="n">count</span><span class="p">;</span> 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">public</span> <span class="kt">int</span> <span class="n">Capacity</span> 
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="n">items</span><span class="p">.</span><span class="n">Length</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="k">set</span> 
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span><span class="k">value</span> <span class="p">&lt;</span> <span class="n">count</span><span class="p">)</span> <span class="k">value</span> <span class="p">=</span> <span class="n">count</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span><span class="k">value</span> <span class="p">!=</span> <span class="n">items</span><span class="p">.</span><span class="n">Length</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl">            <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">T</span><span class="p">[]</span> <span class="n">newItems</span> <span class="p">=</span> <span class="k">new</span> <span class="n">T</span><span class="p">[</span><span class="k">value</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">                <span class="n">Array</span><span class="p">.</span><span class="n">Copy</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="n">newItems</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="n">count</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">                <span class="n">items</span> <span class="p">=</span> <span class="n">newItems</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Indexer</span>
+</span></span><span class="line"><span class="cl">    <span class="k">public</span> <span class="n">T</span> <span class="k">this</span><span class="p">[</span><span class="kt">int</span> <span class="n">index</span><span class="p">]</span> 
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">get</span> 
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">items</span><span class="p">[</span><span class="n">index</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="k">set</span> 
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">items</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="p">=</span> <span class="k">value</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">OnChanged</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// Methods</span>
+</span></span><span class="line"><span class="cl">    <span class="k">public</span> <span class="k">void</span> <span class="n">Add</span><span class="p">(</span><span class="n">T</span> <span class="n">item</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">count</span> <span class="p">==</span> <span class="n">Capacity</span><span class="p">)</span> <span class="n">Capacity</span> <span class="p">=</span> <span class="n">count</span> <span class="p">*</span> <span class="m">2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">items</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="p">=</span> <span class="n">item</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">count</span><span class="p">++;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">OnChanged</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">protected</span> <span class="k">virtual</span> <span class="k">void</span> <span class="n">OnChanged</span><span class="p">()</span> <span class="p">=&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Changed</span><span class="p">?.</span><span class="n">Invoke</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="n">EventArgs</span><span class="p">.</span><span class="n">Empty</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">public</span> <span class="k">override</span> <span class="kt">bool</span> <span class="n">Equals</span><span class="p">(</span><span class="kt">object</span> <span class="n">other</span><span class="p">)</span> <span class="p">=&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Equals</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="n">other</span> <span class="k">as</span> <span class="n">MyList</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">static</span> <span class="kt">bool</span> <span class="n">Equals</span><span class="p">(</span><span class="n">MyList</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="n">a</span><span class="p">,</span> <span class="n">MyList</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="n">b</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">Object</span><span class="p">.</span><span class="n">ReferenceEquals</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="k">null</span><span class="p">))</span> <span class="k">return</span> <span class="n">Object</span><span class="p">.</span><span class="n">ReferenceEquals</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="k">null</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">Object</span><span class="p">.</span><span class="n">ReferenceEquals</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="k">null</span><span class="p">)</span> <span class="p">||</span> <span class="n">a</span><span class="p">.</span><span class="n">count</span> <span class="p">!=</span> <span class="n">b</span><span class="p">.</span><span class="n">count</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="p">&lt;</span> <span class="n">a</span><span class="p">.</span><span class="n">count</span><span class="p">;</span> <span class="n">i</span><span class="p">++)</span> 
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(!</span><span class="kt">object</span><span class="p">.</span><span class="n">Equals</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">items</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">b</span><span class="p">.</span><span class="n">items</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span> 
+</span></span><span class="line"><span class="cl">            <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="k">true</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Event</span>
+</span></span><span class="line"><span class="cl">    <span class="k">public</span> <span class="k">event</span> <span class="n">EventHandler</span> <span class="n">Changed</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Operators</span>
+</span></span><span class="line"><span class="cl">    <span class="k">public</span> <span class="k">static</span> <span class="kt">bool</span> <span class="k">operator</span> <span class="p">==(</span><span class="n">MyList</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="n">a</span><span class="p">,</span> <span class="n">MyList</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="p">=&gt;</span> 
+</span></span><span class="line"><span class="cl">        <span class="n">Equals</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">public</span> <span class="k">static</span> <span class="kt">bool</span> <span class="k">operator</span> <span class="p">!=(</span><span class="n">MyList</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="n">a</span><span class="p">,</span> <span class="n">MyList</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="p">=&gt;</span> 
+</span></span><span class="line"><span class="cl">        <span class="p">!</span><span class="n">Equals</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h5 id="构造函数--和类名相同无返回值">构造函数 ： 和类名相同，无返回值</h5>
 <h5 id="属性-不指明存储位置set和get设置读写属性">属性： 不指明存储位置，set和get设置读写属性</h5>
@@ -1131,11 +1126,11 @@ dotnet run
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="n">MyList</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;</span> <span class="n">names</span> <span class="p">=</span> <span class="k">new</span> <span class="n">MyList</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;();</span>
-<span class="n">names</span><span class="p">.</span><span class="n">Capacity</span> <span class="p">=</span> <span class="m">100</span><span class="p">;</span>   <span class="c1">// Invokes set accessor
-</span><span class="c1"></span><span class="kt">int</span> <span class="n">i</span> <span class="p">=</span> <span class="n">names</span><span class="p">.</span><span class="n">Count</span><span class="p">;</span>    <span class="c1">// Invokes get accessor
-</span><span class="c1"></span><span class="kt">int</span> <span class="n">j</span> <span class="p">=</span> <span class="n">names</span><span class="p">.</span><span class="n">Capacity</span><span class="p">;</span> <span class="c1">// Invokes get accessor
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="line"><span class="cl"><span class="n">MyList</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;</span> <span class="n">names</span> <span class="p">=</span> <span class="k">new</span> <span class="n">MyList</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;();</span>
+</span></span><span class="line"><span class="cl"><span class="n">names</span><span class="p">.</span><span class="n">Capacity</span> <span class="p">=</span> <span class="m">100</span><span class="p">;</span>   <span class="c1">// Invokes set accessor</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">i</span> <span class="p">=</span> <span class="n">names</span><span class="p">.</span><span class="n">Count</span><span class="p">;</span>    <span class="c1">// Invokes get accessor</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">j</span> <span class="p">=</span> <span class="n">names</span><span class="p">.</span><span class="n">Capacity</span><span class="p">;</span> <span class="c1">// Invokes get accessor</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h5 id="索引器">索引器</h5>
 <h5 id="事件">事件</h5>
@@ -1160,24 +1155,24 @@ dotnet run
 </span><span class="lnt">17
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="k">class</span> <span class="nc">EventExample</span>
-<span class="p">{</span>
-    <span class="k">static</span> <span class="kt">int</span> <span class="n">changeCount</span><span class="p">;</span>
-    <span class="k">static</span> <span class="k">void</span> <span class="n">ListChanged</span><span class="p">(</span><span class="kt">object</span> <span class="n">sender</span><span class="p">,</span> <span class="n">EventArgs</span> <span class="n">e</span><span class="p">)</span> 
-    <span class="p">{</span>
-        <span class="n">changeCount</span><span class="p">++;</span>
-    <span class="p">}</span>
-    <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="n">Usage</span><span class="p">()</span> 
-    <span class="p">{</span>
-        <span class="n">MyList</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;</span> <span class="n">names</span> <span class="p">=</span> <span class="k">new</span> <span class="n">MyList</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;();</span>
-        <span class="n">names</span><span class="p">.</span><span class="n">Changed</span> <span class="p">+=</span> <span class="k">new</span> <span class="n">EventHandler</span><span class="p">(</span><span class="n">ListChanged</span><span class="p">);</span>
-        <span class="n">names</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="s">&#34;Liz&#34;</span><span class="p">);</span>
-        <span class="n">names</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="s">&#34;Martha&#34;</span><span class="p">);</span>
-        <span class="n">names</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="s">&#34;Beth&#34;</span><span class="p">);</span>
-        <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">changeCount</span><span class="p">);</span>		<span class="c1">// Outputs &#34;3&#34;
-</span><span class="c1"></span>    <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">EventExample</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">static</span> <span class="kt">int</span> <span class="n">changeCount</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">static</span> <span class="k">void</span> <span class="n">ListChanged</span><span class="p">(</span><span class="kt">object</span> <span class="n">sender</span><span class="p">,</span> <span class="n">EventArgs</span> <span class="n">e</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">changeCount</span><span class="p">++;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="n">Usage</span><span class="p">()</span> 
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">MyList</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;</span> <span class="n">names</span> <span class="p">=</span> <span class="k">new</span> <span class="n">MyList</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;();</span>
+</span></span><span class="line"><span class="cl">        <span class="n">names</span><span class="p">.</span><span class="n">Changed</span> <span class="p">+=</span> <span class="k">new</span> <span class="n">EventHandler</span><span class="p">(</span><span class="n">ListChanged</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">names</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="s">&#34;Liz&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">names</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="s">&#34;Martha&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">names</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="s">&#34;Beth&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">changeCount</span><span class="p">);</span>		<span class="c1">// Outputs &#34;3&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="数组">数组</h4>
 <div class="highlight"><div class="chroma">
@@ -1185,8 +1180,8 @@ dotnet run
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="kt">int</span> <span class="n">a</span> <span class="p">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">[]{</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">a</span> <span class="p">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">[]{</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>数组中的元素均为同一种类型</li>
@@ -1212,25 +1207,23 @@ dotnet run
 </span><span class="lnt">12
 </span><span class="lnt">13
 </span><span class="lnt">14
-</span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="k">interface</span> <span class="n">IControl</span>
-<span class="p">{</span>
-    <span class="k">void</span> <span class="n">Paint</span><span class="p">();</span>
-<span class="p">}</span>
-
-<span class="k">interface</span> <span class="n">IDataBound</span>
-<span class="p">{</span>
-    <span class="k">void</span> <span class="n">BInd</span><span class="p">(</span><span class="n">BInd</span> <span class="n">b</span><span class="p">);</span>
-<span class="p">}</span>
-<span class="k">public</span> <span class="k">class</span> <span class="nc">EditBox</span><span class="p">:</span> <span class="n">IContril</span><span class="p">,</span> <span class="n">IDataBound</span>
-<span class="p">{</span>
-    <span class="k">public</span> <span class="k">void</span> <span class="n">Paint</span><span class="p">()</span> <span class="p">{}</span>
-    <span class="k">public</span> <span class="k">void</span> <span class="n">Bind</span><span class="p">(</span><span class="n">Bind</span> <span class="n">b</span><span class="p">)</span> <span class="p">{}</span>
-<span class="p">}</span>
-
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="line"><span class="cl"><span class="k">interface</span> <span class="nc">IControl</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">void</span> <span class="n">Paint</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">interface</span> <span class="nc">IDataBound</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">void</span> <span class="n">BInd</span><span class="p">(</span><span class="n">BInd</span> <span class="n">b</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">public</span> <span class="k">class</span> <span class="nc">EditBox</span><span class="p">:</span> <span class="n">IContril</span><span class="p">,</span> <span class="n">IDataBound</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">public</span> <span class="k">void</span> <span class="n">Paint</span><span class="p">()</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">public</span> <span class="k">void</span> <span class="n">Bind</span><span class="p">(</span><span class="n">Bind</span> <span class="n">b</span><span class="p">)</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>类可以隐式转换成相应的接口类型</p>
 <div class="highlight"><div class="chroma">
@@ -1239,9 +1232,9 @@ dotnet run
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="n">EditBox</span> <span class="n">editBox</span> <span class="p">=</span> <span class="k">new</span> <span class="n">EdixBox</span><span class="p">();</span>
-<span class="n">IControl</span> <span class="n">control</span> <span class="p">=</span> <span class="n">eidBox</span><span class="p">;</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="line"><span class="cl"><span class="n">EditBox</span> <span class="n">editBox</span> <span class="p">=</span> <span class="k">new</span> <span class="n">EdixBox</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="n">IControl</span> <span class="n">control</span> <span class="p">=</span> <span class="n">eidBox</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="委托">委托</h4>
 <p>实现将方法作为参数传递</p>
@@ -1284,42 +1277,42 @@ dotnet run
 </span><span class="lnt">35
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
-<span class="k">delegate</span> <span class="kt">double</span> <span class="n">Function</span><span class="p">(</span><span class="kt">double</span> <span class="n">x</span><span class="p">);</span>
-<span class="k">class</span> <span class="nc">Multiplier</span>
-<span class="p">{</span>
-    <span class="kt">double</span> <span class="n">factor</span><span class="p">;</span>
-    <span class="k">public</span> <span class="n">Multiplier</span><span class="p">(</span><span class="kt">double</span> <span class="n">factor</span><span class="p">)</span> 
-    <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="n">factor</span> <span class="p">=</span> <span class="n">factor</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="k">public</span> <span class="kt">double</span> <span class="n">Multiply</span><span class="p">(</span><span class="kt">double</span> <span class="n">x</span><span class="p">)</span> 
-    <span class="p">{</span>
-        <span class="k">return</span> <span class="n">x</span> <span class="p">*</span> <span class="n">factor</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-<span class="k">class</span> <span class="nc">DelegateExample</span>
-<span class="p">{</span>
-    <span class="k">static</span> <span class="kt">double</span> <span class="n">Square</span><span class="p">(</span><span class="kt">double</span> <span class="n">x</span><span class="p">)</span> 
-    <span class="p">{</span>
-        <span class="k">return</span> <span class="n">x</span> <span class="p">*</span> <span class="n">x</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="k">static</span> <span class="kt">double</span><span class="p">[]</span> <span class="n">Apply</span><span class="p">(</span><span class="kt">double</span><span class="p">[]</span> <span class="n">a</span><span class="p">,</span> <span class="n">Function</span> <span class="n">f</span><span class="p">)</span> 
-    <span class="p">{</span>
-        <span class="kt">double</span><span class="p">[]</span> <span class="n">result</span> <span class="p">=</span> <span class="k">new</span> <span class="kt">double</span><span class="p">[</span><span class="n">a</span><span class="p">.</span><span class="n">Length</span><span class="p">];</span>
-        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="p">&lt;</span> <span class="n">a</span><span class="p">.</span><span class="n">Length</span><span class="p">;</span> <span class="n">i</span><span class="p">++)</span> <span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="p">=</span> <span class="n">f</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
-        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="k">static</span> <span class="k">void</span> <span class="n">Main</span><span class="p">()</span> 
-    <span class="p">{</span>
-        <span class="kt">double</span><span class="p">[]</span> <span class="n">a</span> <span class="p">=</span> <span class="p">{</span><span class="m">0.0</span><span class="p">,</span> <span class="m">0.5</span><span class="p">,</span> <span class="m">1.0</span><span class="p">};</span>
-        <span class="kt">double</span><span class="p">[]</span> <span class="n">squares</span> <span class="p">=</span> <span class="n">Apply</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">Square</span><span class="p">);</span>
-        <span class="kt">double</span><span class="p">[]</span> <span class="n">sines</span> <span class="p">=</span> <span class="n">Apply</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">Math</span><span class="p">.</span><span class="n">Sin</span><span class="p">);</span>
-        <span class="n">Multiplier</span> <span class="n">m</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Multiplier</span><span class="p">(</span><span class="m">2.0</span><span class="p">);</span>
-        <span class="kt">double</span><span class="p">[]</span> <span class="n">doubles</span> <span class="p">=</span>  <span class="n">Apply</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">m</span><span class="p">.</span><span class="n">Multiply</span><span class="p">);</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="line"><span class="cl"><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">delegate</span> <span class="kt">double</span> <span class="n">Function</span><span class="p">(</span><span class="kt">double</span> <span class="n">x</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Multiplier</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">double</span> <span class="n">factor</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">public</span> <span class="n">Multiplier</span><span class="p">(</span><span class="kt">double</span> <span class="n">factor</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">this</span><span class="p">.</span><span class="n">factor</span> <span class="p">=</span> <span class="n">factor</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">public</span> <span class="kt">double</span> <span class="n">Multiply</span><span class="p">(</span><span class="kt">double</span> <span class="n">x</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">x</span> <span class="p">*</span> <span class="n">factor</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">DelegateExample</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">static</span> <span class="kt">double</span> <span class="n">Square</span><span class="p">(</span><span class="kt">double</span> <span class="n">x</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">x</span> <span class="p">*</span> <span class="n">x</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">static</span> <span class="kt">double</span><span class="p">[]</span> <span class="n">Apply</span><span class="p">(</span><span class="kt">double</span><span class="p">[]</span> <span class="n">a</span><span class="p">,</span> <span class="n">Function</span> <span class="n">f</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">double</span><span class="p">[]</span> <span class="n">result</span> <span class="p">=</span> <span class="k">new</span> <span class="kt">double</span><span class="p">[</span><span class="n">a</span><span class="p">.</span><span class="n">Length</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="p">&lt;</span> <span class="n">a</span><span class="p">.</span><span class="n">Length</span><span class="p">;</span> <span class="n">i</span><span class="p">++)</span> <span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="p">=</span> <span class="n">f</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">static</span> <span class="k">void</span> <span class="n">Main</span><span class="p">()</span> 
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">double</span><span class="p">[]</span> <span class="n">a</span> <span class="p">=</span> <span class="p">{</span><span class="m">0.0</span><span class="p">,</span> <span class="m">0.5</span><span class="p">,</span> <span class="m">1.0</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">double</span><span class="p">[]</span> <span class="n">squares</span> <span class="p">=</span> <span class="n">Apply</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">Square</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">double</span><span class="p">[]</span> <span class="n">sines</span> <span class="p">=</span> <span class="n">Apply</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">Math</span><span class="p">.</span><span class="n">Sin</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Multiplier</span> <span class="n">m</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Multiplier</span><span class="p">(</span><span class="m">2.0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">double</span><span class="p">[]</span> <span class="n">doubles</span> <span class="p">=</span>  <span class="n">Apply</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">m</span><span class="p">.</span><span class="n">Multiply</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>可以使用匿名函数创建委托</p>
 <div class="highlight"><div class="chroma">
@@ -1327,8 +1320,8 @@ dotnet run
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="kt">double</span><span class="p">[]</span> <span class="n">doubles</span> <span class="p">=</span> <span class="n">Apply</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">(</span><span class="kt">double</span> <span class="n">x</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="n">x</span> <span class="p">*</span> <span class="m">2.0</span><span class="p">);</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-C#" data-lang="C#"><span class="line"><span class="cl"><span class="kt">double</span><span class="p">[]</span> <span class="n">doubles</span> <span class="p">=</span> <span class="n">Apply</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">(</span><span class="kt">double</span> <span class="n">x</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="n">x</span> <span class="p">*</span> <span class="m">2.0</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="参考">参考</h3>
 <ul>

@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.86.0-DEV" />
+<meta name="generator" content="Hugo 0.108.0" />
 
 
 <link rel="canonical" href="https://ppd0705.github.io/post/redis_procotol_1/" />
@@ -65,11 +65,10 @@
 <meta property="og:url" content="https://ppd0705.github.io/post/redis_procotol_1/" /><meta property="article:section" content="post" />
 <meta property="article:published_time" content="2019-10-05T20:28:20+08:00" />
 <meta property="article:modified_time" content="2019-10-05T20:28:20+08:00" />
-
 <meta itemprop="name" content="Redis协议初探及redis-py源码节选">
 <meta itemprop="description" content="通讯协议 基于TCP协议 数据以\r\n分隔，数据类型五种，按第一个字节来区分 simple string: ”&#43;“， 状态回复 1 &#43;OK\r\n error: &ldquo;-&quot;， 错误回复 1"><meta itemprop="datePublished" content="2019-10-05T20:28:20+08:00" />
 <meta itemprop="dateModified" content="2019-10-05T20:28:20+08:00" />
-<meta itemprop="wordCount" content="741">
+<meta itemprop="wordCount" content="740">
 <meta itemprop="keywords" content="Redis,Python," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Redis协议初探及redis-py源码节选"/>
 <meta name="twitter:description" content="通讯协议 基于TCP协议 数据以\r\n分隔，数据类型五种，按第一个字节来区分 simple string: ”&#43;“， 状态回复 1 &#43;OK\r\n error: &ldquo;-&quot;， 错误回复 1"/>
@@ -284,7 +283,7 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 741 words </span>
+        <span class="more-meta"> 740 words </span>
           <span class="more-meta"> 2 min read </span>
 
         
@@ -345,8 +344,8 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">    +OK<span class="se">\r\n</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">    +OK<span class="se">\r\n</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>error: &ldquo;-&quot;， 错误回复</li>
@@ -356,8 +355,8 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">    -ERR unknown <span class="nb">command</span> <span class="s1">&#39;foobar&#39;</span><span class="se">\r\n</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">    -ERR unknown <span class="nb">command</span> <span class="s1">&#39;foobar&#39;</span><span class="se">\r\n</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>integer: &ldquo;:&quot;， 整数回复</li>
@@ -367,8 +366,8 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">    :10<span class="se">\r\n</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">    :10<span class="se">\r\n</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>bulk string: &ldquo;$&quot;，用于命令请求和批量回复</li>
@@ -378,8 +377,8 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">    <span class="nv">$6</span><span class="se">\r\n</span>foobar<span class="se">\r\n</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">    <span class="nv">$6</span><span class="se">\r\n</span>foobar<span class="se">\r\n</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>multi bulk string: &ldquo;*&quot;， 多条批量回复(-1表示不存在)</li>
@@ -389,8 +388,8 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">    *4<span class="se">\r\n</span><span class="nv">$3</span><span class="se">\r\n</span>bar<span class="se">\r\n</span><span class="nv">$3</span><span class="se">\r\n</span>foo<span class="se">\r\n</span><span class="nv">$5</span><span class="se">\r\n</span>heloo<span class="se">\r\n</span><span class="nv">$-</span>1<span class="se">\r\n</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">    *4<span class="se">\r\n</span><span class="nv">$3</span><span class="se">\r\n</span>bar<span class="se">\r\n</span><span class="nv">$3</span><span class="se">\r\n</span>foo<span class="se">\r\n</span><span class="nv">$5</span><span class="se">\r\n</span>heloo<span class="se">\r\n</span><span class="nv">$-</span>1<span class="se">\r\n</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><hr>
 <h4 id="redis-py">redis-py</h4>
@@ -433,47 +432,45 @@
 </span><span class="lnt">34
 </span><span class="lnt">35
 </span><span class="lnt">36
-</span><span class="lnt">37
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">_connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="s2">&#34;Create a TCP socket connection&#34;</span>
-    <span class="n">err</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">socket</span><span class="o">.</span><span class="n">getaddrinfo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket_type</span><span class="p">,</span>
-                                  <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">):</span>
-        <span class="n">family</span><span class="p">,</span> <span class="n">socktype</span><span class="p">,</span> <span class="n">proto</span><span class="p">,</span> <span class="n">canonname</span><span class="p">,</span> <span class="n">socket_address</span> <span class="o">=</span> <span class="n">res</span>
-        <span class="n">sock</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">sock</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">family</span><span class="p">,</span> <span class="n">socktype</span><span class="p">,</span> <span class="n">proto</span><span class="p">)</span>
-            <span class="c1"># TCP_NODELAY</span>
-            <span class="n">sock</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">IPPROTO_TCP</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">TCP_NODELAY</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-
-            <span class="c1"># TCP_KEEPALIVE</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket_keepalive</span><span class="p">:</span>
-                <span class="n">sock</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">SOL_SOCKET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SO_KEEPALIVE</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">iteritems</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">socket_keepalive_options</span><span class="p">):</span>
-                    <span class="n">sock</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">IPPROTO_TCP</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
-
-            <span class="c1"># set the socket_connect_timeout before we connect</span>
-            <span class="n">sock</span><span class="o">.</span><span class="n">settimeout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">socket_connect_timeout</span><span class="p">)</span>
-
-            <span class="c1"># connect</span>
-            <span class="n">sock</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">socket_address</span><span class="p">)</span>
-
-            <span class="c1"># set the socket_timeout now that we&#39;re connected</span>
-            <span class="n">sock</span><span class="o">.</span><span class="n">settimeout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">socket_timeout</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">sock</span>
-
-        <span class="k">except</span> <span class="n">socket</span><span class="o">.</span><span class="n">error</span> <span class="k">as</span> <span class="n">_</span><span class="p">:</span>
-            <span class="n">err</span> <span class="o">=</span> <span class="n">_</span>
-            <span class="k">if</span> <span class="n">sock</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">sock</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-
-    <span class="k">if</span> <span class="n">err</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">err</span>
-    <span class="k">raise</span> <span class="n">socket</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&#34;socket.getaddrinfo returned an empty list&#34;</span><span class="p">)</span>
-
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">_connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;Create a TCP socket connection&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">err</span> <span class="o">=</span> <span class="kc">None</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">socket</span><span class="o">.</span><span class="n">getaddrinfo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket_type</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                                  <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">family</span><span class="p">,</span> <span class="n">socktype</span><span class="p">,</span> <span class="n">proto</span><span class="p">,</span> <span class="n">canonname</span><span class="p">,</span> <span class="n">socket_address</span> <span class="o">=</span> <span class="n">res</span>
+</span></span><span class="line"><span class="cl">        <span class="n">sock</span> <span class="o">=</span> <span class="kc">None</span>
+</span></span><span class="line"><span class="cl">        <span class="k">try</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">sock</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">family</span><span class="p">,</span> <span class="n">socktype</span><span class="p">,</span> <span class="n">proto</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># TCP_NODELAY</span>
+</span></span><span class="line"><span class="cl">            <span class="n">sock</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">IPPROTO_TCP</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">TCP_NODELAY</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1"># TCP_KEEPALIVE</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket_keepalive</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                <span class="n">sock</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">SOL_SOCKET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SO_KEEPALIVE</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">iteritems</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">socket_keepalive_options</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">sock</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">IPPROTO_TCP</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1"># set the socket_connect_timeout before we connect</span>
+</span></span><span class="line"><span class="cl">            <span class="n">sock</span><span class="o">.</span><span class="n">settimeout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">socket_connect_timeout</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1"># connect</span>
+</span></span><span class="line"><span class="cl">            <span class="n">sock</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">socket_address</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1"># set the socket_timeout now that we&#39;re connected</span>
+</span></span><span class="line"><span class="cl">            <span class="n">sock</span><span class="o">.</span><span class="n">settimeout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">socket_timeout</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">sock</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">except</span> <span class="n">socket</span><span class="o">.</span><span class="n">error</span> <span class="k">as</span> <span class="n">_</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">err</span> <span class="o">=</span> <span class="n">_</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="n">sock</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                <span class="n">sock</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">err</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">raise</span> <span class="n">err</span>
+</span></span><span class="line"><span class="cl">    <span class="k">raise</span> <span class="n">socket</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&#34;socket.getaddrinfo returned an empty list&#34;</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h5 id="response解析">response解析</h5>
 <div class="highlight"><div class="chroma">
@@ -525,52 +522,52 @@
 </span><span class="lnt">45
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">read_response</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ConnectionError</span><span class="p">(</span><span class="n">SERVER_CLOSED_CONNECTION_ERROR</span><span class="p">)</span>
-
-    <span class="n">byte</span><span class="p">,</span> <span class="n">response</span> <span class="o">=</span> <span class="n">byte_to_chr</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">response</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
-
-    <span class="k">if</span> <span class="n">byte</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="s1">&#39;$&#39;</span><span class="p">,</span> <span class="s1">&#39;*&#39;</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="n">InvalidResponse</span><span class="p">(</span><span class="s2">&#34;Protocol Error: </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">&#34;</span> <span class="o">%</span>
-                              <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">byte</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="p">)))</span>
-
-    <span class="c1"># server returned an error</span>
-    <span class="k">if</span> <span class="n">byte</span> <span class="o">==</span> <span class="s1">&#39;-&#39;</span><span class="p">:</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="n">nativestr</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
-        <span class="n">error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_error</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
-        <span class="c1"># if the error is a ConnectionError, raise immediately so the user</span>
-        <span class="c1"># is notified</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="ne">ConnectionError</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">error</span>
-        <span class="c1"># otherwise, we&#39;re dealing with a ResponseError that might belong</span>
-        <span class="c1"># inside a pipeline response. the connection&#39;s read_response()</span>
-        <span class="c1"># and/or the pipeline&#39;s execute() will raise this error if</span>
-        <span class="c1"># necessary, so just return the exception instance here.</span>
-        <span class="k">return</span> <span class="n">error</span>
-    <span class="c1"># single value</span>
-    <span class="k">elif</span> <span class="n">byte</span> <span class="o">==</span> <span class="s1">&#39;+&#39;</span><span class="p">:</span>
-        <span class="k">pass</span>
-    <span class="c1"># int value</span>
-    <span class="k">elif</span> <span class="n">byte</span> <span class="o">==</span> <span class="s1">&#39;:&#39;</span><span class="p">:</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="n">long</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
-    <span class="c1"># bulk response</span>
-    <span class="k">elif</span> <span class="n">byte</span> <span class="o">==</span> <span class="s1">&#39;$&#39;</span><span class="p">:</span>
-        <span class="n">length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">length</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
-    <span class="c1"># multi-bulk response</span>
-    <span class="k">elif</span> <span class="n">byte</span> <span class="o">==</span> <span class="s1">&#39;*&#39;</span><span class="p">:</span>
-        <span class="n">length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">length</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">read_response</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">length</span><span class="p">)]</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">response</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">read_response</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">raise</span> <span class="ne">ConnectionError</span><span class="p">(</span><span class="n">SERVER_CLOSED_CONNECTION_ERROR</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">byte</span><span class="p">,</span> <span class="n">response</span> <span class="o">=</span> <span class="n">byte_to_chr</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">response</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">byte</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="s1">&#39;$&#39;</span><span class="p">,</span> <span class="s1">&#39;*&#39;</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">raise</span> <span class="n">InvalidResponse</span><span class="p">(</span><span class="s2">&#34;Protocol Error: </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">&#34;</span> <span class="o">%</span>
+</span></span><span class="line"><span class="cl">                              <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">byte</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="p">)))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># server returned an error</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">byte</span> <span class="o">==</span> <span class="s1">&#39;-&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">response</span> <span class="o">=</span> <span class="n">nativestr</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_error</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># if the error is a ConnectionError, raise immediately so the user</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># is notified</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="ne">ConnectionError</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">            <span class="k">raise</span> <span class="n">error</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># otherwise, we&#39;re dealing with a ResponseError that might belong</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># inside a pipeline response. the connection&#39;s read_response()</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># and/or the pipeline&#39;s execute() will raise this error if</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># necessary, so just return the exception instance here.</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">error</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># single value</span>
+</span></span><span class="line"><span class="cl">    <span class="k">elif</span> <span class="n">byte</span> <span class="o">==</span> <span class="s1">&#39;+&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">pass</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># int value</span>
+</span></span><span class="line"><span class="cl">    <span class="k">elif</span> <span class="n">byte</span> <span class="o">==</span> <span class="s1">&#39;:&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">response</span> <span class="o">=</span> <span class="n">long</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># bulk response</span>
+</span></span><span class="line"><span class="cl">    <span class="k">elif</span> <span class="n">byte</span> <span class="o">==</span> <span class="s1">&#39;$&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">length</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="kc">None</span>
+</span></span><span class="line"><span class="cl">        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># multi-bulk response</span>
+</span></span><span class="line"><span class="cl">    <span class="k">elif</span> <span class="n">byte</span> <span class="o">==</span> <span class="s1">&#39;*&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">length</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="kc">None</span>
+</span></span><span class="line"><span class="cl">        <span class="n">response</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">read_response</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">length</span><span class="p">)]</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">response</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h5 id="客户端打包">客户端打包</h5>
 <div class="highlight"><div class="chroma">
@@ -608,38 +605,38 @@
 </span><span class="lnt">31
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">pack_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-    <span class="s2">&#34;Pack a series of arguments into the Redis protocol&#34;</span>
-    <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="c1"># the client might have included 1 or more literal arguments in</span>
-    <span class="c1"># the command name, e.g., &#39;CONFIG GET&#39;. The Redis server expects these</span>
-    <span class="c1"># arguments to be sent separately, so split the first argument</span>
-    <span class="c1"># manually. These arguments should be bytestrings so that they are</span>
-    <span class="c1"># not encoded.</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">unicode</span><span class="p">):</span>
-        <span class="n">args</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">())</span> <span class="o">+</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
-    <span class="k">elif</span> <span class="sa">b</span><span class="s1">&#39; &#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-        <span class="n">args</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">())</span> <span class="o">+</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
-
-    <span class="n">buff</span> <span class="o">=</span> <span class="n">SYM_EMPTY</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">SYM_STAR</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">))</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span> <span class="n">SYM_CRLF</span><span class="p">))</span>
-
-    <span class="n">buffer_cutoff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer_cutoff</span>
-    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">imap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="o">.</span><span class="n">encode</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
-        <span class="c1"># to avoid large string mallocs, chunk the command into the</span>
-        <span class="c1"># output list if we&#39;re sending large values</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">buff</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">buffer_cutoff</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">buffer_cutoff</span><span class="p">:</span>
-            <span class="n">buff</span> <span class="o">=</span> <span class="n">SYM_EMPTY</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                <span class="p">(</span><span class="n">buff</span><span class="p">,</span> <span class="n">SYM_DOLLAR</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">arg</span><span class="p">))</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span> <span class="n">SYM_CRLF</span><span class="p">))</span>
-            <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">buff</span><span class="p">)</span>
-            <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
-            <span class="n">buff</span> <span class="o">=</span> <span class="n">SYM_CRLF</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">buff</span> <span class="o">=</span> <span class="n">SYM_EMPTY</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                <span class="p">(</span><span class="n">buff</span><span class="p">,</span> <span class="n">SYM_DOLLAR</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">arg</span><span class="p">))</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span>
-                 <span class="n">SYM_CRLF</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">SYM_CRLF</span><span class="p">))</span>
-    <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">buff</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">output</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">pack_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;Pack a series of arguments into the Redis protocol&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># the client might have included 1 or more literal arguments in</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># the command name, e.g., &#39;CONFIG GET&#39;. The Redis server expects these</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># arguments to be sent separately, so split the first argument</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># manually. These arguments should be bytestrings so that they are</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># not encoded.</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">unicode</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">args</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">())</span> <span class="o">+</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+</span></span><span class="line"><span class="cl">    <span class="k">elif</span> <span class="sa">b</span><span class="s1">&#39; &#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">args</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">())</span> <span class="o">+</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">buff</span> <span class="o">=</span> <span class="n">SYM_EMPTY</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">SYM_STAR</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">))</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span> <span class="n">SYM_CRLF</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">buffer_cutoff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer_cutoff</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">imap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="o">.</span><span class="n">encode</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># to avoid large string mallocs, chunk the command into the</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># output list if we&#39;re sending large values</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">buff</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">buffer_cutoff</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">buffer_cutoff</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">buff</span> <span class="o">=</span> <span class="n">SYM_EMPTY</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">                <span class="p">(</span><span class="n">buff</span><span class="p">,</span> <span class="n">SYM_DOLLAR</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">arg</span><span class="p">))</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span> <span class="n">SYM_CRLF</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">            <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">buff</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">buff</span> <span class="o">=</span> <span class="n">SYM_CRLF</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">buff</span> <span class="o">=</span> <span class="n">SYM_EMPTY</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">                <span class="p">(</span><span class="n">buff</span><span class="p">,</span> <span class="n">SYM_DOLLAR</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">arg</span><span class="p">))</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">                 <span class="n">SYM_CRLF</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">SYM_CRLF</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">buff</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">output</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="参考">参考</h4>
 <ul>

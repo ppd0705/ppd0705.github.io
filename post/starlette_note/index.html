@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.86.0-DEV" />
+<meta name="generator" content="Hugo 0.108.0" />
 
 
 <link rel="canonical" href="https://ppd0705.github.io/post/starlette_note/" />
@@ -65,11 +65,10 @@
 <meta property="og:url" content="https://ppd0705.github.io/post/starlette_note/" /><meta property="article:section" content="post" />
 <meta property="article:published_time" content="2020-03-12T22:46:27+08:00" />
 <meta property="article:modified_time" content="2020-03-12T22:46:27+08:00" />
-
 <meta itemprop="name" content="Starlette源码笔记">
 <meta itemprop="description" content="简介 Starlette是一个轻量的基于ASGI协议的web框架, 一个简单app如下： 1 2 3 4 5 6 7 8 async def app(scope, recieve, send): assert scope[&#34;type&#34;] == &#34;http&#34; body = b&#34;hello: &#34; request = Request(scope, recieve) async for chunk"><meta itemprop="datePublished" content="2020-03-12T22:46:27+08:00" />
 <meta itemprop="dateModified" content="2020-03-12T22:46:27+08:00" />
-<meta itemprop="wordCount" content="1138">
+<meta itemprop="wordCount" content="1139">
 <meta itemprop="keywords" content="Python," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Starlette源码笔记"/>
 <meta name="twitter:description" content="简介 Starlette是一个轻量的基于ASGI协议的web框架, 一个简单app如下： 1 2 3 4 5 6 7 8 async def app(scope, recieve, send): assert scope[&#34;type&#34;] == &#34;http&#34; body = b&#34;hello: &#34; request = Request(scope, recieve) async for chunk"/>
@@ -284,7 +283,7 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 1138 words </span>
+        <span class="more-meta"> 1139 words </span>
           <span class="more-meta"> 3 min read </span>
 
         
@@ -349,15 +348,15 @@
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="k">async</span> <span class="k">def</span> <span class="nf">app</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">recieve</span><span class="p">,</span> <span class="n">send</span><span class="p">):</span>
-    <span class="k">assert</span> <span class="n">scope</span><span class="p">[</span><span class="s2">&#34;type&#34;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&#34;http&#34;</span>
-    <span class="n">body</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&#34;hello: &#34;</span>
-    <span class="n">request</span> <span class="o">=</span> <span class="n">Request</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">recieve</span><span class="p">)</span>
-    <span class="k">async</span> <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">stream</span><span class="p">():</span>
-        <span class="n">body</span> <span class="o">+=</span> <span class="n">chunk</span>
-    <span class="n">response</span> <span class="o">=</span> <span class="n">Response</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
-    <span class="k">await</span> <span class="n">response</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">recieve</span><span class="p">,</span> <span class="n">send</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">async</span> <span class="k">def</span> <span class="nf">app</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">recieve</span><span class="p">,</span> <span class="n">send</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">assert</span> <span class="n">scope</span><span class="p">[</span><span class="s2">&#34;type&#34;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&#34;http&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">body</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&#34;hello: &#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">request</span> <span class="o">=</span> <span class="n">Request</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">recieve</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">async</span> <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">stream</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">        <span class="n">body</span> <span class="o">+=</span> <span class="n">chunk</span>
+</span></span><span class="line"><span class="cl">    <span class="n">response</span> <span class="o">=</span> <span class="n">Response</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">await</span> <span class="n">response</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">recieve</span><span class="p">,</span> <span class="n">send</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="部分模块">部分模块</h3>
 <h4 id="aplications">aplications</h4>
@@ -405,27 +404,27 @@
 </span><span class="lnt">20
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="k">class</span> <span class="nc">HTTPEndpoint</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scope</span><span class="p">:</span> <span class="n">Scope</span><span class="p">,</span> <span class="n">receive</span><span class="p">:</span> <span class="n">Receive</span><span class="p">,</span> <span class="n">send</span><span class="p">:</span> <span class="n">Send</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="n">scope</span><span class="p">[</span><span class="s2">&#34;type&#34;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&#34;http&#34;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">scope</span> <span class="o">=</span> <span class="n">scope</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">receive</span> <span class="o">=</span> <span class="n">receive</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">send</span> <span class="o">=</span> <span class="n">send</span>
-
-    <span class="k">def</span> <span class="fm">__await__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Generator</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispatch</span><span class="p">()</span><span class="o">.</span><span class="fm">__await__</span><span class="p">()</span>
-
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">dispatch</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">request</span> <span class="o">=</span> <span class="n">Request</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scope</span><span class="p">,</span> <span class="n">receive</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">receive</span><span class="p">)</span>
-        <span class="n">handler_name</span> <span class="o">=</span> <span class="s2">&#34;get&#34;</span> <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&#34;HEAD&#34;</span> <span class="k">else</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-        <span class="n">handler</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">handler_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">method_not_allowed</span><span class="p">)</span>
-        <span class="n">is_async</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">iscoroutinefunction</span><span class="p">(</span><span class="n">handler</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">is_async</span><span class="p">:</span>
-            <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">handler</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">run_in_threadpool</span><span class="p">(</span><span class="n">handler</span><span class="p">,</span> <span class="n">request</span><span class="p">)</span>
-        <span class="k">await</span> <span class="n">response</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scope</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">receive</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">HTTPEndpoint</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scope</span><span class="p">:</span> <span class="n">Scope</span><span class="p">,</span> <span class="n">receive</span><span class="p">:</span> <span class="n">Receive</span><span class="p">,</span> <span class="n">send</span><span class="p">:</span> <span class="n">Send</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">assert</span> <span class="n">scope</span><span class="p">[</span><span class="s2">&#34;type&#34;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&#34;http&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">scope</span> <span class="o">=</span> <span class="n">scope</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">receive</span> <span class="o">=</span> <span class="n">receive</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">send</span> <span class="o">=</span> <span class="n">send</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__await__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Generator</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispatch</span><span class="p">()</span><span class="o">.</span><span class="fm">__await__</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">async</span> <span class="k">def</span> <span class="nf">dispatch</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">request</span> <span class="o">=</span> <span class="n">Request</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scope</span><span class="p">,</span> <span class="n">receive</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">receive</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">handler_name</span> <span class="o">=</span> <span class="s2">&#34;get&#34;</span> <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&#34;HEAD&#34;</span> <span class="k">else</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="n">handler</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">handler_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">method_not_allowed</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">is_async</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">iscoroutinefunction</span><span class="p">(</span><span class="n">handler</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">is_async</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">handler</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">run_in_threadpool</span><span class="p">(</span><span class="n">handler</span><span class="p">,</span> <span class="n">request</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">await</span> <span class="n">response</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scope</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">receive</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>endpoint func 转app</li>
@@ -450,23 +449,23 @@
 </span><span class="lnt">16
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">request_response</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ASGIApp</span><span class="p">:</span>
-    <span class="s2">&#34;&#34;&#34;
-</span><span class="s2">    Takes a function or coroutine `func(request) -&gt; response`,
-</span><span class="s2">    and returns an ASGI application.
-</span><span class="s2">    &#34;&#34;&#34;</span>
-    <span class="n">is_coroutine</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">iscoroutinefunction</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">app</span><span class="p">(</span><span class="n">scope</span><span class="p">:</span> <span class="n">Scope</span><span class="p">,</span> <span class="n">receive</span><span class="p">:</span> <span class="n">Receive</span><span class="p">,</span> <span class="n">send</span><span class="p">:</span> <span class="n">Send</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">request</span> <span class="o">=</span> <span class="n">Request</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">receive</span><span class="o">=</span><span class="n">receive</span><span class="p">,</span> <span class="n">send</span><span class="o">=</span><span class="n">send</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">is_coroutine</span><span class="p">:</span>
-            <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">func</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">run_in_threadpool</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">request</span><span class="p">)</span>
-        <span class="k">await</span> <span class="n">response</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">receive</span><span class="p">,</span> <span class="n">send</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">app</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">request_response</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ASGIApp</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    Takes a function or coroutine `func(request) -&gt; response`,
+</span></span></span><span class="line"><span class="cl"><span class="s2">    and returns an ASGI application.
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">is_coroutine</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">iscoroutinefunction</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">async</span> <span class="k">def</span> <span class="nf">app</span><span class="p">(</span><span class="n">scope</span><span class="p">:</span> <span class="n">Scope</span><span class="p">,</span> <span class="n">receive</span><span class="p">:</span> <span class="n">Receive</span><span class="p">,</span> <span class="n">send</span><span class="p">:</span> <span class="n">Send</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">request</span> <span class="o">=</span> <span class="n">Request</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">receive</span><span class="o">=</span><span class="n">receive</span><span class="p">,</span> <span class="n">send</span><span class="o">=</span><span class="n">send</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">is_coroutine</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">func</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">run_in_threadpool</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">request</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">await</span> <span class="n">response</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">receive</span><span class="p">,</span> <span class="n">send</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">app</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="middleware">middleware</h4>
 <p>app middlewares是先进后出的栈</p>
@@ -487,26 +486,24 @@
 </span><span class="lnt">13
 </span><span class="lnt">14
 </span><span class="lnt">15
-</span><span class="lnt">16
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">build_middleware_stack</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ASGIApp</span><span class="p">:</span>
-    <span class="n">middleware</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="p">[</span><span class="n">Middleware</span><span class="p">(</span><span class="n">ServerErrorMiddleware</span><span class="p">,</span> <span class="n">handler</span><span class="o">=</span><span class="n">error_handler</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="n">debug</span><span class="p">,)]</span>
-        <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_middleware</span>
-        <span class="o">+</span> <span class="p">[</span>
-            <span class="n">Middleware</span><span class="p">(</span>
-                <span class="n">ExceptionMiddleware</span><span class="p">,</span> <span class="n">handlers</span><span class="o">=</span><span class="n">exception_handlers</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="n">debug</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="p">]</span>
-    <span class="p">)</span>
-
-    <span class="n">app</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">router</span>
-    <span class="k">for</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">options</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">middleware</span><span class="p">):</span>
-        <span class="n">app</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">app</span><span class="o">=</span><span class="n">app</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">app</span>
-
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">build_middleware_stack</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ASGIApp</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">middleware</span> <span class="o">=</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">        <span class="p">[</span><span class="n">Middleware</span><span class="p">(</span><span class="n">ServerErrorMiddleware</span><span class="p">,</span> <span class="n">handler</span><span class="o">=</span><span class="n">error_handler</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="n">debug</span><span class="p">,)]</span>
+</span></span><span class="line"><span class="cl">        <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_middleware</span>
+</span></span><span class="line"><span class="cl">        <span class="o">+</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">            <span class="n">Middleware</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">                <span class="n">ExceptionMiddleware</span><span class="p">,</span> <span class="n">handlers</span><span class="o">=</span><span class="n">exception_handlers</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="n">debug</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">app</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">router</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">options</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">middleware</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">app</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">app</span><span class="o">=</span><span class="n">app</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">app</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h5 id="官方middleware">官方middleware</h5>
 <ul>
@@ -537,28 +534,26 @@
 </span><span class="lnt">15
 </span><span class="lnt">16
 </span><span class="lnt">17
-</span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">time</span>
-<span class="k">class</span> <span class="nc">Timer</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">app</span>
-
-    <span class="k">async</span> <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scope</span><span class="p">,</span> <span class="n">receive</span><span class="p">,</span> <span class="n">send</span><span class="p">):</span>
-        <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-        <span class="n">http_status_code</span> <span class="o">=</span> <span class="s2">&#34;Unknown&#34;</span>
-
-        <span class="k">async</span> <span class="k">def</span> <span class="nf">send_wrapper</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
-            <span class="k">nonlocal</span> <span class="n">http_status_code</span>
-            <span class="k">if</span> <span class="n">message</span><span class="p">[</span><span class="s2">&#34;type&#34;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&#34;http.response.start&#34;</span><span class="p">:</span>
-                <span class="n">http_status_code</span> <span class="o">=</span> <span class="n">message</span><span class="p">[</span><span class="s2">&#34;status&#34;</span><span class="p">]</span>
-            <span class="k">await</span> <span class="n">send</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-
-        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">receive</span><span class="p">,</span> <span class="n">send_wrapper</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;timer: </span><span class="si">{</span><span class="n">scope</span><span class="p">[</span><span class="s1">&#39;method&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">scope</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">http_status_code</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
-
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">time</span>
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Timer</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">app</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">async</span> <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scope</span><span class="p">,</span> <span class="n">receive</span><span class="p">,</span> <span class="n">send</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="n">http_status_code</span> <span class="o">=</span> <span class="s2">&#34;Unknown&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">async</span> <span class="k">def</span> <span class="nf">send_wrapper</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">            <span class="k">nonlocal</span> <span class="n">http_status_code</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="n">message</span><span class="p">[</span><span class="s2">&#34;type&#34;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&#34;http.response.start&#34;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                <span class="n">http_status_code</span> <span class="o">=</span> <span class="n">message</span><span class="p">[</span><span class="s2">&#34;status&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">            <span class="k">await</span> <span class="n">send</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">receive</span><span class="p">,</span> <span class="n">send_wrapper</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;timer: </span><span class="si">{</span><span class="n">scope</span><span class="p">[</span><span class="s1">&#39;method&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">scope</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">http_status_code</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="requests">requests</h4>
 <p>Request: 解析scope和receive到的数据</p>
@@ -571,12 +566,12 @@
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="k">class</span> <span class="nc">Request</span><span class="p">(</span><span class="n">HTTPConnection</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">scope</span><span class="p">:</span> <span class="n">Scope</span><span class="p">,</span> <span class="n">receive</span><span class="p">:</span> <span class="n">Receive</span> <span class="o">=</span> <span class="n">empty_receive</span><span class="p">,</span> <span class="n">send</span><span class="p">:</span> <span class="n">Send</span> <span class="o">=</span> <span class="n">empty_send</span>
-    <span class="p">):</span>
-        <span class="k">pass</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Request</span><span class="p">(</span><span class="n">HTTPConnection</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="p">,</span> <span class="n">scope</span><span class="p">:</span> <span class="n">Scope</span><span class="p">,</span> <span class="n">receive</span><span class="p">:</span> <span class="n">Receive</span> <span class="o">=</span> <span class="n">empty_receive</span><span class="p">,</span> <span class="n">send</span><span class="p">:</span> <span class="n">Send</span> <span class="o">=</span> <span class="n">empty_send</span>
+</span></span><span class="line"><span class="cl">    <span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">pass</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="responses">responses</h4>
 <p>设置headers, __call__时send content</p>
@@ -615,38 +610,38 @@
 </span><span class="lnt">31
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="k">class</span> <span class="nc">Response</span><span class="p">:</span>
-    <span class="n">media_type</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">charset</span> <span class="o">=</span> <span class="s2">&#34;utf-8&#34;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">content</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">status_code</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span>
-        <span class="n">headers</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">media_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">background</span><span class="p">:</span> <span class="n">BackgroundTask</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">status_code</span> <span class="o">=</span> <span class="n">status_code</span>
-        <span class="k">if</span> <span class="n">media_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">media_type</span> <span class="o">=</span> <span class="n">media_type</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">background</span> <span class="o">=</span> <span class="n">background</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">init_headers</span><span class="p">(</span><span class="n">headers</span><span class="p">)</span>
-        
-    <span class="k">async</span> <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scope</span><span class="p">:</span> <span class="n">Scope</span><span class="p">,</span> <span class="n">receive</span><span class="p">:</span> <span class="n">Receive</span><span class="p">,</span> <span class="n">send</span><span class="p">:</span> <span class="n">Send</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">await</span> <span class="n">send</span><span class="p">(</span>
-            <span class="p">{</span>
-                <span class="s2">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;http.response.start&#34;</span><span class="p">,</span>
-                <span class="s2">&#34;status&#34;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span>
-                <span class="s2">&#34;headers&#34;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_headers</span><span class="p">,</span>
-            <span class="p">}</span>
-        <span class="p">)</span>
-        <span class="k">await</span> <span class="n">send</span><span class="p">({</span><span class="s2">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;http.response.body&#34;</span><span class="p">,</span> <span class="s2">&#34;body&#34;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">body</span><span class="p">})</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">background</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">background</span><span class="p">()</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Response</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">media_type</span> <span class="o">=</span> <span class="kc">None</span>
+</span></span><span class="line"><span class="cl">    <span class="n">charset</span> <span class="o">=</span> <span class="s2">&#34;utf-8&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="n">content</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="n">status_code</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="n">headers</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="n">media_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="n">background</span><span class="p">:</span> <span class="n">BackgroundTask</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">status_code</span> <span class="o">=</span> <span class="n">status_code</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">media_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="bp">self</span><span class="o">.</span><span class="n">media_type</span> <span class="o">=</span> <span class="n">media_type</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">background</span> <span class="o">=</span> <span class="n">background</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">init_headers</span><span class="p">(</span><span class="n">headers</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">    <span class="k">async</span> <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scope</span><span class="p">:</span> <span class="n">Scope</span><span class="p">,</span> <span class="n">receive</span><span class="p">:</span> <span class="n">Receive</span><span class="p">,</span> <span class="n">send</span><span class="p">:</span> <span class="n">Send</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">await</span> <span class="n">send</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">            <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="s2">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;http.response.start&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                <span class="s2">&#34;status&#34;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                <span class="s2">&#34;headers&#34;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_headers</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">await</span> <span class="n">send</span><span class="p">({</span><span class="s2">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;http.response.body&#34;</span><span class="p">,</span> <span class="s2">&#34;body&#34;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">body</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">background</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">background</span><span class="p">()</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>Response: 基类，render body, init headers, set cookie, call(scope, receice, send)发送header和body</li>

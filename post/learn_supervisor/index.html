@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.86.0-DEV" />
+<meta name="generator" content="Hugo 0.108.0" />
 
 
 <link rel="canonical" href="https://ppd0705.github.io/post/learn_supervisor/" />
@@ -65,7 +65,6 @@
 <meta property="og:url" content="https://ppd0705.github.io/post/learn_supervisor/" /><meta property="article:section" content="post" />
 <meta property="article:published_time" content="2022-03-27T21:21:20+08:00" />
 <meta property="article:modified_time" content="2022-03-31T07:32:20+08:00" />
-
 <meta itemprop="name" content="supervisor 源码解读">
 <meta itemprop="description" content="简介 Supervisor is a client/server system that allows its users to control a number of processes on UNIX-like operating systems. 当前最新版本为 4.2.4，发布于 2021-12-30 第一个发布版本为 1.0.3，发布于 2004-05-26 主要模块 supervisorctl supervisorctl 是个命令行客户端"><meta itemprop="datePublished" content="2022-03-27T21:21:20+08:00" />
 <meta itemprop="dateModified" content="2022-03-31T07:32:20+08:00" />
@@ -364,13 +363,13 @@
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">supervisor&gt; <span class="nb">help</span>
-default commands <span class="o">(</span><span class="nb">type</span> <span class="nb">help</span> &lt;topic&gt;<span class="o">)</span>:
-<span class="o">=====================================</span>
-add    <span class="nb">exit</span>      open  reload  restart   start   tail
-avail  <span class="nb">fg</span>        pid   remove  shutdown  status  update
-clear  maintail  quit  reread  signal    stop    version
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">supervisor&gt; <span class="nb">help</span>
+</span></span><span class="line"><span class="cl">default commands <span class="o">(</span><span class="nb">type</span> <span class="nb">help</span> &lt;topic&gt;<span class="o">)</span>:
+</span></span><span class="line"><span class="cl"><span class="o">=====================================</span>
+</span></span><span class="line"><span class="cl">add    <span class="nb">exit</span>      open  reload  restart   start   tail
+</span></span><span class="line"><span class="cl">avail  <span class="nb">fg</span>        pid   remove  shutdown  status  update
+</span></span><span class="line"><span class="cl">clear  maintail  quit  reread  signal    stop    version
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="主流程">主流程</h3>
 <div class="highlight"><div class="chroma">
@@ -399,29 +398,29 @@ clear  maintail  quit  reread  signal    stop    version
 </span><span class="lnt">22
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># file: supervisor/supervisorctl.py</span>
-<span class="k">class</span> <span class="nc">Controller</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">Cmd</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">cmdloop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">intro</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
-            <span class="n">stop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">onecmd</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">onecmd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
-        <span class="n">cmd</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parseline</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-        <span class="n">do_func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_do_func</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">do_func</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
-        
-    <span class="k">def</span> <span class="nf">_get_do_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
-        <span class="n">func_name</span> <span class="o">=</span> <span class="s1">&#39;do_&#39;</span> <span class="o">+</span> <span class="n">cmd</span>
-        <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">default</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">func</span>
-        
-    <span class="k">def</span> <span class="nf">do_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
-        <span class="n">supervisor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctl</span><span class="o">.</span><span class="n">get_supervisor</span><span class="p">()</span>
-        <span class="n">names</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="n">supervisor</span><span class="o">.</span><span class="n">startProcess</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ctl</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">: started&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># file: supervisor/supervisorctl.py</span>
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Controller</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">Cmd</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">cmdloop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">intro</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            <span class="n">stop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">onecmd</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">onecmd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">cmd</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parseline</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">do_func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_do_func</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">do_func</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">_get_do_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">func_name</span> <span class="o">=</span> <span class="s1">&#39;do_&#39;</span> <span class="o">+</span> <span class="n">cmd</span>
+</span></span><span class="line"><span class="cl">        <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">default</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">func</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">do_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">supervisor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctl</span><span class="o">.</span><span class="n">get_supervisor</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="n">names</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">result</span> <span class="o">=</span> <span class="n">supervisor</span><span class="o">.</span><span class="n">startProcess</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="bp">self</span><span class="o">.</span><span class="n">ctl</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">: started&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="supervisord">supervisord</h2>
 <h3 id="主流程-1">主流程</h3>
@@ -499,77 +498,77 @@ clear  maintail  quit  reread  signal    stop    version
 </span><span class="lnt">70
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># file: supervisor/supervisord.py</span>
-
-<span class="k">class</span> <span class="nc">Supervisor</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="o">=</span> <span class="n">options</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">process_groups</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="c1"># process_groups struct like:</span>
-        <span class="c1"># {</span>
-        <span class="c1">#    &#34;groupA&#34;: {</span>
-        <span class="c1">#        &#34;groupA&#34;: &lt;Subprocess instance&gt;,</span>
-        <span class="c1">#    },</span>
-        <span class="c1">#    &#34;groupB&#34;: {</span>
-        <span class="c1">#        &#34;programB1&#34;: &lt;Subprocess instance&gt;,</span>
-        <span class="c1">#        &#34;programB2&#34;: &lt;Subprocess instance&gt;,</span>
-        <span class="c1">#    },</span>
-        <span class="c1"># }</span>
-        
-    <span class="k">def</span> <span class="nf">runforever</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># 创建管理子进程的Subprocess类实例（实际子进程还没启动）</span>
-        <span class="k">for</span> <span class="n">config</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">process_group_configs</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">add_process_group</span><span class="p">(</span><span class="n">config</span><span class="p">)</span> 
-            
-        <span class="c1"># 启动 httpservers</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">openhttpservers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        
-        <span class="c1"># 注册信号</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">setsignals</span><span class="p">()</span>
-        
-        <span class="c1"># 全局变量：包含所有socket对象</span>
-        <span class="n">socket_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">get_socket_map</span><span class="p">()</span>
-        
-        <span class="k">while</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">combined_map</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="n">combined_map</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">socket_map</span><span class="p">)</span>
-            
-            <span class="c1"># 添加子进程标准输入输出相关的pipe</span>
-            <span class="n">combined_map</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_process_map</span><span class="p">())</span>
-            
-            <span class="c1"># 注册文件描述符</span>
-            <span class="k">for</span> <span class="n">fd</span><span class="p">,</span> <span class="n">dispatcher</span> <span class="ow">in</span> <span class="n">combined_map</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">dispatcher</span><span class="o">.</span><span class="n">readable</span><span class="p">():</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">poller</span><span class="o">.</span><span class="n">register_readable</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">dispatcher</span><span class="o">.</span><span class="n">writable</span><span class="p">():</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">poller</span><span class="o">.</span><span class="n">register_writable</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span>
-                    
-            <span class="c1"># 读取可读写的文件描述符</span>
-            <span class="n">r</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">poller</span><span class="o">.</span><span class="n">poll</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
-            
-            <span class="c1"># 处理对应事件</span>
-            <span class="k">for</span> <span class="n">fd</span> <span class="ow">in</span> <span class="n">r</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">fd</span> <span class="ow">in</span> <span class="n">combined_map</span><span class="p">:</span>
-                    <span class="n">dispatcher</span> <span class="o">=</span> <span class="n">combined_map</span><span class="p">[</span><span class="n">fd</span><span class="p">]</span>
-                    <span class="n">dispatcher</span><span class="o">.</span><span class="n">handle_read_event</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">fd</span> <span class="ow">in</span> <span class="n">w</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">fd</span> <span class="ow">in</span> <span class="n">combined_map</span><span class="p">:</span>
-                    <span class="n">dispatcher</span> <span class="o">=</span> <span class="n">combined_map</span><span class="p">[</span><span class="n">fd</span><span class="p">]</span>
-                    <span class="n">dispatcher</span><span class="o">.</span><span class="n">handle_write_event</span><span class="p">()</span>
-                    
-            <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">pgroups</span><span class="p">:</span>
-                <span class="c1"># 检查进程状态，确定是否要启动或者停止操作</span>
-                <span class="n">group</span><span class="o">.</span><span class="n">transition</span><span class="p">()</span>
-                
-            <span class="c1"># waitpid(0, 1) 检查是否有进程停止</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">reap</span><span class="p">()</span>
-            
-            <span class="c1"># 信号处理： 是否要停止、重启、重新打开日志文件等</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">handle_signal</span><span class="p">()</span>
-            
-            <span class="c1"># 发送心跳事件</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">tick</span><span class="p">()</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># file: supervisor/supervisord.py</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Supervisor</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="o">=</span> <span class="n">options</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">process_groups</span> <span class="o">=</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># process_groups struct like:</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># {</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">#    &#34;groupA&#34;: {</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">#        &#34;groupA&#34;: &lt;Subprocess instance&gt;,</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">#    },</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">#    &#34;groupB&#34;: {</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">#        &#34;programB1&#34;: &lt;Subprocess instance&gt;,</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">#        &#34;programB2&#34;: &lt;Subprocess instance&gt;,</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">#    },</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># }</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">runforever</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 创建管理子进程的Subprocess类实例（实际子进程还没启动）</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">config</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">process_group_configs</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="bp">self</span><span class="o">.</span><span class="n">add_process_group</span><span class="p">(</span><span class="n">config</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl">            
+</span></span><span class="line"><span class="cl">        <span class="c1"># 启动 httpservers</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">openhttpservers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1"># 注册信号</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">setsignals</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1"># 全局变量：包含所有socket对象</span>
+</span></span><span class="line"><span class="cl">        <span class="n">socket_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">get_socket_map</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="k">while</span> <span class="mi">1</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">combined_map</span> <span class="o">=</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">            <span class="n">combined_map</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">socket_map</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            
+</span></span><span class="line"><span class="cl">            <span class="c1"># 添加子进程标准输入输出相关的pipe</span>
+</span></span><span class="line"><span class="cl">            <span class="n">combined_map</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_process_map</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">            
+</span></span><span class="line"><span class="cl">            <span class="c1"># 注册文件描述符</span>
+</span></span><span class="line"><span class="cl">            <span class="k">for</span> <span class="n">fd</span><span class="p">,</span> <span class="n">dispatcher</span> <span class="ow">in</span> <span class="n">combined_map</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="n">dispatcher</span><span class="o">.</span><span class="n">readable</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">                    <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">poller</span><span class="o">.</span><span class="n">register_readable</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="n">dispatcher</span><span class="o">.</span><span class="n">writable</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">                    <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">poller</span><span class="o">.</span><span class="n">register_writable</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                    
+</span></span><span class="line"><span class="cl">            <span class="c1"># 读取可读写的文件描述符</span>
+</span></span><span class="line"><span class="cl">            <span class="n">r</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">poller</span><span class="o">.</span><span class="n">poll</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            
+</span></span><span class="line"><span class="cl">            <span class="c1"># 处理对应事件</span>
+</span></span><span class="line"><span class="cl">            <span class="k">for</span> <span class="n">fd</span> <span class="ow">in</span> <span class="n">r</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="n">fd</span> <span class="ow">in</span> <span class="n">combined_map</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">dispatcher</span> <span class="o">=</span> <span class="n">combined_map</span><span class="p">[</span><span class="n">fd</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">dispatcher</span><span class="o">.</span><span class="n">handle_read_event</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            <span class="k">for</span> <span class="n">fd</span> <span class="ow">in</span> <span class="n">w</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="n">fd</span> <span class="ow">in</span> <span class="n">combined_map</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">dispatcher</span> <span class="o">=</span> <span class="n">combined_map</span><span class="p">[</span><span class="n">fd</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">dispatcher</span><span class="o">.</span><span class="n">handle_write_event</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">                    
+</span></span><span class="line"><span class="cl">            <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">pgroups</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                <span class="c1"># 检查进程状态，确定是否要启动或者停止操作</span>
+</span></span><span class="line"><span class="cl">                <span class="n">group</span><span class="o">.</span><span class="n">transition</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">                
+</span></span><span class="line"><span class="cl">            <span class="c1"># waitpid(0, 1) 检查是否有进程停止</span>
+</span></span><span class="line"><span class="cl">            <span class="bp">self</span><span class="o">.</span><span class="n">reap</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            
+</span></span><span class="line"><span class="cl">            <span class="c1"># 信号处理： 是否要停止、重启、重新打开日志文件等</span>
+</span></span><span class="line"><span class="cl">            <span class="bp">self</span><span class="o">.</span><span class="n">handle_signal</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            
+</span></span><span class="line"><span class="cl">            <span class="c1"># 发送心跳事件</span>
+</span></span><span class="line"><span class="cl">            <span class="bp">self</span><span class="o">.</span><span class="n">tick</span><span class="p">()</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="子进程实例">子进程实例</h3>
 <div class="highlight"><div class="chroma">
@@ -639,70 +638,70 @@ clear  maintail  quit  reread  signal    stop    version
 </span><span class="lnt">63
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python">
-<span class="k">def</span> <span class="nf">make_pipes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="n">pipes</span> <span class="o">=</span> <span class="p">{}</span>
-
-    <span class="n">stdin</span><span class="p">,</span> <span class="n">child_stdin</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">pipe</span><span class="p">()</span>
-    <span class="n">pipes</span><span class="p">[</span><span class="s1">&#39;child_stdin&#39;</span><span class="p">],</span> <span class="n">pipes</span><span class="p">[</span><span class="s1">&#39;stdin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stdin</span><span class="p">,</span> <span class="n">child_stdin</span>
-    <span class="n">stdout</span><span class="p">,</span> <span class="n">child_stdout</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">pipe</span><span class="p">()</span>
-    <span class="n">pipes</span><span class="p">[</span><span class="s1">&#39;stdout&#39;</span><span class="p">],</span> <span class="n">pipes</span><span class="p">[</span><span class="s1">&#39;child_stdout&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">child_stdout</span>
-    <span class="n">stderr</span><span class="p">,</span> <span class="n">child_stderr</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">pipe</span><span class="p">()</span>
-    <span class="n">pipes</span><span class="p">[</span><span class="s1">&#39;stderr&#39;</span><span class="p">],</span> <span class="n">pipes</span><span class="p">[</span><span class="s1">&#39;child_stderr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stderr</span><span class="p">,</span> <span class="n">child_stderr</span>
-    <span class="k">for</span> <span class="n">fd</span> <span class="ow">in</span> <span class="p">(</span><span class="n">pipes</span><span class="p">[</span><span class="s1">&#39;stdout&#39;</span><span class="p">],</span> <span class="n">pipes</span><span class="p">[</span><span class="s1">&#39;stderr&#39;</span><span class="p">],</span> <span class="n">pipes</span><span class="p">[</span><span class="s1">&#39;stdin&#39;</span><span class="p">]):</span>
-        <span class="k">if</span> <span class="n">fd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">flags</span> <span class="o">=</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">fcntl</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">F_GETFL</span><span class="p">)</span> <span class="o">|</span> <span class="n">os</span><span class="o">.</span><span class="n">O_NDELAY</span>   <span class="c1"># O_NDELAY is an alias for O_NONBLOCK</span>
-            <span class="n">fcntl</span><span class="o">.</span><span class="n">fcntl</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">F_SETFL</span><span class="p">,</span> <span class="n">flags</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">pipes</span>
-    
-<span class="k">class</span> <span class="nc">Subprocess</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="n">pid</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dispatchers</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pipes</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">ProcessStates</span><span class="o">.</span><span class="n">STOPPED</span>
-        
-    <span class="k">def</span> <span class="nf">spawn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">filename</span><span class="p">,</span> <span class="n">argv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_execv_args</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dispatchers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">make_dispatchers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        
-        <span class="n">pid</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">os</span><span class="o">.</span><span class="n">fork</span><span class="p">()</span>
-         
-        <span class="k">if</span> <span class="n">pid</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_spawn_as_parent</span><span class="p">(</span><span class="n">pid</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_spawn_as_child</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">argv</span><span class="p">)</span>
-            
-    <span class="k">def</span> <span class="nf">_spawn_as_parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pid</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="n">pid</span>
-        <span class="n">options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">options</span>
-        <span class="n">options</span><span class="o">.</span><span class="n">close_child_pipes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pipes</span><span class="p">)</span>
-        
-    <span class="k">def</span> <span class="nf">_spawn_as_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">argv</span><span class="p">):</span>
-        <span class="n">options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">options</span>
-        <span class="n">options</span><span class="o">.</span><span class="n">setpgrp</span><span class="p">()</span>
-        
-        <span class="c1"># 文件描述符重定向</span>
-        <span class="n">options</span><span class="o">.</span><span class="n">dup2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pipes</span><span class="p">[</span><span class="s1">&#39;child_stdin&#39;</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="n">options</span><span class="o">.</span><span class="n">dup2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pipes</span><span class="p">[</span><span class="s1">&#39;child_stdout&#39;</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">redirect_stderr</span><span class="p">:</span>
-            <span class="n">options</span><span class="o">.</span><span class="n">dup2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pipes</span><span class="p">[</span><span class="s1">&#39;child_stdout&#39;</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">options</span><span class="o">.</span><span class="n">dup2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pipes</span><span class="p">[</span><span class="s1">&#39;child_stderr&#39;</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">minfds</span><span class="p">):</span>
-            <span class="n">options</span><span class="o">.</span><span class="n">close_fd</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-            
-        <span class="n">env</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">execve</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
-        
-    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kill</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">stopsignal</span><span class="p">)</span>
-        
-    <span class="k">def</span> <span class="nf">kill</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sig</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">change_state</span><span class="p">(</span><span class="n">ProcessStates</span><span class="o">.</span><span class="n">STOPPING</span><span class="p">)</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">kill</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">sig</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">make_pipes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">pipes</span> <span class="o">=</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">stdin</span><span class="p">,</span> <span class="n">child_stdin</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">pipe</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">pipes</span><span class="p">[</span><span class="s1">&#39;child_stdin&#39;</span><span class="p">],</span> <span class="n">pipes</span><span class="p">[</span><span class="s1">&#39;stdin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stdin</span><span class="p">,</span> <span class="n">child_stdin</span>
+</span></span><span class="line"><span class="cl">    <span class="n">stdout</span><span class="p">,</span> <span class="n">child_stdout</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">pipe</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">pipes</span><span class="p">[</span><span class="s1">&#39;stdout&#39;</span><span class="p">],</span> <span class="n">pipes</span><span class="p">[</span><span class="s1">&#39;child_stdout&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">child_stdout</span>
+</span></span><span class="line"><span class="cl">    <span class="n">stderr</span><span class="p">,</span> <span class="n">child_stderr</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">pipe</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">pipes</span><span class="p">[</span><span class="s1">&#39;stderr&#39;</span><span class="p">],</span> <span class="n">pipes</span><span class="p">[</span><span class="s1">&#39;child_stderr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stderr</span><span class="p">,</span> <span class="n">child_stderr</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">fd</span> <span class="ow">in</span> <span class="p">(</span><span class="n">pipes</span><span class="p">[</span><span class="s1">&#39;stdout&#39;</span><span class="p">],</span> <span class="n">pipes</span><span class="p">[</span><span class="s1">&#39;stderr&#39;</span><span class="p">],</span> <span class="n">pipes</span><span class="p">[</span><span class="s1">&#39;stdin&#39;</span><span class="p">]):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">fd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">flags</span> <span class="o">=</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">fcntl</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">F_GETFL</span><span class="p">)</span> <span class="o">|</span> <span class="n">os</span><span class="o">.</span><span class="n">O_NDELAY</span>   <span class="c1"># O_NDELAY is an alias for O_NONBLOCK</span>
+</span></span><span class="line"><span class="cl">            <span class="n">fcntl</span><span class="o">.</span><span class="n">fcntl</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">F_SETFL</span><span class="p">,</span> <span class="n">flags</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">pipes</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Subprocess</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">pid</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">dispatchers</span> <span class="o">=</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">pipes</span> <span class="o">=</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">ProcessStates</span><span class="o">.</span><span class="n">STOPPED</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">spawn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">filename</span><span class="p">,</span> <span class="n">argv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_execv_args</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">dispatchers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">make_dispatchers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="n">pid</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">os</span><span class="o">.</span><span class="n">fork</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">         
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">pid</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="bp">self</span><span class="o">.</span><span class="n">_spawn_as_parent</span><span class="p">(</span><span class="n">pid</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="bp">self</span><span class="o">.</span><span class="n">_spawn_as_child</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">argv</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">_spawn_as_parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pid</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="n">pid</span>
+</span></span><span class="line"><span class="cl">        <span class="n">options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">options</span>
+</span></span><span class="line"><span class="cl">        <span class="n">options</span><span class="o">.</span><span class="n">close_child_pipes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pipes</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">_spawn_as_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">argv</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">options</span>
+</span></span><span class="line"><span class="cl">        <span class="n">options</span><span class="o">.</span><span class="n">setpgrp</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1"># 文件描述符重定向</span>
+</span></span><span class="line"><span class="cl">        <span class="n">options</span><span class="o">.</span><span class="n">dup2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pipes</span><span class="p">[</span><span class="s1">&#39;child_stdin&#39;</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">options</span><span class="o">.</span><span class="n">dup2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pipes</span><span class="p">[</span><span class="s1">&#39;child_stdout&#39;</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">redirect_stderr</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">options</span><span class="o">.</span><span class="n">dup2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pipes</span><span class="p">[</span><span class="s1">&#39;child_stdout&#39;</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">options</span><span class="o">.</span><span class="n">dup2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pipes</span><span class="p">[</span><span class="s1">&#39;child_stderr&#39;</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">minfds</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">            <span class="n">options</span><span class="o">.</span><span class="n">close_fd</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            
+</span></span><span class="line"><span class="cl">        <span class="n">env</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="n">os</span><span class="o">.</span><span class="n">execve</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kill</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">stopsignal</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">kill</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sig</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">change_state</span><span class="p">(</span><span class="n">ProcessStates</span><span class="o">.</span><span class="n">STOPPING</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">os</span><span class="o">.</span><span class="n">kill</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">sig</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="http_server">http_server</h2>
 <p>支持基于 tcp socket 或者 unix domain socket 的 http server</p>
@@ -771,68 +770,68 @@ clear  maintail  quit  reread  signal    stop    version
 </span><span class="lnt">61
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="k">class</span> <span class="nc">supervisor_af_inet_http_server</span><span class="p">(</span><span class="n">supervisor_http_server</span><span class="p">):</span>
-     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">logger_object</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ip</span> <span class="o">=</span> <span class="n">ip</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">port</span>
-        
-        <span class="n">sock</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
-        
-        <span class="bp">self</span><span class="o">.</span><span class="n">handlers</span> <span class="o">=</span> <span class="p">[]</span>
-        
-        <span class="bp">self</span><span class="o">.</span><span class="n">socket</span> <span class="o">=</span> <span class="n">sock</span>
-        <span class="n">sock</span><span class="o">.</span><span class="n">setblocking</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">sock</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">listen</span> <span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
-        
-        <span class="c1"># 注册到全局 socket 字典里</span>
-        <span class="n">socket_map</span><span class="p">[</span><span class="n">sock</span><span class="o">.</span><span class="n">fileno</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span>
-        
-    <span class="k">def</span> <span class="nf">handle_read_event</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">handle_accept</span><span class="p">()</span>
-        
-    <span class="k">def</span> <span class="nf">handle_accept</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">conn</span><span class="p">,</span> <span class="n">addr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
-        <span class="n">http_channel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">,</span> <span class="n">addr</span><span class="p">)</span>
-        
-<span class="k">class</span> <span class="nc">http_channel</span> <span class="p">(</span><span class="n">asynchat</span><span class="o">.</span><span class="n">async_chat</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">server</span><span class="p">,</span> <span class="n">conn</span><span class="p">,</span> <span class="n">addr</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">socket</span> <span class="o">=</span> <span class="n">conn</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">setblocking</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        
-        <span class="n">socket_map</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">fileno</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span>
-        
-        <span class="bp">self</span><span class="o">.</span><span class="n">ac_in_buffer</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ac_out_buffer</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ac_out_buffer_size</span> <span class="o">=</span> <span class="mi">512</span>
-        <span class="n">terminator</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\r\n\r\n</span><span class="s1">&#39;</span>
-        
-    <span class="k">def</span> <span class="nf">handle_read_event</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">handle_read</span><span class="p">()</span>
-        
-    <span class="k">def</span> <span class="nf">handle_read</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="n">buffer_size</span><span class="p">)</span>
-        
-        <span class="c1"># 简化版 接收数据拼接 request, 实际逻辑更复杂</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ac_in_buffer</span> <span class="o">+=</span> <span class="n">data</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminator</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ac_in_buffer</span><span class="p">:</span>
-            <span class="n">request</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_reqeust</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">handlers</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">h</span><span class="o">.</span><span class="n">match</span> <span class="p">(</span><span class="n">request</span><span class="p">):</span>
-                    <span class="n">h</span><span class="o">.</span><span class="n">handle_request</span> <span class="p">(</span><span class="n">request</span><span class="p">)</span>
-        
-    <span class="k">def</span> <span class="nf">handle_write_event</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">handle_write</span><span class="p">()</span>
-        
-    <span class="k">def</span> <span class="nf">handle_write</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">obs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ac_out_buffer_size</span>
-        <span class="k">if</span> <span class="nb">len</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ac_out_buffer</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">obs</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">refill_buffer</span><span class="p">()</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ac_out_buffer</span> 
-             <span class="n">num_sent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">send</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ac_out_buffer</span><span class="p">[:</span><span class="n">obs</span><span class="p">])</span>
-             <span class="k">if</span> <span class="n">num_sent</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">ac_out_buffer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ac_out_buffer</span><span class="p">[</span><span class="n">num_sent</span><span class="p">:]</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">supervisor_af_inet_http_server</span><span class="p">(</span><span class="n">supervisor_http_server</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">logger_object</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">ip</span> <span class="o">=</span> <span class="n">ip</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">port</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="n">sock</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">handlers</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">socket</span> <span class="o">=</span> <span class="n">sock</span>
+</span></span><span class="line"><span class="cl">        <span class="n">sock</span><span class="o">.</span><span class="n">setblocking</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">sock</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">listen</span> <span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1"># 注册到全局 socket 字典里</span>
+</span></span><span class="line"><span class="cl">        <span class="n">socket_map</span><span class="p">[</span><span class="n">sock</span><span class="o">.</span><span class="n">fileno</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">handle_read_event</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">handle_accept</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">handle_accept</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">conn</span><span class="p">,</span> <span class="n">addr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="n">http_channel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">,</span> <span class="n">addr</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">http_channel</span> <span class="p">(</span><span class="n">asynchat</span><span class="o">.</span><span class="n">async_chat</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">server</span><span class="p">,</span> <span class="n">conn</span><span class="p">,</span> <span class="n">addr</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">socket</span> <span class="o">=</span> <span class="n">conn</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">setblocking</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="n">socket_map</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">fileno</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">ac_in_buffer</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">ac_out_buffer</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">ac_out_buffer_size</span> <span class="o">=</span> <span class="mi">512</span>
+</span></span><span class="line"><span class="cl">        <span class="n">terminator</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\r\n\r\n</span><span class="s1">&#39;</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">handle_read_event</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">handle_read</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">handle_read</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="n">buffer_size</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1"># 简化版 接收数据拼接 request, 实际逻辑更复杂</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">ac_in_buffer</span> <span class="o">+=</span> <span class="n">data</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminator</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ac_in_buffer</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">request</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_reqeust</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">handlers</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="n">h</span><span class="o">.</span><span class="n">match</span> <span class="p">(</span><span class="n">request</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">h</span><span class="o">.</span><span class="n">handle_request</span> <span class="p">(</span><span class="n">request</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">handle_write_event</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">handle_write</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">handle_write</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">obs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ac_out_buffer_size</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="nb">len</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ac_out_buffer</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">obs</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="bp">self</span><span class="o">.</span><span class="n">refill_buffer</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ac_out_buffer</span> 
+</span></span><span class="line"><span class="cl">             <span class="n">num_sent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">send</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ac_out_buffer</span><span class="p">[:</span><span class="n">obs</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">             <span class="k">if</span> <span class="n">num_sent</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                <span class="bp">self</span><span class="o">.</span><span class="n">ac_out_buffer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ac_out_buffer</span><span class="p">[</span><span class="n">num_sent</span><span class="p">:]</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="xmlrpc_interface">xmlrpc_interface</h2>
 <h3 id="xmlrpc协议简介">xmlrpc协议简介</h3>
@@ -858,23 +857,23 @@ clear  maintail  quit  reread  signal    stop    version
 </span><span class="lnt">16
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-http" data-lang="http"><span class="err">POST /RPC2 HTTP/1.1  # 请求使用 POST 方法， path 为 /RPC2
-</span><span class="err">Host: localhost:9011
-</span><span class="err">Accept-Encoding: gzip
-</span><span class="err">Content-Type: text/xml
-</span><span class="err">User-Agent: Python-xmlrpc/3.8
-</span><span class="err">Content-Length: 176
-</span><span class="err">
-</span><span class="err">&lt;?xml version=&#39;1.0&#39;&gt;
-</span><span class="err">&lt;methodCall&gt; 
-</span><span class="err">    &lt;methodName&gt;supervisor.stopProcess&lt;/methodName&gt;
-</span><span class="err">    &lt;params&gt;
-</span><span class="err">        &lt;param&gt;
-</span><span class="err">        &lt;value&gt;&lt;string&gt;exits_123s&lt;/string&lt;/value&gt;
-</span><span class="err">        &lt;/param&gt;
-</span><span class="err">    &lt;/params&gt;
-</span><span class="err">&lt;/methodCall&gt;
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-http" data-lang="http"><span class="line"><span class="cl"><span class="err">POST /RPC2 HTTP/1.1  # 请求使用 POST 方法， path 为 /RPC2
+</span></span></span><span class="line"><span class="cl"><span class="err">Host: localhost:9011
+</span></span></span><span class="line"><span class="cl"><span class="err">Accept-Encoding: gzip
+</span></span></span><span class="line"><span class="cl"><span class="err">Content-Type: text/xml
+</span></span></span><span class="line"><span class="cl"><span class="err">User-Agent: Python-xmlrpc/3.8
+</span></span></span><span class="line"><span class="cl"><span class="err">Content-Length: 176
+</span></span></span><span class="line"><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err">&lt;?xml version=&#39;1.0&#39;&gt;
+</span></span></span><span class="line"><span class="cl"><span class="err">&lt;methodCall&gt; 
+</span></span></span><span class="line"><span class="cl"><span class="err">    &lt;methodName&gt;supervisor.stopProcess&lt;/methodName&gt;
+</span></span></span><span class="line"><span class="cl"><span class="err">    &lt;params&gt;
+</span></span></span><span class="line"><span class="cl"><span class="err">        &lt;param&gt;
+</span></span></span><span class="line"><span class="cl"><span class="err">        &lt;value&gt;&lt;string&gt;exits_123s&lt;/string&lt;/value&gt;
+</span></span></span><span class="line"><span class="cl"><span class="err">        &lt;/param&gt;
+</span></span></span><span class="line"><span class="cl"><span class="err">    &lt;/params&gt;
+</span></span></span><span class="line"><span class="cl"><span class="err">&lt;/methodCall&gt;
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>正常响应示例</p>
 <div class="highlight"><div class="chroma">
@@ -895,21 +894,21 @@ clear  maintail  quit  reread  signal    stop    version
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-http" data-lang="http"><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
-<span class="n">Server</span><span class="o">:</span> <span class="l">Medusa/1.12</span>
-<span class="n">Date</span><span class="o">:</span> <span class="l">Thu, 24 Mar 2022 09:02:51 GMT</span>
-<span class="n">Content-Type</span><span class="o">:</span> <span class="l">text/xml</span>
-<span class="n">Content-Length</span><span class="o">:</span> <span class="l">129</span>
-
-<span class="cp">&lt;?xml version=&#39;1.0&#39;?&gt;</span>
-<span class="nt">&lt;methodResponse&gt;</span>
-    <span class="nt">&lt;params&gt;</span>
-        <span class="nt">&lt;param&gt;</span>
-            <span class="nt">&lt;value&gt;&lt;boolean&gt;</span>1<span class="nt">&lt;/boolean&gt;&lt;/value&gt;</span>
-        <span class="nt">&lt;/param&gt;</span>
-    <span class="nt">&lt;/params&gt;</span>
-<span class="nt">&lt;/methodResponse&gt;</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-http" data-lang="http"><span class="line"><span class="cl"><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+</span></span><span class="line"><span class="cl"><span class="n">Server</span><span class="o">:</span> <span class="l">Medusa/1.12</span>
+</span></span><span class="line"><span class="cl"><span class="n">Date</span><span class="o">:</span> <span class="l">Thu, 24 Mar 2022 09:02:51 GMT</span>
+</span></span><span class="line"><span class="cl"><span class="n">Content-Type</span><span class="o">:</span> <span class="l">text/xml</span>
+</span></span><span class="line"><span class="cl"><span class="n">Content-Length</span><span class="o">:</span> <span class="l">129</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;?xml version=&#39;1.0&#39;?&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;methodResponse&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;params&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;param&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;value&gt;&lt;boolean&gt;</span>1<span class="nt">&lt;/boolean&gt;&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;/param&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/params&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/methodResponse&gt;</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>错误响应示例  (同样返回 http code 200 )</p>
 <div class="highlight"><div class="chroma">
@@ -939,30 +938,30 @@ clear  maintail  quit  reread  signal    stop    version
 </span><span class="lnt">23
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-http" data-lang="http"><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
-<span class="n">Server</span><span class="o">:</span> <span class="l">Medusa/1.12</span>
-<span class="n">Date</span><span class="o">:</span> <span class="l">Thu, 24 Mar 2022 08:53:09 GMT</span>
-<span class="n">Content-Type</span><span class="o">:</span> <span class="l">text/xml</span>
-<span class="n">Content-Length</span><span class="o">:</span> <span class="l">279</span>
-
-<span class="cp">&lt;?xml version=&#39;1.0&#39;?&gt;</span>
-<span class="nt">&lt;methodResponse&gt;</span>
-    <span class="nt">&lt;fault&gt;</span>
-        <span class="nt">&lt;value&gt;</span>
-            <span class="nt">&lt;struct&gt;</span>
-                <span class="nt">&lt;member&gt;</span>
-                    <span class="nt">&lt;name&gt;</span>faultCode<span class="nt">&lt;/name&gt;</span>
-                    <span class="nt">&lt;value&gt;&lt;int&gt;</span>70<span class="nt">&lt;/int&gt;&lt;/value&gt;</span>
-                <span class="nt">&lt;/member&gt;</span>
-                <span class="nt">&lt;member&gt;</span>
-                <span class="nt">&lt;name&gt;</span>faultString<span class="nt">&lt;/name&gt;</span>
-                <span class="nt">&lt;value&gt;&lt;string&gt;</span>NOT_RUNNING: exits_123s<span class="nt">&lt;/string&gt;&lt;/value&gt;</span>
-                <span class="nt">&lt;/member&gt;</span>
-            <span class="nt">&lt;/struct&gt;</span>
-        <span class="nt">&lt;/value&gt;</span>
-    <span class="nt">&lt;/fault&gt;</span>
-<span class="nt">&lt;/methodResponse&gt;</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-http" data-lang="http"><span class="line"><span class="cl"><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+</span></span><span class="line"><span class="cl"><span class="n">Server</span><span class="o">:</span> <span class="l">Medusa/1.12</span>
+</span></span><span class="line"><span class="cl"><span class="n">Date</span><span class="o">:</span> <span class="l">Thu, 24 Mar 2022 08:53:09 GMT</span>
+</span></span><span class="line"><span class="cl"><span class="n">Content-Type</span><span class="o">:</span> <span class="l">text/xml</span>
+</span></span><span class="line"><span class="cl"><span class="n">Content-Length</span><span class="o">:</span> <span class="l">279</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;?xml version=&#39;1.0&#39;?&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;methodResponse&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;fault&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;value&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;struct&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;member&gt;</span>
+</span></span><span class="line"><span class="cl">                    <span class="nt">&lt;name&gt;</span>faultCode<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">                    <span class="nt">&lt;value&gt;&lt;int&gt;</span>70<span class="nt">&lt;/int&gt;&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;/member&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;member&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;name&gt;</span>faultString<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;value&gt;&lt;string&gt;</span>NOT_RUNNING: exits_123s<span class="nt">&lt;/string&gt;&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;/member&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;/struct&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/fault&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/methodResponse&gt;</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="supervisor中的实现">supervisor中的实现</h3>
 <p>服务端 handler 实现</p>
@@ -988,25 +987,25 @@ clear  maintail  quit  reread  signal    stop    version
 </span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># file: supervisor/xmlrpcrpc.py</span>
-<span class="k">class</span> <span class="nc">supervisor_xmlrpc_handler</span><span class="p">(</span><span class="n">xmlrpc_handler</span><span class="p">):</span>
-    <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;/RPC2&#39;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">supervisord</span><span class="p">,</span> <span class="n">subinterfaces</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rpcinterface</span> <span class="o">=</span> <span class="n">RootRPCInterface</span><span class="p">(</span><span class="n">subinterfaces</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">supervisord</span> <span class="o">=</span> <span class="n">supervisord</span>
-        
-    <span class="k">def</span> <span class="nf">match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">request</span><span class="o">.</span><span class="n">uri</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
-        
-    <span class="k">def</span> <span class="nf">continue_request</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
-        <span class="n">params</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="n">xmlrpclib</span><span class="o">.</span><span class="n">loads</span> <span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">call</span> <span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
-        <span class="n">request</span><span class="o">.</span><span class="n">push</span> <span class="p">(</span><span class="n">response</span><span class="p">)</span>
-        
-    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">traverse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rpcinterface</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
-       
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># file: supervisor/xmlrpcrpc.py</span>
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">supervisor_xmlrpc_handler</span><span class="p">(</span><span class="n">xmlrpc_handler</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;/RPC2&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">supervisord</span><span class="p">,</span> <span class="n">subinterfaces</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">rpcinterface</span> <span class="o">=</span> <span class="n">RootRPCInterface</span><span class="p">(</span><span class="n">subinterfaces</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">supervisord</span> <span class="o">=</span> <span class="n">supervisord</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">request</span><span class="o">.</span><span class="n">uri</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">continue_request</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">params</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="n">xmlrpclib</span><span class="o">.</span><span class="n">loads</span> <span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">call</span> <span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">request</span><span class="o">.</span><span class="n">push</span> <span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">traverse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rpcinterface</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">       
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>接口实现</p>
 <div class="highlight"><div class="chroma">
@@ -1030,24 +1029,24 @@ clear  maintail  quit  reread  signal    stop    version
 </span><span class="lnt">17
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># file: supervisor/rpcinterface.py</span>
-
-<span class="k">class</span> <span class="nc">SupervisorNamespaceRPCInterface</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">supervisord</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">supervisord</span> <span class="o">=</span> <span class="n">supervisord</span>
-        
-    <span class="k">def</span> <span class="nf">stopProcess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">wait</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="n">process</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">supervisord</span><span class="o">.</span><span class="n">process_groups</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">process</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">RPCError</span><span class="p">(</span><span class="n">Faults</span><span class="o">.</span><span class="n">BAD_NAME</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">process</span><span class="o">.</span><span class="n">get_state</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">RUNNING_STATES</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">RPCError</span><span class="p">(</span><span class="n">Faults</span><span class="o">.</span><span class="n">NOT_RUNNING</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-
-        <span class="n">msg</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">msg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">RPCError</span><span class="p">(</span><span class="n">Faults</span><span class="o">.</span><span class="n">FAILED</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">True</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># file: supervisor/rpcinterface.py</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">SupervisorNamespaceRPCInterface</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">supervisord</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">supervisord</span> <span class="o">=</span> <span class="n">supervisord</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">stopProcess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">wait</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">process</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">supervisord</span><span class="o">.</span><span class="n">process_groups</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">process</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="k">raise</span> <span class="n">RPCError</span><span class="p">(</span><span class="n">Faults</span><span class="o">.</span><span class="n">BAD_NAME</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">process</span><span class="o">.</span><span class="n">get_state</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">RUNNING_STATES</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="k">raise</span> <span class="n">RPCError</span><span class="p">(</span><span class="n">Faults</span><span class="o">.</span><span class="n">NOT_RUNNING</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">msg</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">msg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="k">raise</span> <span class="n">RPCError</span><span class="p">(</span><span class="n">Faults</span><span class="o">.</span><span class="n">FAILED</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="kc">True</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="event">event</h2>
 <h3 id="event-类型">event 类型</h3>
@@ -1074,19 +1073,19 @@ clear  maintail  quit  reread  signal    stop    version
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="n">callbacks</span> <span class="o">=</span> <span class="p">[]</span>
-
-<span class="k">def</span> <span class="nf">subscribe</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
-    <span class="n">callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="nb">type</span><span class="p">,</span> <span class="n">callback</span><span class="p">))</span>
-
-<span class="k">def</span> <span class="nf">unsubscribe</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
-    <span class="n">callbacks</span><span class="o">.</span><span class="n">remove</span><span class="p">((</span><span class="nb">type</span><span class="p">,</span> <span class="n">callback</span><span class="p">))</span>
-
-<span class="k">def</span> <span class="nf">notify</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
-    <span class="k">for</span> <span class="nb">type</span><span class="p">,</span> <span class="n">callback</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
-            <span class="n">callback</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">callbacks</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">subscribe</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="nb">type</span><span class="p">,</span> <span class="n">callback</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">unsubscribe</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">callbacks</span><span class="o">.</span><span class="n">remove</span><span class="p">((</span><span class="nb">type</span><span class="p">,</span> <span class="n">callback</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">notify</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="nb">type</span><span class="p">,</span> <span class="n">callback</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">            <span class="n">callback</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="eventlistener">eventlistener</h3>
 <p>eventlistener 是一种特殊的子进程，通过标准输入输出和 supervisord 来获取 event</p>
@@ -1127,35 +1126,35 @@ clear  maintail  quit  reread  signal    stop    version
 </span><span class="lnt">28
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">sys</span>
-
-<span class="k">def</span> <span class="nf">write_stdout</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-    <span class="c1"># only eventlistener protocol messages may be sent to stdout</span>
-    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
-
-<span class="k">def</span> <span class="nf">write_stderr</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-    <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-    <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
-
-<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-    <span class="k">while</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="c1"># transition from ACKNOWLEDGED to READY</span>
-        <span class="n">write_stdout</span><span class="p">(</span><span class="s1">&#39;READY</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-
-        <span class="c1"># read event</span>
-        <span class="n">line</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
-        <span class="n">headers</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="p">])</span>
-        
-        <span class="n">payload</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">headers</span><span class="p">[</span><span class="s1">&#39;len&#39;</span><span class="p">]))</span>
-        
-
-        <span class="c1"># transition from READY to ACKNOWLEDGED</span>
-        <span class="n">write_stdout</span><span class="p">(</span><span class="s1">&#39;RESULT 2</span><span class="se">\n</span><span class="s1">OK&#39;</span><span class="p">)</span>
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="n">main</span><span class="p">()</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">sys</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">write_stdout</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># only eventlistener protocol messages may be sent to stdout</span>
+</span></span><span class="line"><span class="cl">    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">write_stderr</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="mi">1</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># transition from ACKNOWLEDGED to READY</span>
+</span></span><span class="line"><span class="cl">        <span class="n">write_stdout</span><span class="p">(</span><span class="s1">&#39;READY</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1"># read event</span>
+</span></span><span class="line"><span class="cl">        <span class="n">line</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="n">headers</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="p">])</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="n">payload</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">headers</span><span class="p">[</span><span class="s1">&#39;len&#39;</span><span class="p">]))</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1"># transition from READY to ACKNOWLEDGED</span>
+</span></span><span class="line"><span class="cl">        <span class="n">write_stdout</span><span class="p">(</span><span class="s1">&#39;RESULT 2</span><span class="se">\n</span><span class="s1">OK&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">main</span><span class="p">()</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>总结</p>
 <ol>

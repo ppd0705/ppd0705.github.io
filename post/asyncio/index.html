@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.86.0-DEV" />
+<meta name="generator" content="Hugo 0.108.0" />
 
 
 <link rel="canonical" href="https://ppd0705.github.io/post/asyncio/" />
@@ -65,7 +65,6 @@
 <meta property="og:url" content="https://ppd0705.github.io/post/asyncio/" /><meta property="article:section" content="post" />
 <meta property="article:published_time" content="2019-11-05T06:22:00+08:00" />
 <meta property="article:modified_time" content="2019-11-05T06:22:00+08:00" />
-
 <meta itemprop="name" content="Asyncio主要类和方法一览">
 <meta itemprop="description" content="events Handle 基本属性： loop, context, call_back, args run: 执行call_back TimeHandle: 带有when到期时间的handle,也用于来比较大小 AbstractServer: 抽象server, 定义start_se"><meta itemprop="datePublished" content="2019-11-05T06:22:00+08:00" />
 <meta itemprop="dateModified" content="2019-11-05T06:22:00+08:00" />
@@ -450,24 +449,24 @@
 </span><span class="lnt">17
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"> 
-<span class="k">try</span><span class="p">:</span>   
-    <span class="n">result</span> <span class="o">=</span> <span class="n">coro</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span> 
-<span class="k">except</span> <span class="ne">StopIteration</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-    <span class="c1"># coro finished</span>
-    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">set_result</span><span class="p">(</span><span class="n">exc</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">Future</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">_blocking</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_blocking</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="n">result</span><span class="o">.</span><span class="n">add_done_callback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wakeup</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">pass</span>
-    <span class="k">elif</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="n">call_soon</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_step</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-       <span class="k">pass</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl"><span class="k">try</span><span class="p">:</span>   
+</span></span><span class="line"><span class="cl">    <span class="n">result</span> <span class="o">=</span> <span class="n">coro</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl"><span class="k">except</span> <span class="ne">StopIteration</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># coro finished</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">set_result</span><span class="p">(</span><span class="n">exc</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">Future</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">_blocking</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="bp">self</span><span class="o">.</span><span class="n">_blocking</span> <span class="o">=</span> <span class="kc">False</span>
+</span></span><span class="line"><span class="cl">            <span class="n">result</span><span class="o">.</span><span class="n">add_done_callback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wakeup</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="k">pass</span>
+</span></span><span class="line"><span class="cl">    <span class="k">elif</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="n">call_soon</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_step</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">       <span class="k">pass</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>wait: 等超时或return_when条件满足之后返回（donw=e, pengding）两类futures</li>

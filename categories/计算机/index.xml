@@ -6,7 +6,16 @@
     <description>Recent content in 计算机 on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 24 Jul 2022 10:50:35 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 13 Dec 2022 09:24:20 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>nats丢消息排查小记</title>
+      <link>https://ppd0705.github.io/post/debug_nats_message_losing/</link>
+      <pubDate>Tue, 13 Dec 2022 09:24:20 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/debug_nats_message_losing/</guid>
+      <description>背景 最近我们把消息队列从 kafka 迁移到 nats, 主要原因是kafka的延迟不能忍受，5ms 其实也不小了，但在几千上万个 topic 的情况下，延迟有时会上升至数百 ms</description>
+    </item>
+    
     <item>
       <title>[笔记]k8s入门</title>
       <link>https://ppd0705.github.io/post/getting_started_with_k8s/</link>
@@ -176,15 +185,6 @@
       
       <guid>https://ppd0705.github.io/post/starlette_note/</guid>
       <description>简介 Starlette是一个轻量的基于ASGI协议的web框架, 一个简单app如下： 1 2 3 4 5 6 7 8 async def app(scope, recieve, send): assert scope[&amp;#34;type&amp;#34;] == &amp;#34;http&amp;#34; body = b&amp;#34;hello: &amp;#34; request = Request(scope, recieve) async for chunk</description>
-    </item>
-    
-    <item>
-      <title>Uvicorn源码笔记</title>
-      <link>https://ppd0705.github.io/post/uvicorn_note/</link>
-      <pubDate>Wed, 04 Mar 2020 08:25:53 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/uvicorn_note/</guid>
-      <description>简介 Unicorn是一个遵守ASGI协议的web服务器，使用asycnio框架，要求python3.6+，支持HTTP1.1和WebSock</description>
     </item>
     
   </channel>

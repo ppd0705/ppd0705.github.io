@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.86.0-DEV" />
+<meta name="generator" content="Hugo 0.108.0" />
 
 
 <link rel="canonical" href="https://ppd0705.github.io/post/learning_vue/" />
@@ -65,11 +65,10 @@
 <meta property="og:url" content="https://ppd0705.github.io/post/learning_vue/" /><meta property="article:section" content="post" />
 <meta property="article:published_time" content="2021-05-05T10:22:36+08:00" />
 <meta property="article:modified_time" content="2021-05-05T10:22:36+08:00" />
-
 <meta itemprop="name" content="[笔记]VueJS学习">
 <meta itemprop="description" content="Vue实例 1 2 3 4 5 6 7 var vm = new Vue({ el: &#34;#app&#34;, data: { a: 100 } }) el: 对应的元素 data: 数据 Vue实例有很多方法如 $watch: 监控变量，可定义回调函数 1 2 3 vm.$watch(&#39;a&#39;, function(newVal, oldVal){ }) 生命周期 V"><meta itemprop="datePublished" content="2021-05-05T10:22:36+08:00" />
 <meta itemprop="dateModified" content="2021-05-05T10:22:36+08:00" />
-<meta itemprop="wordCount" content="2081">
+<meta itemprop="wordCount" content="2053">
 <meta itemprop="keywords" content="JavaScript,VueJS," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]VueJS学习"/>
 <meta name="twitter:description" content="Vue实例 1 2 3 4 5 6 7 var vm = new Vue({ el: &#34;#app&#34;, data: { a: 100 } }) el: 对应的元素 data: 数据 Vue实例有很多方法如 $watch: 监控变量，可定义回调函数 1 2 3 vm.$watch(&#39;a&#39;, function(newVal, oldVal){ }) 生命周期 V"/>
@@ -284,7 +283,7 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 2081 words </span>
+        <span class="more-meta"> 2053 words </span>
           <span class="more-meta"> 5 min read </span>
 
         
@@ -362,14 +361,14 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-Vue" data-lang="Vue">
-<span class="kd">var</span> <span class="nx">vm</span> <span class="o">=</span> <span class="k">new</span>  <span class="nx">Vue</span><span class="p">({</span>
-    <span class="nx">el</span><span class="o">:</span> <span class="s2">&#34;#app&#34;</span><span class="p">,</span>
-    <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
-        <span class="nx">a</span><span class="o">:</span> <span class="mi">100</span>
-    <span class="p">}</span>
-<span class="p">})</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-Vue" data-lang="Vue"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">vm</span> <span class="o">=</span> <span class="k">new</span>  <span class="nx">Vue</span><span class="p">({</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">el</span><span class="o">:</span> <span class="s2">&#34;#app&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">a</span><span class="o">:</span> <span class="mi">100</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>el: 对应的元素
 data: 数据</p>
@@ -384,10 +383,10 @@ data: 数据</p>
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-Vue" data-lang="Vue"><span class="nx">vm</span><span class="p">.</span><span class="nx">$watch</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">newVal</span><span class="p">,</span> <span class="nx">oldVal</span><span class="p">){</span>
-    
-<span class="p">})</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-Vue" data-lang="Vue"><span class="line"><span class="cl"><span class="nx">vm</span><span class="p">.</span><span class="nx">$watch</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">newVal</span><span class="p">,</span> <span class="nx">oldVal</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="生命周期">生命周期</h3>
 <p><img src="evernotecid://3487788A-1852-4593-9A87-CA680D111422/appyinxiangcom/19474765/ENResource/p164" alt="6f2c97f045ba988851b02056c01c8d62.png"></p>
@@ -402,13 +401,13 @@ data: 数据</p>
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-Vue" data-lang="Vue"><span class="kd">var</span> <span class="nx">vm</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
-    
-    <span class="nx">created</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
-        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;created&#39;</span><span class="p">);</span>
-    <span class="p">},</span>
-<span class="p">})</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-Vue" data-lang="Vue"><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">vm</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="nx">created</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;created&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="插值">插值</h3>
 <ul>
@@ -473,22 +472,22 @@ $store: 全局单例状态树</p>
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-Vue" data-lang="Vue"><span class="kr">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vuex</span><span class="p">.</span><span class="nx">Store</span><span class="p">({</span>
-  <span class="nx">state</span><span class="o">:</span> <span class="p">{</span>
-    <span class="nx">todos</span><span class="o">:</span> <span class="p">[</span>
-      <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">text</span><span class="o">:</span> <span class="s1">&#39;...&#39;</span><span class="p">,</span> <span class="nx">done</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span>
-      <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span> <span class="nx">text</span><span class="o">:</span> <span class="s1">&#39;...&#39;</span><span class="p">,</span> <span class="nx">done</span><span class="o">:</span> <span class="kc">false</span> <span class="p">}</span>
-    <span class="p">]</span>
-  <span class="p">},</span>
-  <span class="nx">getters</span><span class="o">:</span> <span class="p">{</span>
-    <span class="nx">doneTodos</span><span class="o">:</span> <span class="nx">state</span> <span class="p">=&gt;</span> <span class="p">{</span>
-      <span class="k">return</span> <span class="nx">state</span><span class="p">.</span><span class="nx">todos</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">todo</span> <span class="p">=&gt;</span> <span class="nx">todo</span><span class="p">.</span><span class="nx">done</span><span class="p">)</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">})</span>
-
-<span class="nx">store</span><span class="p">.</span><span class="nx">getters</span><span class="p">.</span><span class="nx">doneTodos</span> <span class="c1">// -&gt; [{ id: 1, text: &#39;...&#39;, done: true }]
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-Vue" data-lang="Vue"><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vuex</span><span class="p">.</span><span class="nx">Store</span><span class="p">({</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">state</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">todos</span><span class="o">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">      <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">text</span><span class="o">:</span> <span class="s1">&#39;...&#39;</span><span class="p">,</span> <span class="nx">done</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span>
+</span></span><span class="line"><span class="cl">      <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span> <span class="nx">text</span><span class="o">:</span> <span class="s1">&#39;...&#39;</span><span class="p">,</span> <span class="nx">done</span><span class="o">:</span> <span class="kc">false</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">getters</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">doneTodos</span><span class="o">:</span> <span class="nx">state</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="nx">state</span><span class="p">.</span><span class="nx">todos</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">todo</span> <span class="p">=&gt;</span> <span class="nx">todo</span><span class="p">.</span><span class="nx">done</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">store</span><span class="p">.</span><span class="nx">getters</span><span class="p">.</span><span class="nx">doneTodos</span> <span class="c1">// -&gt; [{ id: 1, text: &#39;...&#39;, done: true }]
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>通过方法访问可以方便查询store数据，没有缓存</p>
 <div class="highlight"><div class="chroma">
@@ -503,15 +502,15 @@ $store: 全局单例状态树</p>
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-Vue" data-lang="Vue"><span class="nx">getters</span><span class="o">:</span> <span class="p">{</span>
-  <span class="c1">// ...
-</span><span class="c1"></span>  <span class="nx">getTodoById</span><span class="o">:</span> <span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">state</span><span class="p">.</span><span class="nx">todos</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="nx">todo</span> <span class="p">=&gt;</span> <span class="nx">todo</span><span class="p">.</span><span class="nx">id</span> <span class="o">===</span> <span class="nx">id</span><span class="p">)</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-
-<span class="nx">store</span><span class="p">.</span><span class="nx">getters</span><span class="p">.</span><span class="nx">getTodoById</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="c1">// -&gt; { id: 2, text: &#39;...&#39;, done: false }
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-Vue" data-lang="Vue"><span class="line"><span class="cl"><span class="nx">getters</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nx">getTodoById</span><span class="o">:</span> <span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">state</span><span class="p">.</span><span class="nx">todos</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="nx">todo</span> <span class="p">=&gt;</span> <span class="nx">todo</span><span class="p">.</span><span class="nx">id</span> <span class="o">===</span> <span class="nx">id</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">store</span><span class="p">.</span><span class="nx">getters</span><span class="p">.</span><span class="nx">getTodoById</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="c1">// -&gt; { id: 2, text: &#39;...&#39;, done: false }
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><h5 id="mutation">Mutation</h5>
 <p>更改store的唯一方法，在mutations中声明回调函数，使用commit来触发</p>
@@ -532,20 +531,20 @@ $store: 全局单例状态树</p>
 </span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-Vue" data-lang="Vue"><span class="kr">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vuex</span><span class="p">.</span><span class="nx">Store</span><span class="p">({</span>
-  <span class="nx">state</span><span class="o">:</span> <span class="p">{</span>
-    <span class="nx">count</span><span class="o">:</span> <span class="mi">1</span>
-  <span class="p">},</span>
-  <span class="nx">mutations</span><span class="o">:</span> <span class="p">{</span>
-    <span class="nx">increment</span> <span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
-      <span class="c1">// 变更状态
-</span><span class="c1"></span>      <span class="nx">state</span><span class="p">.</span><span class="nx">count</span><span class="o">++</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">})</span>
-
-<span class="nx">store</span><span class="p">.</span><span class="nx">commit</span><span class="p">(</span><span class="s1">&#39;increment&#39;</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-Vue" data-lang="Vue"><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vuex</span><span class="p">.</span><span class="nx">Store</span><span class="p">({</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">state</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">count</span><span class="o">:</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">  <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">mutations</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">increment</span> <span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 变更状态
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="nx">state</span><span class="p">.</span><span class="nx">count</span><span class="o">++</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">store</span><span class="p">.</span><span class="nx">commit</span><span class="p">(</span><span class="s1">&#39;increment&#39;</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>提交除了使用commit 也可以使用mapMutations来将其生设为方法</p>
 <p>mutation必须是同步函数</p>
@@ -576,29 +575,29 @@ $store: 全局单例状态树</p>
 </span><span class="lnt">22
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-Vue" data-lang="Vue"><span class="kr">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vuex</span><span class="p">.</span><span class="nx">Store</span><span class="p">({</span>
-  <span class="nx">state</span><span class="o">:</span> <span class="p">{</span>
-    <span class="nx">count</span><span class="o">:</span> <span class="mi">0</span>
-  <span class="p">},</span>
-  <span class="nx">mutations</span><span class="o">:</span> <span class="p">{</span>
-    <span class="nx">increment</span> <span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">state</span><span class="p">.</span><span class="nx">count</span><span class="o">++</span>
-    <span class="p">}</span>
-  <span class="p">},</span>
-  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span>
-    <span class="nx">increment</span> <span class="p">(</span><span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">context</span><span class="p">.</span><span class="nx">commit</span><span class="p">(</span><span class="s1">&#39;increment&#39;</span><span class="p">)</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-  
-  <span class="c1">//  可以使用参数结构来简化代码
-</span><span class="c1"></span>  <span class="c1">// actions: {
-</span><span class="c1"></span>  <span class="c1">// increment ({ commit }) {
-</span><span class="c1"></span>  <span class="c1">//  commit(&#39;increment&#39;)
-</span><span class="c1"></span>  <span class="c1">// }
-</span><span class="c1"></span><span class="p">}</span>
-<span class="p">})</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-Vue" data-lang="Vue"><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vuex</span><span class="p">.</span><span class="nx">Store</span><span class="p">({</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">state</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">count</span><span class="o">:</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">  <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">mutations</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">increment</span> <span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">state</span><span class="p">.</span><span class="nx">count</span><span class="o">++</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">increment</span> <span class="p">(</span><span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">context</span><span class="p">.</span><span class="nx">commit</span><span class="p">(</span><span class="s1">&#39;increment&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">//  可以使用参数结构来简化代码
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// actions: {
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// increment ({ commit }) {
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">//  commit(&#39;increment&#39;)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// }
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>action提交的是mutation而不是直接更改状态</p>
 <p><code>store.dispatch('increment')</code></p>
@@ -612,12 +611,12 @@ $store: 全局单例状态树</p>
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-Vue" data-lang="Vue"> <span class="nx">incrementAsync</span> <span class="p">({</span> <span class="nx">commit</span> <span class="p">})</span> <span class="p">{</span>
-    <span class="nx">setTimeout</span><span class="p">(()</span> <span class="p">=&gt;</span> <span class="p">{</span>
-      <span class="nx">commit</span><span class="p">(</span><span class="s1">&#39;increment&#39;</span><span class="p">)</span>
-    <span class="p">},</span> <span class="mi">1000</span><span class="p">)</span>
-  <span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-Vue" data-lang="Vue"><span class="line"><span class="cl"> <span class="nx">incrementAsync</span> <span class="p">({</span> <span class="nx">commit</span> <span class="p">})</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">setTimeout</span><span class="p">(()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">commit</span><span class="p">(</span><span class="s1">&#39;increment&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span> <span class="mi">1000</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h5 id="mudules">Mudules</h5>
 <p>使用modules将store分割成模块，每个模块拥有自己的state、mutation、acttion等</p>
@@ -647,36 +646,36 @@ $store: 全局单例状态树</p>
 </span><span class="lnt">22
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-Vue" data-lang="Vue"><span class="kr">const</span> <span class="nx">moduleA</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="nx">state</span><span class="o">:</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">({</span> <span class="p">...</span> <span class="p">}),</span>
-  <span class="nx">mutations</span><span class="o">:</span> <span class="p">{</span> <span class="p">...</span> <span class="p">},</span>
-  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span> <span class="p">...</span> <span class="p">},</span>
-  <span class="nx">getters</span><span class="o">:</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
-<span class="p">}</span>
-
-<span class="kr">const</span> <span class="nx">moduleB</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="nx">state</span><span class="o">:</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">({</span> <span class="p">...</span> <span class="p">}),</span>
-  <span class="nx">mutations</span><span class="o">:</span> <span class="p">{</span> <span class="p">...</span> <span class="p">},</span>
-  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
-<span class="p">}</span>
-
-<span class="kr">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vuex</span><span class="p">.</span><span class="nx">Store</span><span class="p">({</span>
-  <span class="nx">modules</span><span class="o">:</span> <span class="p">{</span>
-    <span class="nx">a</span><span class="o">:</span> <span class="nx">moduleA</span><span class="p">,</span>
-    <span class="nx">b</span><span class="o">:</span> <span class="nx">moduleB</span>
-  <span class="p">}</span>
-<span class="p">})</span>
-
-<span class="nx">store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">a</span> <span class="c1">// -&gt; moduleA 的状态
-</span><span class="c1"></span><span class="nx">store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">b</span> <span class="c1">// -&gt; moduleB 的状态
-</span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-Vue" data-lang="Vue"><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">moduleA</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">state</span><span class="o">:</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">({</span> <span class="p">...</span> <span class="p">}),</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">mutations</span><span class="o">:</span> <span class="p">{</span> <span class="p">...</span> <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span> <span class="p">...</span> <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">getters</span><span class="o">:</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">moduleB</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">state</span><span class="o">:</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">({</span> <span class="p">...</span> <span class="p">}),</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">mutations</span><span class="o">:</span> <span class="p">{</span> <span class="p">...</span> <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">actions</span><span class="o">:</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vuex</span><span class="p">.</span><span class="nx">Store</span><span class="p">({</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">modules</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">a</span><span class="o">:</span> <span class="nx">moduleA</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">b</span><span class="o">:</span> <span class="nx">moduleB</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">a</span> <span class="c1">// -&gt; moduleA 的状态
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">store</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">b</span> <span class="c1">// -&gt; moduleB 的状态
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>默认情况模块内部的getter、actition和mutation等是注册在全局的，可以添加<code>namespaced: true</code>使其成为带命名空间的模块</p>
 <p>在带命名空间里可以使用<code>rootState</code>访问全局内容</p>
 <h4 id="注册">注册</h4>
 <ul>
 <li>全局注册
-Vue.component(&lsquo;name&rsquo;, options)</li>
+Vue.component(&rsquo;name&rsquo;, options)</li>
 <li>局部注册</li>
 </ul>
 <div class="highlight"><div class="chroma">
@@ -689,13 +688,13 @@ Vue.component(&lsquo;name&rsquo;, options)</li>
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-Vue" data-lang="Vue"><span class="kd">var</span> <span class="nx">ComponentA</span> <span class="o">=</span> <span class="p">{...}</span>
-<span class="k">new</span>  <span class="nx">Vue</span> <span class="p">({</span>
-    <span class="nx">components</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s1">&#39;component-a&#39;</span><span class="o">:</span> <span class="nx">ComponentA</span><span class="p">,</span>
-    <span class="p">},</span>
-<span class="p">})</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-Vue" data-lang="Vue"><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">ComponentA</span> <span class="o">=</span> <span class="p">{...}</span>
+</span></span><span class="line"><span class="cl"><span class="k">new</span>  <span class="nx">Vue</span> <span class="p">({</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">components</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s1">&#39;component-a&#39;</span><span class="o">:</span> <span class="nx">ComponentA</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="单文件组件">单文件组件</h4>
 <p>三大部分</p>
@@ -711,15 +710,15 @@ Vue.component(&lsquo;name&rsquo;, options)</li>
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-Vue" data-lang="Vue"><span class="p">&lt;</span><span class="nt">template</span><span class="p">&gt;</span>
-<span class="p">&lt;/</span><span class="nt">template</span><span class="p">&gt;</span>
-
-<span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
-<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
-
-<span class="p">&lt;</span><span class="nt">style</span> <span class="na">scoped</span><span class="p">&gt;</span>
-<span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-Vue" data-lang="Vue"><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">template</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">template</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">style</span> <span class="na">scoped</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="vue-ruter路由导航">Vue-Ruter路由导航</h3>
 <h4 id="基本标签">基本标签</h4>
@@ -731,8 +730,8 @@ Vue.component(&lsquo;name&rsquo;, options)</li>
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-Vue" data-lang="Vue"><span class="p">&lt;</span><span class="nt">router-link</span> <span class="na">to</span><span class="o">=</span><span class="s">&#34;/about&#34;</span><span class="p">&gt;</span><span class="nx">Go</span> <span class="nx">to</span> <span class="nx">About</span><span class="o">&lt;</span><span class="err">/router-link&gt;</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-Vue" data-lang="Vue"><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">router-link</span> <span class="na">to</span><span class="o">=</span><span class="s">&#34;/about&#34;</span><span class="p">&gt;</span><span class="nx">Go</span> <span class="nx">to</span> <span class="nx">About</span><span class="o">&lt;</span><span class="err">/router-link&gt;</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>用来想a标签一样创建链接，但可以不重新加载页面</p>
 <ul>
@@ -752,15 +751,15 @@ Vue.component(&lsquo;name&rsquo;, options)</li>
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-Vue" data-lang="Vue"><span class="kr">const</span> <span class="nx">User</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="nx">template</span><span class="o">:</span> <span class="s1">&#39;&lt;div&gt;User {{ $route.params.id }}&lt;/div&gt;&#39;</span><span class="p">,</span>
-<span class="p">}</span>
-
-<span class="kr">const</span> <span class="nx">routes</span> <span class="o">=</span> <span class="p">[</span>
-  <span class="c1">// 动态段以冒号开始
-</span><span class="c1"></span>  <span class="p">{</span> <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;/users/:id&#39;</span><span class="p">,</span> <span class="nx">component</span><span class="o">:</span> <span class="nx">User</span> <span class="p">},</span>
-<span class="p">]</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-Vue" data-lang="Vue"><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">User</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">template</span><span class="o">:</span> <span class="s1">&#39;&lt;div&gt;User {{ $route.params.id }}&lt;/div&gt;&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">routes</span> <span class="o">=</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 动态段以冒号开始
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="p">{</span> <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;/users/:id&#39;</span><span class="p">,</span> <span class="nx">component</span><span class="o">:</span> <span class="nx">User</span> <span class="p">},</span>
+</span></span><span class="line"><span class="cl"><span class="p">]</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="嵌套路由">嵌套路由</h4>
 <div class="highlight"><div class="chroma">
@@ -796,36 +795,36 @@ Vue.component(&lsquo;name&rsquo;, options)</li>
 </span><span class="lnt">29
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-Vue" data-lang="Vue"><span class="kr">const</span> <span class="nx">User</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="nx">template</span><span class="o">:</span> <span class="sb">`
-</span><span class="sb">    &lt;div class=&#34;user&#34;&gt;
-</span><span class="sb">      &lt;h2&gt;User {{ $route.params.id }}&lt;/h2&gt;
-</span><span class="sb">      &lt;router-view&gt;&lt;/router-view&gt;
-</span><span class="sb">    &lt;/div&gt;
-</span><span class="sb">  `</span><span class="p">,</span>
-<span class="p">}</span>
-
-<span class="kr">const</span> <span class="nx">routes</span> <span class="o">=</span> <span class="p">[</span>
-  <span class="p">{</span>
-    <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;/user/:id&#39;</span><span class="p">,</span>
-    <span class="nx">component</span><span class="o">:</span> <span class="nx">User</span><span class="p">,</span>
-    <span class="nx">children</span><span class="o">:</span> <span class="p">[</span>
-      <span class="p">{</span>
-        <span class="c1">// 当 /user/:id/profile 匹配成功 
-</span><span class="c1"></span>        <span class="c1">// UserProfile 将被渲染到 User 的 &lt;router-view&gt; 内部
-</span><span class="c1"></span>        <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;profile&#39;</span><span class="p">,</span>
-        <span class="nx">component</span><span class="o">:</span> <span class="nx">UserProfile</span><span class="p">,</span>
-      <span class="p">},</span>
-      <span class="p">{</span>
-        <span class="c1">// 当 /user/:id/posts 匹配成功
-</span><span class="c1"></span>        <span class="c1">// UserPosts 将被渲染到 User 的 &lt;router-view&gt; 内部
-</span><span class="c1"></span>        <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;posts&#39;</span><span class="p">,</span>
-        <span class="nx">component</span><span class="o">:</span> <span class="nx">UserPosts</span><span class="p">,</span>
-      <span class="p">},</span>
-    <span class="p">],</span>
-  <span class="p">},</span>
-<span class="p">]</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-Vue" data-lang="Vue"><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">User</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">template</span><span class="o">:</span> <span class="sb">`
+</span></span></span><span class="line"><span class="cl"><span class="sb">    &lt;div class=&#34;user&#34;&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">      &lt;h2&gt;User {{ $route.params.id }}&lt;/h2&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">      &lt;router-view&gt;&lt;/router-view&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">    &lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">  `</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">routes</span> <span class="o">=</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">  <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;/user/:id&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">component</span><span class="o">:</span> <span class="nx">User</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">children</span><span class="o">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">      <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 当 /user/:id/profile 匹配成功 
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// UserProfile 将被渲染到 User 的 &lt;router-view&gt; 内部
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;profile&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">component</span><span class="o">:</span> <span class="nx">UserProfile</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="p">},</span>
+</span></span><span class="line"><span class="cl">      <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 当 /user/:id/posts 匹配成功
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// UserPosts 将被渲染到 User 的 &lt;router-view&gt; 内部
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;posts&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">component</span><span class="o">:</span> <span class="nx">UserPosts</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">],</span>
+</span></span><span class="line"><span class="cl">  <span class="p">},</span>
+</span></span><span class="line"><span class="cl"><span class="p">]</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="编程式路由">编程式路由</h4>
 <h3 id="导航到其他位置">导航到其他位置</h3>
@@ -837,16 +836,14 @@ Vue.component(&lsquo;name&rsquo;, options)</li>
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
-</span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-JS" data-lang="JS"><span class="c1">// 带有路径的对象
-</span><span class="c1"></span><span class="nx">router</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span> <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;/users/eduardo&#39;</span> <span class="p">})</span>
-
-<span class="c1">// 命名的路由，并加上参数，让路由建立 url
-</span><span class="c1"></span><span class="nx">router</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="nx">params</span><span class="o">:</span> <span class="p">{</span> <span class="nx">username</span><span class="o">:</span> <span class="s1">&#39;eduardo&#39;</span> <span class="p">}</span> <span class="p">})</span>
-
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-JS" data-lang="JS"><span class="line"><span class="cl"><span class="c1">// 带有路径的对象
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">router</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span> <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;/users/eduardo&#39;</span> <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 命名的路由，并加上参数，让路由建立 url
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">router</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="nx">params</span><span class="o">:</span> <span class="p">{</span> <span class="nx">username</span><span class="o">:</span> <span class="s1">&#39;eduardo&#39;</span> <span class="p">}</span> <span class="p">})</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="替换当前位置">替换当前位置</h4>
 <p>router.relace 类似于router.push，当不会向history添加新纪录</p>
@@ -857,10 +854,10 @@ Vue.component(&lsquo;name&rsquo;, options)</li>
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-JS" data-lang="JS"><span class="nx">router</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span> <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;/home&#39;</span><span class="p">,</span> <span class="nx">replace</span><span class="o">:</span> <span class="kc">true</span> <span class="p">})</span>
-<span class="c1">// 相当于
-</span><span class="c1"></span><span class="nx">router</span><span class="p">.</span><span class="nx">replace</span><span class="p">({</span> <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;/home&#39;</span> <span class="p">})</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-JS" data-lang="JS"><span class="line"><span class="cl"><span class="nx">router</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span> <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;/home&#39;</span><span class="p">,</span> <span class="nx">replace</span><span class="o">:</span> <span class="kc">true</span> <span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 相当于
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">router</span><span class="p">.</span><span class="nx">replace</span><span class="p">({</span> <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;/home&#39;</span> <span class="p">})</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="横跨历史">横跨历史</h4>
 <p>类似于window.history.go(n)</p>
@@ -876,15 +873,15 @@ Vue.component(&lsquo;name&rsquo;, options)</li>
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-JS" data-lang="JS"><span class="c1">// 向前移动一条记录，与 router.forward() 相同
-</span><span class="c1"></span><span class="nx">router</span><span class="p">.</span><span class="nx">go</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-
-<span class="c1">// 返回一条记录，与router.back() 相同
-</span><span class="c1"></span><span class="nx">router</span><span class="p">.</span><span class="nx">go</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-
-<span class="c1">// 前进 3 条记录
-</span><span class="c1"></span><span class="nx">router</span><span class="p">.</span><span class="nx">go</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-JS" data-lang="JS"><span class="line"><span class="cl"><span class="c1">// 向前移动一条记录，与 router.forward() 相同
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">router</span><span class="p">.</span><span class="nx">go</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 返回一条记录，与router.back() 相同
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">router</span><span class="p">.</span><span class="nx">go</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 前进 3 条记录
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">router</span><span class="p">.</span><span class="nx">go</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="命名视图">命名视图</h4>
 <p>当想同级展示多个视图时，可使用命名视图</p>
@@ -911,26 +908,26 @@ Vue.component(&lsquo;name&rsquo;, options)</li>
 </span><span class="lnt">19
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="o">&lt;</span><span class="nx">router</span><span class="o">-</span><span class="nx">view</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&#34;view left-sidebar&#34;</span> <span class="nx">name</span><span class="o">=</span><span class="s2">&#34;LeftSidebar&#34;</span><span class="o">&gt;&lt;</span><span class="err">/router-view&gt;</span>
-<span class="o">&lt;</span><span class="nx">router</span><span class="o">-</span><span class="nx">view</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&#34;view main-content&#34;</span><span class="o">&gt;&lt;</span><span class="err">/router-view&gt;</span>
-<span class="o">&lt;</span><span class="nx">router</span><span class="o">-</span><span class="nx">view</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&#34;view right-sidebar&#34;</span> <span class="nx">name</span><span class="o">=</span><span class="s2">&#34;RightSidebar&#34;</span><span class="o">&gt;&lt;</span><span class="err">/router-view&gt;</span>
-
-<span class="kr">const</span> <span class="nx">router</span> <span class="o">=</span> <span class="nx">createRouter</span><span class="p">({</span>
-  <span class="nx">history</span><span class="o">:</span> <span class="nx">createWebHashHistory</span><span class="p">(),</span>
-  <span class="nx">routes</span><span class="o">:</span> <span class="p">[</span>
-    <span class="p">{</span>
-      <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span>
-      <span class="nx">components</span><span class="o">:</span> <span class="p">{</span>
-        <span class="k">default</span><span class="o">:</span> <span class="nx">Home</span><span class="p">,</span>
-        <span class="c1">// LeftSidebar: LeftSidebar 的缩写
-</span><span class="c1"></span>        <span class="nx">LeftSidebar</span><span class="p">,</span>
-        <span class="c1">// 它们与 `&lt;router-view&gt;` 上的 `name` 属性匹配
-</span><span class="c1"></span>        <span class="nx">RightSidebar</span><span class="p">,</span>
-      <span class="p">},</span>
-    <span class="p">},</span>
-  <span class="p">],</span>
-<span class="p">})</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="o">&lt;</span><span class="nx">router</span><span class="o">-</span><span class="nx">view</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&#34;view left-sidebar&#34;</span> <span class="nx">name</span><span class="o">=</span><span class="s2">&#34;LeftSidebar&#34;</span><span class="o">&gt;&lt;</span><span class="err">/router-view&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;</span><span class="nx">router</span><span class="o">-</span><span class="nx">view</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&#34;view main-content&#34;</span><span class="o">&gt;&lt;</span><span class="err">/router-view&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;</span><span class="nx">router</span><span class="o">-</span><span class="nx">view</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&#34;view right-sidebar&#34;</span> <span class="nx">name</span><span class="o">=</span><span class="s2">&#34;RightSidebar&#34;</span><span class="o">&gt;&lt;</span><span class="err">/router-view&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">router</span> <span class="o">=</span> <span class="nx">createRouter</span><span class="p">({</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">history</span><span class="o">:</span> <span class="nx">createWebHashHistory</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">routes</span><span class="o">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">components</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">default</span><span class="o">:</span> <span class="nx">Home</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// LeftSidebar: LeftSidebar 的缩写
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nx">LeftSidebar</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 它们与 `&lt;router-view&gt;` 上的 `name` 属性匹配
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nx">RightSidebar</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="p">],</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="reference">reference</h3>
 <ul>
