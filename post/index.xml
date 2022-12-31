@@ -6,7 +6,16 @@
     <description>Recent content in Posts on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 13 Dec 2022 09:24:20 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 31 Dec 2022 09:39:13 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>2022年终总结</title>
+      <link>https://ppd0705.github.io/post/2022_sammary/</link>
+      <pubDate>Sat, 31 Dec 2022 09:39:13 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/2022_sammary/</guid>
+      <description>工作 今年工作的关键词是重构。编程语言由 python 转 go，引入了消息队列 kafka nats，一个人吭哧吭哧写了半年，将核心组件和业务重新设计了一遍，并顺利落地</description>
+    </item>
+    
     <item>
       <title>nats丢消息排查小记</title>
       <link>https://ppd0705.github.io/post/debug_nats_message_losing/</link>
@@ -176,15 +185,6 @@
       
       <guid>https://ppd0705.github.io/post/mysql_qa/</guid>
       <description>1. redo log 和bin log的区别？ binlog属于服务层日志，记录的是SQL的原始逻辑，主要用来归档；而redo log属于InnoDB引擎特有的日</description>
-    </item>
-    
-    <item>
-      <title>[笔记]Redis核心技术与实战</title>
-      <link>https://ppd0705.github.io/post/redis_core_technologies/</link>
-      <pubDate>Mon, 31 Aug 2020 21:34:46 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/redis_core_technologies/</guid>
-      <description>第2讲 数据结构： Redis有哪些慢操作 基本数据结构 五种数据类型 String List Hash Set Sorted Set 底层数据结构 全局键值对 桶中的元素都是指向具体值的指针 通过链表解决冲</description>
     </item>
     
   </channel>
