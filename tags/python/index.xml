@@ -6,7 +6,16 @@
     <description>Recent content in Python on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 13 Dec 2022 09:24:20 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 12 May 2023 07:40:27 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>迁移Python项目到Golang</title>
+      <link>https://ppd0705.github.io/post/migrate_python_project_to_go/</link>
+      <pubDate>Fri, 12 May 2023 07:40:27 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/migrate_python_project_to_go/</guid>
+      <description>前言 最近在用 Golang 重构一个 Python web 项目，之前后端主要的技术栈是 flask+sqlalchemy+celery，综合现有情况， 我选择了使用 gin+gorm+cron 来做相应替</description>
+    </item>
+    
     <item>
       <title>nats丢消息排查小记</title>
       <link>https://ppd0705.github.io/post/debug_nats_message_losing/</link>

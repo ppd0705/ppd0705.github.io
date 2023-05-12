@@ -6,7 +6,16 @@
     <description>Recent content in 计算机 on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 13 Dec 2022 09:24:20 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 12 May 2023 07:40:27 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>迁移Python项目到Golang</title>
+      <link>https://ppd0705.github.io/post/migrate_python_project_to_go/</link>
+      <pubDate>Fri, 12 May 2023 07:40:27 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/migrate_python_project_to_go/</guid>
+      <description>前言 最近在用 Golang 重构一个 Python web 项目，之前后端主要的技术栈是 flask+sqlalchemy+celery，综合现有情况， 我选择了使用 gin+gorm+cron 来做相应替</description>
+    </item>
+    
     <item>
       <title>nats丢消息排查小记</title>
       <link>https://ppd0705.github.io/post/debug_nats_message_losing/</link>
@@ -176,15 +185,6 @@
       
       <guid>https://ppd0705.github.io/post/lua_introduction/</guid>
       <description>前言：最近在了解API网关apisix， 其中的配置都是用的lua, 于是开始了解lua。 语法 注释 行注释 -- 块注释 1 2 3 --[[块 注释 --]] 变量 布尔类</description>
-    </item>
-    
-    <item>
-      <title>Starlette源码笔记</title>
-      <link>https://ppd0705.github.io/post/starlette_note/</link>
-      <pubDate>Thu, 12 Mar 2020 22:46:27 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/starlette_note/</guid>
-      <description>简介 Starlette是一个轻量的基于ASGI协议的web框架, 一个简单app如下： 1 2 3 4 5 6 7 8 async def app(scope, recieve, send): assert scope[&amp;#34;type&amp;#34;] == &amp;#34;http&amp;#34; body = b&amp;#34;hello: &amp;#34; request = Request(scope, recieve) async for chunk</description>
     </item>
     
   </channel>
