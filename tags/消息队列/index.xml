@@ -6,7 +6,16 @@
     <description>Recent content in 消息队列 on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 13 Dec 2022 09:24:20 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 01 Jun 2023 08:31:17 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>NATS 学习笔记</title>
+      <link>https://ppd0705.github.io/post/nats_note/</link>
+      <pubDate>Thu, 01 Jun 2023 08:31:17 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/nats_note/</guid>
+      <description>Quality of Service (QoS) At most once Core NATS is a fire-and-forget messaging system. It will only hold messages in memory. If a subscriber is not listening on the subject, or is not active when the message is sent, the message is not received. At least/ exactly once JetStream support higher qualities of service (at least once and exactly once) Subject-based Messaging 消息基于 Subject 匹配和</description>
+    </item>
+    
     <item>
       <title>nats丢消息排查小记</title>
       <link>https://ppd0705.github.io/post/debug_nats_message_losing/</link>

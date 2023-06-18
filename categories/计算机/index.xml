@@ -6,7 +6,16 @@
     <description>Recent content in 计算机 on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Fri, 12 May 2023 07:40:27 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 01 Jun 2023 08:31:17 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>NATS 学习笔记</title>
+      <link>https://ppd0705.github.io/post/nats_note/</link>
+      <pubDate>Thu, 01 Jun 2023 08:31:17 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/nats_note/</guid>
+      <description>Quality of Service (QoS) At most once Core NATS is a fire-and-forget messaging system. It will only hold messages in memory. If a subscriber is not listening on the subject, or is not active when the message is sent, the message is not received. At least/ exactly once JetStream support higher qualities of service (at least once and exactly once) Subject-based Messaging 消息基于 Subject 匹配和</description>
+    </item>
+    
     <item>
       <title>迁移Python项目到Golang</title>
       <link>https://ppd0705.github.io/post/migrate_python_project_to_go/</link>
@@ -176,15 +185,6 @@
       
       <guid>https://ppd0705.github.io/post/csharp_notes/</guid>
       <description>前言：最近在维护一个获取http接口的数据然后填充到Excel的工具，于是接触到了C#，总体感觉下来，C#关键字多，语法多，功能强大，LIN</description>
-    </item>
-    
-    <item>
-      <title>Lua基本使用</title>
-      <link>https://ppd0705.github.io/post/lua_introduction/</link>
-      <pubDate>Wed, 08 Apr 2020 20:32:24 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/lua_introduction/</guid>
-      <description>前言：最近在了解API网关apisix， 其中的配置都是用的lua, 于是开始了解lua。 语法 注释 行注释 -- 块注释 1 2 3 --[[块 注释 --]] 变量 布尔类</description>
     </item>
     
   </channel>

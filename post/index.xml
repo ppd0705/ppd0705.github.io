@@ -6,7 +6,16 @@
     <description>Recent content in Posts on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Fri, 12 May 2023 07:40:27 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 01 Jun 2023 08:31:17 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>NATS 学习笔记</title>
+      <link>https://ppd0705.github.io/post/nats_note/</link>
+      <pubDate>Thu, 01 Jun 2023 08:31:17 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/nats_note/</guid>
+      <description>Quality of Service (QoS) At most once Core NATS is a fire-and-forget messaging system. It will only hold messages in memory. If a subscriber is not listening on the subject, or is not active when the message is sent, the message is not received. At least/ exactly once JetStream support higher qualities of service (at least once and exactly once) Subject-based Messaging 消息基于 Subject 匹配和</description>
+    </item>
+    
     <item>
       <title>迁移Python项目到Golang</title>
       <link>https://ppd0705.github.io/post/migrate_python_project_to_go/</link>
@@ -176,15 +185,6 @@
       
       <guid>https://ppd0705.github.io/post/2020_summary/</guid>
       <description>工作 年初立了go away的flag，最终在10月份实现了，在ricequant工作了3年+1个星期，算是完整服役吧！公司不盈利且发展缓慢，还</description>
-    </item>
-    
-    <item>
-      <title>Redis自问自答</title>
-      <link>https://ppd0705.github.io/post/redis_qa/</link>
-      <pubDate>Sun, 27 Dec 2020 18:25:30 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/redis_qa/</guid>
-      <description>1. 有哪些数据类型？底层分别使用什么数据结构？ 1 2 3 4 5 6 7 8 type def struct redisObject { // 类型 unsigned type // 编码方式 unsigned encoding // 指向底层数据结构的指针 void *ptr } robj String: int: 底层使用l</description>
     </item>
     
   </channel>
