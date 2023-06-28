@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>nats丢消息排查小记 - PPD&#39;s blog</title>
+  <title>2022年终总结 - PPD&#39;s blog</title>
   
 
 <meta name="renderer" content="webkit" />
@@ -23,7 +23,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 
 <meta name="author" content="PPD" />
-  <meta name="description" content="背景 最近我们把消息队列从 kafka 迁移到 nats, 主要原因是kafka的延迟不能忍受，5ms 其实也不小了，但在几千上万个 topic 的情况下，延迟有时会上升至数百 ms" />
+  <meta name="description" content="工作 今年工作的关键词是重构。编程语言由 python 转 go，引入了消息队列 kafka nats，一个人吭哧吭哧写了半年，将核心组件和业务重新设计了一遍，并顺利落地" />
 
   <meta name="keywords" content="PPD, blog" />
 
@@ -35,7 +35,7 @@
 <meta name="generator" content="Hugo 0.108.0" />
 
 
-<link rel="canonical" href="https://ppd0705.github.io/post/debug_nats_message_losing/" />
+<link rel="canonical" href="https://ppd0705.github.io/post/2022_summary/" />
 
 
 
@@ -59,19 +59,19 @@
 
 
 
-<meta property="og:title" content="nats丢消息排查小记" />
-<meta property="og:description" content="背景 最近我们把消息队列从 kafka 迁移到 nats, 主要原因是kafka的延迟不能忍受，5ms 其实也不小了，但在几千上万个 topic 的情况下，延迟有时会上升至数百 ms" />
+<meta property="og:title" content="2022年终总结" />
+<meta property="og:description" content="工作 今年工作的关键词是重构。编程语言由 python 转 go，引入了消息队列 kafka nats，一个人吭哧吭哧写了半年，将核心组件和业务重新设计了一遍，并顺利落地" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://ppd0705.github.io/post/debug_nats_message_losing/" /><meta property="article:section" content="post" />
-<meta property="article:published_time" content="2022-12-13T09:24:20+08:00" />
-<meta property="article:modified_time" content="2022-12-13T09:24:20+08:00" />
-<meta itemprop="name" content="nats丢消息排查小记">
-<meta itemprop="description" content="背景 最近我们把消息队列从 kafka 迁移到 nats, 主要原因是kafka的延迟不能忍受，5ms 其实也不小了，但在几千上万个 topic 的情况下，延迟有时会上升至数百 ms"><meta itemprop="datePublished" content="2022-12-13T09:24:20+08:00" />
-<meta itemprop="dateModified" content="2022-12-13T09:24:20+08:00" />
-<meta itemprop="wordCount" content="672">
-<meta itemprop="keywords" content="Python,消息队列," /><meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="nats丢消息排查小记"/>
-<meta name="twitter:description" content="背景 最近我们把消息队列从 kafka 迁移到 nats, 主要原因是kafka的延迟不能忍受，5ms 其实也不小了，但在几千上万个 topic 的情况下，延迟有时会上升至数百 ms"/>
+<meta property="og:url" content="https://ppd0705.github.io/post/2022_summary/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-12-31T09:39:13+08:00" />
+<meta property="article:modified_time" content="2022-12-31T09:39:13+08:00" />
+<meta itemprop="name" content="2022年终总结">
+<meta itemprop="description" content="工作 今年工作的关键词是重构。编程语言由 python 转 go，引入了消息队列 kafka nats，一个人吭哧吭哧写了半年，将核心组件和业务重新设计了一遍，并顺利落地"><meta itemprop="datePublished" content="2022-12-31T09:39:13+08:00" />
+<meta itemprop="dateModified" content="2022-12-31T09:39:13+08:00" />
+<meta itemprop="wordCount" content="1580">
+<meta itemprop="keywords" content="年终总结," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="2022年终总结"/>
+<meta name="twitter:description" content="工作 今年工作的关键词是重构。编程语言由 python 转 go，引入了消息队列 kafka nats，一个人吭哧吭哧写了半年，将核心组件和业务重新设计了一遍，并顺利落地"/>
 
 <!--[if lte IE 9]>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
@@ -273,18 +273,18 @@
           <article class="post bg-white">
     
     <header class="post-header">
-      <h1 class="post-title">nats丢消息排查小记</h1>
+      <h1 class="post-title">2022年终总结</h1>
       
       <div class="post-meta">
-        <time datetime="2022-12-13" class="post-time">
-          2022-12-13
+        <time datetime="2022-12-31" class="post-time">
+          2022-12-31
         </time>
         <div class="post-category">
-            <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
+            <a href="https://ppd0705.github.io/categories/%E7%94%9F%E6%B4%BB/"> 生活 </a>
             
           </div>
-        <span class="more-meta"> 672 words </span>
-          <span class="more-meta"> 2 min read </span>
+        <span class="more-meta"> 1580 words </span>
+          <span class="more-meta"> 4 min read </span>
 
         
         
@@ -305,13 +305,9 @@
   <div class="post-toc-content">
     <nav id="TableOfContents">
   <ul>
-    <li>
-      <ul>
-        <li><a href="#背景">背景</a></li>
-        <li><a href="#排查过程">排查过程</a></li>
-        <li><a href="#相关链接">相关链接</a></li>
-      </ul>
-    </li>
+    <li><a href="#工作">工作</a></li>
+    <li><a href="#生活">生活</a></li>
+    <li><a href="#展望">展望</a></li>
   </ul>
 </nav>
   </div>
@@ -319,31 +315,48 @@
 
     
     <div class="post-content">
-      <h2 id="背景">背景</h2>
-<p>最近我们把消息队列从 kafka 迁移到 nats, 主要原因是kafka的延迟不能忍受，5ms 其实也不小了，但在几千上万个 topic
-的情况下，延迟有时会上升至数百 ms（我猜 topic 多的情况下顺序写的优势不再存在）。迁移到 nats 之后， 使用 Publish-Subscribe 的延迟大概就 1ms, 真香！</p>
-<p>但小部分场景需要用到 JetStream 来做持久化，使用了 JetStream 一段时间后发现，每天会随机的丢几条消息，发生的时间完全没有规律。</p>
-<h2 id="排查过程">排查过程</h2>
-<p>通过命令行查 Stream 消息，发现丢失的消息是有被持久化的，所以问题要么出在服务端：没有把消息发送给客户端；要么客户端把消息弄丢了。
-大概看了一些服务端的代码，感觉没有头绪，想想还是从客户端入手比较简单。</p>
-<p>首先在客户端接收原始消息那里加了一行日志，经过核对发现客户端确实收到了消息，但没有返回到上层，中间某个地方把消息弄丢了。</p>
-<p>再看丢消息的时间点刚好在超时时间的临界点，猜想应该是超时处理的时候把消息丢了。于是写了一个消费者测试代码，把超时时间从 1 秒 调到 0.1 秒，发现
-丢消息的概率显著提升。</p>
-<p>最后确实发现了丢消息的地方（<a href="https://github.com/nats-io/nats.py/blob/8d75773d5529d9b4299099752a0c2e26ab862d19/nats/aio/subscription.py#L159">代码</a>）。</p>
-<p>但中间由于我加 debug 日志不够，产生了一个让我费解的疑问。具体如下：</p>
-<p><img src="/image/debug_nats_message_losing/01.PNG" alt="code"></p>
-<p>我在 164、167、174 行加了 debug 代码。</p>
-<p><img src="/image/debug_nats_message_losing/02.PNG" alt="log"></p>
-<p>从日志截图来看，代码运行到 164 后直接到了 174 行，167 行没有被运行。这里让我很不接，明明没有协程切换，为什么 167 行没有执行到。</p>
-<p><img src="/image/debug_nats_message_losing/03.jpg" alt="dialog"></p>
-<p>知道在前同事群里请教，才发现是 166 行 <code>set_result</code> 报错了，所以没有执行到 167 行。</p>
-<p>消除这个疑问之后，发现了问题的本源：
-<img src="/image/debug_nats_message_losing/04.png" alt="cancel_future"></p>
-<p>获取消息超时后，会取消<code>fuure</code>，但问题是取消的过程中可能发生协程切换，如果切换到
-<code>pending_queue.get()</code>这个协程协程，就会导致丢掉一条消息。</p>
-<h2 id="相关链接">相关链接</h2>
+      <h1 id="工作">工作</h1>
+<p>今年工作的关键词是重构。编程语言由 python 转 go，引入了消息队列 <del>kafka</del> nats，一个人吭哧吭哧写了半年，将核心组件和业务重新设计了一遍，并顺利落地。
+我一方面很享受决策自由，以及看到重构完成后的简洁优雅带来的满满成就感；另一方面感到孤独，不过好在有 github、优质博客等供我学习和激发灵感。</p>
+<p><img src="/image/2022_sammary/github_contributors.png" alt="github_contributors"></p>
+<p>今年六月底公司开始执远程工作制度，经过半年的体验，我确定我目前的岗位和我个人都挺适合远程办公的。
+之于岗位，首先我们组非常小巧而独立，几乎不依赖公司其他组同事，组内大概就是每天开5分钟晨会；其次某种层面来说我们组的主要工作成果可以通过数字直接考量，简单来说就是贡献了多少成交量和盈亏了多少钱。
+之于个人，我有足够的能力和意愿去解决当前工作中的大部分问题；我是一个内向型人格，我享受独处；我追求工作上的成就感，如果工作让我感受不到自己的价值和成长，我会主动离开。</p>
+<p>今年组内入职了两个新同事。一个同事试用期后离开了，作为面试参与者反思了一下，面试时技术能力和行事风格的考量不应该被一些简历标签所影响。
+另外一个同事则相处融洽，且让我们提升了不少战斗力。</p>
+<p>今年行业环境极其寒冷，各种重大事故不胜其数，谁会相信市值第五大代币崩盘？谁会相信第二大交易所会破产？或许明年的寒意还会更胜？</p>
+<h1 id="生活">生活</h1>
+<p>今年上半年基本是做核酸扫场所码度过的。某一天出门时还好好的，下班时却发现住的地方被封控只进不出，我想了大概3秒，对我来说最好的选择还是得选择&quot;进&quot;。连续封控的那十八天
+虽然不能出门，但物资不缺，少了通勤时间，感觉一天时间变长了，有时间自己做饭，心情也很平静。</p>
+<p>六月底开始远程办公后我想着何不回家住会呢？当时以为自己待不了多久，没带多少行李，踩着双拖鞋就回家了，没想到至今我都没有再返回深圳。
+回家住这么久最大的收获就是重新和我爸认识了解了一遍；其次就是吃了各种很多年没有吃过的应季食物吧。</p>
+<p><img src="/image/2022_sammary/xiaoyuxia.jpg" alt="xiaoyuxia"></p>
+<p>在农村就久住就会发现出门没有车实在不方便，于是在九月初买了车。开始我想我这技术最远去个县城就顶天了，没想到
+一个月之后就怀着忐忑的心情独自一个人北上去了长沙，但在长沙两个月我就开了2次车，哈哈。在长沙见了几次同学，感受了一下他们的生活状态；
+住在湘江边上的安置小区，很多本地人，坐在宣传栏边上聊天的大妈都是人手一栋楼，你停下来看租房广告便会问你要什么样的户型的；
+一个偶尔的机缘我报了一门口语课，这是我第一次上口语课，算是很新鲜的体验吧，上课确实算一种和一个新地方建立连接的方式，
+尤其是口语课，顺着课程话题就认识了解老师和同学的经历了。</p>
+<p>今年跑步跑了 320 公里，里程数相比去年少，主要还是因为在农村不太方便跑步。</p>
+<p>今年看的书也比较少，最推荐的书是《也许你该找个人聊聊》，一些笔记：</p>
 <ul>
-<li><a href="https://github.com/nats-io/nats.py/issues/392">丢消息issue</a></li>
+<li>我们是在人与人的关系中成长的</li>
+<li>我们大多数人的心中都会有个&quot;他们&quot;，即使并没有谁在观察我们的生活</li>
+<li>我意识到，即使到了七十岁，你的心还是会像十七岁时一样脆弱，容易受伤，充满渴望和激情</li>
+<li>当人们不知道改变会带来什么的时候，往往不愿意放弃现有的东西，这个阶段的痛点是改变意味着失去，而新情况有又叫人不安</li>
+<li>我们以为罗列遗愿清单是为了避免遗憾，但事实上我们是在靠它回避死亡</li>
+<li>痛苦没有高低等级之分</li>
+</ul>
+<p>今年年假还一天没用，利用周末和法定节假日就近旅行也玩耍了不少，上半年跟着前同事自驾游了 2 次；下半年和家人去了一下衡山、曾国藩故居，自己又独自爬了曾国藩古道。</p>
+<p>今年世界杯我一场没看，但我看了很多 LOL 的比赛，夏季赛和世界赛都很精彩，谁能想到 4 号种子能逆袭夺冠呢？</p>
+<p>今年的最后一个周一，至今没有打疫苗的我终于感染了新冠，头两天发烧头痛，第三天好了之后开始咳嗽和嗓子疼，整体上影响不大了。</p>
+<h1 id="展望">展望</h1>
+<ul>
+<li>多找人聊聊天</li>
+<li>日常跑步，参加一次半马</li>
+<li>日常英语练习，精读《How I Met Your Mother》Season 1</li>
+<li>带家人旅行一次</li>
+<li>深度学习一下 nats，至少产出一篇文章</li>
+<li>入门一下 C++，了解其优劣</li>
 </ul>
 
     </div>
@@ -358,7 +371,7 @@
   <p class="copyright-item">
     <span class="item-title">LastMod</span>
     <span class="item-content">
-      2022-12-13
+      2022-12-31
       
     </span>
   </p>
@@ -375,15 +388,14 @@
 
     <footer class="post-footer">
       <div class="post-tags">
-          <a href="https://ppd0705.github.io/tags/python/">Python</a>
-          <a href="https://ppd0705.github.io/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/">消息队列</a>
+          <a href="https://ppd0705.github.io/tags/%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/">年终总结</a>
           
         </div>
 
       
       <nav class="post-nav">
         
-          <a class="prev" href="/post/2022_summary/">
+          <a class="prev" href="/post/migrate_python_project_to_go/">
             
             <i class="iconfont">
               <svg  class="icon" viewBox="0 0 1024 1024" version="1.1"
@@ -393,12 +405,12 @@
 </svg>
 
             </i>
-            <span class="prev-text nav-default">2022年终总结</span>
+            <span class="prev-text nav-default">迁移Python项目到Golang</span>
             <span class="prev-text nav-mobile">Prev</span>
           </a>
         
-          <a class="next" href="/post/hello_30/">
-            <span class="next-text nav-default">你好！三十岁</span>
+          <a class="next" href="/post/debug_nats_message_losing/">
+            <span class="next-text nav-default">nats丢消息排查小记</span>
             <span class="prev-text nav-mobile">Next</span>
             
             <i class="iconfont">
