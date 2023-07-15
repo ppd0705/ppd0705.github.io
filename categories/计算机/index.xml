@@ -6,7 +6,16 @@
     <description>Recent content in 计算机 on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 01 Jun 2023 08:31:17 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 29 Jun 2023 07:21:46 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>[笔记]数据结构和算法之美（更新中）</title>
+      <link>https://ppd0705.github.io/post/algo_beauty/</link>
+      <pubDate>Thu, 29 Jun 2023 07:21:46 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/algo_beauty/</guid>
+      <description>第二讲 十个重点数据结构 数组 链表 栈 队列 散列表 二叉树 堆 跳表 图 Trie 树 十个重点算法 递归 排序 二分查找 搜索 哈希 贪心 分治 回溯 动态规划 字符串匹配 第三讲 复杂度分</description>
+    </item>
+    
     <item>
       <title>NATS 学习笔记</title>
       <link>https://ppd0705.github.io/post/nats_note/</link>
@@ -62,7 +71,7 @@
     </item>
     
     <item>
-      <title>[笔记]业务开发算法 50 讲（更新中）</title>
+      <title>[笔记]业务开发算法 50 讲</title>
       <link>https://ppd0705.github.io/post/algo_in_action/</link>
       <pubDate>Mon, 14 Mar 2022 08:36:33 +0800</pubDate>
       
@@ -176,15 +185,6 @@
       
       <guid>https://ppd0705.github.io/post/google_sre/</guid>
       <description>第一部分 第一章 SRE(site reliability engineering): 设计和研发大型、分不出计算机系统。有时和研发团队工作，其他时候开发基础组件，推广这些基础组件在多个项目中复用。 SRE关注</description>
-    </item>
-    
-    <item>
-      <title>[笔记]C# 基本语法</title>
-      <link>https://ppd0705.github.io/post/csharp_notes/</link>
-      <pubDate>Mon, 25 May 2020 22:44:02 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/csharp_notes/</guid>
-      <description>前言：最近在维护一个获取http接口的数据然后填充到Excel的工具，于是接触到了C#，总体感觉下来，C#关键字多，语法多，功能强大，LIN</description>
     </item>
     
   </channel>
