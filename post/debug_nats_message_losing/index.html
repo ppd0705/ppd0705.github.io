@@ -68,7 +68,7 @@
 <meta itemprop="name" content="nats丢消息排查小记">
 <meta itemprop="description" content="背景 最近我们把消息队列从 kafka 迁移到 nats, 主要原因是kafka的延迟不能忍受，5ms 其实也不小了，但在几千上万个 topic 的情况下，延迟有时会上升至数百 ms"><meta itemprop="datePublished" content="2022-12-13T09:24:20+08:00" />
 <meta itemprop="dateModified" content="2022-12-13T09:24:20+08:00" />
-<meta itemprop="wordCount" content="672">
+<meta itemprop="wordCount" content="673">
 <meta itemprop="keywords" content="Python,消息队列," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="nats丢消息排查小记"/>
 <meta name="twitter:description" content="背景 最近我们把消息队列从 kafka 迁移到 nats, 主要原因是kafka的延迟不能忍受，5ms 其实也不小了，但在几千上万个 topic 的情况下，延迟有时会上升至数百 ms"/>
@@ -283,7 +283,7 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 672 words </span>
+        <span class="more-meta"> 673 words </span>
           <span class="more-meta"> 2 min read </span>
 
         
@@ -339,8 +339,8 @@
 <p>知道在前同事群里请教，才发现是 166 行 <code>set_result</code> 报错了，所以没有执行到 167 行。</p>
 <p>消除这个疑问之后，发现了问题的本源：
 <img src="/image/debug_nats_message_losing/04.png" alt="cancel_future"></p>
-<p>获取消息超时后，会取消<code>fuure</code>，但问题是取消的过程中可能发生协程切换，如果切换到
-<code>pending_queue.get()</code>这个协程协程，就会导致丢掉一条消息。</p>
+<p>获取消息超时后，会取消<code>future</code>，但问题是取消的过程中可能发生协程切换，如果切换到
+<code>pending_queue.get()</code>这个协程方法，就会导致丢掉一条消息。</p>
 <h2 id="相关链接">相关链接</h2>
 <ul>
 <li><a href="https://github.com/nats-io/nats.py/issues/392">丢消息issue</a></li>
