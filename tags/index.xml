@@ -6,7 +6,16 @@
     <description>Recent content in Tags on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 29 Jun 2023 07:21:46 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 29 Nov 2023 18:51:08 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>C&#43;&#43;</title>
+      <link>https://ppd0705.github.io/tags/c&#43;&#43;/</link>
+      <pubDate>Wed, 29 Nov 2023 18:51:08 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/tags/c&#43;&#43;/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>算法</title>
       <link>https://ppd0705.github.io/tags/%E7%AE%97%E6%B3%95/</link>
@@ -175,15 +184,6 @@
       <pubDate>Sun, 27 Dec 2020 18:25:30 +0800</pubDate>
       
       <guid>https://ppd0705.github.io/tags/redis/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>MySQL</title>
-      <link>https://ppd0705.github.io/tags/mysql/</link>
-      <pubDate>Thu, 24 Dec 2020 11:50:33 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/tags/mysql/</guid>
       <description></description>
     </item>
     

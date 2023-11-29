@@ -6,7 +6,16 @@
     <description>Recent content in 计算机 on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 29 Jun 2023 07:21:46 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 29 Nov 2023 18:51:08 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>[笔记]C&#43;&#43;之旅（更新中）</title>
+      <link>https://ppd0705.github.io/post/cpp_tour/</link>
+      <pubDate>Wed, 29 Nov 2023 18:51:08 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/cpp_tour/</guid>
+      <description>第一章 基础 hello world 示例 1 2 3 4 5 import std; int main() { std::cout &amp;lt;&amp;lt; &amp;#34;Hello, World!\n&amp;#34;; } 函数 函数声明包含名称、参数和返回值，返回值在名称之前。 函数的类型由他的返回值类型和参数类型序</description>
+    </item>
+    
     <item>
       <title>[笔记]数据结构和算法之美（更新中）</title>
       <link>https://ppd0705.github.io/post/algo_beauty/</link>
@@ -176,15 +185,6 @@
       
       <guid>https://ppd0705.github.io/post/pydantic_note/</guid>
       <description>简介 pydantic是一个基于type hint 的类型检查库 使用 Model 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 from typing import Optional from datetime import datetime from pydantic import BaseModel, Field class User(BaseModel): id:int name:str = &amp;#34;PPD&amp;#34; age: int = None hometown:</description>
-    </item>
-    
-    <item>
-      <title>[笔记]GoogleSRE</title>
-      <link>https://ppd0705.github.io/post/google_sre/</link>
-      <pubDate>Sun, 05 Jul 2020 22:24:16 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/google_sre/</guid>
-      <description>第一部分 第一章 SRE(site reliability engineering): 设计和研发大型、分不出计算机系统。有时和研发团队工作，其他时候开发基础组件，推广这些基础组件在多个项目中复用。 SRE关注</description>
     </item>
     
   </channel>

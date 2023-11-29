@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>C&#43;&#43; on PPD&#39;s blog</title>
+    <link>https://ppd0705.github.io/tags/c&#43;&#43;/</link>
+    <description>Recent content in C&#43;&#43; on PPD&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 29 Nov 2023 18:51:08 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/tags/c++/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>[笔记]C&#43;&#43;之旅（更新中）</title>
+      <link>https://ppd0705.github.io/post/cpp_tour/</link>
+      <pubDate>Wed, 29 Nov 2023 18:51:08 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/cpp_tour/</guid>
+      <description>第一章 基础 hello world 示例 1 2 3 4 5 import std; int main() { std::cout &amp;lt;&amp;lt; &amp;#34;Hello, World!\n&amp;#34;; } 函数 函数声明包含名称、参数和返回值，返回值在名称之前。 函数的类型由他的返回值类型和参数类型序</description>
+    </item>
+    
+  </channel>
+</rss>
