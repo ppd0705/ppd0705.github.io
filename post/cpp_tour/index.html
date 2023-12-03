@@ -64,11 +64,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://ppd0705.github.io/post/cpp_tour/" /><meta property="article:section" content="post" />
 <meta property="article:published_time" content="2023-11-29T18:51:08+08:00" />
-<meta property="article:modified_time" content="2023-11-29T18:51:08+08:00" />
+<meta property="article:modified_time" content="2023-12-03T11:06:08+08:00" />
 <meta itemprop="name" content="[笔记]C&#43;&#43;之旅（更新中）">
 <meta itemprop="description" content="第一章 基础 hello world 示例 1 2 3 4 5 import std; int main() { std::cout &lt;&lt; &#34;Hello, World!\n&#34;; } 函数 函数声明包含名称、参数和返回值，返回值在名称之前。 函数的类型由他的返回值类型和参数类型序"><meta itemprop="datePublished" content="2023-11-29T18:51:08+08:00" />
-<meta itemprop="dateModified" content="2023-11-29T18:51:08+08:00" />
-<meta itemprop="wordCount" content="553">
+<meta itemprop="dateModified" content="2023-12-03T11:06:08+08:00" />
+<meta itemprop="wordCount" content="994">
 <meta itemprop="keywords" content="C&#43;&#43;," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]C&#43;&#43;之旅（更新中）"/>
 <meta name="twitter:description" content="第一章 基础 hello world 示例 1 2 3 4 5 import std; int main() { std::cout &lt;&lt; &#34;Hello, World!\n&#34;; } 函数 函数声明包含名称、参数和返回值，返回值在名称之前。 函数的类型由他的返回值类型和参数类型序"/>
@@ -283,7 +283,7 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 553 words </span>
+        <span class="more-meta"> 994 words </span>
           <span class="more-meta"> 2 min read </span>
 
         
@@ -310,6 +310,9 @@
         <li><a href="#函数">函数</a></li>
         <li><a href="#类型变量与运算">类型、变量与运算</a></li>
         <li><a href="#常量">常量</a></li>
+        <li><a href="#指针数组和引用">指针、数组和引用</a></li>
+        <li><a href="#初始化">初始化</a></li>
+        <li><a href="#赋值">赋值</a></li>
       </ul>
     </li>
   </ul>
@@ -399,7 +402,63 @@
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>被声明为 constexpr 或者 consteval 的函数是 c++ 版本的纯函数，必须在编译时计算，且不能有任何副作用，只能使用输入参数作为信息。</p>
-
+<h2 id="指针数组和引用">指针、数组和引用</h2>
+<p>在声明中，<code>[]</code> 表示对应类型的数组，<code>*</code> 表示指向对应类型的指针，<code>&amp;</code> 表示指向对应对象的引用。
+引用和指针类似，但可以不使用前缀<code>*</code>就能直接访问引用对象的值，而且引用初始化滞后就不能再指向其他的对象。</p>
+<p>在表达式中，前置一元操作符<code>*</code> 表示取内容，前置一元操作符<code>&amp;</code> 表示取地址</p>
+<p>建议使用 <code>nullptr</code> 而非 <code>0</code> 来表示空指针，避免和整数类型混淆</p>
+<h2 id="初始化">初始化</h2>
+<p>初始化是将一段没有被初始化的内存区域变成一个有效的对象，对几乎所有的数据类型而言，对未初始化的对象的读写操作都是未定义的。</p>
+<p>要让赋值操作成功进行，被赋值的对象必须拥有一个有效的值</p>
+<h2 id="赋值">赋值</h2>
+<p>对于内置类型来说，赋值语句就是简单的机器赋值指令。两个对象是独立的，修改 y 值的时候不会影响 x 的值。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">x</span> <span class="o">=</span> <span class="n">y</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果希望不同的对象指向（共享）相同的值，必须明确指定</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span><span class="o">*</span> <span class="n">p</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">x</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span><span class="o">*</span> <span class="n">q</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">y</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span> <span class="o">=</span> <span class="n">q</span><span class="p">;</span>  <span class="c1">// p 和 q 两个指针都指向了 y
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>给引用赋值改变的是引用对象的值</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span><span class="o">&amp;</span> <span class="n">r</span> <span class="o">=</span> <span class="n">x</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span><span class="o">&amp;</span> <span class="n">r2</span> <span class="o">=</span> <span class="n">y</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">r</span> <span class="o">=</span> <span class="n">r2</span><span class="p">;</span>   <span class="c1">// 从 r2 读取，通过 r 写入，x 变成 3
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
     </div>
 
     
@@ -412,7 +471,7 @@
   <p class="copyright-item">
     <span class="item-title">LastMod</span>
     <span class="item-content">
-      2023-11-29
+      2023-12-03
       
     </span>
   </p>
