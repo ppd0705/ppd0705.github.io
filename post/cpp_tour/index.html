@@ -64,11 +64,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://ppd0705.github.io/post/cpp_tour/" /><meta property="article:section" content="post" />
 <meta property="article:published_time" content="2023-11-29T18:51:08+08:00" />
-<meta property="article:modified_time" content="2023-12-03T11:06:08+08:00" />
+<meta property="article:modified_time" content="2023-12-04T21:06:08+08:00" />
 <meta itemprop="name" content="[笔记]C&#43;&#43;之旅（更新中）">
 <meta itemprop="description" content="第一章 基础 hello world 示例 1 2 3 4 5 import std; int main() { std::cout &lt;&lt; &#34;Hello, World!\n&#34;; } 函数 函数声明包含名称、参数和返回值，返回值在名称之前。 函数的类型由他的返回值类型和参数类型序"><meta itemprop="datePublished" content="2023-11-29T18:51:08+08:00" />
-<meta itemprop="dateModified" content="2023-12-03T11:06:08+08:00" />
-<meta itemprop="wordCount" content="994">
+<meta itemprop="dateModified" content="2023-12-04T21:06:08+08:00" />
+<meta itemprop="wordCount" content="1835">
 <meta itemprop="keywords" content="C&#43;&#43;," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]C&#43;&#43;之旅（更新中）"/>
 <meta name="twitter:description" content="第一章 基础 hello world 示例 1 2 3 4 5 import std; int main() { std::cout &lt;&lt; &#34;Hello, World!\n&#34;; } 函数 函数声明包含名称、参数和返回值，返回值在名称之前。 函数的类型由他的返回值类型和参数类型序"/>
@@ -283,8 +283,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 994 words </span>
-          <span class="more-meta"> 2 min read </span>
+        <span class="more-meta"> 1835 words </span>
+          <span class="more-meta"> 4 min read </span>
 
         
         
@@ -313,6 +313,25 @@
         <li><a href="#指针数组和引用">指针、数组和引用</a></li>
         <li><a href="#初始化">初始化</a></li>
         <li><a href="#赋值">赋值</a></li>
+      </ul>
+    </li>
+    <li><a href="#第二章-用户自定义类型">第二章 用户自定义类型</a>
+      <ul>
+        <li><a href="#结构">结构</a></li>
+        <li><a href="#类">类</a></li>
+        <li><a href="#枚举">枚举</a></li>
+        <li><a href="#联合">联合</a></li>
+      </ul>
+    </li>
+    <li><a href="#第三章-模块化">第三章 模块化</a>
+      <ul>
+        <li><a href="#函数参数和返回值">函数参数和返回值</a>
+          <ul>
+            <li><a href="#参数传递">参数传递</a></li>
+            <li><a href="#返回值">返回值</a></li>
+            <li><a href="#返回类型后置">返回类型后置</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
   </ul>
@@ -458,6 +477,219 @@
 </span></span><span class="line"><span class="cl"><span class="n">r</span> <span class="o">=</span> <span class="n">r2</span><span class="p">;</span>   <span class="c1">// 从 r2 读取，通过 r 写入，x 变成 3
 </span></span></span></code></pre></td></tr></table>
 </div>
+</div><h1 id="第二章-用户自定义类型">第二章 用户自定义类型</h1>
+<h2 id="结构">结构</h2>
+<p>struct 将所需的元素组织在一起</p>
+<p>如下有一个简单的 Vector struct 示例</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">Vector</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">double</span><span class="o">*</span> <span class="n">elem</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">sz</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">vector_init</span><span class="p">(</span><span class="n">Vector</span><span class="o">&amp;</span> <span class="n">v</span><span class="p">,</span> <span class="kt">int</span> <span class="n">s</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">v</span><span class="p">.</span><span class="n">elem</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">double</span><span class="p">[</span><span class="n">s</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="n">v</span><span class="p">.</span><span class="n">sz</span> <span class="o">=</span> <span class="n">s</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">doubel</span> <span class="nf">read_and_sum</span><span class="p">(</span><span class="kt">int</span> <span class="n">s</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Vector</span> <span class="n">v</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">vector_init</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">s</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">!=</span><span class="n">s</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">std</span><span class="o">::</span><span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">v</span><span class="p">.</span><span class="n">elem</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kt">double</span> <span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">s</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">sum</span> <span class="o">+=</span> <span class="n">v</span><span class="p">.</span><span class="n">elem</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">sum</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>自定义类型的名称通常使用首字母大写，以便和标准库类型区分</p>
+<p>访问 struct 成员有两种方式， 通过名字或引用时用<code>.</code> 符号，通过指针时用<code>-&gt;</code> 符号</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">f</span><span class="p">(</span><span class="n">Vector</span> <span class="n">v</span><span class="p">,</span> <span class="n">Vector</span><span class="o">&amp;</span> <span class="n">rv</span><span class="p">,</span> <span class="n">Vector</span><span class="o">*</span> <span class="n">pv</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">i1</span> <span class="o">=</span> <span class="n">v</span><span class="p">.</span><span class="n">sz</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">i2</span> <span class="o">=</span> <span class="n">rv</span><span class="p">.</span><span class="n">sz</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">i3</span> <span class="o">=</span> <span class="n">pv</span><span class="o">-&gt;</span><span class="n">sz</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="类">类</h2>
+<p>类将数据和操作组织在一起，类的 public 成员定义了该类的接口，private 成交则只能通过接口访问</p>
+<p>class 和 struct 没有本质区别，唯一区别在于 struct 成员默认是 public 的。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Vector</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Vector</span><span class="p">(</span><span class="kt">int</span> <span class="n">s</span><span class="p">)</span> <span class="o">:</span> <span class="n">elem</span><span class="p">{</span><span class="k">new</span> <span class="kt">double</span><span class="p">[</span><span class="n">s</span><span class="p">]},</span> <span class="n">sz</span><span class="p">{</span><span class="n">s</span><span class="p">}</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kt">double</span> <span class="o">&amp;</span><span class="k">operator</span><span class="p">[](</span><span class="kt">int</span> <span class="n">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">elem</span><span class="p">[</span><span class="n">i</span><span class="p">];</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="nf">size</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="n">sz</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">private</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">double</span> <span class="o">*</span><span class="n">elem</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">sz</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Vector 对象是一个句柄，包含指向 元素的指针（elem） 和元素的数量（sz）, Vector 包含 Vector()、
+operator[] 和 size() 三个接口。</p>
+<p>和类名同名的成员函数为构造函数，用来构造类的实例</p>
+<h2 id="枚举">枚举</h2>
+<p>枚举类型用来表示少量整数数值的集合，提升代码的可读性，降低潜在错误。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">enum</span> <span class="k">class</span> <span class="nc">Color</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">red</span><span class="p">,</span> <span class="n">blue</span><span class="p">,</span> <span class="n">green</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="k">enum</span> <span class="k">class</span> <span class="nc">TrafficLight</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">green</span><span class="p">,</span> <span class="n">yellow</span><span class="p">,</span> <span class="n">red</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>enum 后面的 class 表示这个枚举类型是强类型，具备独立的作用域，不同的 enum class 是不同的类型</p>
+<p>enum class 不可以隐式地和整数混用</p>
+<h2 id="联合">联合</h2>
+<p>union 是一种特殊的 struct，他的所有成员被分配在同一块内存区域中，实际占用的空间就是它最大的成员所占用的空间。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">enum</span> <span class="k">class</span> <span class="nc">Type</span> <span class="p">{</span><span class="n">ptr</span><span class="p">,</span> <span class="n">num</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">union</span> <span class="nc">Value</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span><span class="o">*</span> <span class="n">p</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">Entry</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Type</span> <span class="n">t</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Value</span> <span class="n">v</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">f</span><span class="p">(</span><span class="n">Entry</span><span class="o">*</span> <span class="n">pe</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">pe</span><span class="o">-&gt;</span><span class="n">t</span> <span class="o">==</span> <span class="n">Type</span><span class="o">::</span><span class="n">num</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;num: &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">pe</span><span class="o">-&gt;</span><span class="n">v</span><span class="p">.</span><span class="n">i</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;ptr: &#34;</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="p">(</span><span class="n">pe</span><span class="o">-&gt;</span><span class="n">v</span><span class="p">.</span><span class="n">p</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="第三章-模块化">第三章 模块化</h1>
+<p>c++ 中有两种方式可以实现分离编译</p>
+<ul>
+<li>头文件</li>
+<li>模块</li>
+</ul>
+<p>头文件有明显的缺点</p>
+<ul>
+<li>编译耗时，对于同一个文件，每 #include 一次编译器就需要处理一次</li>
+<li>顺序依赖</li>
+<li>代码膨胀</li>
+</ul>
+<p>c++ 20 引入了 <code>module</code>, 使用 import 来引入 module</p>
+<h2 id="函数参数和返回值">函数参数和返回值</h2>
+<h3 id="参数传递">参数传递</h3>
+<p>参数默认使用传值的方式，为了性能，可以使用传引用的方式</p>
+<h3 id="返回值">返回值</h3>
+<p>返回值的默认行为也是复制传值。
+可以通过给对象提供移动构造方法，将对象移动到函数之外</p>
+<h3 id="返回类型后置">返回类型后置</h3>
+<p>相比传统的记法，后置返回记法更符合逻辑</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">auto</span> <span class="nf">next_elem</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Elem</span><span class="o">*</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">auto</span> <span class="nf">sqrt</span><span class="p">(</span><span class="n">doyble</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">double</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table>
+</div>
 </div>
     </div>
 
@@ -471,7 +703,7 @@
   <p class="copyright-item">
     <span class="item-title">LastMod</span>
     <span class="item-content">
-      2023-12-03
+      2023-12-04
       
     </span>
   </p>
