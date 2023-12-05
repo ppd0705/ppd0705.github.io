@@ -68,7 +68,7 @@
 <meta itemprop="name" content="[笔记]C&#43;&#43;之旅（更新中）">
 <meta itemprop="description" content="第一章 基础 hello world 示例 1 2 3 4 5 import std; int main() { std::cout &lt;&lt; &#34;Hello, World!\n&#34;; } 函数 函数声明包含名称、参数和返回值，返回值在名称之前。 函数的类型由他的返回值类型和参数类型序"><meta itemprop="datePublished" content="2023-11-29T18:51:08+08:00" />
 <meta itemprop="dateModified" content="2023-12-04T21:06:08+08:00" />
-<meta itemprop="wordCount" content="1835">
+<meta itemprop="wordCount" content="2338">
 <meta itemprop="keywords" content="C&#43;&#43;," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]C&#43;&#43;之旅（更新中）"/>
 <meta name="twitter:description" content="第一章 基础 hello world 示例 1 2 3 4 5 import std; int main() { std::cout &lt;&lt; &#34;Hello, World!\n&#34;; } 函数 函数声明包含名称、参数和返回值，返回值在名称之前。 函数的类型由他的返回值类型和参数类型序"/>
@@ -283,8 +283,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 1835 words </span>
-          <span class="more-meta"> 4 min read </span>
+        <span class="more-meta"> 2338 words </span>
+          <span class="more-meta"> 5 min read </span>
 
         
         
@@ -332,6 +332,14 @@
             <li><a href="#返回类型后置">返回类型后置</a></li>
           </ul>
         </li>
+      </ul>
+    </li>
+    <li><a href="#第四章-错误处理">第四章 错误处理</a></li>
+    <li><a href="#第五章-类">第五章 类</a>
+      <ul>
+        <li><a href="#具体类">具体类</a></li>
+        <li><a href="#抽象类">抽象类</a></li>
+        <li><a href="#虚函数">虚函数</a></li>
       </ul>
     </li>
   </ul>
@@ -690,7 +698,94 @@ operator[] 和 size() 三个接口。</p>
 </span></span><span class="line"><span class="cl"><span class="k">auto</span> <span class="nf">sqrt</span><span class="p">(</span><span class="n">doyble</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">double</span><span class="p">;</span>
 </span></span></code></pre></td></tr></table>
 </div>
+</div><h1 id="第四章-错误处理">第四章 错误处理</h1>
+<p>使用 <code>throw error</code> 抛出错误，使用 <code>try ... catch (error)</code> 来捕捉错误</p>
+<p>错误处理通常有三种方式：</p>
+<ul>
+<li>抛出异常</li>
+<li>返回错误码</li>
+<li>终止程序（如调用 <code>exit</code>之类的函数）</li>
+</ul>
+<h1 id="第五章-类">第五章 类</h1>
+<h2 id="具体类">具体类</h2>
+<p>具体类的典型特征是它的成员变量是其定义的一部分</p>
+<p>RAII (Resource Acquisition Is Initialization) 资源获取即初始化 是 c++ 一种惯用管理内存的方式，
+它能保证已构造的对象，最后会被销毁，即其析构函数会被调用。</p>
+<h2 id="抽象类">抽象类</h2>
+<p>抽象类将使用者和类的实现细节完全隔离，即将接口和实现完全解耦，并放弃了纯局部变量</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Container</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">virtual</span> <span class="kt">double</span><span class="o">&amp;</span> <span class="k">operator</span><span class="p">[](</span><span class="kt">int</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">virtual</span> <span class="kt">int</span> <span class="nf">size</span><span class="p">()</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">virtual</span> <span class="o">~</span><span class="n">Container</span><span class="p">()</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span></code></pre></td></tr></table>
 </div>
+</div><p>如上所示， Container 即为一个抽象类。使用 关键字<code>virtual</code> 声明的函数为虚函数，虚函数可能会在派生类中被重新定义。
+<code>= 0</code> 后缀表示该函数为纯虚函数，必须在派生类中定义该函数。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">List_container</span><span class="o">:</span><span class="k">public</span> <span class="n">Container</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="k">private</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">list</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="n">ld</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">List_container</span><span class="p">()</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">List_container</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">initializer_list</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="n">il</span><span class="p">)</span><span class="o">:</span> <span class="n">ld</span><span class="p">{</span><span class="n">il</span><span class="p">}</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">~</span><span class="n">List_container</span><span class="p">()</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kt">double</span><span class="o">&amp;</span> <span class="k">operator</span><span class="p">[](</span><span class="kt">int</span> <span class="n">i</span><span class="p">)</span> <span class="k">override</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="nf">size</span><span class="p">()</span> <span class="k">const</span> <span class="k">override</span> <span class="p">{</span> <span class="k">return</span> <span class="n">ld</span><span class="p">.</span><span class="n">size</span><span class="p">();}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">double</span><span class="o">&amp;</span> <span class="n">List_container</span><span class="o">::</span><span class="k">operator</span><span class="p">[](</span><span class="kt">int</span> <span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">x</span><span class="p">:</span> <span class="n">ld</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">x</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="o">--</span><span class="n">i</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">throw</span> <span class="n">std</span><span class="o">::</span><span class="n">out_of_range</span><span class="p">{</span><span class="s">&#34;List container&#34;</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>: public </code> 表示&quot;派生自&quot;或者&quot;是&hellip;的子类型&quot;。基类和派生类的关系称之为继承。</p>
+<p><code>override</code> 是可选的，但可以显示声明覆盖基类对应函数的意图</p>
+<h2 id="虚函数">虚函数</h2>
+<p>每个含有虚函数的类都有一个虚函数表，所以对应的实例都有一个指针，来指向这个共享的表</p>
+
     </div>
 
     
