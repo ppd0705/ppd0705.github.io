@@ -64,11 +64,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://ppd0705.github.io/post/nats_note/" /><meta property="article:section" content="post" />
 <meta property="article:published_time" content="2023-06-01T08:31:17+08:00" />
-<meta property="article:modified_time" content="2023-06-18T15:31:17+08:00" />
+<meta property="article:modified_time" content="2023-12-24T17:56:17+08:00" />
 <meta itemprop="name" content="NATS 学习笔记">
 <meta itemprop="description" content="Quality of Service (QoS) At most once Core NATS is a fire-and-forget messaging system. It will only hold messages in memory. If a subscriber is not listening on the subject, or is not active when the message is sent, the message is not received. At least/ exactly once JetStream support higher qualities of service (at least once and exactly once) Subject-based Messaging 消息基于 Subject 匹配和"><meta itemprop="datePublished" content="2023-06-01T08:31:17+08:00" />
-<meta itemprop="dateModified" content="2023-06-18T15:31:17+08:00" />
-<meta itemprop="wordCount" content="584">
+<meta itemprop="dateModified" content="2023-12-24T17:56:17+08:00" />
+<meta itemprop="wordCount" content="2254">
 <meta itemprop="keywords" content="消息队列," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="NATS 学习笔记"/>
 <meta name="twitter:description" content="Quality of Service (QoS) At most once Core NATS is a fire-and-forget messaging system. It will only hold messages in memory. If a subscriber is not listening on the subject, or is not active when the message is sent, the message is not received. At least/ exactly once JetStream support higher qualities of service (at least once and exactly once) Subject-based Messaging 消息基于 Subject 匹配和"/>
@@ -283,8 +283,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 584 words </span>
-          <span class="more-meta"> 2 min read </span>
+        <span class="more-meta"> 2254 words </span>
+          <span class="more-meta"> 5 min read </span>
 
         
         
@@ -336,9 +336,17 @@
           </ul>
         </li>
         <li><a href="#kv-存储">KV 存储</a></li>
-        <li><a href="#reference">Reference</a></li>
+        <li><a href="#协议">协议</a></li>
       </ul>
     </li>
+    <li><a href="#源码阅读">源码阅读</a>
+      <ul>
+        <li><a href="#数据解析">数据解析</a></li>
+        <li><a href="#订阅列表">订阅列表</a></li>
+        <li><a href="#集群">集群</a></li>
+      </ul>
+    </li>
+    <li><a href="#reference">Reference</a></li>
   </ul>
 </nav>
   </div>
@@ -391,7 +399,6 @@
 <li>LimitsPolicy: MaxMsgs, MaxBytes, MaxAge, and MaxMsgsPerSubject</li>
 <li>InterestPolicy: 当没有消费者消费或者所有消费者消费了，消息会删除</li>
 <li>WorkQueuePolicy: 每个消息只能被消费一次，一个 WorkQueue 只能有一个消费者</li>
-<li></li>
 </ul>
 <h3 id="丢弃策略">丢弃策略</h3>
 <ul>
@@ -417,9 +424,663 @@
 <p>最大 Pending 数量，超过则不再传递消息</p>
 <h2 id="kv-存储">KV 存储</h2>
 <p>JetStream 可以提供 KV 功能， 具体包括增删改查，甚至可以监听 key的 改动、 获取 value 的历史版本</p>
-<h2 id="reference">Reference</h2>
+<h2 id="协议">协议</h2>
+<p>NATS 使用文本格式的协议，基于 TCP 进行通信。以换行符做消息分隔符， 以空格或制表符作为字段分隔符。</p>
+<p>可以直接使用 telnet 或者 netcat 作为客户端直接和服务段交互</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">nc -c localhost <span class="m">4222</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>具体操作符类型如下：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>发送方</th>
+<th>语法</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>INFO</td>
+<td>Server</td>
+<td><code>INFO {&quot;option_name&quot;:option_value,...}␍␊</code></td>
+<td>连接建立之后发送</td>
+</tr>
+<tr>
+<td>CONNECT</td>
+<td>Client</td>
+<td><code>CONNECT {&quot;option_name&quot;:option_value,...}␍␊</code></td>
+<td>指定连接信息</td>
+</tr>
+<tr>
+<td>PUB</td>
+<td>Client</td>
+<td><code>PUB &lt;subject&gt; [reply-to] &lt;#bytes&gt;␍␊[payload]␍␊</code></td>
+<td>发布消息到服务段</td>
+</tr>
+<tr>
+<td>SUB</td>
+<td>Client</td>
+<td><code>SUB &lt;subject&gt; [queue group] &lt;sid&gt;␍␊</code></td>
+<td>订阅消息</td>
+</tr>
+<tr>
+<td>UNSUB</td>
+<td>Client</td>
+<td><code>UNSUB &lt;sid&gt; [max_msgs]␍␊</code></td>
+<td>取消订阅消息</td>
+</tr>
+<tr>
+<td>MSG</td>
+<td>Server</td>
+<td><code>MSG &lt;subject&gt; &lt;sid&gt; [reply-to] &lt;#bytes&gt;␍␊[payload]␍␊</code></td>
+<td>转发消息给客户端</td>
+</tr>
+<tr>
+<td>PING</td>
+<td>Both</td>
+<td><code>PING␍␊</code></td>
+<td>心跳请求</td>
+</tr>
+<tr>
+<td>PONG</td>
+<td>Both</td>
+<td><code>PONG␍␊</code></td>
+<td>心跳相应</td>
+</tr>
+<tr>
+<td>+OK</td>
+<td>Server</td>
+<td><code>+OK␍␊</code></td>
+<td>确认消息，verbose 模式才有</td>
+</tr>
+<tr>
+<td>-ERR</td>
+<td>Server</td>
+<td><code>-ERR &lt;error message&gt;␍␊</code></td>
+<td>错误</td>
+</tr>
+</tbody>
+</table>
+<h1 id="源码阅读">源码阅读</h1>
+<h2 id="数据解析">数据解析</h2>
+<p>基于一个有限状态机，接受到的数据会一个字符一个字节去录入和转移状态</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Golang" data-lang="Golang"><span class="line"><span class="cl"><span class="k">for</span> <span class="nx">i</span> <span class="p">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">buf</span><span class="p">);</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">b</span> <span class="p">=</span> <span class="nx">buf</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">switch</span> <span class="nx">c</span><span class="p">.</span><span class="nx">state</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="nx">OP_START</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">       <span class="o">...</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="nx">OP_P</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">switch</span> <span class="nx">b</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">case</span> <span class="sc">&#39;U&#39;</span><span class="p">,</span> <span class="sc">&#39;u&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">c</span><span class="p">.</span><span class="nx">state</span> <span class="p">=</span> <span class="nx">OP_PU</span>
+</span></span><span class="line"><span class="cl">        <span class="k">case</span> <span class="sc">&#39;I&#39;</span><span class="p">,</span> <span class="sc">&#39;i&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">c</span><span class="p">.</span><span class="nx">state</span> <span class="p">=</span> <span class="nx">OP_PI</span>
+</span></span><span class="line"><span class="cl">        <span class="k">case</span> <span class="sc">&#39;O&#39;</span><span class="p">,</span> <span class="sc">&#39;o&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">c</span><span class="p">.</span><span class="nx">state</span> <span class="p">=</span> <span class="nx">OP_PO</span>
+</span></span><span class="line"><span class="cl">        <span class="k">default</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="k">goto</span> <span class="nx">parseErr</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="nx">OP_PU</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">switch</span> <span class="nx">b</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">case</span> <span class="sc">&#39;B&#39;</span><span class="p">,</span> <span class="sc">&#39;b&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">c</span><span class="p">.</span><span class="nx">state</span> <span class="p">=</span> <span class="nx">OP_PUB</span>
+</span></span><span class="line"><span class="cl">        <span class="k">default</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="k">goto</span> <span class="nx">parseErr</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="nx">OP_PUB</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">switch</span> <span class="nx">b</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">case</span> <span class="sc">&#39; &#39;</span><span class="p">,</span> <span class="sc">&#39;\t&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">c</span><span class="p">.</span><span class="nx">state</span> <span class="p">=</span> <span class="nx">OP_PUB_SPC</span>
+</span></span><span class="line"><span class="cl">        <span class="k">default</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="k">goto</span> <span class="nx">parseErr</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">...</span>
+</span></span><span class="line"><span class="cl">    <span class="k">default</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">goto</span> <span class="nx">parseErr</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="订阅列表">订阅列表</h2>
+<p>订阅列表使用前缀树来维护</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Golang" data-lang="Golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">node</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">next</span>  <span class="o">*</span><span class="nx">level</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">psubs</span> <span class="p">[]</span><span class="o">*</span><span class="nx">subscription</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">qsubs</span> <span class="p">[][]</span><span class="o">*</span><span class="nx">subscription</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">level</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">nodes</span>    <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="o">*</span><span class="nx">node</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">pwc</span><span class="p">,</span> <span class="nx">fwc</span> <span class="o">*</span><span class="nx">node</span>  <span class="c1">// pwd、fwc 分别表示 &#39;*&#39; 和 &#39;&gt;&#39; 订阅
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>插入操作</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Golang" data-lang="Golang"><span class="line"><span class="cl"><span class="nx">l</span> <span class="o">:=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">root</span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">n</span> <span class="o">*</span><span class="nx">node</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">t</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">tokens</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">t</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">||</span> <span class="nx">sfwc</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">s</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="nx">ErrInvalidSubject</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">switch</span> <span class="nx">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="nx">pwc</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">n</span> <span class="p">=</span> <span class="nx">l</span><span class="p">.</span><span class="nx">pwc</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="nx">fwc</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">n</span> <span class="p">=</span> <span class="nx">l</span><span class="p">.</span><span class="nx">fwc</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">sfwc</span> <span class="p">=</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">    <span class="k">default</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">n</span> <span class="p">=</span> <span class="nx">l</span><span class="p">.</span><span class="nx">nodes</span><span class="p">[</span><span class="nx">t</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">n</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">n</span> <span class="p">=</span> <span class="nf">newNode</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="k">switch</span> <span class="nx">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">case</span> <span class="nx">pwc</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">l</span><span class="p">.</span><span class="nx">pwc</span> <span class="p">=</span> <span class="nx">n</span>
+</span></span><span class="line"><span class="cl">        <span class="k">case</span> <span class="nx">fwc</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">l</span><span class="p">.</span><span class="nx">fwc</span> <span class="p">=</span> <span class="nx">n</span>
+</span></span><span class="line"><span class="cl">        <span class="k">default</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">l</span><span class="p">.</span><span class="nx">nodes</span><span class="p">[</span><span class="nx">t</span><span class="p">]</span> <span class="p">=</span> <span class="nx">n</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">n</span><span class="p">.</span><span class="nx">next</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">n</span><span class="p">.</span><span class="nx">next</span> <span class="p">=</span> <span class="nf">newLevel</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">l</span> <span class="p">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">next</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">queue</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">n</span><span class="p">.</span><span class="nx">psubs</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">n</span><span class="p">.</span><span class="nx">psubs</span><span class="p">,</span> <span class="nx">sub</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// This is a queue subscription
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="nx">i</span> <span class="o">:=</span> <span class="nf">findQSliceForSub</span><span class="p">(</span><span class="nx">sub</span><span class="p">,</span> <span class="nx">n</span><span class="p">.</span><span class="nx">qsubs</span><span class="p">);</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">n</span><span class="p">.</span><span class="nx">qsubs</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">n</span><span class="p">.</span><span class="nx">qsubs</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">sub</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">n</span><span class="p">.</span><span class="nx">qsubs</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">n</span><span class="p">.</span><span class="nx">qsubs</span><span class="p">,</span> <span class="p">[]</span><span class="o">*</span><span class="nx">subscription</span><span class="p">{</span><span class="nx">sub</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>删除操作</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Golang" data-lang="Golang"><span class="line"><span class="cl"><span class="nx">sfwc</span> <span class="o">:=</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl"><span class="nx">l</span> <span class="o">:=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">root</span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">n</span> <span class="o">*</span><span class="nx">node</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// Track levels for pruning
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">var</span> <span class="nx">lnts</span> <span class="p">[</span><span class="mi">32</span><span class="p">]</span><span class="nx">lnt</span>
+</span></span><span class="line"><span class="cl"><span class="nx">levels</span> <span class="o">:=</span> <span class="nx">lnts</span><span class="p">[:</span><span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">t</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">tokens</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">t</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">||</span> <span class="nx">sfwc</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="nx">ErrInvalidSubject</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">l</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="nx">ErrNotFound</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">switch</span> <span class="nx">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="nx">pwc</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">n</span> <span class="p">=</span> <span class="nx">l</span><span class="p">.</span><span class="nx">pwc</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="nx">fwc</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">n</span> <span class="p">=</span> <span class="nx">l</span><span class="p">.</span><span class="nx">fwc</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">sfwc</span> <span class="p">=</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">    <span class="k">default</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">n</span> <span class="p">=</span> <span class="nx">l</span><span class="p">.</span><span class="nx">nodes</span><span class="p">[</span><span class="nx">t</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">n</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">levels</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">levels</span><span class="p">,</span> <span class="nx">lnt</span><span class="p">{</span><span class="nx">l</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">t</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">l</span> <span class="p">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">next</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">l</span> <span class="p">=</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 反向删除记录
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">levels</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">--</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">l</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">t</span> <span class="o">:=</span> <span class="nx">levels</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">l</span><span class="p">,</span> <span class="nx">levels</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">n</span><span class="p">,</span> <span class="nx">levels</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">t</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">n</span><span class="p">.</span><span class="nf">isEmpty</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">l</span><span class="p">.</span><span class="nf">pruneNode</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">t</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>查找操作</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Golang" data-lang="Golang"><span class="line"><span class="cl"><span class="c1">// matchLevel is used to recursively descend into the trie.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">matchLevel</span><span class="p">(</span><span class="nx">l</span> <span class="o">*</span><span class="nx">level</span><span class="p">,</span> <span class="nx">toks</span> <span class="p">[]</span><span class="kt">string</span><span class="p">,</span> <span class="nx">results</span> <span class="o">*</span><span class="nx">SublistResult</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">pwc</span><span class="p">,</span> <span class="nx">n</span> <span class="o">*</span><span class="nx">node</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">t</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">toks</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">l</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">l</span><span class="p">.</span><span class="nx">fwc</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nf">addNodeToResults</span><span class="p">(</span><span class="nx">l</span><span class="p">.</span><span class="nx">fwc</span><span class="p">,</span> <span class="nx">results</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">pwc</span> <span class="p">=</span> <span class="nx">l</span><span class="p">.</span><span class="nx">pwc</span><span class="p">;</span> <span class="nx">pwc</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nf">matchLevel</span><span class="p">(</span><span class="nx">pwc</span><span class="p">.</span><span class="nx">next</span><span class="p">,</span> <span class="nx">toks</span><span class="p">[</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">:],</span> <span class="nx">results</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">n</span> <span class="p">=</span> <span class="nx">l</span><span class="p">.</span><span class="nx">nodes</span><span class="p">[</span><span class="nx">t</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">n</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">l</span> <span class="p">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">next</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">l</span> <span class="p">=</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">n</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">addNodeToResults</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">results</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">pwc</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">addNodeToResults</span><span class="p">(</span><span class="nx">pwc</span><span class="p">,</span> <span class="nx">results</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="集群">集群</h2>
+<p>集群节点两两之间会建立一个类型为 ROUTER 的 Client。</p>
+<p>建立连接后，会通过 <code>SUB</code> 类型消息告知当前节点订阅列表</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Golang" data-lang="Golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">Server</span><span class="p">)</span> <span class="nf">sendLocalSubsToRoute</span><span class="p">(</span><span class="nx">route</span> <span class="o">*</span><span class="nx">client</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">b</span> <span class="o">:=</span> <span class="nx">bytes</span><span class="p">.</span><span class="nx">Buffer</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">s</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">client</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">s</span><span class="p">.</span><span class="nx">clients</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">client</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">subs</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="o">*</span><span class="nx">subscription</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">client</span><span class="p">.</span><span class="nx">subs</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">		<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">sub</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">client</span><span class="p">.</span><span class="nx">subs</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">subs</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">subs</span><span class="p">,</span> <span class="nx">sub</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">client</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">sub</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">subs</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">rsid</span> <span class="o">:=</span> <span class="nf">routeSid</span><span class="p">(</span><span class="nx">sub</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">proto</span> <span class="o">:=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="nx">subProto</span><span class="p">,</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">subject</span><span class="p">,</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">queue</span><span class="p">,</span> <span class="nx">rsid</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">b</span><span class="p">.</span><span class="nf">WriteString</span><span class="p">(</span><span class="nx">proto</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">s</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">route</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">defer</span> <span class="nx">route</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">route</span><span class="p">.</span><span class="nf">sendProto</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nf">Bytes</span><span class="p">(),</span> <span class="kc">true</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>当有新的节点加入后，会转发新节点的信息</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Golang" data-lang="Golang"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">Server</span><span class="p">)</span> <span class="nf">forwardNewRouteInfoToKnownServers</span><span class="p">(</span><span class="nx">info</span> <span class="o">*</span><span class="nx">Info</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">s</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">defer</span> <span class="nx">s</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">b</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nf">Marshal</span><span class="p">(</span><span class="nx">info</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">infoJSON</span> <span class="o">:=</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="nx">InfoProto</span><span class="p">,</span> <span class="nx">b</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">r</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">s</span><span class="p">.</span><span class="nx">routes</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">r</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">r</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">remoteID</span> <span class="o">!=</span> <span class="nx">info</span><span class="p">.</span><span class="nx">ID</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">r</span><span class="p">.</span><span class="nf">sendInfo</span><span class="p">(</span><span class="nx">infoJSON</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">r</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>当普通 Client 有新的订阅时，Route Client 会转发消息到所有其他节点</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Golang" data-lang="Golang"><span class="line"><span class="cl"><span class="c1">// sid 会被重新， 添加 RSID 前缀和客户端信息等
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">routeSid</span><span class="p">(</span><span class="nx">sub</span> <span class="o">*</span><span class="nx">subscription</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">qi</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">sub</span><span class="p">.</span><span class="nx">queue</span><span class="p">)</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">qi</span> <span class="p">=</span> <span class="s">&#34;Q&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;%s%s:%d:%s&#34;</span><span class="p">,</span> <span class="nx">qi</span><span class="p">,</span> <span class="nx">RSID</span><span class="p">,</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">client</span><span class="p">.</span><span class="nx">cid</span><span class="p">,</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">sid</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">Server</span><span class="p">)</span> <span class="nf">broadcastInterestToRoutes</span><span class="p">(</span><span class="nx">proto</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">arg</span> <span class="p">[]</span><span class="kt">byte</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">LoadInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">s</span><span class="p">.</span><span class="nx">logging</span><span class="p">.</span><span class="nx">trace</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">arg</span> <span class="p">=</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">proto</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="nx">proto</span><span class="p">)</span><span class="o">-</span><span class="nx">LEN_CR_LF</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">protoAsBytes</span> <span class="o">:=</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">proto</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">s</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">route</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">s</span><span class="p">.</span><span class="nx">routes</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// FIXME(dlc) - Make same logic as deliverMsg
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">route</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">route</span><span class="p">.</span><span class="nf">sendProto</span><span class="p">(</span><span class="nx">protoAsBytes</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">route</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">route</span><span class="p">.</span><span class="nf">traceOutOp</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nx">arg</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">s</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>发布消息时，如果是 Route 类型的客户端，会对remoteID 做去重，以免给同一个 Route 客户端发送多次。
+并且消息只会从 普通客户端发送到 Route 客户端，不会出现 Route 客户端 再发到 Route 客户端的情况</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Golang" data-lang="Golang"><span class="line"><span class="cl"><span class="c1">// processMsg is called to process an inbound msg from a client.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">client</span><span class="p">)</span> <span class="nf">processMsg</span><span class="p">(</span><span class="nx">msg</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">SublistResult</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">isRoute</span> <span class="o">:=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">typ</span> <span class="o">==</span> <span class="nx">ROUTER</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">sub</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">r</span><span class="p">.</span><span class="nx">psubs</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// Check if this is a send to a ROUTER, make sure we only send it
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">// once. The other side will handle the appropriate re-processing
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">// and fan-out. Also enforce 1-Hop semantics, so no routing to another.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">if</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">client</span><span class="p">.</span><span class="nx">typ</span> <span class="o">==</span> <span class="nx">ROUTER</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		    <span class="c1">// 只会转发一次
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="k">if</span> <span class="nx">isRoute</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="k">continue</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="cl">			
+</span></span><span class="line"><span class="cl">			<span class="c1">// route 去重
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="k">if</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">rmap</span><span class="p">[</span><span class="nx">sub</span><span class="p">.</span><span class="nx">client</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">remoteID</span><span class="p">];</span> <span class="nx">ok</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="nx">c</span><span class="p">.</span><span class="nf">Debugf</span><span class="p">(</span><span class="s">&#34;Ignoring route, already processed&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">				<span class="nx">sub</span><span class="p">.</span><span class="nx">client</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">				<span class="k">continue</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">rmap</span><span class="p">[</span><span class="nx">sub</span><span class="p">.</span><span class="nx">client</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">remoteID</span><span class="p">]</span> <span class="p">=</span> <span class="nx">routeSeen</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">sub</span><span class="p">.</span><span class="nx">client</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// Normal delivery
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">mh</span> <span class="o">:=</span> <span class="nx">c</span><span class="p">.</span><span class="nf">msgHeader</span><span class="p">(</span><span class="nx">msgh</span><span class="p">[:</span><span class="nx">si</span><span class="p">],</span> <span class="nx">sub</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">c</span><span class="p">.</span><span class="nf">deliverMsg</span><span class="p">(</span><span class="nx">sub</span><span class="p">,</span> <span class="nx">mh</span><span class="p">,</span> <span class="nx">msg</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="reference">Reference</h1>
 <ul>
 <li><a href="https://docs.nats.io/">NATS Document</a></li>
+<li><a href="https://github.com/cz-theng/nats-source">NATS 1.0 源码学习笔记</a></li>
 </ul>
 
     </div>
@@ -434,7 +1095,7 @@
   <p class="copyright-item">
     <span class="item-title">LastMod</span>
     <span class="item-content">
-      2023-06-18
+      2023-12-24
       
     </span>
   </p>
