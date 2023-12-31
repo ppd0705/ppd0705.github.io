@@ -6,7 +6,16 @@
     <description>Recent content in 生活 on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 31 Dec 2022 09:39:13 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/categories/%E7%94%9F%E6%B4%BB/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 31 Dec 2023 16:56:53 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/categories/%E7%94%9F%E6%B4%BB/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>2023年终总结</title>
+      <link>https://ppd0705.github.io/post/2023_summary/</link>
+      <pubDate>Sun, 31 Dec 2023 16:56:53 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/2023_summary/</guid>
+      <description>工作 今年工作的关键词依然是重构。后端从 flask+sqlalchemy+celery 换到了 gin+gorm+cron，而前端从 jQuery+Bootstrap 换到了 Vue+AntDesign。 这是我第一次写前后端分</description>
+    </item>
+    
     <item>
       <title>2022年终总结</title>
       <link>https://ppd0705.github.io/post/2022_summary/</link>

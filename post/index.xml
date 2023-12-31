@@ -6,7 +6,16 @@
     <description>Recent content in Posts on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 29 Nov 2023 18:51:08 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 31 Dec 2023 16:56:53 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>2023年终总结</title>
+      <link>https://ppd0705.github.io/post/2023_summary/</link>
+      <pubDate>Sun, 31 Dec 2023 16:56:53 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/2023_summary/</guid>
+      <description>工作 今年工作的关键词依然是重构。后端从 flask+sqlalchemy+celery 换到了 gin+gorm+cron，而前端从 jQuery+Bootstrap 换到了 Vue+AntDesign。 这是我第一次写前后端分</description>
+    </item>
+    
     <item>
       <title>[笔记]C&#43;&#43;之旅</title>
       <link>https://ppd0705.github.io/post/cpp_tour/</link>
@@ -176,15 +185,6 @@
       
       <guid>https://ppd0705.github.io/post/learning_vue/</guid>
       <description>Vue实例 1 2 3 4 5 6 7 var vm = new Vue({ el: &amp;#34;#app&amp;#34;, data: { a: 100 } }) el: 对应的元素 data: 数据 Vue实例有很多方法如 $watch: 监控变量，可定义回调函数 1 2 3 vm.$watch(&amp;#39;a&amp;#39;, function(newVal, oldVal){ }) 生命周期 V</description>
-    </item>
-    
-    <item>
-      <title>[笔记]Go并发编程实战</title>
-      <link>https://ppd0705.github.io/post/go_concurrent_note/</link>
-      <pubDate>Wed, 05 May 2021 10:17:59 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/go_concurrent_note/</guid>
-      <description>01| Mutex介绍 实现机制 临界区： 一个被共享的资源，或者一个整体的一组共享资源 使用互斥锁，限定临界区只能同时由一个线程持有 同步原语：可以看做解</description>
     </item>
     
   </channel>
