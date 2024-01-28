@@ -64,11 +64,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://ppd0705.github.io/post/algo_beauty/" /><meta property="article:section" content="post" />
 <meta property="article:published_time" content="2023-06-29T07:21:46+08:00" />
-<meta property="article:modified_time" content="2024-02-26T20:24:46+08:00" />
+<meta property="article:modified_time" content="2024-02-27T17:19:46+08:00" />
 <meta itemprop="name" content="[笔记]数据结构和算法之美（更新中）">
 <meta itemprop="description" content="第二讲 十个重点数据结构 数组 链表 栈 队列 散列表 二叉树 堆 跳表 图 Trie 树 十个重点算法 递归 排序 二分查找 搜索 哈希 贪心 分治 回溯 动态规划 字符串匹配 第三讲 复杂度分"><meta itemprop="datePublished" content="2023-06-29T07:21:46+08:00" />
-<meta itemprop="dateModified" content="2024-02-26T20:24:46+08:00" />
-<meta itemprop="wordCount" content="4174">
+<meta itemprop="dateModified" content="2024-02-27T17:19:46+08:00" />
+<meta itemprop="wordCount" content="4996">
 <meta itemprop="keywords" content="算法," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[笔记]数据结构和算法之美（更新中）"/>
 <meta name="twitter:description" content="第二讲 十个重点数据结构 数组 链表 栈 队列 散列表 二叉树 堆 跳表 图 Trie 树 十个重点算法 递归 排序 二分查找 搜索 哈希 贪心 分治 回溯 动态规划 字符串匹配 第三讲 复杂度分"/>
@@ -283,8 +283,8 @@
             <a href="https://ppd0705.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"> 计算机 </a>
             
           </div>
-        <span class="more-meta"> 4174 words </span>
-          <span class="more-meta"> 9 min read </span>
+        <span class="more-meta"> 4996 words </span>
+          <span class="more-meta"> 10 min read </span>
 
         
         
@@ -392,6 +392,26 @@
         <li><a href="#分布式存储">分布式存储</a></li>
       </ul>
     </li>
+    <li><a href="#第二十三章-二叉树">第二十三章 二叉树</a>
+      <ul>
+        <li><a href="#树的相关概念">树的相关概念</a></li>
+        <li><a href="#二叉树">二叉树</a>
+          <ul>
+            <li><a href="#链式存储方式">链式存储方式</a></li>
+            <li><a href="#顺序存储方式">顺序存储方式</a></li>
+            <li><a href="#遍历">遍历</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#第二十四章-二叉查找树">第二十四章 二叉查找树</a>
+      <ul>
+        <li><a href="#查找操作">查找操作</a></li>
+        <li><a href="#插入操作">插入操作</a></li>
+        <li><a href="#删除操作">删除操作</a></li>
+      </ul>
+    </li>
+    <li><a href="#第二十五章-平衡二叉查找树">第二十五章 平衡二叉查找树</a></li>
     <li><a href="#链接">链接</a></li>
   </ul>
 </nav>
@@ -1150,6 +1170,49 @@
 <h2 id="数据分片">数据分片</h2>
 <h2 id="分布式存储">分布式存储</h2>
 <p>一致性哈希算法示例： <a href="https://geektutu.com/post/geecache-day4.html">GeeCache一致性哈希</a></p>
+<h1 id="第二十三章-二叉树">第二十三章 二叉树</h1>
+<h2 id="树的相关概念">树的相关概念</h2>
+<p>根节点： 没有父节点的节点
+叶子节点： 没有子节点的节点</p>
+<p>高度、深度 和层的示意如下图</p>
+<p><img src="/image/algo_beauty/23_1.webp" alt="height_depth_level"></p>
+<h2 id="二叉树">二叉树</h2>
+<p>完全二叉树：叶子节点都在最后两层，最后一层的叶子节点都靠左排列，除了最后一层，其他层节点的个数要达到最大</p>
+<p>满二叉树：叶子节点都在最后一层，除了叶子节点之外，每个节点都有两个子节点</p>
+<h3 id="链式存储方式">链式存储方式</h3>
+<p>使用链表来存储，每个节点有三个字段，一个字段存储数据，另外两个字段分别指向左右子节点</p>
+<p><img src="/image/algo_beauty/23_2.webp" alt="link_tree"></p>
+<h3 id="顺序存储方式">顺序存储方式</h3>
+<p>根节点存储下标为 1 的位置，左节点存在下标为 2<em>i 的位置，右节点存储在 2</em>i+1 的位置</p>
+<p><img src="/image/algo_beauty/23_3.webp" alt="arr_tree"></p>
+<h3 id="遍历">遍历</h3>
+<p>二叉树有三种经典的遍历方式：前序遍历、中序遍历、后续遍历</p>
+<p><img src="/image/algo_beauty/23_4.webp" alt="tree_traversal"></p>
+<h1 id="第二十四章-二叉查找树">第二十四章 二叉查找树</h1>
+<p>二叉查找树：对于任意一个节点， 其左子树的每个节点均小于它，右子树的每个节点都大于它</p>
+<h2 id="查找操作">查找操作</h2>
+<p>从根节点出发，如果等于要找的数据则返回，如果小于则从左子树找，否则从右子树找。</p>
+<h2 id="插入操作">插入操作</h2>
+<p>从根节点出发，如果大于根节点，当右节点为空，则直接插到右节点的位置，否则遍历右子树；
+如果小于根节点，当左节点为空，则直接插到左节点的位置，否则遍历左子树。</p>
+<h2 id="删除操作">删除操作</h2>
+<ol>
+<li>当目标节点没有子节点，将其父节点指向的指针置为空</li>
+<li>当目标节点有一个子节点，将其父节点指向的指针指向目标节点的子节点</li>
+<li>当目标节点有两个子节点，用目标节点右子树的最小节点来替换目标节点</li>
+</ol>
+<h1 id="第二十五章-平衡二叉查找树">第二十五章 平衡二叉查找树</h1>
+<p>极端情况下二叉查找树会退化成链表，所以需要设计平衡二叉树来避免性能退化的问题。</p>
+<p>平衡二叉树的严格定义：任何一个节点的左右子树的高度差值不能大于一。</p>
+<p>AVL 树完全满足平衡二叉树的严格定义，查找效率高，但为了维持这种高度的平衡，每次插入和删除都要调整，比较复杂和耗时。</p>
+<p>红黑树只做到了近似平衡，在维护平衡的成本上，比 AVL 树的成本低。所以查找、插入和删除操作的性能都比较稳定</p>
+<p>红黑树中有两种颜色的节点：黑色、红色，节点具有有如如下要求：</p>
+<ul>
+<li>根节点是黑色的</li>
+<li>每个叶子节点都是黑色的空节点</li>
+<li>相邻节点不能同时为红色，即红色节点被黑色隔开</li>
+<li>每个节点，其到达叶子节点的所有路径中黑色节点的数量是一样的</li>
+</ul>
 <h1 id="链接">链接</h1>
 <ul>
 <li><a href="https://time.geekbang.org/column/intro/100017301?tab=intro">数据结构与算法之美-极客时间</a></li>
@@ -1168,7 +1231,7 @@
   <p class="copyright-item">
     <span class="item-title">LastMod</span>
     <span class="item-content">
-      2024-02-26
+      2024-02-27
       
     </span>
   </p>
