@@ -6,7 +6,16 @@
     <description>Recent content in Posts on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 31 Dec 2023 16:56:53 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 04 Apr 2024 16:22:03 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>2024出差小记</title>
+      <link>https://ppd0705.github.io/post/2024_business_trip/</link>
+      <pubDate>Thu, 04 Apr 2024 16:22:03 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/2024_business_trip/</guid>
+      <description>前言 关于这次苏州出差行，我在春节前就有了念头，但迟迟没有最后确定日期，因为这个纯属我个人主观想法。 新近合并的团队成员在苏州，只见了一面，他们</description>
+    </item>
+    
     <item>
       <title>2023年终总结</title>
       <link>https://ppd0705.github.io/post/2023_summary/</link>
@@ -176,15 +185,6 @@
       
       <guid>https://ppd0705.github.io/post/go_develop_in_action/</guid>
       <description>第一讲 开源规范 开源协议概述 MIT是相对自由开发的协议 第二讲 文档规范 最重要的三类文档：README文档、项目文档和API文档 README规范 主</description>
-    </item>
-    
-    <item>
-      <title>[笔记]VueJS学习</title>
-      <link>https://ppd0705.github.io/post/learning_vue/</link>
-      <pubDate>Wed, 05 May 2021 10:22:36 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/learning_vue/</guid>
-      <description>Vue实例 1 2 3 4 5 6 7 var vm = new Vue({ el: &amp;#34;#app&amp;#34;, data: { a: 100 } }) el: 对应的元素 data: 数据 Vue实例有很多方法如 $watch: 监控变量，可定义回调函数 1 2 3 vm.$watch(&amp;#39;a&amp;#39;, function(newVal, oldVal){ }) 生命周期 V</description>
     </item>
     
   </channel>
