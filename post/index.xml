@@ -6,7 +6,16 @@
     <description>Recent content in Posts on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 19 May 2024 15:52:44 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 16 Jun 2024 11:17:34 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>2024端午小记</title>
+      <link>https://ppd0705.github.io/post/2024_dragon_boat_festival/</link>
+      <pubDate>Sun, 16 Jun 2024 11:17:34 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/2024_dragon_boat_festival/</guid>
+      <description>端午节回家待了几天，做点记录 生机 我们这里现在只种一季水稻，刚好端午节前后就是插秧的时节，这个项目目前还没有被很好地机械化，工作量还蛮大，在家</description>
+    </item>
+    
     <item>
       <title>五一肯尼亚之旅</title>
       <link>https://ppd0705.github.io/post/kenya_trip/</link>
@@ -176,15 +185,6 @@
       
       <guid>https://ppd0705.github.io/post/play_os_in_action/</guid>
       <description>第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇</description>
-    </item>
-    
-    <item>
-      <title>[笔记]零基础素描入门</title>
-      <link>https://ppd0705.github.io/post/getting_started_with_pencil_sketch/</link>
-      <pubDate>Sun, 18 Jul 2021 12:48:50 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/getting_started_with_pencil_sketch/</guid>
-      <description>工具详解 铅笔种类 通常有2H、HB、2B、4B、6B、8B、10B、12B等型号 H指Hard(硬)，B指Black(黑) 数字越大，线条越大，墨</description>
     </item>
     
   </channel>
