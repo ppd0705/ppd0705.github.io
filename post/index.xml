@@ -6,7 +6,16 @@
     <description>Recent content in Posts on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 16 Jun 2024 11:17:34 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 31 Dec 2024 07:23:11 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>2024年终总结</title>
+      <link>https://ppd0705.github.io/post/2024_summary/</link>
+      <pubDate>Tue, 31 Dec 2024 07:23:11 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/2024_summary/</guid>
+      <description>工作 今年的关键词还是重构，基础系统和信号模型都做了重构，还算是小有收获。 明年要做什么我其实还没太想清楚，重构目前做的差不多了，更多的需要创新</description>
+    </item>
+    
     <item>
       <title>2024端午小记</title>
       <link>https://ppd0705.github.io/post/2024_dragon_boat_festival/</link>
@@ -176,15 +185,6 @@
       
       <guid>https://ppd0705.github.io/post/spot_perpetual_arbitrage/</guid>
       <description>期货和现货 现货 现货通常指实物 如农作物大豆、玉米; 如数字货币BTC、ETH 现货交易 现货交易一般以一手交钱一手交货或者以物换物的方式 比如10RM</description>
-    </item>
-    
-    <item>
-      <title>[笔记]操作系统实战</title>
-      <link>https://ppd0705.github.io/post/play_os_in_action/</link>
-      <pubDate>Fri, 30 Jul 2021 08:06:33 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/play_os_in_action/</guid>
-      <description>第一讲: 程序的运行过程 程序的编译过程 预处理：加入头文件，替换宏 gcc HelloWorld.c -o HelloWorld.i 编译：包含预处理，将C程序转成成汇编程序 gcc HelloWorld.c -S -c Helloworld.s 汇编：包含预处理和汇</description>
     </item>
     
   </channel>

@@ -2,6 +2,55 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://ppd0705.github.io/post/2024_summary/</loc>
+    <lastmod>2024-12-31T07:23:11+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://ppd0705.github.io/categories/</loc>
+    <lastmod>2024-12-31T07:23:11+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://ppd0705.github.io/post/</loc>
+    <lastmod>2024-12-31T07:23:11+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://ppd0705.github.io/</loc>
+    <lastmod>2024-12-31T07:23:11+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://ppd0705.github.io/tags/</loc>
+    <lastmod>2024-12-31T07:23:11+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://ppd0705.github.io/tags/%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/</loc>
+    <lastmod>2024-12-31T07:23:11+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://ppd0705.github.io/categories/%E7%94%9F%E6%B4%BB/</loc>
+    <lastmod>2024-12-31T07:23:11+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>https://ppd0705.github.io/post/2024_dragon_boat_festival/</loc>
     <lastmod>2024-06-16T11:17:34+08:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -9,42 +58,7 @@
   </url>
   
   <url>
-    <loc>https://ppd0705.github.io/categories/</loc>
-    <lastmod>2024-06-16T11:17:34+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://ppd0705.github.io/post/</loc>
-    <lastmod>2024-06-16T11:17:34+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://ppd0705.github.io/</loc>
-    <lastmod>2024-06-16T11:17:34+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://ppd0705.github.io/tags/</loc>
-    <lastmod>2024-06-16T11:17:34+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
     <loc>https://ppd0705.github.io/tags/%E5%9B%9E%E5%AE%B6/</loc>
-    <lastmod>2024-06-16T11:17:34+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://ppd0705.github.io/categories/%E7%94%9F%E6%B4%BB/</loc>
     <lastmod>2024-06-16T11:17:34+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
@@ -87,13 +101,6 @@
   
   <url>
     <loc>https://ppd0705.github.io/post/2023_summary/</loc>
-    <lastmod>2023-12-31T16:56:53+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://ppd0705.github.io/tags/%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/</loc>
     <lastmod>2023-12-31T16:56:53+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
