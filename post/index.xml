@@ -6,7 +6,16 @@
     <description>Recent content in Posts on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 31 Dec 2024 07:23:11 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 03 Jan 2025 16:58:12 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>2024海南环岛摩旅</title>
+      <link>https://ppd0705.github.io/post/hainan_motorcycle_road_trip/</link>
+      <pubDate>Fri, 03 Jan 2025 16:58:12 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/hainan_motorcycle_road_trip/</guid>
+      <description>前言 之所以想去海南摩旅，主要原因是24年发现了一个非常喜欢的 Youtuber &amp;mdash; Little Chinese Everywhere， 看到她在广西和海南骑摩托车旅行，感觉摩托车还蛮不错</description>
+    </item>
+    
     <item>
       <title>2024年终总结</title>
       <link>https://ppd0705.github.io/post/2024_summary/</link>
@@ -176,15 +185,6 @@
       
       <guid>https://ppd0705.github.io/post/noip_expirence/</guid>
       <description>TL;DR: 愉快地在机房划水2年，没有拿到高考加分。 看到有人发文说 Pascal 正式退出赛事舞台，不禁想写一下脑海残存的高中参赛经历。 高中以前，可以说我在学校过的</description>
-    </item>
-    
-    <item>
-      <title>期现套利策略介绍和实现</title>
-      <link>https://ppd0705.github.io/post/spot_perpetual_arbitrage/</link>
-      <pubDate>Sun, 19 Sep 2021 22:49:39 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/spot_perpetual_arbitrage/</guid>
-      <description>期货和现货 现货 现货通常指实物 如农作物大豆、玉米; 如数字货币BTC、ETH 现货交易 现货交易一般以一手交钱一手交货或者以物换物的方式 比如10RM</description>
     </item>
     
   </channel>
