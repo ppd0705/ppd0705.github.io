@@ -6,7 +6,16 @@
     <description>Recent content in Posts on PPD&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Fri, 03 Jan 2025 16:58:12 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 04 Jan 2026 17:03:13 +0800</lastBuildDate><atom:link href="https://ppd0705.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>2025年终总结</title>
+      <link>https://ppd0705.github.io/post/2025_summary/</link>
+      <pubDate>Sun, 04 Jan 2026 17:03:13 +0800</pubDate>
+      
+      <guid>https://ppd0705.github.io/post/2025_summary/</guid>
+      <description>跑步 今年跑了一千公里，居然比去年多了一倍，开始我以为因为加入跑团导致跑量大增，看了一下反而之前三月份是跑的最多的。 想起来今年从新年第一天以跑</description>
+    </item>
+    
     <item>
       <title>2024海南环岛摩旅</title>
       <link>https://ppd0705.github.io/post/hainan_motorcycle_road_trip/</link>
@@ -176,15 +185,6 @@
       
       <guid>https://ppd0705.github.io/post/learn_c/</guid>
       <description>第零讲 课前热身 数据量单位 位（bit）： 是最小存储单位，每个位可以存一个二进制码值得 0 或 1 字节（byte）： 通常是由八个位组成的一个存储单元，</description>
-    </item>
-    
-    <item>
-      <title>非典型 NOIP 经历</title>
-      <link>https://ppd0705.github.io/post/noip_expirence/</link>
-      <pubDate>Sun, 21 Nov 2021 11:09:55 +0800</pubDate>
-      
-      <guid>https://ppd0705.github.io/post/noip_expirence/</guid>
-      <description>TL;DR: 愉快地在机房划水2年，没有拿到高考加分。 看到有人发文说 Pascal 正式退出赛事舞台，不禁想写一下脑海残存的高中参赛经历。 高中以前，可以说我在学校过的</description>
     </item>
     
   </channel>
